@@ -1,5 +1,8 @@
 use graphics::*;
-use winit::window::Window;
+
+pub mod content_input;
+
+pub use content_input::*;
 
 use crate::{
     content::*,
@@ -11,14 +14,17 @@ use crate::{
 use hecs::World;
 
 pub enum WindowType {
+    None,
     Login,
     Register,
 }
 
 pub struct MenuContent {
     bg: usize,
+    cur_window: WindowType,
     window: Vec<usize>,
     button: Vec<Button>,
+    pub did_button_click: bool,
 }
 
 impl MenuContent {
@@ -32,8 +38,10 @@ impl MenuContent {
 
         let mut content = MenuContent {
             bg,
+            cur_window: WindowType::None,
             window: Vec::new(),
             button: Vec::new(),
+            did_button_click: false,
         };
 
         create_window(systems, &mut content, WindowType::Register);
@@ -53,6 +61,7 @@ impl MenuContent {
 }
 
 pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, window_type: WindowType) {
+    content.cur_window = window_type;
     content.window.iter().for_each(|gfx_index| {
         systems.gfx.remove_gfx(*gfx_index);
     });
@@ -64,7 +73,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
 
     let screen_size = Vec2::new(SCREEN_WIDTH as f32, SCREEN_HEIGHT as f32);
 
-    match window_type {
+    match content.cur_window {
         WindowType::Login => {
 
         }
@@ -116,19 +125,20 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 ButtonType::Rect(Color::rgba(100, 100, 100, 255),
                     true,
                     Color::rgba(70, 70, 70, 255),
-                    ButtonChangeType::ColorChange(Color::rgba(255, 255, 255, 255)),
-                    ButtonChangeType::ColorChange(Color::rgba(255, 255, 255, 255)),
+                    ButtonChangeType::ColorChange(Color::rgba(180, 180, 180, 255)),
+                    ButtonChangeType::ColorChange(Color::rgba(40, 40, 40, 255)),
                 ),
                 ButtonContentType::Text("Register".to_string(),
                         Vec3::new(0.0, 7.0, MENU_WINDOW_CONTENT),
                         Color::rgba(200, 200, 200, 255),
                         1,
-                        ButtonChangeType::ColorChange(Color::rgba(255, 255, 255, 255)),
+                        ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                         ButtonChangeType::ColorChange(Color::rgba(170, 170, 170, 255))),
                 Vec3::new(pos.x + 104.0, pos.y + 45.0, MENU_WINDOW_CONTENT),
                 Vec2::new(140.0, 34.0),
                 0);
             content.button.push(button);
         }
+        _ => {}
     }
 }

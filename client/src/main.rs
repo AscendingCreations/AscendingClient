@@ -17,7 +17,10 @@ use std::{
 };
 use wgpu::{Backends, Dx12Compiler, InstanceDescriptor, InstanceFlags};
 use winit::{
-    dpi::PhysicalSize, 
+    dpi::{
+        PhysicalSize,
+        PhysicalPosition,
+    },
     event::*, 
     event_loop::{ControlFlow, EventLoop}, 
     keyboard::*, 
@@ -267,6 +270,9 @@ async fn main() -> Result<(), AscendingError> {
     let mut fps = 0u32;
     let mut loop_timer = LoopTimer::default();
 
+    let mut mouse_pos: PhysicalPosition<f64> = PhysicalPosition::new(0.0, 0.0);
+    let mut mouse_press: bool = false;
+
     #[allow(deprecated)]
     event_loop.run(move |event, elwt| {
         // we check for the first batch of events to ensure we dont need to stop rendering here first.
@@ -287,6 +293,47 @@ async fn main() -> Result<(), AscendingError> {
                             &mut systems,
                             &mut content,
                             event);
+                    }
+                    WindowEvent::CursorMoved { position, .. } => {
+                        mouse_pos = position.clone();
+
+                        if mouse_press {
+                            handle_mouse_input(&mut world,
+                                &mut systems, 
+                                MouseInputType::MouseLeftDown, 
+                                &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                                &mut content,
+                            );
+                        } else {
+                            handle_mouse_input(&mut world,
+                                &mut systems, 
+                                MouseInputType::MouseMove, 
+                                &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                                &mut content,
+                            );
+                        }
+                    }
+                    WindowEvent::MouseInput { state, .. } => {
+                        match state {
+                            ElementState::Pressed => {
+                                handle_mouse_input(&mut world,
+                                    &mut systems, 
+                                    MouseInputType::MouseLeftDown, 
+                                    &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                                    &mut content,
+                                );
+                                mouse_press = true;
+                            }
+                            ElementState::Released => {
+                                handle_mouse_input(&mut world,
+                                    &mut systems, 
+                                    MouseInputType::MouseRelease, 
+                                    &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                                    &mut content,
+                                );
+                                mouse_press = false;
+                            }
+                        }
                     }
                     _ => {}
                 }

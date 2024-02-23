@@ -12,7 +12,7 @@ pub enum ContentHolder {
     Game(GameContent),
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ContentType {
     Menu,
     Game,
@@ -20,7 +20,7 @@ pub enum ContentType {
 
 pub struct Content {
     pub holder: ContentHolder,
-    content_type: ContentType,
+    pub content_type: ContentType,
 }
 
 impl Content {

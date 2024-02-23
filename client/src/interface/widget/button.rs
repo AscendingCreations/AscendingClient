@@ -55,8 +55,8 @@ pub struct Button {
     button_type: ButtonType,
     content_type: ButtonContentType,
 
-    pos: Vec3,
-    size: Vec2,
+    pub pos: Vec3,
+    pub size: Vec2,
 }
 
 impl Button {
@@ -193,11 +193,40 @@ impl Button {
                 }
             }
         }
+
+        let contenttype = self.content_type.clone();
+        if let Some(content_data) = self.content {
+            match contenttype {
+                ButtonContentType::Text(_, pos, _, _, _, click_change) => {
+                    match click_change {
+                        ButtonChangeType::AdjustY(adjusty) => {
+                            systems.gfx.set_pos(content_data, 
+                                Vec3::new(self.pos.x + pos.x, self.pos.y + pos.y + adjusty as f32, pos.z));
+                        }
+                        ButtonChangeType::ColorChange(color) => { systems.gfx.set_color(content_data, color); }
+                        _ => {}
+                    }
+                }
+                ButtonContentType::Image(_, pos, size, _, click_change) => {
+                    match click_change {
+                        ButtonChangeType::AdjustY(adjusty) => {
+                            systems.gfx.set_pos(content_data, 
+                                Vec3::new(self.pos.x + pos.x, self.pos.y + pos.y + adjusty as f32, pos.z));
+                        }
+                        ButtonChangeType::ImageFrame(frame) => {
+                            systems.gfx.set_uv(content_data, 
+                                Vec4::new(0.0, size.y * frame as f32, size.x, size.y));
+                        }
+                        _ => {}
+                    }
+                }
+                _ => {}
+            }
+        }
     }
 
     fn apply_hover(&mut self, systems: &mut DrawSetting) {
         let buttontype = self.button_type.clone();
-
         match buttontype {
             ButtonType::Rect(_, _, _, hover_change, _) => {
                 match hover_change {
@@ -223,13 +252,43 @@ impl Button {
                 }
             }
         }
+
+        let contenttype = self.content_type.clone();
+        if let Some(content_data) = self.content {
+            match contenttype {
+                ButtonContentType::Text(_, pos, _, _, hover_change, _) => {
+                    match hover_change {
+                        ButtonChangeType::AdjustY(adjusty) => {
+                            systems.gfx.set_pos(content_data, 
+                                Vec3::new(self.pos.x + pos.x, self.pos.y + pos.y + adjusty as f32, pos.z));
+                        }
+                        ButtonChangeType::ColorChange(color) => {
+                            systems.gfx.set_color(content_data, color);
+                        }
+                        _ => {}
+                    }
+                }
+                ButtonContentType::Image(_, pos, size, hover_change, _) => {
+                    match hover_change {
+                        ButtonChangeType::AdjustY(adjusty) => {
+                            systems.gfx.set_pos(content_data, 
+                                Vec3::new(self.pos.x + pos.x, self.pos.y + pos.y + adjusty as f32, pos.z));
+                        }
+                        ButtonChangeType::ImageFrame(frame) => {
+                            systems.gfx.set_uv(content_data, 
+                                Vec4::new(0.0, size.y * frame as f32, size.x, size.y));
+                        }
+                        _ => {}
+                    }
+                }
+                _ => {}
+            }
+        }
     }
 
     fn apply_normal(&mut self, systems: &mut DrawSetting) {
         let buttontype = self.button_type.clone();
-
         systems.gfx.set_pos(self.index, self.pos);
-
         match buttontype {
             ButtonType::Rect(color, _, _, _, _) => {
                 systems.gfx.set_color(self.index, color);
@@ -237,6 +296,25 @@ impl Button {
             ButtonType::Image(_, _, _) => {
                 systems.gfx.set_uv(self.index, 
                     Vec4::new(0.0, 0.0, self.size.x, self.size.y));
+            }
+        }
+
+        let contenttype = self.content_type.clone();
+        if let Some(content_data) = self.content {
+            match contenttype {
+                ButtonContentType::Text(_, pos, color, _, _, _) => {
+                    systems.gfx.set_pos(content_data,
+                        Vec3::new(self.pos.x + pos.x, self.pos.y + pos.y, pos.z));
+                    systems.gfx.set_color(content_data, color);
+                    systems.gfx.center_text(content_data);
+                }
+                ButtonContentType::Image(_, pos, size, _, _) => {
+                    systems.gfx.set_pos(content_data,
+                        Vec3::new(self.pos.x + pos.x, self.pos.y + pos.y, pos.z));
+                    systems.gfx.set_uv(content_data, 
+                        Vec4::new(0.0, 0.0, size.x, size.y));
+                }
+                _ => {}
             }
         }
     }

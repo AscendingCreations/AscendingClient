@@ -5,7 +5,38 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{content::*, Direction, DrawSetting};
+use crate::{content::{*, menu_content::content_input::*}, Direction, DrawSetting};
+
+pub enum MouseInputType {
+    MouseLeftDown,
+    MouseLeftDownMove,
+    MouseMove,
+    MouseRelease,
+}
+
+pub fn handle_mouse_input(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    input_type: MouseInputType,
+    mouse_pos: &Vec2,
+    content: &mut Content,
+) {
+    // We convert the mouse position to render position as the y pos increase upward
+    let screen_pos = Vec2::new(
+        mouse_pos.x,
+        systems.size.height - mouse_pos.y,
+    );
+
+    let content_type = content.content_type.clone();
+    match content_type {
+        ContentType::Game => {
+            GameContent::mouse_input(content, world, systems, input_type, screen_pos);
+        }
+        ContentType::Menu => {
+            MenuContent::mouse_input(content, world, systems, input_type, screen_pos);
+        }
+    }
+}
 
 pub fn handle_key_input(
     world: &mut World,
@@ -13,53 +44,13 @@ pub fn handle_key_input(
     content: &mut Content,
     event: &KeyEvent,
 ) {
-    match &mut content.holder {
-        ContentHolder::Game(data) => {
-            if event.state.is_pressed() {
-                match event.physical_key {
-                    PhysicalKey::Code(KeyCode::ArrowUp) => {
-                        data.move_player(world, &Direction::Up);
-                    }
-                    PhysicalKey::Code(KeyCode::ArrowDown) => {
-                        data.move_player(world, &Direction::Down);
-                    }
-                    PhysicalKey::Code(KeyCode::ArrowLeft) => {
-                        data.move_player(world, &Direction::Left);
-                    }
-                    PhysicalKey::Code(KeyCode::ArrowRight) => {
-                        data.move_player(world, &Direction::Right);
-                    }
-                    
-                    PhysicalKey::Code(KeyCode::KeyW) => {
-                        data.move_other_player(world, &Direction::Up);
-                    }
-                    PhysicalKey::Code(KeyCode::KeyS) => {
-                        data.move_other_player(world, &Direction::Down);
-                    }
-                    PhysicalKey::Code(KeyCode::KeyA) => {
-                        data.move_other_player(world, &Direction::Left);
-                    }
-                    PhysicalKey::Code(KeyCode::KeyD) => {
-                        data.move_other_player(world, &Direction::Right);
-                    }
-
-                    PhysicalKey::Code(KeyCode::F1) => {
-                        content.switch_content(world, systems, ContentType::Menu);
-                        return;
-                    }
-                    _ => {}
-                }
-            }
+    let content_type = content.content_type.clone();
+    match content_type {
+        ContentType::Game => {
+            GameContent::key_input(content, world, systems, event);
         }
-        ContentHolder::Menu(_data) => {
-            if event.state.is_pressed() {
-                match event.physical_key {
-                    PhysicalKey::Code(KeyCode::F1) => {
-                        content.switch_content(world, systems, ContentType::Game);
-                    }
-                    _ => {}
-                }
-            }
+        ContentType::Menu => {
+            MenuContent::key_input(content, world, systems, event);
         }
     }
 }

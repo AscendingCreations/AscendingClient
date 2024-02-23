@@ -2,6 +2,10 @@ use graphics::*;
 
 use indexmap::IndexSet;
 
+pub mod content_input;
+
+pub use content_input::*;
+
 use crate::{
     gfx_order::*,
     logic::*,
