@@ -9,11 +9,11 @@ use crate::{ContentType, DrawSetting, content::*, MouseInputType};
 
 impl GameContent {
     pub fn mouse_input(
-        content: &mut Content,
-        world: &mut World,
-        systems: &mut DrawSetting,
-        input_type: MouseInputType,
-        screen_pos: Vec2,
+        _content: &mut Content,
+        _world: &mut World,
+        _systems: &mut DrawSetting,
+        _input_type: MouseInputType,
+        _screen_pos: Vec2,
     ) {
         
     }

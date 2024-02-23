@@ -8,8 +8,10 @@ use hecs::World;
 use crate::{ContentType, DrawSetting, content::*, MouseInputType};
 
 mod register_input;
+mod login_input;
 
 use register_input::*;
+use login_input::*;
 
 impl MenuContent {
     pub fn mouse_input(
@@ -25,7 +27,9 @@ impl MenuContent {
                     WindowType::Register => {
                         register_mouse_input(data, world, systems, input_type, screen_pos);
                     }
-                    WindowType::Login => {}
+                    WindowType::Login => {
+                        login_mouse_input(data, world, systems, input_type, screen_pos);
+                    }
                     _ => {}
                 }
             }

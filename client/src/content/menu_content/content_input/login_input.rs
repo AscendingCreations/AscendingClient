@@ -7,7 +7,7 @@ use hecs::World;
 
 use crate::{button, content::*, ContentType, DrawSetting, MouseInputType};
 
-pub fn register_mouse_input(
+pub fn login_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut DrawSetting,
@@ -23,22 +23,14 @@ pub fn register_mouse_input(
             if let Some(index) = button_index {
                 menu_content.did_button_click = true;
                 match index {
-                    0 => { // Register
+                    0 => { // Login
+                        println!("Login");
+                    }
+                    1 => { // Register
                         println!("Register");
-                    }
-                    1 => { // Sign In
-                        
-                        println!("Sign In");
                         println!("Old Collection {:?}", systems.gfx.count_collection());
-                        create_window(systems, menu_content, WindowType::Login);
+                        create_window(systems, menu_content, WindowType::Register);
                         println!("New Collection {:?}", systems.gfx.count_collection());
-                    }
-                    2 => { // Sprite Left
-                        
-                        println!("Sprite Left");
-                    }
-                    3 => { // Sprite Right
-                        println!("Sprite Right");
                     }
                     _ => {}
                 }
