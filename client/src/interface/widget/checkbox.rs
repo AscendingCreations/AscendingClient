@@ -7,87 +7,148 @@ use crate::{
 };
 
 #[derive(Clone)]
+pub enum CheckboxChangeType {
+    None,
+    ImageFrame(usize),
+    ColorChange(Color),
+}
+
+#[derive(Clone)]
+pub struct CheckRect {
+    pub rect_color: Color,
+    pub got_border: bool,
+    pub border_color: Color,
+    pub border_radius: f32,
+    pub pos: Vec3,
+    pub size: Vec2,
+}
+
+#[derive(Clone)]
+pub struct CheckImage {
+    pub res: usize,
+    pub pos: Vec3,
+    pub size: Vec2,
+    pub uv: Vec2,
+}
+
+#[derive(Clone)]
+pub struct CheckboxRect {
+    pub rect_color: Color,
+    pub got_border: bool,
+    pub border_color: Color,
+    pub border_radius: f32,
+    pub hover_change: CheckboxChangeType,
+    pub click_change: CheckboxChangeType,
+}
+
+#[derive(Clone)]
+pub struct CheckboxImage {
+    pub res: usize,
+    pub hover_change: CheckboxChangeType,
+    pub click_change: CheckboxChangeType,
+}
+
+#[derive(Clone)]
+pub struct CheckboxText {
+    pub text: String,
+    pub offset_pos: Vec2,
+    pub render_layer: usize,
+    pub label_size: Vec2,
+    pub color: Color,
+    pub hover_change: CheckboxChangeType,
+    pub click_change: CheckboxChangeType,
+}
+
+#[derive(Clone)]
 pub enum CheckType {
-    RectColor(Color),
-    SetImage(usize, // Resource Image
-        Vec3, // Position
-        Vec2, // Size
-        Vec2, // UV
-    ),
+    SetRect(CheckRect),
+    SetImage(CheckImage),
 }
 
 #[derive(Clone)]
 pub enum CheckboxType {
-    Rect(Color, // Default Color
-        bool, // Got Border
-        Color, // Border Color
-        CheckType),
-    Image(usize, // Resource image
-        CheckType),
-}
-
-pub struct CheckboxText {
-    text: String,
-    render_layer: usize,
-    label_size: Vec2,
-    offset: usize,
-    color: Color,
+    Rect(CheckboxRect),
+    Image(CheckboxImage),
 }
 
 pub struct Checkbox {
     image: usize,
-    check_image: Option<usize>,
-    text: Option<usize>,
+    check_image: usize,
+    box_type: CheckboxType,
+    check_type: CheckType,
+    text_type: Option<(usize, CheckboxText)>,
 
-    checkbox_type: CheckboxType,
+    in_hover: bool,
+    in_click: bool,
+    pub value: bool,
+
+    pub pos: Vec3,
+    pub box_size: Vec2,
+    pub adjust_x: f32,
 }
 
 impl Checkbox {
     pub fn new(
         systems: &mut DrawSetting,
-        checkbox_type: CheckboxType,
+        box_type: CheckboxType,
+        check_type: CheckType,
         pos: Vec3,
         box_size: Vec2,
         render_layer: usize,
         text_data: Option<CheckboxText>,
     ) -> Self {
-        let checkboxtype = checkbox_type.clone();
-        let checktype: CheckType;
-        let image = match checkboxtype {
-            CheckboxType::Rect(default_color, got_border, border_color, ctype) => {
+        let boxtype = box_type.clone();
+        let checktype = check_type.clone();
+
+        let image = match boxtype {
+            CheckboxType::Rect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
-                rect.set_color(default_color)
+                rect.set_color(data.rect_color)
                     .set_position(pos)
-                    .set_size(box_size);
-                if got_border {
+                    .set_size(box_size)
+                    .set_radius(data.border_radius);
+                if data.got_border {
                     rect.set_border_width(1.0)
-                        .set_border_color(border_color);
+                        .set_border_color(data.border_color);
                 }
-                checktype = ctype;
                 systems.gfx.add_rect(rect, render_layer)
             }
-            CheckboxType::Image(res, ctype) => {
-                let mut img = Image::new(Some(res), &mut systems.renderer, 0);
+            CheckboxType::Image(data) => {
+                let mut img = Image::new(Some(data.res), &mut systems.renderer, 0);
                 img.pos = pos;
                 img.hw = box_size;
                 img.uv = Vec4::new(0.0, 0.0, box_size.x, box_size.y);
-                checktype = ctype;
                 systems.gfx.add_image(img, render_layer)
             }
         };
-        let check_image = match checktype {
-            CheckType::SetImage(res, cpos, csize, cuv) => {
-                let mut img = Image::new(Some(res), &mut systems.renderer, 0);
-                img.pos = Vec3::new(pos.x + cpos.x, pos.y + cpos.y, cpos.z);
-                img.hw = csize;
-                img.uv = Vec4::new(cuv.x, cuv.y, csize.x, csize.y);
-                Some(systems.gfx.add_image(img, render_layer))
-            }
-            _ => None,
-        };
 
-        let text = if let Some(data) = text_data {
-            let tpos = Vec3::new(pos.x + box_size.x + data.offset as f32, pos.y, pos.z);
+        let check_image = match checktype {
+            CheckType::SetRect(data) => {
+                let mut rect = Rect::new(&mut systems.renderer, 0);
+                rect.set_position(Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, data.pos.z))
+                    .set_size(data.size)
+                    .set_color(data.rect_color)
+                    .set_radius(data.border_radius);
+                if data.got_border {
+                    rect.set_border_width(1.0)
+                        .set_border_color(data.border_color);
+                }
+                systems.gfx.add_rect(rect, render_layer)
+            }
+            CheckType::SetImage(data) => {
+                let mut img = Image::new(Some(data.res), &mut systems.renderer, 0);
+                img.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, data.pos.z);
+                img.hw = data.size;
+                img.uv = Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
+                systems.gfx.add_image(img, render_layer)
+            }
+        };
+        systems.gfx.set_visible(check_image, false);
+
+        let mut adjust_x = 0.0;
+        let text_type = if let Some(data) = text_data {
+            let data_copy = data.clone();
+            let tpos = Vec3::new(pos.x + box_size.x + data.offset_pos.x, pos.y + data.offset_pos.y, pos.z);
             let txt = create_label(systems, 
                 tpos,
                 data.label_size, 
@@ -95,7 +156,8 @@ impl Checkbox {
                 data.color);
             let txt_index = systems.gfx.add_text(txt, data.render_layer);
             systems.gfx.set_text(&mut systems.renderer, txt_index, &data.text);
-            Some(txt_index)
+            adjust_x = data.offset_pos.x + data.label_size.x;
+            Some((txt_index, data_copy))
         } else {
             None
         };
@@ -103,18 +165,133 @@ impl Checkbox {
         Checkbox {
             image,
             check_image,
-            text,
-            checkbox_type,
+            box_type,
+            check_type,
+            text_type,
+            in_hover: false,
+            in_click: false,
+            value: false,
+            pos,
+            box_size,
+            adjust_x,
         }
     }
 
     pub fn unload(&mut self, systems: &mut DrawSetting) {
         systems.gfx.remove_gfx(self.image);
-        if let Some(index) = self.check_image {
-            systems.gfx.remove_gfx(index);
+        systems.gfx.remove_gfx(self.check_image);
+        if let Some(data) = &mut self.text_type {
+            systems.gfx.remove_gfx(data.0);
         }
-        if let Some(index) = self.text {
-            systems.gfx.remove_gfx(index);
+    }
+
+    pub fn set_hover(&mut self, systems: &mut DrawSetting, state: bool) {
+        if self.in_hover == state {
+            return;
+        }
+        self.in_hover = state;
+        if !self.in_click {
+            if self.in_hover {
+                self.apply_hover(systems);
+            } else {
+                self.apply_normal(systems);
+            }
+        }
+    }
+
+    pub fn set_click(&mut self, systems: &mut DrawSetting, state: bool) {
+        if self.in_click == state {
+            return;
+        }
+        self.in_click = state;
+        if self.in_click {
+            self.value = !self.value;
+            systems.gfx.set_visible(self.check_image, self.value);
+        }
+        
+        if self.in_click {
+            self.apply_click(systems);
+        } else {
+            if self.in_hover {
+                self.apply_hover(systems);
+            } else {
+                self.apply_normal(systems);
+            }
+        }
+    }
+
+    fn apply_click(&mut self, systems: &mut DrawSetting) {
+        let buttontype = self.box_type.clone();
+        match buttontype {
+            CheckboxType::Rect(data) => {
+                match data.click_change {
+                    CheckboxChangeType::ColorChange(color) => { systems.gfx.set_color(self.image, color); }
+                    _ => {}
+                }
+            }
+            CheckboxType::Image(data) => {
+                match data.click_change {
+                    CheckboxChangeType::ImageFrame(frame) => {
+                        systems.gfx.set_uv(self.image, 
+                            Vec4::new(0.0, self.box_size.y * frame as f32, self.box_size.x, self.box_size.y));
+                    }
+                    _ => {}
+                }
+            }
+        }
+
+        if let Some(data) = &mut self.text_type {
+            let contenttype = data.1.clone();
+            match contenttype.click_change {
+                CheckboxChangeType::ColorChange(color) => { systems.gfx.set_color(data.0, color); }
+                _ => {}
+            }
+        }
+    }
+
+    fn apply_hover(&mut self, systems: &mut DrawSetting) {
+        let buttontype = self.box_type.clone();
+        match buttontype {
+            CheckboxType::Rect(data) => {
+                match data.hover_change {
+                    CheckboxChangeType::ColorChange(color) => { systems.gfx.set_color(self.image, color); }
+                    _ => {}
+                }
+            }
+            CheckboxType::Image(data) => {
+                match data.hover_change {
+                    CheckboxChangeType::ImageFrame(frame) => {
+                        systems.gfx.set_uv(self.image, 
+                            Vec4::new(0.0, self.box_size.y * frame as f32, self.box_size.x, self.box_size.y));
+                    }
+                    _ => {}
+                }
+            }
+        }
+
+        if let Some(data) = &mut self.text_type {
+            let contenttype = data.1.clone();
+            match contenttype.hover_change {
+                CheckboxChangeType::ColorChange(color) => { systems.gfx.set_color(data.0, color); }
+                _ => {}
+            }
+        }
+    }
+
+    fn apply_normal(&mut self, systems: &mut DrawSetting) {
+        let buttontype = self.box_type.clone();
+        match buttontype {
+            CheckboxType::Rect(data) => {
+                systems.gfx.set_color(self.image, data.rect_color);
+            }
+            CheckboxType::Image(_) => {
+                systems.gfx.set_uv(self.image, 
+                    Vec4::new(0.0, 0.0, self.box_size.x, self.box_size.y));
+            }
+        }
+
+        if let Some(data) = &mut self.text_type {
+            systems.gfx.set_color(data.0, data.1.color);
         }
     }
 }

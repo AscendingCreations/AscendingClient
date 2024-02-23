@@ -19,18 +19,16 @@ pub struct ButtonRect {
     pub rect_color: Color,
     pub got_border: bool,
     pub border_color: Color,
+    pub border_radius: f32,
     pub hover_change: ButtonChangeType,
     pub click_change: ButtonChangeType,
 }
 
 #[derive(Clone)]
-pub enum ButtonType {
-    None,
-    Rect(ButtonRect),
-    Image(usize,
-        ButtonChangeType, // Hover Change
-        ButtonChangeType // Click Change
-    ),
+pub struct ButtonImage {
+    pub res: usize,
+    pub hover_change: ButtonChangeType,
+    pub click_change: ButtonChangeType,
 }
 
 #[derive(Clone)]
@@ -51,6 +49,13 @@ pub struct ButtonContentText {
     pub render_layer: usize,
     pub hover_change: ButtonChangeType,
     pub click_change: ButtonChangeType,
+}
+
+#[derive(Clone)]
+pub enum ButtonType {
+    None,
+    Rect(ButtonRect),
+    Image(ButtonImage),
 }
 
 #[derive(Clone)]
@@ -88,15 +93,16 @@ impl Button {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
                 rect.set_position(pos)
                     .set_size(size)
-                    .set_color(data.rect_color);
+                    .set_color(data.rect_color)
+                    .set_radius(data.border_radius);
                 if data.got_border {
                     rect.set_border_width(1.0)
                         .set_border_color(data.border_color);
                 }
                 Some(systems.gfx.add_rect(rect, render_layer))
             }
-            ButtonType::Image(res, _, _) => {
-                let mut image = Image::new(Some(res), &mut systems.renderer, 0);
+            ButtonType::Image(data) => {
+                let mut image = Image::new(Some(data.res), &mut systems.renderer, 0);
                 image.pos = pos;
                 image.hw = size;
                 image.uv = Vec4::new(0.0, 0.0, size.x, size.y);
@@ -196,8 +202,8 @@ impl Button {
                         _ => {}
                     }
                 }
-                ButtonType::Image(_, _, click_change) => {
-                    match click_change {
+                ButtonType::Image(data) => {
+                    match data.click_change {
                         ButtonChangeType::AdjustY(adjusty) => {
                             systems.gfx.set_pos(index, 
                                 Vec3::new(self.pos.x, self.pos.y + adjusty as f32, self.pos.z));
@@ -259,8 +265,8 @@ impl Button {
                         _ => {}
                     }
                 }
-                ButtonType::Image(_, hover_change, _) => {
-                    match hover_change {
+                ButtonType::Image(data) => {
+                    match data.hover_change {
                         ButtonChangeType::AdjustY(adjusty) => {
                             systems.gfx.set_pos(index, 
                                 Vec3::new(self.pos.x, self.pos.y + adjusty as f32, self.pos.z));
@@ -318,7 +324,7 @@ impl Button {
                 ButtonType::Rect(data) => {
                     systems.gfx.set_color(index, data.rect_color);
                 }
-                ButtonType::Image(_, _, _) => {
+                ButtonType::Image(_) => {
                     systems.gfx.set_uv(index, 
                         Vec4::new(0.0, 0.0, self.size.x, self.size.y));
                 }
