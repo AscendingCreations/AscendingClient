@@ -1,8 +1,6 @@
 use graphics::*;
 use cosmic_text::{Attrs, Metrics};
-use clipboard::{ClipboardContext, ClipboardProvider};
-#[cfg(windows)]
-use winapi::um::winuser::{IsClipboardFormatAvailable, CF_TEXT};
+use arboard::Clipboard;
 
 const KEY_CTRL: usize = 0;
 const MAX_KEY: usize = 1;
@@ -172,18 +170,14 @@ pub fn is_text(event: &KeyEvent) -> bool {
 }
 
 pub fn get_clipboard_text() -> String {
-    let mut ctx = ClipboardContext::new().expect("Failed to create clipboard context");
-    #[cfg(windows)]
-    let is_text_available = unsafe { IsClipboardFormatAvailable(CF_TEXT) != 0 };
-    if is_text_available {
-        ctx.get_contents().expect("Failed to get clipboard contents")
-    } else {
-        println!("Failed to get text");
-        String::new()
+    let mut clipboard = Clipboard::new().unwrap();
+    match clipboard.get_text() {
+        Ok(data) => data,
+        Err(_) => String::new(),
     }
 }
 
 pub fn set_clipboard_text(message: String) {
-    let mut ctx = ClipboardContext::new().expect("Failed to create clipboard context");
-    ctx.set_contents(message.to_owned()).expect("Failed to set clipboard contents");
+    let mut clipboard = Clipboard::new().unwrap();
+    clipboard.set_text(message).unwrap();
 }

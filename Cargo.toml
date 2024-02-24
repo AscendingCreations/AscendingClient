@@ -1,8 +1,12 @@
-[workspace]
+[package]
+name = "client"
+version = "0.1.0"
+authors = ["S.J.R. van Schaik", "Andrew Wheeler <genusistimelord@gmail.com>"]
+license = "MIT OR Apache-2.0"
+edition = "2021"
 resolver = "2"
-members = ["client", "input", "camera", "graphics"]
 
-[workspace.dependencies]
+[dependencies]
 async-trait = "0.1.73"
 bytemuck = { version = "1.14.0", features = ["derive"] }
 crevice = "0.14.0"
@@ -15,9 +19,6 @@ image = "0.24.7"
 tokio = { version = "1.32.0", features = ["full"] }
 guillotiere = "0.6.2"
 serde = { version = "1.0.188", features = ["derive"] }
-camera = { path = "./camera", package = "ascending_camera"}
-input = { path = "./input", package = "ascending_input" }
-graphics = { path = "./graphics", package = "ascending_graphics" }
 log = "0.4.20"
 backtrace = "0.3.69"
 futures = "0.3.28"
@@ -35,16 +36,36 @@ slab = "0.4.9"
 smol_str = "0.2"
 indexmap = "2.1.0"
 kdtree = "0.7.0"
-clipboard = "0.5"
-winapi = { version = "0.3", features = ["winuser"] }
+arboard = "3.3.1"
 
-[workspace.dependencies.naga]
+[dependencies.camera]
+git = "https://github.com/AscendingCreations/AscendingLibraries"
+#path = "../AscendingLibraries/camera"
+#rev = "f2324c1"
+package = "ascending_camera"
+version = "0.1.0"
+
+[dependencies.input]
+git = "https://github.com/AscendingCreations/AscendingLibraries"
+#path = "../AscendingLibraries/input"
+#rev = "f2324c1"
+package = "ascending_input"
+version = "0.1.0"
+
+[dependencies.graphics]
+git = "https://github.com/AscendingCreations/AscendingLibraries"
+#path = "../AscendingLibraries/graphics"
+#rev = "f2324c1"
+package = "ascending_graphics"
+version = "0.1.0"
+
+[dependencies.naga]
 #git = "https://github.com/gfx-rs/naga"
 #rev = "76003dc0035d53a474d366dcdf49d2e4d12e921f"
 version = "0.19.0"
 features = ["wgsl-in"]
 
-[workspace.dependencies.wgpu]
+[dependencies.wgpu]
 #git = "https://github.com/gfx-rs/wgpu"
 #rev = "061e04b"
 #features = ["angle"]

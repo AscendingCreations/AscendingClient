@@ -1,6 +1,10 @@
 use graphics::*;
 use winit::dpi::PhysicalSize;
 
+pub mod fade;
+
+pub use fade::*;
+
 use crate::{
     gfx_collection::*, game_content::*, TextureAllocation
 };
@@ -11,6 +15,7 @@ pub struct DrawSetting {
     pub size: PhysicalSize<f32>,
     pub scale: f64,
     pub resource: TextureAllocation,
+    pub fade: Fade,
 }
 
 pub struct State<Controls>
@@ -93,6 +98,8 @@ where
         pass.render_rects(renderer, &self.ui_renderer, &self.ui_atlas, 0);
 
         pass.render_text(renderer, &self.text_renderer, &self.text_atlas, 1);
+
+        pass.render_rects(renderer, &self.ui_renderer, &self.ui_atlas, 2);
     }
 }
 

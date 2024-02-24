@@ -204,7 +204,9 @@ async fn main() -> Result<(), AscendingError> {
         size,
         scale,
         resource,
+        fade: Fade::new(),
     };
+    systems.fade.init_setup(&mut systems.renderer, &mut systems.gfx, &systems.size);
 
     // We establish the different renderers here to load their data up to use them.
     let text_renderer = TextRenderer::new(&systems.renderer).unwrap();
@@ -376,6 +378,7 @@ async fn main() -> Result<(), AscendingError> {
 
         // Game Loop
         game_loop(&mut world, &mut systems, &mut content, seconds, &mut loop_timer);
+        systems.fade.fade_logic(seconds);
 
         // update our systems data to the gpu. this is the Camera in the shaders.
         graphics.system.update(&systems.renderer, &frame_time);
