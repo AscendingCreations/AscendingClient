@@ -378,7 +378,9 @@ async fn main() -> Result<(), AscendingError> {
 
         // Game Loop
         game_loop(&mut world, &mut systems, &mut content, seconds, &mut loop_timer);
-        systems.fade.fade_logic(seconds);
+        if systems.fade.fade_logic(&mut systems.gfx, seconds) {
+            fade_end(&mut systems, &mut world, &mut content);
+        }
 
         // update our systems data to the gpu. this is the Camera in the shaders.
         graphics.system.update(&systems.renderer, &frame_time);

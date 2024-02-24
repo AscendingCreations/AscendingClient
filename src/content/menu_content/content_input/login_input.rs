@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{button, content::*, ContentType, DrawSetting, MouseInputType};
+use crate::{button, content::*, ContentType, DrawSetting, MouseInputType, fade::*};
 
 pub fn login_mouse_input(
     menu_content: &mut MenuContent,
@@ -63,6 +63,7 @@ fn trigger_button(
             println!("Login");
             println!("Email: {:?}", menu_content.textbox[0].text);
             println!("Password: {:?}", menu_content.textbox[1].text);
+            systems.fade.init_fade(&mut systems.gfx, FadeType::In, FADE_LOGIN);
         }
         1 => { // Register
             println!("Register");

@@ -267,7 +267,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec3::new(pos.x, pos.y + 199.0, MENU_WINDOW_CONTENT_DETAIL), 
                 Vec2::new(size.x, 20.0),
                 Bounds::new(pos.x, pos.y + 199.0, pos.x + size.x, pos.y + 219.0),
-                Color::rgba(200, 200, 200, 255));
+                Color::rgba(240, 240, 240, 255));
             let text_index = systems.gfx.add_text(header_text, 1);
             systems.gfx.set_text(&mut systems.renderer, text_index, "Login Window");
             systems.gfx.center_text(text_index);
@@ -311,7 +311,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 let textbox = Textbox::new(systems,
                     Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, MENU_WINDOW_CONTENT_DETAIL),
                     Vec2::new(180.0, 20.0),
-                    Color::rgba(200, 200, 200, 255),
+                    Color::rgba(240, 240, 240, 255),
                     1,
                     255,
                     Color::rgba(120, 120, 120, 255),
@@ -333,7 +333,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     ButtonContentText {
                         text: "Login".to_string(),
                         pos: Vec3::new(0.0, 7.0, MENU_WINDOW_CONTENT),
-                        color: Color::rgba(200, 200, 200, 255),
+                        color: Color::rgba(230, 230, 230, 255),
                         render_layer: 1,
                         hover_change: ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                         click_change: ButtonChangeType::ColorChange(Color::rgba(170, 170, 170, 255))
@@ -351,7 +351,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                         pos: Vec3::new(0.0, 0.0, MENU_WINDOW_CONTENT),
                         color: Color::rgba(80, 80, 80, 255),
                         render_layer: 1,
-                        hover_change: ButtonChangeType::ColorChange(Color::rgba(220, 220, 220, 255)),
+                        hover_change: ButtonChangeType::ColorChange(Color::rgba(240, 240, 240, 255)),
                         click_change: ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                     }),
                 Vec3::new(pos.x + 104.0, pos.y + 19.0, MENU_WINDOW_CONTENT),
@@ -388,7 +388,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     render_layer: 1,
                     label_size: Vec2::new(180.0, 20.0),
                     color: Color::rgba(80, 80, 80, 255),
-                    hover_change: CheckboxChangeType::ColorChange(Color::rgba(220, 220, 220, 255)),
+                    hover_change: CheckboxChangeType::ColorChange(Color::rgba(240, 240, 240, 255)),
                     click_change: CheckboxChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                 }));
             content.checkbox.push(checkbox);
@@ -415,7 +415,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec3::new(pos.x, pos.y + 348.0, MENU_WINDOW_CONTENT_DETAIL), 
                 Vec2::new(size.x, 20.0),
                 Bounds::new(pos.x, pos.y + 348.0, pos.x + size.x, pos.y + 368.0),
-                Color::rgba(200, 200, 200, 255));
+                Color::rgba(240, 240, 240, 255));
             let text_index = systems.gfx.add_text(header_text, 1);
             systems.gfx.set_text(&mut systems.renderer, text_index, "Register Window");
             systems.gfx.center_text(text_index);
@@ -460,7 +460,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 let textbox = Textbox::new(systems,
                     Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, MENU_WINDOW_CONTENT_DETAIL),
                     Vec2::new(180.0, 20.0),
-                    Color::rgba(200, 200, 200, 255),
+                    Color::rgba(240, 240, 240, 255),
                     1,
                     255,
                     Color::rgba(120, 120, 120, 255),
@@ -498,7 +498,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     ButtonContentText {
                         text: "Register".to_string(),
                         pos: Vec3::new(0.0, 7.0, MENU_WINDOW_CONTENT),
-                        color: Color::rgba(200, 200, 200, 255),
+                        color: Color::rgba(230, 230, 230, 255),
                         render_layer: 1,
                         hover_change: ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                         click_change: ButtonChangeType::ColorChange(Color::rgba(170, 170, 170, 255))
@@ -516,7 +516,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                         pos: Vec3::new(0.0, 0.0, MENU_WINDOW_CONTENT),
                         color: Color::rgba(80, 80, 80, 255),
                         render_layer: 1,
-                        hover_change: ButtonChangeType::ColorChange(Color::rgba(220, 220, 220, 255)),
+                        hover_change: ButtonChangeType::ColorChange(Color::rgba(240, 240, 240, 255)),
                         click_change: ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                     }),
                 Vec3::new(pos.x + 104.0, pos.y + 19.0, MENU_WINDOW_CONTENT),
