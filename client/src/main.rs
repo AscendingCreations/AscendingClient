@@ -371,12 +371,6 @@ async fn main() -> Result<(), AscendingError> {
             systems.renderer.update_depth_texture();
         }
 
-        // check if out close action was hit for esc
-        if input_handler.is_action_down(&Action::Quit) {
-            println!("The close button was pressed; stopping");
-            elwt.exit();
-        }
-
         frame_time.update();
         let seconds = frame_time.seconds();
 

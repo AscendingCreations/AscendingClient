@@ -31,3 +31,5 @@ hecs.workspace = true
 glam.workspace = true
 slab.workspace = true
 indexmap.workspace = true
+clipboard.workspace = true
+winapi.workspace = true

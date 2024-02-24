@@ -35,6 +35,8 @@ slab = "0.4.9"
 smol_str = "0.2"
 indexmap = "2.1.0"
 kdtree = "0.7.0"
+clipboard = "0.5"
+winapi = { version = "0.3", features = ["winuser"] }
 
 [workspace.dependencies.naga]
 #git = "https://github.com/gfx-rs/naga"

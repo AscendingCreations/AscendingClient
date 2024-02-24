@@ -43,14 +43,19 @@ impl MenuContent {
         systems: &mut DrawSetting,
         event: &KeyEvent,
     ) {
-        if event.state.is_pressed() {
-            match event.physical_key {
-                PhysicalKey::Code(KeyCode::F1) => {
-                    content.switch_content(world, systems, ContentType::Game);
-                    return;
+        match &mut content.holder {
+            ContentHolder::Menu(data) => {
+                match data.cur_window {
+                    WindowType::Register => {
+                        register_key_input(data, world, systems, event);
+                    }
+                    WindowType::Login => {
+                        login_key_input(data, world, systems, event);
+                    }
+                    _ => {}
                 }
-                _ => {}
             }
+            _ => {}
         }
     }
 }

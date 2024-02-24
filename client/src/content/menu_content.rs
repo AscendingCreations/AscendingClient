@@ -27,6 +27,9 @@ pub struct MenuContent {
     unique_label: Vec<usize>,
     button: Vec<Button>,
     checkbox: Vec<Checkbox>,
+    textbox: Vec<Textbox>,
+    selected_textbox: Option<usize>,
+
     pub did_button_click: bool,
     pub did_checkbox_click: bool,
 }
@@ -48,8 +51,10 @@ impl MenuContent {
             unique_label: Vec::new(),
             button: Vec::new(),
             checkbox: Vec::new(),
+            textbox: Vec::new(),
             did_button_click: false,
             did_checkbox_click: false,
+            selected_textbox: None,
         };
 
         create_window(systems, &mut content, WindowType::Login);
@@ -74,11 +79,16 @@ impl MenuContent {
         self.checkbox.iter_mut().for_each(|checkbox| {
             checkbox.unload(systems);
         });
-        self.window = Vec::new();
-        self.button = Vec::new();
-        self.label = Vec::new();
-        self.unique_label = Vec::new();
-        self.checkbox = Vec::new();
+        self.textbox.iter_mut().for_each(|textbox| {
+            textbox.unload(systems);
+        });
+        self.window.clear();
+        self.button.clear();
+        self.label.clear();
+        self.unique_label.clear();
+        self.checkbox.clear();
+        self.textbox.clear();
+        self.selected_textbox = None;
     }
 }
 
@@ -180,6 +190,30 @@ pub fn reset_checkbox(
     });
 }
 
+pub fn click_textbox(
+    menu_content: &mut MenuContent,
+    systems: &mut DrawSetting,
+    screen_pos: Vec2,
+) {
+    let mut checkbox_found = None;
+    for (index, textbox) in menu_content.textbox.iter_mut().enumerate() {
+        if screen_pos.x >= textbox.pos.x &&
+            screen_pos.x <= textbox.pos.x + textbox.size.x &&
+            screen_pos.y >= textbox.pos.y &&
+            screen_pos.y <= textbox.pos.y + textbox.size.y {
+            textbox.set_select(systems, true);
+            checkbox_found = Some(index)
+        }
+    }
+    if let Some(index)  = menu_content.selected_textbox {
+        menu_content.textbox[index].set_select(systems, false);
+    }
+    if let Some(index) = checkbox_found {
+        menu_content.textbox[index].set_select(systems, true);
+    }
+    menu_content.selected_textbox = checkbox_found;
+}
+
 pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, window_type: WindowType) {
     content.cur_window = window_type;
     content.window.iter().for_each(|gfx_index| {
@@ -197,11 +231,16 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
     content.checkbox.iter_mut().for_each(|checkbox| {
         checkbox.unload(systems);
     });
-    content.window = Vec::new();
-    content.button = Vec::new();
-    content.label = Vec::new();
-    content.unique_label = Vec::new();
-    content.checkbox = Vec::new();
+    content.textbox.iter_mut().for_each(|textbox| {
+        textbox.unload(systems);
+    });
+    content.window.clear();
+    content.button.clear();
+    content.label.clear();
+    content.unique_label.clear();
+    content.checkbox.clear();
+    content.textbox.clear();
+    content.selected_textbox = None;
 
     let screen_size = Vec2::new(SCREEN_WIDTH as f32, SCREEN_HEIGHT as f32);
 
@@ -263,6 +302,21 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 };
                 systems.gfx.set_text(&mut systems.renderer, textindex, msg);
                 content.label.push(textindex);
+
+                let is_hidden = match index {
+                    1 => true,
+                    _ => false,
+                };
+
+                let textbox = Textbox::new(systems,
+                    Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, MENU_WINDOW_CONTENT_DETAIL),
+                    Vec2::new(180.0, 20.0),
+                    Color::rgba(200, 200, 200, 255),
+                    1,
+                    255,
+                    Color::rgba(120, 120, 120, 255),
+                    is_hidden);
+                content.textbox.push(textbox);
             }
 
             let button = Button::new(systems,
@@ -369,7 +423,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
 
             for index in 0..5 {
                 let mut labelbox = Rect::new(&mut systems.renderer, 0);
-                let mut textbox = Rect::new(&mut systems.renderer, 0);
+                let mut textbox_bg = Rect::new(&mut systems.renderer, 0);
                 let addy = match index {
                     1 => 278.0,
                     2 => 247.0,
@@ -380,11 +434,11 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 labelbox.set_position(Vec3::new(pos.x + 24.0, pos.y + addy, MENU_WINDOW_CONTENT))
                     .set_size(Vec2::new(116.0, 24.0))
                     .set_color(Color::rgba(208, 208, 208, 255));
-                textbox.set_position(Vec3::new(pos.x + 140.0, pos.y + addy, MENU_WINDOW_CONTENT))
+                textbox_bg.set_position(Vec3::new(pos.x + 140.0, pos.y + addy, MENU_WINDOW_CONTENT))
                     .set_size(Vec2::new(184.0, 24.0))
                     .set_color(Color::rgba(90, 90, 90, 255));
                 content.window.push(systems.gfx.add_rect(labelbox, 0));
-                content.window.push(systems.gfx.add_rect(textbox, 0));
+                content.window.push(systems.gfx.add_rect(textbox_bg, 0));
 
                 let tpos = Vec2::new(pos.x + 27.0, pos.y + addy + 2.0);
                 let text = create_label(systems,
@@ -402,6 +456,16 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 };
                 systems.gfx.set_text(&mut systems.renderer, textindex, msg);
                 content.label.push(textindex);
+
+                let textbox = Textbox::new(systems,
+                    Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, MENU_WINDOW_CONTENT_DETAIL),
+                    Vec2::new(180.0, 20.0),
+                    Color::rgba(200, 200, 200, 255),
+                    1,
+                    255,
+                    Color::rgba(120, 120, 120, 255),
+                    false);
+                content.textbox.push(textbox);
             }
 
             let mut sprite_bg = Rect::new(&mut systems.renderer, 0);
