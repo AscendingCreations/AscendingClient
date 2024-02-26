@@ -25,8 +25,8 @@ pub fn game_loop(
             update_camera(world, data, systems);
     
             if seconds > loop_timer.player_tmr {
-                update_player(world, data);
-                loop_timer.player_tmr = seconds + 0.04;
+                update_player(world, systems, data);
+                loop_timer.player_tmr = seconds + 0.01;
             }
         }
         ContentHolder::Menu(_content) => {}

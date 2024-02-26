@@ -1,6 +1,5 @@
 use graphics::*;
 use cosmic_text::Attrs;
-use naga::proc::index;
 use slab::Slab;
 
 pub enum GfxType {
@@ -97,22 +96,16 @@ impl GfxCollection {
 
     pub fn set_border_color(&mut self, index: usize, color: Color) {
         if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Rect(rect) => {
-                    rect.set_border_color(color);
-                }
-                _ => {}
+            if let GfxType::Rect(rect) = &mut data.gfx {
+                rect.set_border_color(color);
             }
         }
     }
 
     pub fn set_border_width(&mut self, index: usize, width: f32) {
         if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Rect(rect) => {
-                    rect.set_border_width(width);
-                }
-                _ => {}
+            if let GfxType::Rect(rect) = &mut data.gfx {
+                rect.set_border_width(width);
             }
         }
     }
@@ -159,38 +152,29 @@ impl GfxCollection {
 
     pub fn set_uv(&mut self, index: usize, uv: Vec4) {
         if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Image(image) => {
-                    image.uv = uv;
-                    image.changed = true;
-                }
-                _ => {}
+            if let GfxType::Image(image) = &mut data.gfx {
+                image.uv = uv;
+                image.changed = true;
             }
         }
     }
 
     pub fn set_text(&mut self, renderer: &mut GpuRenderer, index: usize, msg: &str) {
         if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Text(text) => {
-                    text.set_text(renderer, msg, Attrs::new(), Shaping::Advanced,);
-                }
-                _ => {}
+            if let GfxType::Text(text) = &mut data.gfx {
+                text.set_text(renderer, msg, Attrs::new(), Shaping::Advanced,);
             }
         }
     }
 
     pub fn center_text(&mut self, index: usize) {
         if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Text(text) => {
-                    let size = text.measure();
-                    let bound = text.bounds.unwrap_or_default();
-                    let textbox_size = bound.right - bound.left;
-                    text.pos.x = bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
-                    text.changed = true;
-                },
-                _ => {}
+            if let GfxType::Text(text) = &mut data.gfx {
+                let size = text.measure();
+                let bound = text.bounds.unwrap_or_default();
+                let textbox_size = bound.right - bound.left;
+                text.pos.x = bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
+                text.changed = true;
             }
         }
     }
@@ -223,13 +207,11 @@ impl GfxCollection {
 
     pub fn get_uv(&mut self, index: usize) -> Vec4 {
         if let Some(data) = self.collection.get(index) {
-            match &data.gfx {
-                GfxType::Image(image) => image.uv,
-                _ => Vec4::new(0.0, 0.0, 0.0, 0.0),
+            if let GfxType::Image(image) = &data.gfx {
+                return image.uv
             }
-        } else {
-            Vec4::new(0.0, 0.0, 0.0, 0.0)
         }
+        Vec4::new(0.0, 0.0, 0.0, 0.0)
     }
 
     pub fn get_color(&mut self, index: usize) -> Color {
@@ -253,6 +235,14 @@ impl GfxCollection {
             }
         } else {
             Vec2::new(0.0, 0.0)
+        }
+    }
+
+    pub fn set_map_tile(&mut self, index: usize, pos: (u32, u32, u32), tile: TileData) {
+        if let Some(data) = self.collection.get_mut(index) {
+            if let GfxType::Map(map) = &mut data.gfx {
+                map.set_tile(pos, tile);
+            }
         }
     }
 }

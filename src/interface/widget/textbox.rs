@@ -16,6 +16,7 @@ use crate::{
 };
 
 pub struct Textbox {
+    visible: bool,
     pub text: String,
     text_index: usize,
     bg: usize,
@@ -39,6 +40,7 @@ impl Textbox {
         limit: usize,
         selected_bg_color: Color,
         hide_content: bool,
+        visible: bool,
     ) -> Self {
         let mut rect = Rect::new(&mut systems.renderer, 0);
         rect.set_color(selected_bg_color)
@@ -53,8 +55,10 @@ impl Textbox {
             Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
             text_color);
         let text_index = systems.gfx.add_text(text_data, render_layer);
+        systems.gfx.set_visible(text_index, visible);
 
         Textbox {
+            visible,
             text: String::new(),
             text_index,
             bg,
@@ -69,7 +73,7 @@ impl Textbox {
     }
 
     pub fn set_select(&mut self, systems: &mut DrawSetting, is_select: bool) {
-        if self.is_selected == is_select {
+        if self.is_selected == is_select || !self.visible {
             return;
         }
         self.is_selected = is_select;
@@ -81,11 +85,24 @@ impl Textbox {
         systems.gfx.remove_gfx(self.text_index);
     }
 
+    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+        if self.visible == visible {
+            return;
+        }
+        self.visible = visible;
+        systems.gfx.set_visible(self.bg, visible);
+        systems.gfx.set_visible(self.text_index, visible);
+    }
+
     pub fn enter_text(
         &mut self,
         systems: &mut DrawSetting,
         event: &KeyEvent,
     ) {
+        if !self.visible {
+            return;
+        }
+
         match event.physical_key {
             PhysicalKey::Code(KeyCode::ControlLeft) | PhysicalKey::Code(KeyCode::ControlRight) => {
                 self.special_key_hold[KEY_CTRL] = event.state.is_pressed();

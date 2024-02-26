@@ -12,6 +12,12 @@ pub struct Position {
 }
 
 #[derive(Copy, Clone, Debug, Default)]
+pub struct Dir(pub u8);
+
+#[derive(Copy, Clone, Debug, Default)]
+pub struct LastMoveFrame(pub usize);
+
+#[derive(Copy, Clone, Debug, Default)]
 pub struct Sprite(pub usize);
 
 #[derive(Copy, Clone, Debug, Default)]

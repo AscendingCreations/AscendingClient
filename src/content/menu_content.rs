@@ -315,7 +315,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     1,
                     255,
                     Color::rgba(120, 120, 120, 255),
-                    is_hidden);
+                    is_hidden,
+                    true);
                 content.textbox.push(textbox);
             }
 
@@ -340,7 +341,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec3::new(pos.x + 104.0, pos.y + 45.0, MENU_WINDOW_CONTENT),
                 Vec2::new(140.0, 34.0),
-                0);
+                0,
+                true);
             content.button.push(button);
 
             let button = Button::new(systems,
@@ -356,7 +358,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec3::new(pos.x + 104.0, pos.y + 19.0, MENU_WINDOW_CONTENT),
                 Vec2::new(140.0, 20.0),
-                0);
+                0,
+                true);
             content.button.push(button);
 
             let checkbox = Checkbox::new(
@@ -390,7 +393,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     color: Color::rgba(80, 80, 80, 255),
                     hover_change: CheckboxChangeType::ColorChange(Color::rgba(240, 240, 240, 255)),
                     click_change: CheckboxChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
-                }));
+                }),
+                true);
             content.checkbox.push(checkbox);
         }
         WindowType::Register => {
@@ -464,7 +468,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     1,
                     255,
                     Color::rgba(120, 120, 120, 255),
-                    false);
+                    false,
+                    true);
                 content.textbox.push(textbox);
             }
 
@@ -505,7 +510,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec3::new(pos.x + 104.0, pos.y + 45.0, MENU_WINDOW_CONTENT),
                 Vec2::new(140.0, 34.0),
-                0);
+                0,
+                true);
             content.button.push(button);
 
             let button = Button::new(systems,
@@ -521,7 +527,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec3::new(pos.x + 104.0, pos.y + 19.0, MENU_WINDOW_CONTENT),
                 Vec2::new(140.0, 20.0),
-                0);
+                0,
+                true);
             content.button.push(button);
 
             let button = Button::new(systems,
@@ -545,7 +552,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec3::new(pos.x + 142.0, pos.y + 118.0, MENU_WINDOW_CONTENT),
                 Vec2::new(24.0, 24.0),
-                0);
+                0,
+                true);
             content.button.push(button);
 
             let button = Button::new(systems,
@@ -569,7 +577,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec3::new(pos.x + 282.0, pos.y + 118.0, MENU_WINDOW_CONTENT),
                 Vec2::new(24.0, 24.0),
-                0);
+                0,
+                true);
             content.button.push(button);
 
             let sprite_number_text = create_label(systems, 

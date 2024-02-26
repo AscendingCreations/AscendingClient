@@ -41,6 +41,7 @@ mod gfx_order;
 mod inputs;
 mod mainloop;
 mod logic;
+mod database;
 
 use renderer::*;
 use gfx_collection::*;
@@ -52,6 +53,7 @@ use gfx_order::*;
 use inputs::*;
 use mainloop::*;
 use logic::*;
+use database::*;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
 enum Action {
@@ -218,6 +220,7 @@ async fn main() -> Result<(), AscendingError> {
 
     // Initiate Game Content
     let mut content = Content::new(&mut world, &mut systems);
+    let mut database = Database::new();
 
     // setup our system which includes Camera and projection as well as our controls.
     // for the camera.
@@ -236,10 +239,11 @@ async fn main() -> Result<(), AscendingError> {
     );
 
     // create a Text rendering object.
+    let txt_pos = Vec2::new(5.0, systems.size.height - 25.0);
     let txt = create_label(&mut systems,
-        Vec3::new(0.0, 0.0, 1.0),
-        Vec2::new(190.0, 16.0),
-        Bounds::new(0.0, 0.0, 250.0, 600.0),
+        Vec3::new(txt_pos.x, txt_pos.y, 0.0),
+        Vec2::new(100.0, 20.0),
+        Bounds::new(txt_pos.x, txt_pos.y, txt_pos.x + 100.0, txt_pos.y + 20.0),
         Color::rgba(255, 255, 255, 255));
     let text = systems.gfx.add_text(txt, 0);
 
@@ -379,7 +383,7 @@ async fn main() -> Result<(), AscendingError> {
         // Game Loop
         game_loop(&mut world, &mut systems, &mut content, seconds, &mut loop_timer);
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
-            fade_end(&mut systems, &mut world, &mut content);
+            fade_end(&mut systems, &mut world, &mut content, &mut database);
         }
 
         // update our systems data to the gpu. this is the Camera in the shaders.

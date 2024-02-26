@@ -66,6 +66,7 @@ pub enum ButtonContentType {
 }
 
 pub struct Button {
+    visible: bool,
     index: Option<usize>,
     content: Option<usize>,
     in_hover: bool,
@@ -86,6 +87,7 @@ impl Button {
         pos: Vec3,
         size: Vec2,
         render_layer: usize,
+        visible: bool,
     ) -> Self {
         let buttontype = button_type.clone();
         let index = match buttontype {
@@ -99,14 +101,18 @@ impl Button {
                     rect.set_border_width(1.0)
                         .set_border_color(data.border_color);
                 }
-                Some(systems.gfx.add_rect(rect, render_layer))
+                let rect_index = systems.gfx.add_rect(rect, render_layer);
+                systems.gfx.set_visible(rect_index, visible);
+                Some(rect_index)
             }
             ButtonType::Image(data) => {
                 let mut image = Image::new(Some(data.res), &mut systems.renderer, 0);
                 image.pos = pos;
                 image.hw = size;
                 image.uv = Vec4::new(0.0, 0.0, size.x, size.y);
-                Some(systems.gfx.add_image(image, render_layer))
+                let image_index = systems.gfx.add_image(image, render_layer);
+                systems.gfx.set_visible(image_index, visible);
+                Some(image_index)
             }
             _ => None,
         };
@@ -119,7 +125,9 @@ impl Button {
                 image.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, data.pos.z);
                 image.hw = data.size;
                 image.uv = Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
-                Some(systems.gfx.add_image(image, render_layer))
+                let image_index = systems.gfx.add_image(image, render_layer);
+                systems.gfx.set_visible(image_index, visible);
+                Some(image_index)
             }
             ButtonContentType::Text(data) => {
                 let text_pos = Vec2::new(pos.x + data.pos.x, pos.y + data.pos.y);
@@ -132,11 +140,13 @@ impl Button {
                 let index = systems.gfx.add_text(text, data.render_layer);
                 systems.gfx.set_text(&mut systems.renderer, index, &data.text);
                 systems.gfx.center_text(index);
+                systems.gfx.set_visible(index, visible);
                 Some(index)
             }
         };
 
         Button {
+            visible,
             index,
             content,
             in_hover: false,
@@ -157,8 +167,21 @@ impl Button {
         }
     }
 
+    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+        if self.visible == visible {
+            return;
+        }
+        self.visible = visible;
+        if let Some(index) = self.index {
+            systems.gfx.set_visible(index, visible);
+        }
+        if let Some(content_index) = self.content {
+            systems.gfx.set_visible(content_index, visible);
+        }
+    }
+
     pub fn set_hover(&mut self, systems: &mut DrawSetting, state: bool) {
-        if self.in_hover == state {
+        if self.in_hover == state || !self.visible {
             return;
         }
         self.in_hover = state;
@@ -172,7 +195,7 @@ impl Button {
     }
 
     pub fn set_click(&mut self, systems: &mut DrawSetting, state: bool) {
-        if self.in_click == state {
+        if self.in_click == state || !self.visible {
             return;
         }
         self.in_click = state;

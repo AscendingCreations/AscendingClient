@@ -72,6 +72,7 @@ pub enum CheckboxType {
 }
 
 pub struct Checkbox {
+    visible: bool,
     image: usize,
     check_image: usize,
     box_type: CheckboxType,
@@ -96,6 +97,7 @@ impl Checkbox {
         box_size: Vec2,
         render_layer: usize,
         text_data: Option<CheckboxText>,
+        visible: bool,
     ) -> Self {
         let boxtype = box_type.clone();
         let checktype = check_type.clone();
@@ -121,6 +123,7 @@ impl Checkbox {
                 systems.gfx.add_image(img, render_layer)
             }
         };
+        systems.gfx.set_visible(image, visible);
 
         let check_image = match checktype {
             CheckType::SetRect(data) => {
@@ -156,6 +159,7 @@ impl Checkbox {
                 data.color);
             let txt_index = systems.gfx.add_text(txt, data.render_layer);
             systems.gfx.set_text(&mut systems.renderer, txt_index, &data.text);
+            systems.gfx.set_visible(txt_index, visible);
             adjust_x = data.offset_pos.x + data.label_size.x;
             Some((txt_index, data_copy))
         } else {
@@ -163,6 +167,7 @@ impl Checkbox {
         };
 
         Checkbox {
+            visible,
             image,
             check_image,
             box_type,
@@ -185,8 +190,24 @@ impl Checkbox {
         }
     }
 
+    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+        if self.visible == visible {
+            return;
+        }
+        self.visible = visible;
+        systems.gfx.set_visible(self.image, visible);
+        if visible {
+            systems.gfx.set_visible(self.check_image, self.value);
+        } else {
+            systems.gfx.set_visible(self.check_image, false);
+        }
+        if let Some(data) = &mut self.text_type {
+            systems.gfx.set_visible(data.0, visible);
+        }
+    }
+
     pub fn set_hover(&mut self, systems: &mut DrawSetting, state: bool) {
-        if self.in_hover == state {
+        if self.in_hover == state || !self.visible {
             return;
         }
         self.in_hover = state;
@@ -200,7 +221,7 @@ impl Checkbox {
     }
 
     pub fn set_click(&mut self, systems: &mut DrawSetting, state: bool) {
-        if self.in_click == state {
+        if self.in_click == state || !self.visible {
             return;
         }
         self.in_click = state;

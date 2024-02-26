@@ -17,6 +17,7 @@ pub struct TilesheetData {
 pub struct TextureAllocation {
     pub menu_bg: TextureData,
     pub selection_arrow: TextureData,
+    pub button_icon: TextureData,
     pub player: TextureData,
     pub tilesheet: Vec<TilesheetData>,
 }
@@ -39,6 +40,13 @@ impl TextureAllocation {
         let selection_arrow = TextureData {
             name: "selection_arrow.png".to_string(),
             allocation: Texture::from_file("images/gui/selection_arrow.png")?
+                .upload(&mut atlases[0], renderer)
+                .ok_or_else(|| OtherError::new("failed to upload image"))?,
+        };
+
+        let button_icon = TextureData {
+            name: "button_icon.png".to_string(),
+            allocation: Texture::from_file("images/gui/button_icon.png")?
                 .upload(&mut atlases[0], renderer)
                 .ok_or_else(|| OtherError::new("failed to upload image"))?,
         };
@@ -78,6 +86,7 @@ impl TextureAllocation {
         Ok(Self {
             menu_bg,
             selection_arrow,
+            button_icon,
             player,
             tilesheet,
         })

@@ -1,4 +1,7 @@
-use crate::DrawSetting;
+use crate::{
+    DrawSetting,
+    database::*,
+};
 use hecs::World;
 
 pub mod game_content;
@@ -56,5 +59,11 @@ impl Content {
         }
 
         println!("Gfx Collection: {:?}", systems.gfx.count_collection())
+    }
+
+    pub fn init_map(&mut self, systems: &mut DrawSetting, database: &mut Database) {
+        if let ContentHolder::Game(data) = &mut self.holder {
+            data.setup_map(systems, database)
+        }
     }
 }

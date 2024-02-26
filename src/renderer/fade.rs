@@ -4,7 +4,7 @@ use hecs::World;
 use winit::dpi::PhysicalSize;
 
 use crate::{
-    gfx_collection::*, gfx_order::*, content::*, DrawSetting
+    gfx_collection::*, gfx_order::*, content::*, DrawSetting, Database,
 };
 
 pub enum FadeType {
@@ -95,10 +95,18 @@ impl Fade {
     }
 }
 
-pub fn fade_end(systems: &mut DrawSetting, world: &mut World, content: &mut Content) {
+pub fn fade_end(
+    systems: &mut DrawSetting,
+    world: &mut World,
+    content: &mut Content,
+    database: &mut Database,
+) {
     match systems.fade.f_end_index {
         FADE_LOGIN => {
             content.switch_content(world, systems, ContentType::Game);
+            database.load_map(0, 0, 0);
+            content.init_map(systems, database);
+            
             systems.fade.init_fade(&mut systems.gfx, FadeType::Out, 0);
         }
         _ => {}

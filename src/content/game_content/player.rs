@@ -1,6 +1,8 @@
 use graphics::*;
 use hecs::World;
 
+const SPRITE_FRAME_X: f32 = 3.0;
+
 use crate::{
     gfx_order::*,
     Direction,
@@ -30,6 +32,8 @@ pub fn add_player(
         },
         Sprite(sprite),
         Movement::default(),
+        Dir::default(),
+        LastMoveFrame::default(),
     ));
     let _ = world.insert_one(entity, EntityType::Player(Entity(entity)));
     Entity(entity)
@@ -47,6 +51,7 @@ pub fn unload_player(
 
 pub fn move_player(
     world: &mut World,
+    systems: &mut DrawSetting,
     entity: &Entity,
     dir: &Direction,
 ) {
@@ -59,10 +64,39 @@ pub fn move_player(
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
+    {
+        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = match dir {
+            Direction::Up => 2,
+            Direction::Down => 0,
+            Direction::Left => 3,
+            Direction::Right => 1,
+        };
+    }
+    let last_frame = if world.get_or_panic::<LastMoveFrame>(entity).0 == 1 { 2 } else { 1 };
+    {
+        world.get::<&mut LastMoveFrame>(entity.0).expect("Could not find LastFrame").0 = last_frame;
+    }
+    let frame = world.get_or_panic::<Dir>(entity).0 * 3;
+    set_player_frame(world, systems, entity, frame as usize + last_frame);
+}
+
+pub fn set_player_frame(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    entity: &Entity,
+    frame_index: usize,
+) {
+    let sprite_index = world.get_or_panic::<Sprite>(entity).0;
+    let size = systems.gfx.get_size(sprite_index);
+    let frame_pos = Vec2::new(frame_index as f32 % SPRITE_FRAME_X,
+        (frame_index  as f32 / SPRITE_FRAME_X).floor());
+    systems.gfx.set_uv(sprite_index,
+        Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y));
 }
 
 pub fn end_player_move(
     world: &mut World,
+    systems: &mut DrawSetting,
     entity: &Entity,
 ) {
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
@@ -74,6 +108,8 @@ pub fn end_player_move(
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
+    let frame = world.get_or_panic::<Dir>(entity).0 * 3;
+    set_player_frame(world, systems, entity, frame as usize);
 }
 
 pub fn update_player_position(
@@ -98,12 +134,13 @@ pub fn update_player_position(
 
 pub fn process_player_movement(
     world: &mut World,
+    systems: &mut DrawSetting,
     entity: &Entity,
 ) {
     let movement = world.get_or_panic::<Movement>(entity);
     if !movement.is_moving { return };
     
-    let add_offset = 6.0;
+    let add_offset = 2.0;
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         {
@@ -131,6 +168,6 @@ pub fn process_player_movement(
             world.get::<&mut Position>(entity.0).expect("Could not find Position").pos = new_tile_pos;
             world.get::<&mut Position>(entity.0).expect("Could not find Position").offset = Vec2::new(0.0, 0.0);
         }
-        end_player_move(world, entity);
+        end_player_move(world, systems, entity);
     }
 }
