@@ -21,6 +21,18 @@ pub struct LastMoveFrame(pub usize);
 pub struct Sprite(pub usize);
 
 #[derive(Copy, Clone, Debug, Default)]
+pub struct Attacking(pub bool);
+
+#[derive(Copy, Clone, Debug, Default)]
+pub struct AttackTimer(pub f32);
+
+#[derive(Copy, Clone, Debug, Default)]
+pub struct AttackFrame {
+    pub frame: usize,
+    pub timer: f32,
+}
+
+#[derive(Copy, Clone, Debug, Default)]
 pub struct Movement {
     pub is_moving: bool,
     pub move_direction: Direction,

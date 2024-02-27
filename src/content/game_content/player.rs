@@ -34,6 +34,9 @@ pub fn add_player(
         Movement::default(),
         Dir::default(),
         LastMoveFrame::default(),
+        Attacking::default(),
+        AttackTimer::default(),
+        AttackFrame::default(),
     ));
     let _ = world.insert_one(entity, EntityType::Player(Entity(entity)));
     Entity(entity)
@@ -55,6 +58,9 @@ pub fn move_player(
     entity: &Entity,
     dir: &Direction,
 ) {
+    if world.get_or_panic::<Attacking>(entity).0 {
+        return;
+    }
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         if movement.is_moving {
             return;
@@ -78,20 +84,6 @@ pub fn move_player(
     }
     let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
     set_player_frame(world, systems, entity, frame as usize + last_frame);
-}
-
-pub fn set_player_frame(
-    world: &mut World,
-    systems: &mut DrawSetting,
-    entity: &Entity,
-    frame_index: usize,
-) {
-    let sprite_index = world.get_or_panic::<Sprite>(entity).0;
-    let size = systems.gfx.get_size(sprite_index);
-    let frame_pos = Vec2::new(frame_index as f32 % SPRITE_FRAME_X,
-        (frame_index  as f32 / SPRITE_FRAME_X).floor());
-    systems.gfx.set_uv(sprite_index,
-        Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y));
 }
 
 pub fn end_player_move(
@@ -130,6 +122,73 @@ pub fn update_player_position(
         Vec3::new(texture_pos.x, 
                 texture_pos.y,
                 cur_pos.z));
+}
+
+pub fn set_player_frame(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    entity: &Entity,
+    frame_index: usize,
+) {
+    let sprite_index = world.get_or_panic::<Sprite>(entity).0;
+    let size = systems.gfx.get_size(sprite_index);
+    let frame_pos = Vec2::new(frame_index as f32 % SPRITE_FRAME_X,
+        (frame_index  as f32 / SPRITE_FRAME_X).floor());
+    systems.gfx.set_uv(sprite_index,
+        Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y));
+}
+
+pub fn init_player_attack(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    entity: &Entity,
+    seconds: f32,
+) {
+    if world.get_or_panic::<Attacking>(entity).0 || world.get_or_panic::<Movement>(entity).is_moving {
+        return;
+    }
+
+    {
+        world.get::<&mut Attacking>(entity.0).expect("Could not find attacking").0 = true;
+        world.get::<&mut AttackTimer>(entity.0).expect("Could not find AttackTimer").0 = seconds + 0.5;
+        if let Ok(mut attackframe) = world.get::<&mut AttackFrame>(entity.0) {
+            attackframe.frame = 0;
+            attackframe.timer = seconds + 0.16;
+        }
+    }
+    let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
+    set_player_frame(world, systems, entity, frame as usize + 3);
+}
+
+pub fn process_player_attack(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    entity: &Entity,
+    seconds: f32,
+) {
+    if !world.get_or_panic::<Attacking>(entity).0 {
+        return;
+    }
+    
+    if seconds < world.get_or_panic::<AttackTimer>(entity).0 {
+        if seconds > world.get_or_panic::<AttackFrame>(entity).timer {
+            {
+                world.get::<&mut AttackFrame>(entity.0).expect("Could not find AttackTimer").frame += 1;
+                world.get::<&mut AttackFrame>(entity.0).expect("Could not find AttackTimer").timer = seconds + 0.16;
+            }
+
+            let mut attackframe = world.get_or_panic::<AttackFrame>(entity).frame;
+            if attackframe > 2 { attackframe = 2; }
+            let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
+            set_player_frame(world, systems, entity, frame as usize + 3 + attackframe);
+        }
+    } else {
+        {
+            world.get::<&mut Attacking>(entity.0).expect("Could not find attacking").0 = false;
+        }
+        let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
+        set_player_frame(world, systems, entity, frame as usize);
+    }
 }
 
 pub fn process_player_movement(
@@ -171,3 +230,4 @@ pub fn process_player_movement(
         end_player_move(world, systems, entity);
     }
 }
+

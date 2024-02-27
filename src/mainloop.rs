@@ -23,12 +23,12 @@ pub fn game_loop(
             update_camera(world, data, systems);
     
             if seconds > loop_timer.player_tmr {
-                update_player(world, systems, data);
+                update_player(world, systems, data, seconds);
                 loop_timer.player_tmr = seconds + 0.01;
             }
 
             if seconds > loop_timer.input_tmr {
-                data.handle_key_input(world, systems);
+                data.handle_key_input(world, systems, seconds);
                 loop_timer.input_tmr = seconds + 0.032;
             }
         }

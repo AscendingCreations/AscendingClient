@@ -90,11 +90,11 @@ impl GameContent {
         }
     }
 
-    pub fn handle_key_input(&mut self, world: &mut World, systems: &mut DrawSetting) {
+    pub fn handle_key_input(&mut self, world: &mut World, systems: &mut DrawSetting, seconds: f32) {
         for i in 0..MAX_KEY {
             if self.keyinput[i] {
                 match i {
-                    KEY_ATTACK => {}
+                    KEY_ATTACK => self.player_attack(world, systems, seconds),
                     KEY_MOVEDOWN => self.move_player(world, systems, &Direction::Down),
                     KEY_MOVELEFT => self.move_player(world, systems, &Direction::Left),
                     KEY_MOVEUP => self.move_player(world, systems, &Direction::Up),
@@ -115,6 +115,15 @@ impl GameContent {
         let myentity = self.myentity.expect("Could not find myentity");
         move_player(world, systems, &myentity, &dir);
     }
+    pub fn player_attack(
+        &self,
+        world: &mut World,
+        systems: &mut DrawSetting,
+        seconds: f32,
+    ) {
+        let myentity = self.myentity.expect("Could not find myentity");
+        init_player_attack(world, systems, &myentity, seconds);
+    }
     pub fn move_other_player(
         &self,
         world: &mut World,
@@ -127,12 +136,11 @@ impl GameContent {
     // ---
 }
 
-pub fn update_player(world: &mut World, systems: &mut DrawSetting, content: &mut GameContent) {
+pub fn update_player(world: &mut World, systems: &mut DrawSetting, content: &mut GameContent, seconds: f32) {
     let players = content.players.clone();
     for entity in players.iter() {
-        if world.get_or_panic::<Movement>(&entity).is_moving {
-            process_player_movement(world, systems, entity);
-        }
+        process_player_movement(world, systems, entity);
+        process_player_attack(world, systems, entity, seconds)
     }
 }
 
