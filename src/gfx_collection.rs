@@ -135,6 +135,14 @@ impl GfxCollection {
         }
     }
 
+    pub fn set_bound(&mut self, index: usize, bound: Bounds) {
+        if let Some(data) = self.collection.get_mut(index) {
+            if let GfxType::Text(text) = &mut data.gfx {
+                text.set_bounds(Some(bound));
+            }
+        }
+    }
+
     pub fn set_size(&mut self, index: usize, size: Vec2) {
         if let Some(data) = self.collection.get_mut(index) {
             match &mut data.gfx {

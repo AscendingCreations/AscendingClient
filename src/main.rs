@@ -34,7 +34,7 @@ use hecs::World;
 mod renderer;
 mod gfx_collection;
 mod resource;
-mod interface;
+mod widget;
 mod content;
 mod values;
 mod gfx_order;
@@ -46,7 +46,7 @@ mod database;
 use renderer::*;
 use gfx_collection::*;
 use resource::*;
-use interface::*;
+use widget::*;
 use content::*;
 use values::*;
 use gfx_order::*;
@@ -290,7 +290,6 @@ async fn main() -> Result<(), AscendingError> {
             } if window_id == systems.renderer.window().id() => {
                 match event {
                     WindowEvent::CloseRequested => {
-                        println!("The close button was pressed; stopping");
                         elwt.exit();
                     }
                     WindowEvent::KeyboardInput { event, .. } => {
@@ -306,7 +305,7 @@ async fn main() -> Result<(), AscendingError> {
                         if mouse_press {
                             handle_mouse_input(&mut world,
                                 &mut systems, 
-                                MouseInputType::MouseLeftDown, 
+                                MouseInputType::MouseLeftDownMove, 
                                 &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                 &mut content,
                             );

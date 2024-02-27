@@ -26,6 +26,7 @@ serde_json = "1.0.82"
 indexmap = "2.1.0"
 slab = "0.4.9"
 arboard = "3.3.1"
+enum-iterator = "=1.1.2"
 
 [dependencies.camera]
 git = "https://github.com/AscendingCreations/AscendingLibraries"

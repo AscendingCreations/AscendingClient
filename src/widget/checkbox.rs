@@ -2,7 +2,7 @@ use graphics::*;
 use cosmic_text::{Attrs, Metrics};
 
 use crate::{
-    interface::*,
+    widget::*,
     DrawSetting,
 };
 

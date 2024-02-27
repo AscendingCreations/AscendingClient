@@ -11,7 +11,7 @@ use winit::{
 };
 
 use crate::{
-    interface::*,
+    widget::*,
     DrawSetting,
 };
 

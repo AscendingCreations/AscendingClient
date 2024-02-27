@@ -5,11 +5,7 @@ pub mod content_input;
 pub use content_input::*;
 
 use crate::{
-    content::*,
-    gfx_order::*,
-    DrawSetting,
-    SCREEN_HEIGHT, SCREEN_WIDTH,
-    interface::*,
+    content::*, gfx_order::*, is_within_area, widget::*, DrawSetting, SCREEN_HEIGHT, SCREEN_WIDTH
 };
 use hecs::World;
 
@@ -98,10 +94,7 @@ pub fn hover_buttons(
     screen_pos: Vec2,
 ) {
     for button in menu_content.button.iter_mut() {
-        if screen_pos.x >= button.pos.x &&
-            screen_pos.x <= button.pos.x + button.size.x &&
-            screen_pos.y >= button.pos.y &&
-            screen_pos.y <= button.pos.y + button.size.y {
+        if is_within_area(screen_pos, Vec2::new(button.pos.x, button.pos.y), button.size) {
             button.set_hover(systems, true);
         } else {
             button.set_hover(systems, false);
@@ -116,10 +109,7 @@ pub fn click_buttons(
 ) -> Option<usize> {
     let mut button_found = None;
     for (index, button) in menu_content.button.iter_mut().enumerate() {
-        if screen_pos.x >= button.pos.x &&
-            screen_pos.x <= button.pos.x + button.size.x &&
-            screen_pos.y >= button.pos.y &&
-            screen_pos.y <= button.pos.y + button.size.y {
+        if is_within_area(screen_pos, Vec2::new(button.pos.x, button.pos.y), button.size) {
             button.set_click(systems, true);
             button_found = Some(index)
         }
@@ -147,10 +137,7 @@ pub fn hover_checkbox(
     screen_pos: Vec2,
 ) {
     for checkbox in menu_content.checkbox.iter_mut() {
-        if screen_pos.x >= checkbox.pos.x &&
-            screen_pos.x <= checkbox.pos.x + checkbox.box_size.x + checkbox.adjust_x &&
-            screen_pos.y >= checkbox.pos.y &&
-            screen_pos.y <= checkbox.pos.y + checkbox.box_size.y {
+        if is_within_area(screen_pos, Vec2::new(checkbox.pos.x, checkbox.pos.y), checkbox.box_size) {
             checkbox.set_hover(systems, true);
         } else {
             checkbox.set_hover(systems, false);
@@ -165,10 +152,7 @@ pub fn click_checkbox(
 ) -> Option<usize> {
     let mut checkbox_found = None;
     for (index, checkbox) in menu_content.checkbox.iter_mut().enumerate() {
-        if screen_pos.x >= checkbox.pos.x &&
-            screen_pos.x <= checkbox.pos.x + checkbox.box_size.x + checkbox.adjust_x &&
-            screen_pos.y >= checkbox.pos.y &&
-            screen_pos.y <= checkbox.pos.y + checkbox.box_size.y {
+        if is_within_area(screen_pos, Vec2::new(checkbox.pos.x, checkbox.pos.y), checkbox.box_size) {
             checkbox.set_click(systems, true);
             checkbox_found = Some(index)
         }
@@ -197,10 +181,7 @@ pub fn click_textbox(
 ) {
     let mut checkbox_found = None;
     for (index, textbox) in menu_content.textbox.iter_mut().enumerate() {
-        if screen_pos.x >= textbox.pos.x &&
-            screen_pos.x <= textbox.pos.x + textbox.size.x &&
-            screen_pos.y >= textbox.pos.y &&
-            screen_pos.y <= textbox.pos.y + textbox.size.y {
+        if is_within_area(screen_pos, Vec2::new(textbox.pos.x, textbox.pos.y), textbox.size) {
             textbox.set_select(systems, true);
             checkbox_found = Some(index)
         }
