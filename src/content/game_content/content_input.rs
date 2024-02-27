@@ -7,6 +7,8 @@ use hecs::World;
 
 use crate::{ContentType, DrawSetting, content::*, MouseInputType};
 
+use super::{KEY_ATTACK, KEY_MOVEDOWN, KEY_MOVELEFT, KEY_MOVERIGHT, KEY_MOVEUP};
+
 impl GameContent {
     pub fn mouse_input(
         content: &mut Content,
@@ -28,30 +30,29 @@ impl GameContent {
     ) {
         if let ContentHolder::Game(data) = &mut content.holder {
             Interface::key_input(data, world, systems, event);
+
+            match event.physical_key {
+                PhysicalKey::Code(KeyCode::ArrowUp) => {
+                    data.keyinput[KEY_MOVEUP] = event.state.is_pressed();
+                }
+                PhysicalKey::Code(KeyCode::ArrowDown) => {
+                    data.keyinput[KEY_MOVEDOWN] = event.state.is_pressed();
+                }
+                PhysicalKey::Code(KeyCode::ArrowLeft) => {
+                    data.keyinput[KEY_MOVELEFT] = event.state.is_pressed();
+                }
+                PhysicalKey::Code(KeyCode::ArrowRight) => {
+                    data.keyinput[KEY_MOVERIGHT] = event.state.is_pressed();
+                }
+                PhysicalKey::Code(KeyCode::Space) => {
+                    data.keyinput[KEY_ATTACK] = event.state.is_pressed();
+                }
+                _ => {}
+            }
         }
 
         if event.state.is_pressed() {
             match event.physical_key {
-                PhysicalKey::Code(KeyCode::ArrowUp) => {
-                    if let ContentHolder::Game(data) = &mut content.holder {
-                        data.move_player(world, systems, &crate::Direction::Up);
-                    }
-                }
-                PhysicalKey::Code(KeyCode::ArrowDown) => {
-                    if let ContentHolder::Game(data) = &mut content.holder {
-                        data.move_player(world, systems, &crate::Direction::Down);
-                    }
-                }
-                PhysicalKey::Code(KeyCode::ArrowLeft) => {
-                    if let ContentHolder::Game(data) = &mut content.holder {
-                        data.move_player(world, systems, &crate::Direction::Left);
-                    }
-                }
-                PhysicalKey::Code(KeyCode::ArrowRight) => {
-                    if let ContentHolder::Game(data) = &mut content.holder {
-                        data.move_player(world, systems, &crate::Direction::Right);
-                    }
-                }
                 PhysicalKey::Code(KeyCode::F1) => {
                     content.switch_content(world, systems, ContentType::Menu);
                     return;

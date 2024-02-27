@@ -1,7 +1,7 @@
 use graphics::*;
 use hecs::World;
 
-const SPRITE_FRAME_X: f32 = 3.0;
+const SPRITE_FRAME_X: f32 = 6.0;
 
 use crate::{
     gfx_order::*,
@@ -76,7 +76,7 @@ pub fn move_player(
     {
         world.get::<&mut LastMoveFrame>(entity.0).expect("Could not find LastFrame").0 = last_frame;
     }
-    let frame = world.get_or_panic::<Dir>(entity).0 * 3;
+    let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
     set_player_frame(world, systems, entity, frame as usize + last_frame);
 }
 
@@ -108,7 +108,7 @@ pub fn end_player_move(
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
-    let frame = world.get_or_panic::<Dir>(entity).0 * 3;
+    let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
     set_player_frame(world, systems, entity, frame as usize);
 }
 

@@ -29,11 +29,19 @@ use map::*;
 use camera::*;
 pub use entity::*;
 
+const KEY_ATTACK: usize = 0;
+const KEY_MOVEUP: usize = 1;
+const KEY_MOVELEFT: usize = 2;
+const KEY_MOVEDOWN: usize = 3;
+const KEY_MOVERIGHT: usize = 4;
+const MAX_KEY: usize = 5;
+
 pub struct GameContent {
     players: IndexSet<Entity>,
     map: MapContent,
     camera: Camera,
     interface: Interface,
+    keyinput: [bool; MAX_KEY],
     // Test
     myentity: Option<Entity>,
     otherentity: Option<Entity>,
@@ -46,6 +54,7 @@ impl GameContent {
             map: MapContent::new(systems),
             camera: Camera::new(Vec2::new(0.0, 0.0)),
             interface: Interface::new(systems),
+            keyinput: [false; MAX_KEY],
 
             myentity: None,
             otherentity: None,
@@ -78,6 +87,21 @@ impl GameContent {
     pub fn setup_map(&mut self, systems: &mut DrawSetting, database: &mut Database) {
         for i in 0..9 {
             load_map_data(systems, &database.map[i], self.map.index[i]);
+        }
+    }
+
+    pub fn handle_key_input(&mut self, world: &mut World, systems: &mut DrawSetting) {
+        for i in 0..MAX_KEY {
+            if self.keyinput[i] {
+                match i {
+                    KEY_ATTACK => {}
+                    KEY_MOVEDOWN => self.move_player(world, systems, &Direction::Down),
+                    KEY_MOVELEFT => self.move_player(world, systems, &Direction::Left),
+                    KEY_MOVEUP => self.move_player(world, systems, &Direction::Up),
+                    KEY_MOVERIGHT => self.move_player(world, systems, &Direction::Right),
+                    _ => {}
+                }
+            }
         }
     }
 
