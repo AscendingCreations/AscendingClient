@@ -15,12 +15,14 @@ use hecs::World;
 mod inventory;
 mod profile;
 mod setting;
+mod screen;
 
 use inventory::*;
 use profile::*;
 use setting::*;
+use screen::*;
 
-#[derive(PartialEq, Eq, Clone, Copy, Sequence)]
+#[derive(PartialEq, Eq, Clone, Copy, Sequence, Debug)]
 pub enum Window {
     Inventory,
     Profile,
@@ -33,7 +35,7 @@ pub struct Interface {
     inventory: Inventory,
     profile: Profile,
     setting: Setting,
-    window_order: Vec<Window>,
+    window_order: Vec<(Window, usize)>,
     drag_window: Option<Window>,
 }
 
@@ -47,7 +49,12 @@ impl Interface {
             inventory: Inventory::new(systems),
             profile: Profile::new(systems),
             setting: Setting::new(systems),
-            window_order: Vec::new(),
+            window_order: 
+                vec![
+                    (Window::Inventory, 0),
+                    (Window::Profile, 1),
+                    (Window::Setting, 2),
+                ],
             drag_window: None,
         }
     }
@@ -69,6 +76,19 @@ impl Interface {
         match input_type {
             MouseInputType::MouseMove => {
                 Interface::hover_buttons(game_content, systems, screen_pos);
+                
+                if game_content.interface.setting.visible {
+                    if game_content.interface.setting.sfx_scroll.in_scroll(screen_pos) {
+                        game_content.interface.setting.sfx_scroll.set_hover(systems, true);
+                    } else {
+                        game_content.interface.setting.sfx_scroll.set_hover(systems, false);
+                    }
+                    if game_content.interface.setting.bgm_scroll.in_scroll(screen_pos) {
+                        game_content.interface.setting.bgm_scroll.set_hover(systems, true);
+                    } else {
+                        game_content.interface.setting.bgm_scroll.set_hover(systems, false);
+                    }
+                }
             }
             MouseInputType::MouseLeftDown => {
                 let button_index = Interface::click_buttons(game_content, systems, screen_pos);
@@ -80,7 +100,18 @@ impl Interface {
                 if game_content.interface.drag_window.is_none() {
                     let window = find_window(game_content, screen_pos);
                     if let Some(result) = window {
-                        push_interface(game_content, systems, result, screen_pos);
+                        hold_interface(game_content, systems, result, screen_pos);
+                    }
+                }
+                
+                if game_content.interface.setting.visible &&
+                    game_content.interface.drag_window.is_none()
+                {
+                    if game_content.interface.setting.sfx_scroll.in_scroll(screen_pos) {
+                        game_content.interface.setting.sfx_scroll.set_hold(systems, true, screen_pos);
+                    }
+                    if game_content.interface.setting.bgm_scroll.in_scroll(screen_pos) {
+                        game_content.interface.setting.bgm_scroll.set_hold(systems, true, screen_pos);
                     }
                 }
             }
@@ -93,6 +124,11 @@ impl Interface {
                             game_content.interface.profile.move_window(systems, screen_pos),
                         Window::Setting =>
                             game_content.interface.setting.move_window(systems, screen_pos),
+                    }
+                } else {
+                    if game_content.interface.setting.visible {
+                        game_content.interface.setting.sfx_scroll.set_move_scroll(systems, screen_pos);
+                        game_content.interface.setting.bgm_scroll.set_move_scroll(systems, screen_pos);
                     }
                 }
             }
@@ -109,6 +145,11 @@ impl Interface {
                     }
                 }
                 game_content.interface.drag_window = None;
+
+                if game_content.interface.setting.visible {
+                    game_content.interface.setting.sfx_scroll.set_hold(systems, false, screen_pos);
+                    game_content.interface.setting.bgm_scroll.set_hold(systems, false, screen_pos);
+                }
             }
         }
     }
@@ -201,24 +242,18 @@ fn find_window(game_content: &mut GameContent, screen_pos: Vec2) -> Option<Windo
     let mut max_z_order: f32 = 0.0;
     let mut selected_window = None;
 
-    if game_content.interface.inventory.visible && is_within_area(screen_pos,
-        game_content.interface.inventory.pos,
-        game_content.interface.inventory.size) {
+    if game_content.interface.inventory.can_hold(screen_pos) {
         max_z_order = game_content.interface.inventory.z_order;
         selected_window = Some(Window::Inventory);
     }
-    if game_content.interface.profile.visible && is_within_area(screen_pos,
-        game_content.interface.profile.pos,
-        game_content.interface.profile.size) {
+    if game_content.interface.profile.can_hold(screen_pos) {
         let z_order = game_content.interface.profile.z_order;
         if z_order > max_z_order {
             max_z_order = z_order;
             selected_window = Some(Window::Profile);
         }
     }
-    if game_content.interface.setting.visible && is_within_area(screen_pos,
-        game_content.interface.setting.pos,
-        game_content.interface.setting.size) {
+    if game_content.interface.setting.can_hold(screen_pos) {
         let z_order = game_content.interface.setting.z_order;
         if z_order > max_z_order {
             //max_z_order = z_order;
@@ -247,8 +282,7 @@ fn open_interface(
             game_content.interface.setting.set_visible(systems, true);
         }
     }
-    game_content.interface.window_order.insert(0, window);
-    adjust_window_zorder(game_content, systems);
+    interface_set_to_first(game_content, systems, window);
 }
 
 fn close_interface(
@@ -270,13 +304,10 @@ fn close_interface(
             game_content.interface.setting.set_visible(systems, false);
         }
     }
-    if let Some(index) = game_content.interface
-        .window_order.iter().position(|&wndw| wndw == window) {
-        let _ = game_content.interface.window_order.remove(index);
-    }
+    interface_set_to_last(game_content, systems, window);
 }
 
-fn push_interface(
+fn hold_interface(
     game_content: &mut GameContent,
     systems: &mut DrawSetting,
     window: Window,
@@ -288,15 +319,53 @@ fn push_interface(
         Window::Profile => game_content.interface.profile.hold_window(screen_pos),
         Window::Setting => game_content.interface.setting.hold_window(screen_pos),
     }
+    interface_set_to_first(game_content, systems, window);
+}
 
-    if game_content.interface.window_order[0] == window {
-        return;
+fn interface_set_to_first(
+    game_content: &mut GameContent,
+    systems: &mut DrawSetting,
+    window: Window,
+) {
+    if let Some(index) = 
+        game_content.interface.window_order
+            .iter()
+            .position(|&wndw| wndw.0 == window)
+    {
+        if game_content.interface.window_order[index].1 == 0 {
+            return;
+        }
+        for i in 0..index {
+            game_content.interface.window_order[i].1 = i.saturating_add(1);
+        }
+        game_content.interface.window_order[index].1 = 0;
     }
-    if let Some(index) = game_content.interface
-        .window_order.iter().position(|&wndw| wndw == window) {
-        let wndw = game_content.interface.window_order.remove(index);
-        game_content.interface.window_order.insert(0, wndw);
+    game_content.interface.window_order
+        .sort_by(|a, b| a.1.cmp(&b.1));
+    adjust_window_zorder(game_content, systems);
+}
+
+fn interface_set_to_last(
+    game_content: &mut GameContent,
+    systems: &mut DrawSetting,
+    window: Window,
+) {
+    let last_index = game_content.interface.window_order.len() - 1;
+    if let Some(index) = 
+        game_content.interface.window_order
+            .iter()
+            .position(|&wndw| wndw.0 == window)
+    {
+        if game_content.interface.window_order[index].1 == last_index {
+            return;
+        }
+        for i in index..(last_index + 1) {
+            game_content.interface.window_order[i].1 = i.saturating_sub(1);
+        }
+        game_content.interface.window_order[index].1 = last_index;
     }
+    game_content.interface.window_order
+        .sort_by(|a, b| a.1.cmp(&b.1));
     adjust_window_zorder(game_content, systems);
 }
 
@@ -306,7 +375,7 @@ fn adjust_window_zorder(
 ) {
     let mut order = 99.0;
     for wndw in game_content.interface.window_order.iter() {
-        match wndw {
+        match wndw.0 {
             Window::Inventory => game_content.interface.inventory.set_z_order(systems, order),
             Window::Profile => game_content.interface.profile.set_z_order(systems, order),
             Window::Setting => game_content.interface.setting.set_z_order(systems, order),
@@ -317,59 +386,17 @@ fn adjust_window_zorder(
     print_z_order(game_content);
 }
 
-pub fn create_menu_button(systems: &mut DrawSetting) -> [Button; 3] {
-    let button_properties = ButtonRect {
-        rect_color: Color::rgba(80, 80, 80, 255),
-        got_border: true,
-        border_color: Color::rgba(40, 40, 40, 255),
-        border_radius: 8.0,
-        hover_change: ButtonChangeType::ColorChange(Color::rgba(135, 135, 135, 255)),
-        click_change: ButtonChangeType::ColorChange(Color::rgba(200, 200, 200, 255)),
-    };
-    let mut image_properties = ButtonContentImg {
-        res: systems.resource.button_icon.allocation,
-        pos: Vec3::new(4.0, 4.0, ORDER_GUI_BUTTON_DETAIL),
-        uv: Vec2::new(0.0, 0.0),
-        size: Vec2::new(32.0, 32.0),
-        hover_change: ButtonChangeType::None,
-        click_change: ButtonChangeType::None,
-    };
 
-    let character_button = Button::new(systems,
-        ButtonType::Rect(button_properties.clone()),
-        ButtonContentType::Image(image_properties.clone()),
-        Vec3::new(systems.size.width - 140.0, 10.0, ORDER_GUI_BUTTON),
-        Vec2::new(40.0, 40.0),
-        0,
-        true,
-    );
-    image_properties.uv.x = 32.0;
-    let inventory_button = Button::new(systems,
-        ButtonType::Rect(button_properties.clone()),
-        ButtonContentType::Image(image_properties.clone()),
-        Vec3::new(systems.size.width - 95.0, 10.0, ORDER_GUI_BUTTON),
-        Vec2::new(40.0, 40.0),
-        0,
-        true,
-    );
-    image_properties.uv.x = 64.0;
-    let setting_button = Button::new(systems,
-        ButtonType::Rect(button_properties.clone()),
-        ButtonContentType::Image(image_properties.clone()),
-        Vec3::new(systems.size.width - 50.0, 10.0, ORDER_GUI_BUTTON),
-        Vec2::new(40.0, 40.0),
-        0,
-        true,
-    );
-    
-    [character_button, inventory_button, setting_button]
-}
 
 
 
 // TEST //
 pub fn print_z_order(game_content: &mut GameContent) {
-    for wndw in all::<Window>().collect::<Vec<_>>() {
+    println!("============");
+    for data in game_content.interface.window_order.iter() {
+        println!("Order: {:?}", data);
+    }
+    /*for wndw in all::<Window>().collect::<Vec<_>>() {
         let z_order = match wndw {
             Window::Inventory => game_content.interface.inventory.z_order,
             Window::Profile => game_content.interface.profile.z_order,
@@ -380,5 +407,5 @@ pub fn print_z_order(game_content: &mut GameContent) {
             Window::Profile => println!("Profile {z_order}"),
             Window::Setting => println!("Setting {z_order}"),
         }
-    }
+    }*/
 }

@@ -245,7 +245,7 @@ async fn main() -> Result<(), AscendingError> {
         Vec2::new(100.0, 20.0),
         Bounds::new(txt_pos.x, txt_pos.y, txt_pos.x + 100.0, txt_pos.y + 20.0),
         Color::rgba(255, 255, 255, 255));
-    let text = systems.gfx.add_text(txt, 0);
+    let text = systems.gfx.add_text(txt, 2);
 
     // Allow the window to be seen. hiding it then making visible speeds up
     // load times.
@@ -274,6 +274,8 @@ async fn main() -> Result<(), AscendingError> {
     let mut frame_time = FrameTime::new();
     let mut time = 0.0f32;
     let mut fps = 0u32;
+    let fps_label_color = Attrs::new().color(Color::rgba(200, 100, 100, 255));
+    let fps_number_color = Attrs::new().color(Color::rgba(255, 255, 255, 255));
     let mut loop_timer = LoopTimer::default();
 
     let mut mouse_pos: PhysicalPosition<f64> = PhysicalPosition::new(0.0, 0.0);
@@ -419,7 +421,12 @@ async fn main() -> Result<(), AscendingError> {
         systems.renderer.queue().submit(std::iter::once(encoder.finish()));
 
         if time < seconds {
-            systems.gfx.set_text(&mut systems.renderer, text, &format!("FPS: {fps}"));
+            systems.gfx.set_rich_text(&mut systems.renderer, text, 
+                [
+                    ("FPS: ", fps_label_color),
+                    (&format!("{fps}"), fps_number_color),
+                ]
+            );
             fps = 0u32;
             time = seconds + 1.0;
         }

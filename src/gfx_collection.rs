@@ -171,6 +171,18 @@ impl GfxCollection {
         if let Some(data) = self.collection.get_mut(index) {
             if let GfxType::Text(text) = &mut data.gfx {
                 text.set_text(renderer, msg, Attrs::new(), Shaping::Advanced,);
+                //text.set_rich_text(renderer, spans, default_attr, shaping)
+            }
+        }
+    }
+
+    pub fn set_rich_text<'s, 'r, I>(&mut self, renderer: &mut GpuRenderer, index: usize, msg: I)
+        where
+            I: IntoIterator<Item = (&'s str, Attrs<'r>)>
+    {
+        if let Some(data) = self.collection.get_mut(index) {
+            if let GfxType::Text(text) = &mut data.gfx {
+                text.set_rich_text(renderer, msg, Attrs::new(), Shaping::Advanced);
             }
         }
     }

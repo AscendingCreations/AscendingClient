@@ -100,6 +100,8 @@ where
         pass.render_text(renderer, &self.text_renderer, &self.text_atlas, 1);
 
         pass.render_rects(renderer, &self.ui_renderer, &self.ui_atlas, 2);
+
+        pass.render_text(renderer, &self.text_renderer, &self.text_atlas, 2);
     }
 }
 

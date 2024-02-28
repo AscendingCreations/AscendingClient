@@ -1,9 +1,7 @@
 use graphics::*;
 
 use crate::{
-    widget::*,
-    DrawSetting,
-    gfx_order::*,
+    gfx_order::*, is_within_area, widget::*, DrawSetting
 };
 
 pub struct Profile {
@@ -17,6 +15,8 @@ pub struct Profile {
     pub z_order: f32,
     in_hold: bool,
     hold_pos: Vec2,
+    header_pos: Vec2,
+    header_size: Vec2
 }
 
 impl Profile {
@@ -35,14 +35,16 @@ impl Profile {
         systems.gfx.set_visible(bg, false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
-        header_rect.set_position(Vec3::new(w_pos.x, w_pos.y + 237.0, ORDER_GUI_WINDOW - 0.001))
-            .set_size(Vec2::new(w_size.x, 30.0))
+        let header_pos = Vec2::new(w_pos.x, w_pos.y + 237.0);
+        let header_size = Vec2::new(w_size.x, 30.0);
+        header_rect.set_position(Vec3::new(header_pos.x, header_pos.y, ORDER_GUI_WINDOW - 0.0001))
+            .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
         let header = systems.gfx.add_rect(header_rect, 0);
         systems.gfx.set_visible(header, false);
 
         let text = create_label(systems, 
-            Vec3::new(w_pos.x, w_pos.y + 242.0, ORDER_GUI_WINDOW - 0.002),
+            Vec3::new(w_pos.x, w_pos.y + 242.0, ORDER_GUI_WINDOW - 0.0002),
             Vec2::new(w_size.x, 20.0),
             Bounds::new(w_pos.x, w_pos.y + 242.0, w_pos.x + w_size.x, w_pos.y + 262.0),
             Color::rgba(200, 200, 200, 255));
@@ -62,6 +64,8 @@ impl Profile {
             z_order: 0.0,
             in_hold: false,
             hold_pos: Vec2::new(0.0, 0.0),
+            header_pos,
+            header_size,
         }
     }
 
@@ -80,6 +84,25 @@ impl Profile {
         systems.gfx.set_visible(self.bg, visible);
         systems.gfx.set_visible(self.header, visible);
         systems.gfx.set_visible(self.header_text, visible);
+    }
+
+    pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
+        if !self.visible {
+            return false;
+        }
+        is_within_area(screen_pos, self.header_pos, self.header_size)
+    }
+
+    pub fn hold_window(&mut self, screen_pos: Vec2) {
+        if self.in_hold {
+            return;
+        }
+        self.in_hold = true;
+        self.hold_pos = screen_pos - self.pos;
+    }
+
+    pub fn release_window(&mut self) {
+        self.in_hold = false;
     }
 
     pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
@@ -103,18 +126,6 @@ impl Profile {
         systems.gfx.set_pos(self.header_text, pos);
     }
 
-    pub fn hold_window(&mut self, screen_pos: Vec2) {
-        if self.in_hold {
-            return;
-        }
-        self.in_hold = true;
-        self.hold_pos = screen_pos - self.pos;
-    }
-
-    pub fn release_window(&mut self) {
-        self.in_hold = false;
-    }
-
     pub fn move_window(&mut self, systems: &mut DrawSetting, screen_pos: Vec2) {
         if !self.in_hold {
             return;
@@ -124,6 +135,7 @@ impl Profile {
         let pos = systems.gfx.get_pos(self.bg);
         systems.gfx.set_pos(self.bg, Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z));
         let pos = systems.gfx.get_pos(self.header);
+        self.header_pos = Vec2::new(self.pos.x, self.pos.y + 237.0);
         systems.gfx.set_pos(self.header, Vec3::new(self.pos.x, self.pos.y + 237.0, pos.z));
         let pos = systems.gfx.get_pos(self.header_text);
         systems.gfx.set_pos(self.header_text, Vec3::new(self.pos.x, self.pos.y + 242.0, pos.z));

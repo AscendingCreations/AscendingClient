@@ -1,9 +1,7 @@
 use graphics::*;
 
 use crate::{
-    widget::*,
-    DrawSetting,
-    gfx_order::*,
+    gfx_order::*, is_within_area, widget::*, DrawSetting
 };
 
 pub struct Setting {
@@ -11,12 +9,16 @@ pub struct Setting {
     bg: usize,
     header: usize,
     header_text: usize,
+    pub sfx_scroll: Scrollbar,
+    pub bgm_scroll: Scrollbar,
 
     pub pos: Vec2,
     pub size: Vec2,
     pub z_order: f32,
     in_hold: bool,
     hold_pos: Vec2,
+    header_pos: Vec2,
+    header_size: Vec2
 }
 
 impl Setting {
@@ -35,14 +37,16 @@ impl Setting {
         systems.gfx.set_visible(bg, false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
-        header_rect.set_position(Vec3::new(w_pos.x, w_pos.y + 237.0, ORDER_GUI_WINDOW - 0.001))
-            .set_size(Vec2::new(w_size.x, 30.0))
+        let header_pos = Vec2::new(w_pos.x, w_pos.y + 237.0);
+        let header_size = Vec2::new(w_size.x, 30.0);
+        header_rect.set_position(Vec3::new(header_pos.x, header_pos.y, ORDER_GUI_WINDOW - 0.0001))
+            .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
         let header = systems.gfx.add_rect(header_rect, 0);
         systems.gfx.set_visible(header, false);
 
         let text = create_label(systems, 
-            Vec3::new(w_pos.x, w_pos.y + 242.0, ORDER_GUI_WINDOW - 0.002),
+            Vec3::new(w_pos.x, w_pos.y + 242.0, ORDER_GUI_WINDOW - 0.0002),
             Vec2::new(w_size.x, 20.0),
             Bounds::new(w_pos.x, w_pos.y + 242.0, w_pos.x + w_size.x, w_pos.y + 262.0),
             Color::rgba(200, 200, 200, 255));
@@ -51,17 +55,77 @@ impl Setting {
         systems.gfx.center_text(header_text);
         systems.gfx.set_visible(header_text, false);
 
+        let sfx_scroll = Scrollbar::new(systems,
+            Vec2::new(w_pos.x, w_pos.y),
+            Vec2::new(5.0, 5.0),
+            130.0,
+            20.0,
+            false,
+            ORDER_GUI_WINDOW,
+            ScrollbarRect {
+                color: Color::rgba(70, 70, 70, 255),
+                render_layer: 0,
+                z_pos: 0.0002,
+                got_border: false,
+                border_color: Color::rgba(0,0,0,0),
+                hover_color: Color::rgba(100, 100, 100, 255),
+                hold_color: Color::rgba(40, 40, 40, 255),
+                radius: 0.0,
+            },
+            Some(ScrollbarBackground {
+                color: Color::rgba(150, 150, 150, 255),
+                render_layer: 0,
+                z_pos: 0.0001,
+                got_border: false,
+                border_color: Color::rgba(0,0,0,0),
+                radius: 0.0,
+            }),
+            8,
+            20.0,);
+
+        let bgm_scroll = Scrollbar::new(systems,
+            Vec2::new(w_pos.x, w_pos.y),
+            Vec2::new(5.0, 35.0),
+            130.0,
+            20.0,
+            false,
+            ORDER_GUI_WINDOW,
+            ScrollbarRect {
+                color: Color::rgba(70, 70, 70, 255),
+                render_layer: 0,
+                z_pos: 0.0002,
+                got_border: false,
+                border_color: Color::rgba(0,0,0,0),
+                hover_color: Color::rgba(100, 100, 100, 255),
+                hold_color: Color::rgba(40, 40, 40, 255),
+                radius: 0.0,
+            },
+            Some(ScrollbarBackground {
+                color: Color::rgba(150, 150, 150, 255),
+                render_layer: 0,
+                z_pos: 0.0001,
+                got_border: false,
+                border_color: Color::rgba(0,0,0,0),
+                radius: 0.0,
+            }),
+            8,
+            20.0,);
+
         Setting {
             visible: false,
             bg,
             header,
             header_text,
+            sfx_scroll,
+            bgm_scroll,
 
             pos,
             size: w_size,
             z_order: 0.0,
             in_hold: false,
             hold_pos: Vec2::new(0.0, 0.0),
+            header_pos,
+            header_size,
         }
     }
 
@@ -69,6 +133,8 @@ impl Setting {
         systems.gfx.remove_gfx(self.bg);
         systems.gfx.remove_gfx(self.header);
         systems.gfx.remove_gfx(self.header_text);
+        self.sfx_scroll.unload(systems);
+        self.bgm_scroll.unload(systems);
     }
 
     pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
@@ -80,6 +146,27 @@ impl Setting {
         systems.gfx.set_visible(self.bg, visible);
         systems.gfx.set_visible(self.header, visible);
         systems.gfx.set_visible(self.header_text, visible);
+        self.sfx_scroll.set_visible(systems, visible);
+        self.bgm_scroll.set_visible(systems, visible);
+    }
+
+    pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
+        if !self.visible {
+            return false;
+        }
+        is_within_area(screen_pos, self.header_pos, self.header_size)
+    }
+
+    pub fn hold_window(&mut self, screen_pos: Vec2) {
+        if self.in_hold {
+            return;
+        }
+        self.in_hold = true;
+        self.hold_pos = screen_pos - self.pos;
+    }
+
+    pub fn release_window(&mut self) {
+        self.in_hold = false;
     }
 
     pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
@@ -101,18 +188,9 @@ impl Setting {
         let mut pos = systems.gfx.get_pos(self.header_text);
         pos.z = set_pos_z - 0.0002;
         systems.gfx.set_pos(self.header_text, pos);
-    }
 
-    pub fn hold_window(&mut self, screen_pos: Vec2) {
-        if self.in_hold {
-            return;
-        }
-        self.in_hold = true;
-        self.hold_pos = screen_pos - self.pos;
-    }
-
-    pub fn release_window(&mut self) {
-        self.in_hold = false;
+        self.sfx_scroll.set_z_order(systems, set_pos_z - 0.0002);
+        self.bgm_scroll.set_z_order(systems, set_pos_z - 0.0002);
     }
 
     pub fn move_window(&mut self, systems: &mut DrawSetting, screen_pos: Vec2) {
@@ -124,11 +202,14 @@ impl Setting {
         let pos = systems.gfx.get_pos(self.bg);
         systems.gfx.set_pos(self.bg, Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z));
         let pos = systems.gfx.get_pos(self.header);
+        self.header_pos = Vec2::new(self.pos.x, self.pos.y + 237.0);
         systems.gfx.set_pos(self.header, Vec3::new(self.pos.x, self.pos.y + 237.0, pos.z));
         let pos = systems.gfx.get_pos(self.header_text);
         systems.gfx.set_pos(self.header_text, Vec3::new(self.pos.x, self.pos.y + 242.0, pos.z));
         systems.gfx.set_bound(self.header_text,
             Bounds::new(self.pos.x, self.pos.y + 242.0, self.pos.x + self.size.x, self.pos.y + 262.0));
         systems.gfx.center_text(self.header_text);
+        self.sfx_scroll.set_pos(systems, self.pos);
+        self.bgm_scroll.set_pos(systems, self.pos);
     }
 }
