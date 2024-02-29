@@ -94,7 +94,9 @@ pub fn hover_buttons(
     screen_pos: Vec2,
 ) {
     for button in menu_content.button.iter_mut() {
-        if is_within_area(screen_pos, Vec2::new(button.pos.x, button.pos.y), button.size) {
+        if is_within_area(screen_pos, 
+            Vec2::new(button.base_pos.x + button.adjust_pos.x, 
+                button.base_pos.y + button.adjust_pos.y), button.size) {
             button.set_hover(systems, true);
         } else {
             button.set_hover(systems, false);
@@ -109,7 +111,9 @@ pub fn click_buttons(
 ) -> Option<usize> {
     let mut button_found = None;
     for (index, button) in menu_content.button.iter_mut().enumerate() {
-        if is_within_area(screen_pos, Vec2::new(button.pos.x, button.pos.y), button.size) {
+        if is_within_area(screen_pos, 
+            Vec2::new(button.base_pos.x + button.adjust_pos.x, 
+                button.base_pos.y + button.adjust_pos.y), button.size) {
             button.set_click(systems, true);
             button_found = Some(index)
         }
@@ -137,7 +141,10 @@ pub fn hover_checkbox(
     screen_pos: Vec2,
 ) {
     for checkbox in menu_content.checkbox.iter_mut() {
-        if is_within_area(screen_pos, Vec2::new(checkbox.pos.x, checkbox.pos.y), checkbox.box_size) {
+        if is_within_area(screen_pos, 
+            Vec2::new(checkbox.base_pos.x + checkbox.adjust_pos.x, 
+                checkbox.base_pos.y + checkbox.adjust_pos.y),
+                Vec2::new(checkbox.box_size.x + checkbox.adjust_x, checkbox.box_size.y)) {
             checkbox.set_hover(systems, true);
         } else {
             checkbox.set_hover(systems, false);
@@ -152,7 +159,10 @@ pub fn click_checkbox(
 ) -> Option<usize> {
     let mut checkbox_found = None;
     for (index, checkbox) in menu_content.checkbox.iter_mut().enumerate() {
-        if is_within_area(screen_pos, Vec2::new(checkbox.pos.x, checkbox.pos.y), checkbox.box_size) {
+        if is_within_area(screen_pos, 
+            Vec2::new(checkbox.base_pos.x + checkbox.adjust_pos.x, 
+                checkbox.base_pos.y + checkbox.adjust_pos.y),
+                Vec2::new(checkbox.box_size.x + checkbox.adjust_x, checkbox.box_size.y)) {
             checkbox.set_click(systems, true);
             checkbox_found = Some(index)
         }
@@ -314,13 +324,15 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 ButtonContentType::Text(
                     ButtonContentText {
                         text: "Login".to_string(),
-                        pos: Vec3::new(0.0, 7.0, MENU_WINDOW_CONTENT),
+                        pos: Vec2::new(0.0, 7.0),
                         color: Color::rgba(230, 230, 230, 255),
                         render_layer: 1,
                         hover_change: ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                         click_change: ButtonChangeType::ColorChange(Color::rgba(170, 170, 170, 255))
                     }),
-                Vec3::new(pos.x + 104.0, pos.y + 45.0, MENU_WINDOW_CONTENT),
+                Vec2::new(pos.x, pos.y),
+                Vec2::new(104.0, 45.0),
+                MENU_WINDOW_CONTENT,
                 Vec2::new(140.0, 34.0),
                 0,
                 true);
@@ -331,13 +343,15 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 ButtonContentType::Text(
                     ButtonContentText {
                         text: "Register".to_string(),
-                        pos: Vec3::new(0.0, 0.0, MENU_WINDOW_CONTENT),
+                        pos: Vec2::new(0.0, 0.0),
                         color: Color::rgba(80, 80, 80, 255),
                         render_layer: 1,
                         hover_change: ButtonChangeType::ColorChange(Color::rgba(240, 240, 240, 255)),
                         click_change: ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                     }),
-                Vec3::new(pos.x + 104.0, pos.y + 19.0, MENU_WINDOW_CONTENT),
+                Vec2::new(pos.x, pos.y),
+                Vec2::new(104.0, 19.0),
+                MENU_WINDOW_CONTENT,
                 Vec2::new(140.0, 20.0),
                 0,
                 true);
@@ -360,10 +374,12 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                         got_border: false,
                         border_color: Color::rgba(255, 255, 255, 255),
                         border_radius: 2.0,
-                        pos: Vec3::new(5.0, 5.0, MENU_WINDOW_CONTENT_DETAIL),
+                        pos: Vec2::new(5.0, 5.0),
                         size: Vec2::new(14.0, 14.0),
                     }),
-                Vec3::new(pos.x + 116.0, pos.y + 92.0, MENU_WINDOW_CONTENT),
+                Vec2::new(pos.x, pos.y),
+                Vec2::new(116.0, 92.0),
+                MENU_WINDOW_CONTENT,
                 Vec2::new(24.0, 24.0),
                 0,
                 Some(CheckboxText {
@@ -483,13 +499,15 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 ButtonContentType::Text(
                     ButtonContentText {
                         text: "Register".to_string(),
-                        pos: Vec3::new(0.0, 7.0, MENU_WINDOW_CONTENT),
+                        pos: Vec2::new(0.0, 7.0),
                         color: Color::rgba(230, 230, 230, 255),
                         render_layer: 1,
                         hover_change: ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                         click_change: ButtonChangeType::ColorChange(Color::rgba(170, 170, 170, 255))
                     }),
-                Vec3::new(pos.x + 104.0, pos.y + 45.0, MENU_WINDOW_CONTENT),
+                Vec2::new(pos.x, pos.y),
+                Vec2::new(104.0, 45.0),
+                MENU_WINDOW_CONTENT,
                 Vec2::new(140.0, 34.0),
                 0,
                 true);
@@ -500,13 +518,15 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 ButtonContentType::Text(
                     ButtonContentText {
                         text: "Sign In".to_string(),
-                        pos: Vec3::new(0.0, 0.0, MENU_WINDOW_CONTENT),
+                        pos: Vec2::new(0.0, 0.0),
                         color: Color::rgba(80, 80, 80, 255),
                         render_layer: 1,
                         hover_change: ButtonChangeType::ColorChange(Color::rgba(240, 240, 240, 255)),
                         click_change: ButtonChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                     }),
-                Vec3::new(pos.x + 104.0, pos.y + 19.0, MENU_WINDOW_CONTENT),
+                Vec2::new(pos.x, pos.y),
+                Vec2::new(104.0, 19.0),
+                MENU_WINDOW_CONTENT,
                 Vec2::new(140.0, 20.0),
                 0,
                 true);
@@ -524,14 +544,16 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 ButtonContentType::Image(
                     ButtonContentImg {
-                        res: systems.resource.selection_arrow.allocation,
-                        pos: Vec3::new(0.0, 0.0, MENU_WINDOW_CONTENT_DETAIL),
+                        res: systems.resource.horizontal_arrow.allocation,
+                        pos: Vec2::new(0.0, 0.0),
                         uv: Vec2::new(0.0, 0.0),
                         size: Vec2::new(24.0, 24.0),
                         hover_change: ButtonChangeType::None,
                         click_change: ButtonChangeType::None
                     }),
-                Vec3::new(pos.x + 142.0, pos.y + 118.0, MENU_WINDOW_CONTENT),
+                Vec2::new(pos.x, pos.y),
+                Vec2::new(142.0, 118.0),
+                MENU_WINDOW_CONTENT,
                 Vec2::new(24.0, 24.0),
                 0,
                 true);
@@ -549,14 +571,16 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 ButtonContentType::Image(
                     ButtonContentImg {
-                        res: systems.resource.selection_arrow.allocation,
-                        pos: Vec3::new(0.0, 0.0, MENU_WINDOW_CONTENT_DETAIL),
+                        res: systems.resource.horizontal_arrow.allocation,
+                        pos: Vec2::new(0.0, 0.0),
                         uv: Vec2::new(24.0, 0.0),
                         size: Vec2::new(24.0, 24.0),
                         hover_change: ButtonChangeType::None,
                         click_change: ButtonChangeType::None
                     }),
-                Vec3::new(pos.x + 282.0, pos.y + 118.0, MENU_WINDOW_CONTENT),
+                Vec2::new(pos.x, pos.y),
+                Vec2::new(282.0, 118.0),
+                MENU_WINDOW_CONTENT,
                 Vec2::new(24.0, 24.0),
                 0,
                 true);

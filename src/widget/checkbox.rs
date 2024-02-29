@@ -4,6 +4,7 @@ use cosmic_text::{Attrs, Metrics};
 use crate::{
     widget::*,
     DrawSetting,
+    logic::*,
 };
 
 #[derive(Clone)]
@@ -19,14 +20,14 @@ pub struct CheckRect {
     pub got_border: bool,
     pub border_color: Color,
     pub border_radius: f32,
-    pub pos: Vec3,
+    pub pos: Vec2,
     pub size: Vec2,
 }
 
 #[derive(Clone)]
 pub struct CheckImage {
     pub res: usize,
-    pub pos: Vec3,
+    pub pos: Vec2,
     pub size: Vec2,
     pub uv: Vec2,
 }
@@ -83,7 +84,9 @@ pub struct Checkbox {
     in_click: bool,
     pub value: bool,
 
-    pub pos: Vec3,
+    pub base_pos: Vec2,
+    pub adjust_pos: Vec2,
+    pub z_order: f32,
     pub box_size: Vec2,
     pub adjust_x: f32,
 }
@@ -93,7 +96,9 @@ impl Checkbox {
         systems: &mut DrawSetting,
         box_type: CheckboxType,
         check_type: CheckType,
-        pos: Vec3,
+        base_pos: Vec2,
+        adjust_pos: Vec2,
+        z_order: f32,
         box_size: Vec2,
         render_layer: usize,
         text_data: Option<CheckboxText>,
@@ -102,11 +107,12 @@ impl Checkbox {
         let boxtype = box_type.clone();
         let checktype = check_type.clone();
 
+        let pos = base_pos + adjust_pos;
         let image = match boxtype {
             CheckboxType::Rect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
                 rect.set_color(data.rect_color)
-                    .set_position(pos)
+                    .set_position(Vec3::new(pos.x, pos.y, z_order))
                     .set_size(box_size)
                     .set_radius(data.border_radius);
                 if data.got_border {
@@ -117,7 +123,7 @@ impl Checkbox {
             }
             CheckboxType::Image(data) => {
                 let mut img = Image::new(Some(data.res), &mut systems.renderer, 0);
-                img.pos = pos;
+                img.pos = Vec3::new(pos.x, pos.y, z_order);
                 img.hw = box_size;
                 img.uv = Vec4::new(0.0, 0.0, box_size.x, box_size.y);
                 systems.gfx.add_image(img, render_layer)
@@ -128,7 +134,7 @@ impl Checkbox {
         let check_image = match checktype {
             CheckType::SetRect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
-                rect.set_position(Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, data.pos.z))
+                rect.set_position(Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, next_down(z_order)))
                     .set_size(data.size)
                     .set_color(data.rect_color)
                     .set_radius(data.border_radius);
@@ -140,7 +146,7 @@ impl Checkbox {
             }
             CheckType::SetImage(data) => {
                 let mut img = Image::new(Some(data.res), &mut systems.renderer, 0);
-                img.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, data.pos.z);
+                img.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, next_down(z_order));
                 img.hw = data.size;
                 img.uv = Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
                 systems.gfx.add_image(img, render_layer)
@@ -151,7 +157,7 @@ impl Checkbox {
         let mut adjust_x = 0.0;
         let text_type = if let Some(data) = text_data {
             let data_copy = data.clone();
-            let tpos = Vec3::new(pos.x + box_size.x + data.offset_pos.x, pos.y + data.offset_pos.y, pos.z);
+            let tpos = Vec3::new(pos.x + box_size.x + data.offset_pos.x, pos.y + data.offset_pos.y, z_order);
             let txt = create_label(systems, 
                 tpos,
                 data.label_size, 
@@ -176,7 +182,9 @@ impl Checkbox {
             in_hover: false,
             in_click: false,
             value: false,
-            pos,
+            base_pos,
+            adjust_pos,
+            z_order,
             box_size,
             adjust_x,
         }
@@ -203,6 +211,46 @@ impl Checkbox {
         }
         if let Some(data) = &mut self.text_type {
             systems.gfx.set_visible(data.0, visible);
+        }
+    }
+
+    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+        self.z_order = z_order;
+        let pos = systems.gfx.get_pos(self.image);
+        systems.gfx.set_pos(self.image, Vec3::new(pos.x, pos.y, self.z_order));
+        let pos = systems.gfx.get_pos(self.check_image);
+        systems.gfx.set_pos(self.check_image, Vec3::new(pos.x, pos.y, next_down(self.z_order)));
+        if let Some(data) = &mut self.text_type {
+            let pos = systems.gfx.get_pos(data.0);
+            systems.gfx.set_pos(data.0, Vec3::new(pos.x, pos.y, self.z_order));
+        }
+    }
+
+    pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
+        self.base_pos = new_pos;
+
+        let pos = Vec3::new(self.base_pos.x + self.adjust_pos.x, 
+            self.base_pos.y + self.adjust_pos.y,
+            self.z_order);
+        systems.gfx.set_pos(self.image, pos);
+
+        let contenttype = self.check_type.clone();
+        let extra_pos = match contenttype {
+            CheckType::SetRect(data) => data.pos,
+            CheckType::SetImage(data) => data.pos,
+        };
+        let pos = Vec3::new(self.base_pos.x + self.adjust_pos.x + extra_pos.x, 
+            self.base_pos.y + self.adjust_pos.y + extra_pos.y,
+            self.z_order);
+        systems.gfx.set_pos(self.check_image, pos);
+
+        if let Some(data) = &mut self.text_type {
+            let pos = Vec3::new(self.base_pos.x + self.adjust_pos.x + self.box_size.x + data.1.offset_pos.x, 
+                self.base_pos.y + self.adjust_pos.y + data.1.offset_pos.y,
+                self.z_order);
+            systems.gfx.set_pos(data.0, pos);
+            systems.gfx.set_bound(data.0,
+                Bounds::new(pos.x, pos.y, pos.x + data.1.label_size.x, pos.y + data.1.label_size.y),);
         }
     }
 

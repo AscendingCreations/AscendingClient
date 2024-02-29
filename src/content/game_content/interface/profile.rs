@@ -1,7 +1,7 @@
 use graphics::*;
 
 use crate::{
-    gfx_order::*, is_within_area, widget::*, DrawSetting
+    gfx_order::*, is_within_area, next_down, widget::*, DrawSetting
 };
 
 pub struct Profile {
@@ -37,14 +37,15 @@ impl Profile {
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(w_pos.x, w_pos.y + 237.0);
         let header_size = Vec2::new(w_size.x, 30.0);
-        header_rect.set_position(Vec3::new(header_pos.x, header_pos.y, ORDER_GUI_WINDOW - 0.0001))
+        let header_zpos = next_down(w_pos.z);
+        header_rect.set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
         let header = systems.gfx.add_rect(header_rect, 0);
         systems.gfx.set_visible(header, false);
 
         let text = create_label(systems, 
-            Vec3::new(w_pos.x, w_pos.y + 242.0, ORDER_GUI_WINDOW - 0.0002),
+            Vec3::new(w_pos.x, w_pos.y + 242.0, next_down(header_zpos)),
             Vec2::new(w_size.x, 20.0),
             Bounds::new(w_pos.x, w_pos.y + 242.0, w_pos.x + w_size.x, w_pos.y + 262.0),
             Color::rgba(200, 200, 200, 255));
@@ -93,6 +94,13 @@ impl Profile {
         is_within_area(screen_pos, self.header_pos, self.header_size)
     }
 
+    pub fn in_window(&mut self, screen_pos: Vec2) -> bool {
+        if !self.visible {
+            return false;
+        }
+        is_within_area(screen_pos, self.pos, self.size)
+    }
+
     pub fn hold_window(&mut self, screen_pos: Vec2) {
         if self.in_hold {
             return;
@@ -110,7 +118,7 @@ impl Profile {
             return;
         }
         self.z_order = z_order;
-        let z_order_result = self.z_order * 0.001;
+        let z_order_result = self.z_order * 0.01;
 
         let set_pos_z = ORDER_GUI_WINDOW - z_order_result;
         let mut pos = systems.gfx.get_pos(self.bg);
@@ -118,11 +126,12 @@ impl Profile {
         systems.gfx.set_pos(self.bg, pos);
 
         let mut pos = systems.gfx.get_pos(self.header);
-        pos.z = set_pos_z - 0.0001;
+        let header_zpos = next_down(set_pos_z);
+        pos.z = header_zpos;
         systems.gfx.set_pos(self.header, pos);
 
         let mut pos = systems.gfx.get_pos(self.header_text);
-        pos.z = set_pos_z - 0.0002;
+        pos.z = next_down(header_zpos);
         systems.gfx.set_pos(self.header_text, pos);
     }
 

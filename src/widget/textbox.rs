@@ -13,6 +13,7 @@ use winit::{
 use crate::{
     widget::*,
     DrawSetting,
+    logic::*,
 };
 
 pub struct Textbox {
@@ -50,7 +51,7 @@ impl Textbox {
         systems.gfx.set_visible(bg, false);
 
         let text_data = create_label(systems, 
-            pos, 
+            Vec3::new(pos.x, pos.y, next_down(pos.z)), 
             size, 
             Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
             text_color);
@@ -92,6 +93,21 @@ impl Textbox {
         self.visible = visible;
         systems.gfx.set_visible(self.bg, visible);
         systems.gfx.set_visible(self.text_index, visible);
+    }
+
+    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+        self.pos.z = z_order;
+        systems.gfx.set_pos(self.bg, self.pos);
+        systems.gfx.set_pos(self.text_index, Vec3::new(self.pos.x, self.pos.y, next_down(self.pos.z)));
+    }
+
+    pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
+        self.pos.x = new_pos.x;
+        self.pos.y = new_pos.y;
+        systems.gfx.set_pos(self.bg, self.pos);
+        systems.gfx.set_pos(self.text_index, Vec3::new(self.pos.x, self.pos.y, next_down(self.pos.z)));
+        systems.gfx.set_bound(self.text_index,
+            Bounds::new(self.pos.x, self.pos.y, self.pos.x + self.size.x, self.pos.y + self.size.y));
     }
 
     pub fn enter_text(

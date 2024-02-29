@@ -1,12 +1,15 @@
 use graphics::*;
 use guillotiere::euclid::num::Floor;
 
-use crate::{is_within_area, DrawSetting};
+use crate::{
+    is_within_area,
+    DrawSetting,
+    logic::*,
+};
 
 pub struct ScrollbarBackground {
     pub color: Color,
     pub render_layer: usize,
-    pub z_pos: f32,
     pub got_border: bool,
     pub border_color: Color,
     pub radius: f32,
@@ -15,7 +18,6 @@ pub struct ScrollbarBackground {
 pub struct ScrollbarRect {
     pub color: Color,
     pub render_layer: usize,
-    pub z_pos: f32,
     pub got_border: bool,
     pub border_color: Color,
     pub hover_color: Color,
@@ -29,8 +31,7 @@ pub struct Scrollbar {
     bg: Option<usize>,
     scroll: usize,
 
-    bg_zpos: f32,
-    zpos: f32,
+    z_pos: f32,
 
     base_pos: Vec2,
     adjust_pos: Vec2,
@@ -57,16 +58,17 @@ impl Scrollbar {
         size: f32,
         thickness: f32,
         is_vertical: bool,
-        base_zpos: f32,
+        z_pos: f32,
         scrollbar: ScrollbarRect,
         background: Option<ScrollbarBackground>,
         max_value: usize,
         min_bar_size: f32,
+        visible: bool,
     ) -> Self {
-        let (bg, bg_zpos) = if let Some(data) = background {
+        let bg = if let Some(data) = background {
             let mut scrollbg_rect = Rect::new(&mut systems.renderer, 0);
             let pos = base_pos + adjust_pos;
-            let bg_pos = Vec3::new(pos.x - 1.0, pos.y - 1.0, base_zpos - data.z_pos);
+            let bg_pos = Vec3::new(pos.x - 1.0, pos.y - 1.0, z_pos);
             scrollbg_rect.set_position(bg_pos)
                 .set_color(data.color)
                 .set_radius(data.radius);
@@ -80,10 +82,10 @@ impl Scrollbar {
                 scrollbg_rect.set_size(Vec2::new(size + 2.0, thickness + 2.0));
             }
             let bg = systems.gfx.add_rect(scrollbg_rect, data.render_layer);
-            systems.gfx.set_visible(bg, false);
-            (Some(bg), data.z_pos)
+            systems.gfx.set_visible(bg, visible);
+            Some(bg)
         } else {
-            (None, 0.0)
+            None
         };
 
         let scrollbar_size = 
@@ -109,7 +111,7 @@ impl Scrollbar {
         scroll_rect.set_position(
                 Vec3::new(base_pos.x + pos.x, 
                     base_pos.y + pos.y, 
-                    base_zpos - scrollbar.z_pos))
+                    next_down(z_pos)))
             .set_color(scrollbar.color)
             .set_size(size)
             .set_radius(scrollbar.radius);
@@ -118,14 +120,13 @@ impl Scrollbar {
                 .set_border_color(scrollbar.border_color);
         }
         let scroll = systems.gfx.add_rect(scroll_rect, scrollbar.render_layer);
-        systems.gfx.set_visible(scroll, false);
+        systems.gfx.set_visible(scroll, visible);
         
         Scrollbar {
-            visible: false,
+            visible,
             bg,
             scroll,
-            zpos: scrollbar.z_pos,
-            bg_zpos,
+            z_pos,
             is_vertical,
             base_pos,
             adjust_pos,
@@ -222,12 +223,13 @@ impl Scrollbar {
     }
 
     pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+        self.z_pos = z_order;
         if let Some(index) = self.bg {
             let pos = systems.gfx.get_pos(index);
-            systems.gfx.set_pos(index, Vec3::new(pos.x, pos.y, z_order - self.bg_zpos));
+            systems.gfx.set_pos(index, Vec3::new(pos.x, pos.y, self.z_pos));
         }
         let pos = systems.gfx.get_pos(self.scroll);
-        systems.gfx.set_pos(self.scroll, Vec3::new(pos.x, pos.y, z_order - self.zpos));
+        systems.gfx.set_pos(self.scroll, Vec3::new(pos.x, pos.y, next_down(self.z_pos)));
     }
 
     pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {

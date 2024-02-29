@@ -16,17 +16,25 @@ mod inventory;
 mod profile;
 mod setting;
 mod screen;
+mod chatbox;
 
 use inventory::*;
 use profile::*;
 use setting::*;
 use screen::*;
+use chatbox::*;
 
 #[derive(PartialEq, Eq, Clone, Copy, Sequence, Debug)]
 pub enum Window {
     Inventory,
     Profile,
     Setting,
+    Chatbox,
+}
+
+pub enum SelectedTextbox {
+    None,
+    Chatbox,
 }
 
 pub struct Interface {
@@ -35,8 +43,10 @@ pub struct Interface {
     inventory: Inventory,
     profile: Profile,
     setting: Setting,
+    chatbox: Chatbox,
     window_order: Vec<(Window, usize)>,
     drag_window: Option<Window>,
+    selected_textbox: SelectedTextbox,
 }
 
 impl Interface {
@@ -49,13 +59,16 @@ impl Interface {
             inventory: Inventory::new(systems),
             profile: Profile::new(systems),
             setting: Setting::new(systems),
+            chatbox: Chatbox::new(systems),
             window_order: 
                 vec![
                     (Window::Inventory, 0),
                     (Window::Profile, 1),
                     (Window::Setting, 2),
+                    (Window::Chatbox, 3),
                 ],
             drag_window: None,
+            selected_textbox: SelectedTextbox::None,
         }
     }
 
@@ -64,6 +77,9 @@ impl Interface {
             button.unload(systems);
         });
         self.inventory.unload(systems);
+        self.profile.unload(systems);
+        self.setting.unload(systems);
+        self.chatbox.unload(systems);
     }
 
     pub fn mouse_input(
@@ -89,6 +105,12 @@ impl Interface {
                         game_content.interface.setting.bgm_scroll.set_hover(systems, false);
                     }
                 }
+                if game_content.interface.chatbox.scrollbar.in_scroll(screen_pos) {
+                    game_content.interface.chatbox.scrollbar.set_hover(systems, true);
+                } else {
+                    game_content.interface.chatbox.scrollbar.set_hover(systems, false);
+                }
+                game_content.interface.chatbox.hover_buttons(systems, screen_pos);
             }
             MouseInputType::MouseLeftDown => {
                 let button_index = Interface::click_buttons(game_content, systems, screen_pos);
@@ -114,6 +136,16 @@ impl Interface {
                         game_content.interface.setting.bgm_scroll.set_hold(systems, true, screen_pos);
                     }
                 }
+                if game_content.interface.chatbox.scrollbar.in_scroll(screen_pos) {
+                    game_content.interface.chatbox.scrollbar.set_hold(systems, true, screen_pos);
+                }
+
+                let chatbox_button_index = game_content.interface.chatbox.click_buttons(systems, screen_pos);
+                if let Some(_index) = chatbox_button_index {
+                    game_content.interface.chatbox.did_button_click = true;
+                }
+
+                Interface::click_textbox(game_content, systems, screen_pos);
             }
             MouseInputType::MouseLeftDownMove => {
                 if let Some(window) = &game_content.interface.drag_window {
@@ -124,12 +156,15 @@ impl Interface {
                             game_content.interface.profile.move_window(systems, screen_pos),
                         Window::Setting =>
                             game_content.interface.setting.move_window(systems, screen_pos),
+                        Window::Chatbox =>
+                            game_content.interface.chatbox.move_window(systems, screen_pos),
                     }
                 } else {
                     if game_content.interface.setting.visible {
                         game_content.interface.setting.sfx_scroll.set_move_scroll(systems, screen_pos);
                         game_content.interface.setting.bgm_scroll.set_move_scroll(systems, screen_pos);
                     }
+                    game_content.interface.chatbox.scrollbar.set_move_scroll(systems, screen_pos);
                 }
             }
             MouseInputType::MouseRelease => {
@@ -142,6 +177,8 @@ impl Interface {
                             game_content.interface.profile.release_window(),
                         Window::Setting =>
                             game_content.interface.setting.release_window(),
+                        Window::Chatbox =>
+                            game_content.interface.chatbox.release_window(),
                     }
                 }
                 game_content.interface.drag_window = None;
@@ -150,17 +187,24 @@ impl Interface {
                     game_content.interface.setting.sfx_scroll.set_hold(systems, false, screen_pos);
                     game_content.interface.setting.bgm_scroll.set_hold(systems, false, screen_pos);
                 }
+                game_content.interface.chatbox.scrollbar.set_hold(systems, false, screen_pos);
+                game_content.interface.chatbox.reset_buttons(systems);
             }
         }
     }
 
     pub fn key_input(
-        _game_content: &mut GameContent,
+        game_content: &mut GameContent,
         _world: &mut World,
-        _systems: &mut DrawSetting,
-        _event: &KeyEvent,
+        systems: &mut DrawSetting,
+        event: &KeyEvent,
     ) {
-
+        match game_content.interface.selected_textbox {
+            SelectedTextbox::Chatbox => {
+                game_content.interface.chatbox.textbox.enter_text(systems, event);
+            }
+            _ => {}
+        }
     }
 
     pub fn hover_buttons(
@@ -169,7 +213,9 @@ impl Interface {
         screen_pos: Vec2,
     ) {
         for button in game_content.interface.menu_button.iter_mut() {
-            if is_within_area(screen_pos, Vec2::new(button.pos.x, button.pos.y), button.size) {
+            if is_within_area(screen_pos, 
+                Vec2::new(button.base_pos.x + button.adjust_pos.x, 
+                    button.base_pos.y + button.adjust_pos.y), button.size) {
                 button.set_hover(systems, true);
             } else {
                 button.set_hover(systems, false);
@@ -184,7 +230,9 @@ impl Interface {
     ) -> Option<usize> {
         let mut button_found = None;
         for (index, button) in game_content.interface.menu_button.iter_mut().enumerate() {
-            if is_within_area(screen_pos, Vec2::new(button.pos.x, button.pos.y), button.size) {
+            if is_within_area(screen_pos, 
+                Vec2::new(button.base_pos.x + button.adjust_pos.x, 
+                    button.base_pos.y + button.adjust_pos.y), button.size) {
                 button.set_click(systems, true);
                 button_found = Some(index)
             }
@@ -204,6 +252,27 @@ impl Interface {
         game_content.interface.menu_button.iter_mut().for_each(|button| {
             button.set_click(systems, false);
         });
+    }
+
+    pub fn click_textbox(
+        game_content: &mut GameContent,
+        systems: &mut DrawSetting,
+        screen_pos: Vec2,
+    ) {
+        if is_within_area(screen_pos, 
+            Vec2::new(game_content.interface.chatbox.textbox.pos.x, 
+                game_content.interface.chatbox.textbox.pos.y), 
+                game_content.interface.chatbox.textbox.size) {
+            game_content.interface.chatbox.textbox.set_select(systems, true);
+            game_content.interface.selected_textbox = SelectedTextbox::Chatbox;
+            return;
+        }
+        
+        match game_content.interface.selected_textbox {
+            SelectedTextbox::Chatbox => game_content.interface.chatbox.textbox.set_select(systems, false),
+            _ => {}
+        }
+        game_content.interface.selected_textbox = SelectedTextbox::None;
     }
 }
 
@@ -242,22 +311,29 @@ fn find_window(game_content: &mut GameContent, screen_pos: Vec2) -> Option<Windo
     let mut max_z_order: f32 = 0.0;
     let mut selected_window = None;
 
-    if game_content.interface.inventory.can_hold(screen_pos) {
+    if game_content.interface.inventory.in_window(screen_pos) {
         max_z_order = game_content.interface.inventory.z_order;
         selected_window = Some(Window::Inventory);
     }
-    if game_content.interface.profile.can_hold(screen_pos) {
+    if game_content.interface.profile.in_window(screen_pos) {
         let z_order = game_content.interface.profile.z_order;
         if z_order > max_z_order {
             max_z_order = z_order;
             selected_window = Some(Window::Profile);
         }
     }
-    if game_content.interface.setting.can_hold(screen_pos) {
+    if game_content.interface.setting.in_window(screen_pos) {
         let z_order = game_content.interface.setting.z_order;
         if z_order > max_z_order {
-            //max_z_order = z_order;
+            max_z_order = z_order;
             selected_window = Some(Window::Setting);
+        }
+    }
+    if game_content.interface.chatbox.in_window(screen_pos) {
+        let z_order = game_content.interface.chatbox.z_order;
+        if z_order > max_z_order {
+            //max_z_order = z_order;
+            selected_window = Some(Window::Chatbox);
         }
     }
     selected_window
@@ -281,6 +357,7 @@ fn open_interface(
             if game_content.interface.setting.visible { return; }
             game_content.interface.setting.set_visible(systems, true);
         }
+        _ => {}
     }
     interface_set_to_first(game_content, systems, window);
 }
@@ -303,6 +380,7 @@ fn close_interface(
             if !game_content.interface.setting.visible { return; }
             game_content.interface.setting.set_visible(systems, false);
         }
+        _ => {}
     }
     interface_set_to_last(game_content, systems, window);
 }
@@ -313,13 +391,34 @@ fn hold_interface(
     window: Window,
     screen_pos: Vec2,
 ) {
-    game_content.interface.drag_window = Some(window);
-    match window {
-        Window::Inventory => game_content.interface.inventory.hold_window(screen_pos),
-        Window::Profile => game_content.interface.profile.hold_window(screen_pos),
-        Window::Setting => game_content.interface.setting.hold_window(screen_pos),
-    }
     interface_set_to_first(game_content, systems, window);
+    match window {
+        Window::Inventory => {
+            if !game_content.interface.inventory.can_hold(screen_pos) {
+                return;
+            }
+            game_content.interface.inventory.hold_window(screen_pos);
+        }
+        Window::Profile => {
+            if !game_content.interface.profile.can_hold(screen_pos) {
+                return;
+            }
+            game_content.interface.profile.hold_window(screen_pos);
+        }
+        Window::Setting => {
+            if !game_content.interface.setting.can_hold(screen_pos) {
+                return;
+            }
+            game_content.interface.setting.hold_window(screen_pos);
+        }
+        Window::Chatbox => {
+            if !game_content.interface.chatbox.can_hold(screen_pos) {
+                return;
+            }
+            game_content.interface.chatbox.hold_window(screen_pos);
+        }
+    }
+    game_content.interface.drag_window = Some(window);
 }
 
 fn interface_set_to_first(
@@ -379,6 +478,7 @@ fn adjust_window_zorder(
             Window::Inventory => game_content.interface.inventory.set_z_order(systems, order),
             Window::Profile => game_content.interface.profile.set_z_order(systems, order),
             Window::Setting => game_content.interface.setting.set_z_order(systems, order),
+            Window::Chatbox => game_content.interface.chatbox.set_z_order(systems, order),
         }
         order -= 1.0;
     }
