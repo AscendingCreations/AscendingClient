@@ -141,8 +141,9 @@ impl Interface {
                 }
 
                 let chatbox_button_index = game_content.interface.chatbox.click_buttons(systems, screen_pos);
-                if let Some(_index) = chatbox_button_index {
+                if let Some(index) = chatbox_button_index {
                     game_content.interface.chatbox.did_button_click = true;
+                    trigger_chatbox_button(game_content, systems, index);
                 }
 
                 Interface::click_textbox(game_content, systems, screen_pos);
@@ -165,6 +166,7 @@ impl Interface {
                         game_content.interface.setting.bgm_scroll.set_move_scroll(systems, screen_pos);
                     }
                     game_content.interface.chatbox.scrollbar.set_move_scroll(systems, screen_pos);
+                    game_content.interface.chatbox.set_chat_scrollbar(systems, false);
                 }
             }
             MouseInputType::MouseRelease => {
@@ -302,6 +304,40 @@ fn trigger_button(
             } else {
                 open_interface(game_content, systems, Window::Setting);
             }
+        }
+        _ => {}
+    }
+}
+
+fn trigger_chatbox_button(
+    game_content: &mut GameContent,
+    systems: &mut DrawSetting,
+    index: usize,
+) {
+    match index {
+        0 => { // Scroll Up
+            println!("Scroll Up {:?}", game_content.interface.chatbox.scrollbar.value);
+            let scrollbar_value = 
+                game_content.interface.chatbox.scrollbar.value
+                    .saturating_add(1)
+                    .min(game_content.interface.chatbox.scrollbar.max_value);
+            println!("Scroll Up Result {:?}", scrollbar_value);
+            game_content.interface.chatbox.scrollbar.set_value(systems, scrollbar_value);
+            game_content.interface.chatbox.set_chat_scrollbar(systems, true);
+        }
+        1 => { // Scroll Down
+            println!("Scroll Down {:?}", game_content.interface.chatbox.scrollbar.value);
+            let scrollbar_value = 
+                game_content.interface.chatbox.scrollbar.value
+                    .saturating_sub(1);
+            println!("Scroll Down Result {:?}", scrollbar_value);
+            game_content.interface.chatbox.scrollbar.set_value(systems, scrollbar_value);
+            game_content.interface.chatbox.set_chat_scrollbar(systems, true);
+        }
+        2 => { // Send
+            let msg = game_content.interface.chatbox.textbox.text.clone();
+            game_content.interface.chatbox.add_chat(systems, msg);
+            game_content.interface.chatbox.textbox.set_text(systems, String::new());
         }
         _ => {}
     }
@@ -492,7 +528,6 @@ fn adjust_window_zorder(
 
 // TEST //
 pub fn print_z_order(game_content: &mut GameContent) {
-    println!("============");
     for data in game_content.interface.window_order.iter() {
         println!("Order: {:?}", data);
     }

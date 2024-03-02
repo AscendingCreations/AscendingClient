@@ -199,7 +199,7 @@ impl Button {
         }
         if let Some(content_index) = self.content {
             let pos = systems.gfx.get_pos(content_index);
-            systems.gfx.set_pos(content_index, Vec3::new(pos.x, pos.y, self.z_order));
+            systems.gfx.set_pos(content_index, Vec3::new(pos.x, pos.y, next_down(self.z_order)));
         }
     }
 

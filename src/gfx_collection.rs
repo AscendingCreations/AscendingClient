@@ -171,7 +171,6 @@ impl GfxCollection {
         if let Some(data) = self.collection.get_mut(index) {
             if let GfxType::Text(text) = &mut data.gfx {
                 text.set_text(renderer, msg, Attrs::new(), Shaping::Advanced,);
-                //text.set_rich_text(renderer, spans, default_attr, shaping)
             }
         }
     }
@@ -183,6 +182,18 @@ impl GfxCollection {
         if let Some(data) = self.collection.get_mut(index) {
             if let GfxType::Text(text) = &mut data.gfx {
                 text.set_rich_text(renderer, msg, Attrs::new(), Shaping::Advanced);
+            }
+        }
+    }
+
+    pub fn set_text_wrap(&mut self, renderer: &mut GpuRenderer, index: usize, can_wrap: bool) {
+        if let Some(data) = self.collection.get_mut(index) {
+            if let GfxType::Text(text) = &mut data.gfx {
+                if can_wrap {
+                    text.set_wrap(renderer, cosmic_text::Wrap::Word);
+                } else {
+                    text.set_wrap(renderer, cosmic_text::Wrap::None);
+                }
             }
         }
     }

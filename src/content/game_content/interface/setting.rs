@@ -81,6 +81,7 @@ impl Setting {
             }),
             8,
             20.0,
+            false,
             false);
 
         let bgm_scroll = Scrollbar::new(systems,
@@ -108,6 +109,7 @@ impl Setting {
             }),
             8,
             20.0,
+            false,
             false);
 
         Setting {

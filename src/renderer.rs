@@ -108,8 +108,9 @@ where
 pub fn add_image_to_buffer<Controls>(
     systems: &mut DrawSetting,
     graphics: &mut State<Controls>,
-) where
-Controls: camera::controls::Controls, 
+) 
+where
+    Controls: camera::controls::Controls, 
 {
     systems.gfx.collection.iter_mut().for_each(|data| {
         if data.1.visible {

@@ -5,6 +5,16 @@ use crate::{
 };
 
 const MAX_CHAT_LINE: usize = 8;
+const VISIBLE_SIZE: f32 = 160.0;
+const MAX_CHAT: usize = 100;
+
+#[derive(Debug)]
+pub struct Chat {
+    text: usize,
+    msg: String,
+    size: Vec2,
+    adjust_y: f32,
+}
 
 pub struct Chatbox {
     window: usize,
@@ -14,6 +24,13 @@ pub struct Chatbox {
     button: [Button; 3],
     pub did_button_click: bool,
     pub scrollbar: Scrollbar,
+
+    chat: Vec<Chat>,
+    chat_areasize: Vec2,
+    chat_zorder: f32,
+    chat_bounds: Bounds,
+    chat_line_size: f32,
+    chat_scroll_value: usize,
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -43,10 +60,16 @@ impl Chatbox {
         let textbox_bg = systems.gfx.add_rect(textbox_rect, 0);
 
         let mut chatarea_rect = Rect::new(&mut systems.renderer, 0);
-        chatarea_rect.set_position(Vec3::new(w_pos.x + 5.0, w_pos.y + 34.0, next_down(w_pos.z)))
-            .set_size(Vec2::new(w_size.x - 39.0, w_size.y - 39.0))
+        let chatarea_zorder = next_down(w_pos.z);
+        let chat_area_pos = Vec2::new(w_pos.x + 5.0, w_pos.y + 34.0);
+        let chat_areasize = Vec2::new(w_size.x - 39.0, w_size.y - 39.0);
+        chatarea_rect.set_position(Vec3::new(chat_area_pos.x, chat_area_pos.y, chatarea_zorder))
+            .set_size(chat_areasize)
             .set_color(Color::rgba(160, 160, 160, 255));
         let chatarea_bg = systems.gfx.add_rect(chatarea_rect, 0);
+        let chat_zorder = next_down(chatarea_zorder);
+        let chat_bounds = Bounds::new(chat_area_pos.x, chat_area_pos.y,
+            chat_area_pos.x + chat_areasize.x, chat_area_pos.y + chat_areasize.y);
 
         let textbox = Textbox::new(
             systems,
@@ -174,8 +197,9 @@ impl Chatbox {
                 border_color: Color::rgba(0, 0, 0, 0),
                 radius: 0.0,
             }),
-            3,
+            0,
             20.0,
+            true,
             true,
         );
 
@@ -187,6 +211,12 @@ impl Chatbox {
             button,
             did_button_click: false,
             scrollbar,
+            chat: Vec::new(),
+            chat_areasize,
+            chat_zorder,
+            chat_bounds,
+            chat_line_size: 0.0,
+            chat_scroll_value: 0,
             pos: Vec2::new(w_pos.x, w_pos.y),
             size: w_size,
             z_order: w_pos.z,
@@ -257,12 +287,19 @@ impl Chatbox {
         let textbox_zpos = next_down(set_pos_z);
         systems.gfx.set_pos(self.textbox_bg, Vec3::new(pos.x, pos.y, textbox_zpos));
         let pos = systems.gfx.get_pos(self.chatarea_bg);
-        systems.gfx.set_pos(self.chatarea_bg, Vec3::new(pos.x, pos.y, next_down(set_pos_z)));
+        let chatarea_zorder = next_down(set_pos_z);
+        self.chat_zorder = next_down(chatarea_zorder);
+        systems.gfx.set_pos(self.chatarea_bg, Vec3::new(pos.x, pos.y, chatarea_zorder));
         self.textbox.set_z_order(systems, next_down(textbox_zpos));
         self.button.iter_mut().for_each(|button| {
             button.set_z_order(systems, next_down(set_pos_z));
         });
         self.scrollbar.set_z_order(systems, next_down(set_pos_z));
+
+        for chat in self.chat.iter() {
+            let pos = systems.gfx.get_pos(chat.text);
+            systems.gfx.set_pos(chat.text, Vec3::new(pos.x, pos.y, self.chat_zorder));
+        }
     }
 
     pub fn move_window(&mut self, systems: &mut DrawSetting, screen_pos: Vec2) {
@@ -276,12 +313,26 @@ impl Chatbox {
         let pos = systems.gfx.get_pos(self.textbox_bg);
         systems.gfx.set_pos(self.textbox_bg, Vec3::new(self.pos.x + 5.0, self.pos.y + 5.0, pos.z));
         let pos = systems.gfx.get_pos(self.chatarea_bg);
-        systems.gfx.set_pos(self.chatarea_bg, Vec3::new(self.pos.x + 5.0, self.pos.y + 34.0, pos.z));
+        let chat_area_pos = Vec2::new(self.pos.x + 5.0, self.pos.y + 34.0);
+        self.chat_bounds = Bounds::new(chat_area_pos.x, chat_area_pos.y,
+            chat_area_pos.x + self.chat_areasize.x, chat_area_pos.y + self.chat_areasize.y);
+        systems.gfx.set_pos(self.chatarea_bg, Vec3::new(chat_area_pos.x, chat_area_pos.y, pos.z));
         self.textbox.set_pos(systems, Vec2::new(self.pos.x + 7.0, self.pos.y + 7.0));
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
         });
         self.scrollbar.set_pos(systems, self.pos);
+
+        let scroll_y = self.chat_scroll_value * 20;
+        for data in self.chat.iter_mut() {
+            let start_pos = Vec2::new(self.chat_bounds.left,
+                self.chat_bounds.bottom - self.chat_areasize.y);
+            systems.gfx.set_pos(data.text, 
+                Vec3::new(start_pos.x, 
+                        (start_pos.y + 2.0 + data.adjust_y) - scroll_y as f32, 
+                        self.chat_zorder));
+            systems.gfx.set_bound(data.text, self.chat_bounds);
+        }
     }
 
     pub fn hover_buttons(
@@ -329,5 +380,74 @@ impl Chatbox {
         self.button.iter_mut().for_each(|button| {
             button.set_click(systems, false);
         });
+    }
+
+    pub fn set_chat_scrollbar(&mut self, systems: &mut DrawSetting, force: bool) {
+        if self.scrollbar.value == self.chat_scroll_value {
+            return;
+        }
+        if !force {
+            if !self.scrollbar.in_hold {
+                return;
+            }
+        }
+        self.chat_scroll_value = self.scrollbar.value;
+        let scroll_y = self.chat_scroll_value * 20;
+
+        for data in self.chat.iter_mut() {
+            let start_pos = Vec2::new(self.chat_bounds.left,
+                self.chat_bounds.bottom - self.chat_areasize.y);
+            systems.gfx.set_pos(data.text, 
+                Vec3::new(start_pos.x, 
+                    (start_pos.y + 2.0 + data.adjust_y) - scroll_y as f32, 
+                    self.chat_zorder));
+        }
+    }
+
+    pub fn add_chat(&mut self, systems: &mut DrawSetting, msg: String) {
+        let start_pos = Vec2::new(self.chat_bounds.left,
+            self.chat_bounds.bottom - self.chat_areasize.y);
+        
+        let mut text_data = create_label(systems,
+            Vec3::new(0.0, 0.0, 0.0),
+            self.chat_areasize,
+            self.chat_bounds,
+            Color::rgba(255, 255, 255, 255));
+        text_data.set_buffer_size(&mut systems.renderer, 
+            self.chat_areasize.x as i32, 
+            self.chat_areasize.y as i32)
+            .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
+        
+        let text = systems.gfx.add_text(text_data, 1);
+        systems.gfx.set_text(&mut systems.renderer, text, &msg);
+        let size = systems.gfx.get_measure(text);
+        systems.gfx.set_pos(text, Vec3::new(start_pos.x, start_pos.y + 2.0 + size.y, self.chat_zorder));
+
+        let chat = Chat {
+            text,
+            msg,
+            size,
+            adjust_y: size.y,
+        };
+
+        if self.chat.len() >= MAX_CHAT {
+            if let Some(chat) = self.chat.pop() {
+                self.chat_line_size -= chat.size.y
+            }
+        }
+
+        for data in self.chat.iter_mut() {
+            data.adjust_y += size.y;
+            systems.gfx.set_pos(data.text, Vec3::new(start_pos.x, start_pos.y + 2.0 + data.adjust_y, self.chat_zorder));
+        }
+
+        self.chat.insert(0, chat);
+        self.chat_line_size += size.y;
+
+        let leftover = self.chat_line_size - VISIBLE_SIZE;
+        if leftover > 0.0 {
+            self.scrollbar.set_max_value(systems, (leftover / 20.0).floor() as usize);
+            self.scrollbar.set_value(systems, 0);
+        }
     }
 }

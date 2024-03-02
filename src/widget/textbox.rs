@@ -110,6 +110,24 @@ impl Textbox {
             Bounds::new(self.pos.x, self.pos.y, self.pos.x + self.size.x, self.pos.y + self.size.y));
     }
 
+    pub fn set_text(
+        &mut self,
+        systems: &mut DrawSetting,
+        text: String,
+    ) {
+        self.text.clear();
+        if text.len() > 0 {
+            self.text.push_str(&text);
+        }
+        let msg = if self.hide_content {
+            self.text.chars().map(|_| '*').collect()
+        } else {
+            self.text.clone()
+        };
+        systems.gfx.set_text(&mut systems.renderer, self.text_index, &msg);
+        self.adjust_text(systems);
+    }
+
     pub fn enter_text(
         &mut self,
         systems: &mut DrawSetting,
