@@ -18,7 +18,7 @@ impl GameContent {
         screen_pos: Vec2,
     ) {
         if let ContentHolder::Game(data) = &mut content.holder {
-            Interface::mouse_input(data, world, systems, input_type, screen_pos);
+            Interface::mouse_input(&mut data.interface, world, systems, input_type, screen_pos);
         }
     }
 
@@ -59,7 +59,7 @@ impl GameContent {
                 }
                 PhysicalKey::Code(KeyCode::F5) => {
                     if let ContentHolder::Game(data) = &mut content.holder {
-                        print_z_order(data);
+                        print_z_order(&mut data.interface);
                     }
                 }
                 _ => {}

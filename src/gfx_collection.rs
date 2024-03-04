@@ -114,7 +114,7 @@ impl GfxCollection {
         if let Some(data) = self.collection.get_mut(index) {
             match &mut data.gfx {
                 GfxType::Image(image) => {
-                    if image.pos == pos { return }
+                    //if image.pos == pos { return }
                     image.pos = pos;
                     image.changed = true;
                 }

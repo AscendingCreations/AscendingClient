@@ -80,6 +80,7 @@ pub struct Button {
     pub adjust_pos: Vec2,
     pub z_order: f32,
     pub size: Vec2,
+    z_step: (f32, i32),
 }
 
 impl Button {
@@ -90,6 +91,7 @@ impl Button {
         base_pos: Vec2,
         adjust_pos: Vec2,
         z_order: f32,
+        z_step: (f32, i32),
         size: Vec2,
         render_layer: usize,
         visible: bool,
@@ -129,8 +131,8 @@ impl Button {
             ButtonContentType::None => None,
             ButtonContentType::Image(data) => {
                 let mut image = Image::new(Some(data.res), &mut systems.renderer, 0);
-                let pos = Vec3::new(base_pos.x + adjust_pos.x, base_pos.y + adjust_pos.y, z_order);
-                image.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, next_down(pos.z));
+                let pos = Vec3::new(base_pos.x + adjust_pos.x, base_pos.y + adjust_pos.y, z_order.sub_f32(z_step.0, z_step.1));
+                image.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, pos.z);
                 image.hw = data.size;
                 image.uv = Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
                 let image_index = systems.gfx.add_image(image, render_layer);
@@ -138,11 +140,11 @@ impl Button {
                 Some(image_index)
             }
             ButtonContentType::Text(data) => {
-                let pos = Vec3::new(base_pos.x + adjust_pos.x, base_pos.y + adjust_pos.y, z_order);
+                let pos = Vec3::new(base_pos.x + adjust_pos.x, base_pos.y + adjust_pos.y, z_order.sub_f32(z_step.0, z_step.1));
                 let text_pos = Vec2::new(pos.x + data.pos.x, pos.y + data.pos.y);
                 let text = create_label(
                     systems, 
-                    Vec3::new(text_pos.x, text_pos.y, next_down(pos.z)), 
+                    Vec3::new(text_pos.x, text_pos.y, pos.z), 
                     Vec2::new(size.x, 20.0), 
                     Bounds::new(text_pos.x, text_pos.y, text_pos.x + size.x, text_pos.y + 20.0), 
                     data.color);
@@ -165,6 +167,7 @@ impl Button {
             base_pos,
             adjust_pos,
             z_order,
+            z_step,
             size,
         }
     }
@@ -199,7 +202,7 @@ impl Button {
         }
         if let Some(content_index) = self.content {
             let pos = systems.gfx.get_pos(content_index);
-            systems.gfx.set_pos(content_index, Vec3::new(pos.x, pos.y, next_down(self.z_order)));
+            systems.gfx.set_pos(content_index, Vec3::new(pos.x, pos.y, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
         }
     }
 
@@ -217,13 +220,13 @@ impl Button {
                 ButtonContentType::Image(data) => {
                     let pos = Vec3::new(self.base_pos.x + self.adjust_pos.x + data.pos.x, 
                         self.base_pos.y + self.adjust_pos.y + data.pos.y,
-                        next_down(self.z_order));
+                        self.z_order.sub_f32(self.z_step.0, self.z_step.1));
                     systems.gfx.set_pos(content_index, pos);
                 }
                 ButtonContentType::Text(data) => {
                     let pos = Vec3::new(self.base_pos.x + self.adjust_pos.x + data.pos.x, 
                         self.base_pos.y + self.adjust_pos.y + data.pos.y,
-                        next_down(self.z_order));
+                        self.z_order.sub_f32(self.z_step.0, self.z_step.1));
                     systems.gfx.set_pos(content_index, pos);
                     systems.gfx.set_bound(content_index, 
                         Bounds::new(pos.x, pos.y, pos.x + self.size.x, pos.y + self.size.y));
@@ -305,7 +308,7 @@ impl Button {
                     match data.click_change {
                         ButtonChangeType::AdjustY(adjusty) => {
                             systems.gfx.set_pos(content_data, 
-                                Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y + adjusty as f32, next_down(self.size.y)));
+                                Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y + adjusty as f32, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
                             systems.gfx.center_text(content_data);
                         }
                         ButtonChangeType::ColorChange(color) => { systems.gfx.set_color(content_data, color); }
@@ -316,7 +319,7 @@ impl Button {
                     match data.click_change {
                         ButtonChangeType::AdjustY(adjusty) => {
                             systems.gfx.set_pos(content_data, 
-                                Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y + adjusty as f32, next_down(self.size.y)));
+                                Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y + adjusty as f32, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
                         }
                         ButtonChangeType::ImageFrame(frame) => {
                             systems.gfx.set_uv(content_data, 
@@ -369,7 +372,7 @@ impl Button {
                     match data.hover_change {
                         ButtonChangeType::AdjustY(adjusty) => {
                             systems.gfx.set_pos(content_data, 
-                                Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y + adjusty as f32, next_down(self.z_order)));
+                                Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y + adjusty as f32, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
                             systems.gfx.center_text(content_data);
                         }
                         ButtonChangeType::ColorChange(color) => {
@@ -382,7 +385,7 @@ impl Button {
                     match data.hover_change {
                         ButtonChangeType::AdjustY(adjusty) => {
                             systems.gfx.set_pos(content_data, 
-                                Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y + adjusty as f32, next_down(self.z_order)));
+                                Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y + adjusty as f32, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
                         }
                         ButtonChangeType::ImageFrame(frame) => {
                             systems.gfx.set_uv(content_data, 
@@ -418,18 +421,31 @@ impl Button {
             match contenttype {
                 ButtonContentType::Text(data) => {
                     systems.gfx.set_pos(content_data,
-                        Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, next_down(self.z_order)));
+                        Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
                     systems.gfx.set_color(content_data, data.color);
                     systems.gfx.center_text(content_data);
                 }
                 ButtonContentType::Image(data) => {
                     systems.gfx.set_pos(content_data,
-                        Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, next_down(self.z_order)));
+                        Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
                     systems.gfx.set_uv(content_data, 
                         Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y));
                 }
                 _ => {}
             }
+        }
+    }
+
+
+    // TEST
+    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
+        if let Some(index) = self.index {
+            let pos = systems.gfx.get_pos(index);
+            println!("Button BG: {}", pos.z);
+        }
+        if let Some(content_index) = self.content {
+            let pos = systems.gfx.get_pos(content_index);
+            println!("Button Content: {}", pos.z);
         }
     }
 }

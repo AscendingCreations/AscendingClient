@@ -1,6 +1,27 @@
 use graphics::*;
 use winit::dpi::PhysicalSize;
 
+pub trait FloatFix {
+    fn add_f32(&self, b: f32, dec: i32) -> Self;
+    fn sub_f32(&self, b: f32, dec: i32) -> Self;
+}
+
+impl FloatFix for f32 {
+    fn add_f32(&self, b: f32, dec: i32) -> Self {
+        let a_convert_to_int = (self * 10_f32.powi(dec)) as i32;
+        let b_convert_to_int = (b * 10_f32.powi(dec)) as i32;
+        let total = a_convert_to_int + b_convert_to_int; 
+        total as f32 / 10_f32.powi(dec)
+    }
+
+    fn sub_f32(&self, b: f32, dec: i32) -> Self {
+        let a_convert_to_int = (self * 10_f32.powi(dec)) as i32;
+        let b_convert_to_int = (b * 10_f32.powi(dec)) as i32;
+        let total = a_convert_to_int - b_convert_to_int; 
+        total as f32 / 10_f32.powi(dec)
+    }
+}
+
 #[derive(Debug)]
 pub enum InsertTypes {
     Int(i64),
@@ -44,7 +65,7 @@ pub fn is_within_area(area: Vec2, target_pos: Vec2, target_size: Vec2) -> bool {
         area.y <= target_pos.y + target_size.y
 }
 
-pub fn next_down(f: f32) -> f32 {
+/*pub fn next_down(f: f32) -> f32 {
     // We must use strictly integer arithmetic to prevent denormals from
     // flushing to zero after an arithmetic operation on some platforms.
     const NEG_TINY_BITS: u32 = 0x8000_0001; // Smallest (in magnitude) negative f32.
@@ -64,4 +85,4 @@ pub fn next_down(f: f32) -> f32 {
         bits + 1
     };
     f32::from_bits(next_bits)
-}
+}*/

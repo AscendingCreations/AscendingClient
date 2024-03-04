@@ -301,6 +301,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
 
                 let textbox = Textbox::new(systems,
                     Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, MENU_WINDOW_CONTENT_DETAIL),
+                    (0.01, 2),
                     Vec2::new(180.0, 20.0),
                     Color::rgba(240, 240, 240, 255),
                     1,
@@ -333,6 +334,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(104.0, 45.0),
                 MENU_WINDOW_CONTENT,
+                (0.01, 2),
                 Vec2::new(140.0, 34.0),
                 0,
                 true);
@@ -352,6 +354,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(104.0, 19.0),
                 MENU_WINDOW_CONTENT,
+                (0.01, 2),
                 Vec2::new(140.0, 20.0),
                 0,
                 true);
@@ -380,6 +383,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(116.0, 92.0),
                 MENU_WINDOW_CONTENT,
+                (0.01, 2),
                 Vec2::new(24.0, 24.0),
                 0,
                 Some(CheckboxText {
@@ -460,6 +464,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
 
                 let textbox = Textbox::new(systems,
                     Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, MENU_WINDOW_CONTENT_DETAIL),
+                    (0.01, 2),
                     Vec2::new(180.0, 20.0),
                     Color::rgba(240, 240, 240, 255),
                     1,
@@ -508,6 +513,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(104.0, 45.0),
                 MENU_WINDOW_CONTENT,
+                (0.01, 2),
                 Vec2::new(140.0, 34.0),
                 0,
                 true);
@@ -527,6 +533,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(104.0, 19.0),
                 MENU_WINDOW_CONTENT,
+                (0.01, 2),
                 Vec2::new(140.0, 20.0),
                 0,
                 true);
@@ -554,6 +561,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(142.0, 118.0),
                 MENU_WINDOW_CONTENT,
+                (0.01, 2),
                 Vec2::new(24.0, 24.0),
                 0,
                 true);
@@ -581,6 +589,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(282.0, 118.0),
                 MENU_WINDOW_CONTENT,
+                (0.01, 2),
                 Vec2::new(24.0, 24.0),
                 0,
                 true);

@@ -1,7 +1,7 @@
 use graphics::*;
 
 use crate::{
-    gfx_order::*, is_within_area, next_down, widget::*, DrawSetting
+    gfx_order::*, is_within_area, widget::*, DrawSetting, logic::*,
 };
 
 pub struct Setting {
@@ -30,6 +30,9 @@ impl Setting {
         let w_pos = Vec3::new(systems.size.width - w_size.x - 10.0, 60.0, ORDER_GUI_WINDOW);
         let pos = Vec2::new(w_pos.x, w_pos.y);
 
+        let detail_1 = w_pos.z.sub_f32(0.001, 3);
+        let detail_2 = w_pos.z.sub_f32(0.002, 3);
+
         let mut rect = Rect::new(&mut systems.renderer, 0);
         rect.set_position(Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z))
             .set_size(w_size + 2.0)
@@ -42,7 +45,7 @@ impl Setting {
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(w_pos.x, w_pos.y + 237.0);
         let header_size = Vec2::new(w_size.x, 30.0);
-        let header_zpos = next_down(w_pos.z);
+        let header_zpos = detail_1;
         header_rect.set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
@@ -50,7 +53,7 @@ impl Setting {
         systems.gfx.set_visible(header, false);
 
         let text = create_label(systems, 
-            Vec3::new(w_pos.x, w_pos.y + 242.0, next_down(header_zpos)),
+            Vec3::new(w_pos.x, w_pos.y + 242.0, detail_2),
             Vec2::new(w_size.x, 20.0),
             Bounds::new(w_pos.x, w_pos.y + 242.0, w_pos.x + w_size.x, w_pos.y + 262.0),
             Color::rgba(200, 200, 200, 255));
@@ -65,7 +68,8 @@ impl Setting {
             130.0,
             20.0,
             false,
-            next_down(w_pos.z),
+            detail_1,
+            (0.0001, 4),
             ScrollbarRect {
                 color: Color::rgba(70, 70, 70, 255),
                 render_layer: 0,
@@ -93,7 +97,8 @@ impl Setting {
             130.0,
             20.0,
             false,
-            next_down(w_pos.z),
+            detail_1,
+            (0.0001, 4),
             ScrollbarRect {
                 color: Color::rgba(70, 70, 70, 255),
                 render_layer: 0,
@@ -188,24 +193,26 @@ impl Setting {
             return;
         }
         self.z_order = z_order;
-        let z_order_result = self.z_order * 0.01;
 
-        let set_pos_z = ORDER_GUI_WINDOW - z_order_result;
+        let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
+        let detail_1 = detail_origin.sub_f32(0.001, 3);
+        let detail_2 = detail_origin.sub_f32(0.002, 3);
+
         let mut pos = systems.gfx.get_pos(self.bg);
-        pos.z = set_pos_z;
+        pos.z = detail_origin;
         systems.gfx.set_pos(self.bg, pos);
 
         let mut pos = systems.gfx.get_pos(self.header);
-        let header_zpos = next_down(set_pos_z);
+        let header_zpos = detail_1;
         pos.z = header_zpos;
         systems.gfx.set_pos(self.header, pos);
 
         let mut pos = systems.gfx.get_pos(self.header_text);
-        pos.z = next_down(header_zpos);
+        pos.z = detail_2;
         systems.gfx.set_pos(self.header_text, pos);
 
-        self.sfx_scroll.set_z_order(systems, next_down(set_pos_z));
-        self.bgm_scroll.set_z_order(systems, next_down(set_pos_z));
+        self.sfx_scroll.set_z_order(systems, detail_1);
+        self.bgm_scroll.set_z_order(systems, detail_1);
     }
 
     pub fn move_window(&mut self, systems: &mut DrawSetting, screen_pos: Vec2) {
@@ -228,5 +235,21 @@ impl Setting {
         systems.gfx.center_text(self.header_text);
         self.sfx_scroll.set_pos(systems, self.pos);
         self.bgm_scroll.set_pos(systems, self.pos);
+    }
+
+
+    // TEST
+    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
+        let pos = systems.gfx.get_pos(self.bg);
+        println!("BG: {}", pos.z);
+
+        let pos = systems.gfx.get_pos(self.header);
+        println!("Header: {}", pos.z);
+
+        let pos = systems.gfx.get_pos(self.header_text);
+        println!("Header Text: {}", pos.z);
+
+        self.sfx_scroll.print_z_order(systems);
+        self.bgm_scroll.print_z_order(systems);
     }
 }

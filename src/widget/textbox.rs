@@ -29,12 +29,14 @@ pub struct Textbox {
 
     special_key_hold: [bool; MAX_KEY],
     hide_content: bool,
+    z_step: (f32, i32),
 }
 
 impl Textbox {
     pub fn new(
         systems: &mut DrawSetting,
         pos: Vec3,
+        z_step: (f32, i32),
         size: Vec2,
         text_color: Color,
         render_layer: usize,
@@ -51,7 +53,7 @@ impl Textbox {
         systems.gfx.set_visible(bg, false);
 
         let text_data = create_label(systems, 
-            Vec3::new(pos.x, pos.y, next_down(pos.z)), 
+            Vec3::new(pos.x, pos.y, pos.z.sub_f32(z_step.0, z_step.1)), 
             size, 
             Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
             text_color);
@@ -66,6 +68,7 @@ impl Textbox {
             limit,
             size,
             pos,
+            z_step,
             adjust_x: 0.0,
             is_selected: false,
             special_key_hold: [false; MAX_KEY],
@@ -98,14 +101,14 @@ impl Textbox {
     pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
         self.pos.z = z_order;
         systems.gfx.set_pos(self.bg, self.pos);
-        systems.gfx.set_pos(self.text_index, Vec3::new(self.pos.x, self.pos.y, next_down(self.pos.z)));
+        systems.gfx.set_pos(self.text_index, Vec3::new(self.pos.x, self.pos.y, self.pos.z.sub_f32(self.z_step.0, self.z_step.1)));
     }
 
     pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
         self.pos.x = new_pos.x;
         self.pos.y = new_pos.y;
         systems.gfx.set_pos(self.bg, self.pos);
-        systems.gfx.set_pos(self.text_index, Vec3::new(self.pos.x, self.pos.y, next_down(self.pos.z)));
+        systems.gfx.set_pos(self.text_index, Vec3::new(self.pos.x, self.pos.y, self.pos.z.sub_f32(self.z_step.0, self.z_step.1)));
         systems.gfx.set_bound(self.text_index,
             Bounds::new(self.pos.x, self.pos.y, self.pos.x + self.size.x, self.pos.y + self.size.y));
     }
@@ -197,6 +200,15 @@ impl Textbox {
         self.adjust_x = adjust_x;
         systems.gfx.set_pos(self.text_index, 
             Vec3::new(self.pos.x - self.adjust_x, self.pos.y, self.pos.z));
+    }
+
+
+    // TEST
+    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
+        let pos = systems.gfx.get_pos(self.bg);
+        println!("Textbox BG: {}", pos.z);
+        let pos = systems.gfx.get_pos(self.text_index);
+        println!("Textbox Text: {}", pos.z);
     }
 }
 

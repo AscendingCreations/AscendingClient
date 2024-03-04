@@ -1,7 +1,7 @@
 use graphics::*;
 
 use crate::{
-    gfx_order::*, is_within_area, next_down, widget::*, DrawSetting
+    gfx_order::*, is_within_area, widget::*, DrawSetting, logic::*,
 };
 
 const MAX_INV_SLOT: usize = 30;
@@ -32,6 +32,9 @@ impl Inventory {
         let w_pos = Vec3::new(systems.size.width - w_size.x - 10.0, 60.0, ORDER_GUI_WINDOW);
         let pos = Vec2::new(w_pos.x, w_pos.y);
 
+        let detail_1 = w_pos.z.sub_f32(0.001, 3);
+        let detail_2 = w_pos.z.sub_f32(0.002, 3);
+
         let mut rect = Rect::new(&mut systems.renderer, 0);
         rect.set_position(Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z))
             .set_size(w_size + 2.0)
@@ -44,7 +47,7 @@ impl Inventory {
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(w_pos.x, w_pos.y + 237.0);
         let header_size = Vec2::new(w_size.x, 30.0);
-        let header_zpos = next_down(w_pos.z);
+        let header_zpos = detail_1;
         header_rect.set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
@@ -52,7 +55,7 @@ impl Inventory {
         systems.gfx.set_visible(header, false);
 
         let text = create_label(systems, 
-            Vec3::new(w_pos.x, w_pos.y + 242.0, next_down(header_zpos)),
+            Vec3::new(w_pos.x, w_pos.y + 242.0, detail_2),
             Vec2::new(w_size.x, 20.0),
             Bounds::new(w_pos.x, w_pos.y + 242.0, w_pos.x + w_size.x, w_pos.y + 262.0),
             Color::rgba(200, 200, 200, 255));
@@ -69,7 +72,7 @@ impl Inventory {
             box_rect.set_position(
                 Vec3::new(w_pos.x + 10.0 + (37.0 * frame_pos.x), 
                     w_pos.y + 10.0 + (37.0 * frame_pos.y), 
-                    next_down(w_pos.z))
+                    detail_1)
                 )
                 .set_size(Vec2::new(32.0, 32.0))
                 .set_color(Color::rgba(200, 200, 200, 255));
@@ -151,25 +154,27 @@ impl Inventory {
             return;
         }
         self.z_order = z_order;
-        let z_order_result = self.z_order * 0.01;
+        
+        let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
+        let detail_1 = detail_origin.sub_f32(0.001, 3);
+        let detail_2 = detail_origin.sub_f32(0.002, 3);
 
-        let set_pos_z = ORDER_GUI_WINDOW - z_order_result;
         let mut pos = systems.gfx.get_pos(self.bg);
-        pos.z = set_pos_z;
+        pos.z = detail_origin;
         systems.gfx.set_pos(self.bg, pos);
 
         let mut pos = systems.gfx.get_pos(self.header);
-        let header_zpos = next_down(set_pos_z);
+        let header_zpos = detail_1;
         pos.z = header_zpos;
         systems.gfx.set_pos(self.header, pos);
 
         let mut pos = systems.gfx.get_pos(self.header_text);
-        pos.z = next_down(header_zpos);
+        pos.z = detail_2;
         systems.gfx.set_pos(self.header_text, pos);
 
         for i in 0..MAX_INV_SLOT {
             let mut pos = systems.gfx.get_pos(self.slot[i]);
-            pos.z = next_down(set_pos_z);
+            pos.z = detail_1;
             systems.gfx.set_pos(self.slot[i], pos);
         }
     }
@@ -201,5 +206,21 @@ impl Inventory {
                 Vec3::new(self.pos.x + 10.0 + (37.0 * frame_pos.x),
                         self.pos.y + 10.0 + (37.0 * frame_pos.y), pos.z));
         }
+    }
+
+
+    // TEST
+    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
+        let pos = systems.gfx.get_pos(self.bg);
+        println!("BG: {}", pos.z);
+
+        let pos = systems.gfx.get_pos(self.header);
+        println!("Header: {}", pos.z);
+
+        let pos = systems.gfx.get_pos(self.header_text);
+        println!("Header Text: {}", pos.z);
+
+        let pos = systems.gfx.get_pos(self.slot[0]);
+        println!("Inv Slot: {}", pos.z);
     }
 }

@@ -89,6 +89,7 @@ pub struct Checkbox {
     pub z_order: f32,
     pub box_size: Vec2,
     pub adjust_x: f32,
+    z_step: (f32, i32),
 }
 
 impl Checkbox {
@@ -99,6 +100,7 @@ impl Checkbox {
         base_pos: Vec2,
         adjust_pos: Vec2,
         z_order: f32,
+        z_step: (f32, i32),
         box_size: Vec2,
         render_layer: usize,
         text_data: Option<CheckboxText>,
@@ -134,7 +136,7 @@ impl Checkbox {
         let check_image = match checktype {
             CheckType::SetRect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
-                rect.set_position(Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, next_down(z_order)))
+                rect.set_position(Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, z_order.sub_f32(z_step.0, z_step.1)))
                     .set_size(data.size)
                     .set_color(data.rect_color)
                     .set_radius(data.border_radius);
@@ -146,7 +148,7 @@ impl Checkbox {
             }
             CheckType::SetImage(data) => {
                 let mut img = Image::new(Some(data.res), &mut systems.renderer, 0);
-                img.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, next_down(z_order));
+                img.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, z_order.sub_f32(z_step.0, z_step.1));
                 img.hw = data.size;
                 img.uv = Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
                 systems.gfx.add_image(img, render_layer)
@@ -185,6 +187,7 @@ impl Checkbox {
             base_pos,
             adjust_pos,
             z_order,
+            z_step,
             box_size,
             adjust_x,
         }
@@ -219,7 +222,7 @@ impl Checkbox {
         let pos = systems.gfx.get_pos(self.image);
         systems.gfx.set_pos(self.image, Vec3::new(pos.x, pos.y, self.z_order));
         let pos = systems.gfx.get_pos(self.check_image);
-        systems.gfx.set_pos(self.check_image, Vec3::new(pos.x, pos.y, next_down(self.z_order)));
+        systems.gfx.set_pos(self.check_image, Vec3::new(pos.x, pos.y, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
         if let Some(data) = &mut self.text_type {
             let pos = systems.gfx.get_pos(data.0);
             systems.gfx.set_pos(data.0, Vec3::new(pos.x, pos.y, self.z_order));
@@ -361,6 +364,19 @@ impl Checkbox {
 
         if let Some(data) = &mut self.text_type {
             systems.gfx.set_color(data.0, data.1.color);
+        }
+    }
+
+    
+    // TEST
+    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
+        let pos = systems.gfx.get_pos(self.image);
+        println!("Checkbox Image: {}", pos.z);
+        let pos = systems.gfx.get_pos(self.check_image);
+        println!("Checkbox Check: {}", pos.z);
+        if let Some(data) = &mut self.text_type {
+            let pos = systems.gfx.get_pos(data.0);
+            println!("Checkbox Text: {}", pos.z);
         }
     }
 }

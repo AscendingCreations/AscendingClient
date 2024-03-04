@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{button, content::*, ContentType, DrawSetting, MouseInputType, fade::*};
+use crate::{button, content::*, ContentType, DrawSetting, MouseInputType, fade::*, logic::FloatFix};
 
 pub fn login_mouse_input(
     menu_content: &mut MenuContent,
@@ -66,10 +66,15 @@ fn trigger_button(
             systems.fade.init_fade(&mut systems.gfx, FadeType::In, FADE_LOGIN);
         }
         1 => { // Register
-            println!("Register");
+            let fvalue = 0.09999;
+            let result = fvalue.add_f32(0.00001, 5);
+            println!("result: {result}");
+            let resultb = result.add_f32(0.00001, 5);
+            println!("result b: {resultb}");
+            /*println!("Register");
             println!("Old Collection {:?}", systems.gfx.count_collection());
             create_window(systems, menu_content, WindowType::Register);
-            println!("New Collection {:?}", systems.gfx.count_collection());
+            println!("New Collection {:?}", systems.gfx.count_collection());*/
         }
         _ => {}
     }

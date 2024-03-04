@@ -2,7 +2,7 @@ use graphics::*;
 use cosmic_text::{Attrs, Metrics};
 
 use crate::{
-    gfx_order::*, is_within_area, next_down, widget::*, DrawSetting
+    gfx_order::*, is_within_area, widget::*, DrawSetting, logic::*,
 };
 
 const MAX_CHAT_LINE: usize = 8;
@@ -52,6 +52,9 @@ impl Chatbox {
         let w_pos = Vec3::new(10.0, 10.0, ORDER_GUI_WINDOW);
         let w_size = Vec2::new(350.0, 200.0);
 
+        let detail_1 = w_pos.z.sub_f32(0.001, 3);
+        let detail_2 = w_pos.z.sub_f32(0.002, 3);
+
         let mut window_rect = Rect::new(&mut systems.renderer, 0);
         window_rect.set_position(w_pos)
             .set_size(w_size)
@@ -61,27 +64,28 @@ impl Chatbox {
         let window = systems.gfx.add_rect(window_rect, 0);
 
         let mut textbox_rect = Rect::new(&mut systems.renderer, 0);
-        let textbox_zpos = next_down(w_pos.z);
+        let textbox_zpos = detail_1;
         textbox_rect.set_position(Vec3::new(w_pos.x + 5.0, w_pos.y + 5.0, textbox_zpos))
             .set_size(Vec2::new(w_size.x - 75.0, 24.0))
             .set_color(Color::rgba(80, 80, 80, 255));
         let textbox_bg = systems.gfx.add_rect(textbox_rect, 0);
 
         let mut chatarea_rect = Rect::new(&mut systems.renderer, 0);
-        let chatarea_zorder = next_down(w_pos.z);
+        let chatarea_zorder = detail_1;
         let chat_area_pos = Vec2::new(w_pos.x + 5.0, w_pos.y + 34.0);
         let chat_areasize = Vec2::new(w_size.x - 39.0, w_size.y - 39.0);
         chatarea_rect.set_position(Vec3::new(chat_area_pos.x, chat_area_pos.y, chatarea_zorder))
             .set_size(chat_areasize)
             .set_color(Color::rgba(160, 160, 160, 255));
         let chatarea_bg = systems.gfx.add_rect(chatarea_rect, 0);
-        let chat_zorder = next_down(chatarea_zorder);
+        let chat_zorder = detail_2;
         let chat_bounds = Bounds::new(chat_area_pos.x, chat_area_pos.y,
             chat_area_pos.x + chat_areasize.x, chat_area_pos.y + chat_areasize.y);
 
         let textbox = Textbox::new(
             systems,
-            Vec3::new(w_pos.x + 7.0, w_pos.y + 7.0, next_down(textbox_zpos)),
+            Vec3::new(w_pos.x + 7.0, w_pos.y + 7.0, detail_2),
+            (0.0001, 5),
             Vec2::new(w_size.x - 79.0, 20.0),
             Color::rgba(200, 200, 200, 255),
             1,
@@ -116,7 +120,8 @@ impl Chatbox {
                 ),
                 Vec2::new(w_pos.x, w_pos.y),
                 Vec2::new(w_size.x - 29.0, w_size.y - 29.0),
-                next_down(w_pos.z),
+                detail_1,
+                (0.0001, 5),
                 Vec2::new(24.0, 24.0),
                 0,
                 true
@@ -145,7 +150,8 @@ impl Chatbox {
                 ),
                 Vec2::new(w_pos.x, w_pos.y),
                 Vec2::new(w_size.x - 29.0, 34.0),
-                next_down(w_pos.z),
+                detail_1,
+                (0.0001, 5),
                 Vec2::new(24.0, 24.0),
                 0,
                 true
@@ -174,7 +180,8 @@ impl Chatbox {
                 ),
                 Vec2::new(w_pos.x, w_pos.y),
                 Vec2::new(w_size.x - 65.0, 5.0),
-                next_down(w_pos.z),
+                detail_1,
+                (0.0001, 5),
                 Vec2::new(60.0, 24.0),
                 0,
                 true
@@ -188,7 +195,8 @@ impl Chatbox {
             w_size.y - 97.0,
             22.0,
             true,
-            next_down(w_pos.z),
+            detail_1,
+            (0.0001, 5),
             ScrollbarRect {
                 color: Color::rgba(190, 190, 190, 255),
                 render_layer: 0,
@@ -289,23 +297,23 @@ impl Chatbox {
             return;
         }
         self.z_order = z_order;
-        let z_order_result = self.z_order * 0.01;
 
-        let set_pos_z = ORDER_GUI_WINDOW - z_order_result;
+        let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
+        let detail_1 = detail_origin.sub_f32(0.001, 3);
+        let detail_2 = detail_origin.sub_f32(0.002, 3);
+
         let pos = systems.gfx.get_pos(self.window);
-        systems.gfx.set_pos(self.window, Vec3::new(pos.x, pos.y, set_pos_z));
+        systems.gfx.set_pos(self.window, Vec3::new(pos.x, pos.y, detail_origin));
         let pos = systems.gfx.get_pos(self.textbox_bg);
-        let textbox_zpos = next_down(set_pos_z);
-        systems.gfx.set_pos(self.textbox_bg, Vec3::new(pos.x, pos.y, textbox_zpos));
+        systems.gfx.set_pos(self.textbox_bg, Vec3::new(pos.x, pos.y, detail_1));
         let pos = systems.gfx.get_pos(self.chatarea_bg);
-        let chatarea_zorder = next_down(set_pos_z);
-        self.chat_zorder = next_down(chatarea_zorder);
-        systems.gfx.set_pos(self.chatarea_bg, Vec3::new(pos.x, pos.y, chatarea_zorder));
-        self.textbox.set_z_order(systems, next_down(textbox_zpos));
+        self.chat_zorder = detail_2;
+        systems.gfx.set_pos(self.chatarea_bg, Vec3::new(pos.x, pos.y, detail_1));
+        self.textbox.set_z_order(systems, detail_2);
         self.button.iter_mut().for_each(|button| {
-            button.set_z_order(systems, next_down(set_pos_z));
+            button.set_z_order(systems, detail_1);
         });
-        self.scrollbar.set_z_order(systems, next_down(set_pos_z));
+        self.scrollbar.set_z_order(systems, detail_1);
 
         for chat in self.chat.iter() {
             let pos = systems.gfx.get_pos(chat.text);
@@ -477,5 +485,26 @@ impl Chatbox {
             self.scrollbar.set_max_value(systems, (leftover / 16.0).floor() as usize);
             self.scrollbar.set_value(systems, 0);
         }
+    }
+
+
+    // TEST
+    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
+        let pos = systems.gfx.get_pos(self.window);
+        println!("BG: {}", pos.z);
+
+        let pos = systems.gfx.get_pos(self.textbox_bg);
+        println!("Text BG: {}", pos.z);
+
+        let pos = systems.gfx.get_pos(self.chatarea_bg);
+        println!("Chat Area BG: {}", pos.z);
+
+        self.textbox.print_z_order(systems);
+        self.button.iter_mut().for_each(|button| {
+            button.print_z_order(systems);
+        });
+        self.scrollbar.print_z_order(systems);
+
+        println!("Chat Z Order: {}", self.chat_zorder);
     }
 }

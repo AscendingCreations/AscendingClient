@@ -51,6 +51,7 @@ pub struct Scrollbar {
     hold_color: Color,
     in_hover: bool,
     pub in_hold: bool,
+    z_step: (f32, i32),
 }
 
 impl Scrollbar {
@@ -62,6 +63,7 @@ impl Scrollbar {
         thickness: f32,
         is_vertical: bool,
         z_pos: f32,
+        z_step: (f32, i32),
         scrollbar: ScrollbarRect,
         background: Option<ScrollbarBackground>,
         max_value: usize,
@@ -115,7 +117,7 @@ impl Scrollbar {
         scroll_rect.set_position(
                 Vec3::new(base_pos.x + pos.x, 
                     base_pos.y + pos.y, 
-                    next_down(z_pos)))
+                    z_pos.sub_f32(z_step.0, z_step.1)))
             .set_color(scrollbar.color)
             .set_size(size)
             .set_radius(scrollbar.radius);
@@ -131,6 +133,7 @@ impl Scrollbar {
             bg,
             scroll,
             z_pos,
+            z_step,
             reverse_value,
             is_vertical,
             base_pos,
@@ -241,7 +244,7 @@ impl Scrollbar {
             systems.gfx.set_pos(index, Vec3::new(pos.x, pos.y, self.z_pos));
         }
         let pos = systems.gfx.get_pos(self.scroll);
-        systems.gfx.set_pos(self.scroll, Vec3::new(pos.x, pos.y, next_down(self.z_pos)));
+        systems.gfx.set_pos(self.scroll, Vec3::new(pos.x, pos.y, self.z_pos.sub_f32(self.z_step.0, self.z_step.1)));
     }
 
     pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
@@ -306,7 +309,18 @@ impl Scrollbar {
         systems.gfx.set_pos(self.scroll, 
             Vec3::new(self.base_pos.x + self.pos.x,
                     self.base_pos.y + self.pos.y,
-                    next_down(self.z_pos)));
+                    self.z_pos.sub_f32(self.z_step.0, self.z_step.1)));
         systems.gfx.set_size(self.scroll, self.size);
+    }
+
+
+    // TEST
+    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
+        if let Some(index) = self.bg {
+            let pos = systems.gfx.get_pos(index);
+            println!("Scrollbar BG: {}", pos.z);
+        }
+        let pos = systems.gfx.get_pos(self.scroll);
+        println!("Scrollbar Scroll: {}", pos.z);
     }
 }
