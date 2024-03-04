@@ -16,7 +16,10 @@ pub struct Profile {
     in_hold: bool,
     hold_pos: Vec2,
     header_pos: Vec2,
-    header_size: Vec2
+    header_size: Vec2,
+
+    min_bound: Vec2,
+    max_bound: Vec2,
 }
 
 impl Profile {
@@ -67,6 +70,9 @@ impl Profile {
             hold_pos: Vec2::new(0.0, 0.0),
             header_pos,
             header_size,
+
+            min_bound: Vec2::new(systems.size.width - w_size.x - 1.0, systems.size.height - w_size.y - 1.0),
+            max_bound: Vec2::new(1.0, 1.0),
         }
     }
 
@@ -139,7 +145,9 @@ impl Profile {
         if !self.in_hold {
             return;
         }
-        self.pos = screen_pos - self.hold_pos;
+        self.pos = (screen_pos - self.hold_pos)
+            .max(self.max_bound)
+            .min(self.min_bound);
 
         let pos = systems.gfx.get_pos(self.bg);
         systems.gfx.set_pos(self.bg, Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z));

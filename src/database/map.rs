@@ -39,7 +39,7 @@ impl MapData {
             x,
             y,
             group,
-            tile: vec![Tile { id: vec![0; 1024] }; 8],
+            tile: vec![Tile { id: vec![0; 1024] }; 9],
             attribute: vec![MapAttribute::Walkable; 1024],
             zonespawns: Default::default(),
             zones: Default::default(),
@@ -103,7 +103,7 @@ pub fn load_map_data(
     (0..32).for_each(|x| {
         (0..32).for_each(|y| {
             let tile_num = get_tile_pos(x, y);
-            (0..8).for_each(|layer| {
+            (0..9).for_each(|layer| {
                 let id = mapdata.tile[layer].id[tile_num] as usize;
                 if id > 0 {
                     systems.gfx.set_map_tile(

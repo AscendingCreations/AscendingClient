@@ -61,10 +61,10 @@ impl Interface {
             chatbox: Chatbox::new(systems),
             window_order: 
                 vec![
-                    (Window::Inventory, 0),
-                    (Window::Profile, 1),
-                    (Window::Setting, 2),
-                    (Window::Chatbox, 3),
+                    (Window::Chatbox, 0),
+                    (Window::Inventory, 1),
+                    (Window::Profile, 2),
+                    (Window::Setting, 3),
                 ],
             drag_window: None,
             selected_textbox: SelectedTextbox::None,

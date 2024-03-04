@@ -42,6 +42,9 @@ pub struct Chatbox {
     pub z_order: f32,
     in_hold: bool,
     hold_pos: Vec2,
+
+    min_bound: Vec2,
+    max_bound: Vec2,
 }
 
 impl Chatbox {
@@ -227,6 +230,9 @@ impl Chatbox {
             z_order: w_pos.z,
             in_hold: false,
             hold_pos: Vec2::new(0.0, 0.0),
+
+            min_bound: Vec2::new(systems.size.width - w_size.x, systems.size.height - w_size.y),
+            max_bound: Vec2::new(0.0, 0.0),
         }
     }
 
@@ -311,7 +317,9 @@ impl Chatbox {
         if !self.in_hold {
             return;
         }
-        self.pos = screen_pos - self.hold_pos;
+        self.pos = (screen_pos - self.hold_pos)
+            .max(self.max_bound)
+            .min(self.min_bound);
 
         let pos = systems.gfx.get_pos(self.window);
         systems.gfx.set_pos(self.window, Vec3::new(self.pos.x, self.pos.y, pos.z));
