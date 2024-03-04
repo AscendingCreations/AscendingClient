@@ -28,4 +28,5 @@ pub enum EntityType {
     #[default]
     None,
     Player(Entity),
+    Npc(Entity),
 }

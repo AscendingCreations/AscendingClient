@@ -8,6 +8,7 @@ use crate::{
 #[derive(Copy, Clone, Debug, Default)]
 pub struct LoopTimer {
     player_tmr: f32,
+    npc_tmr: f32,
     input_tmr: f32,
 }
 
@@ -25,6 +26,11 @@ pub fn game_loop(
             if seconds > loop_timer.player_tmr {
                 update_player(world, systems, data, seconds);
                 loop_timer.player_tmr = seconds + 0.01;
+            }
+
+            if seconds > loop_timer.npc_tmr {
+                update_npc(world, systems, data, seconds);
+                loop_timer.npc_tmr = seconds + 0.01;
             }
 
             if seconds > loop_timer.input_tmr {
