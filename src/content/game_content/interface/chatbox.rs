@@ -1,4 +1,5 @@
 use graphics::*;
+use cosmic_text::{Attrs, Metrics};
 
 use crate::{
     gfx_order::*, is_within_area, next_down, widget::*, DrawSetting
@@ -8,10 +9,14 @@ const MAX_CHAT_LINE: usize = 8;
 const VISIBLE_SIZE: f32 = 160.0;
 const MAX_CHAT: usize = 100;
 
+pub const COLOR_WHITE: Color = Color::rgba(255, 255, 255, 255);
+pub const COLOR_RED: Color = Color::rgba(230, 30, 30, 255);
+pub const COLOR_BLUE: Color = Color::rgba(30, 30, 230, 255);
+pub const COLOR_GREEN: Color = Color::rgba(30, 230, 30, 255);
+
 #[derive(Debug)]
 pub struct Chat {
     text: usize,
-    msg: String,
     size: Vec2,
     adjust_y: f32,
 }
@@ -392,7 +397,7 @@ impl Chatbox {
             }
         }
         self.chat_scroll_value = self.scrollbar.value;
-        let scroll_y = self.chat_scroll_value * 20;
+        let scroll_y = self.chat_scroll_value * 16;
 
         for data in self.chat.iter_mut() {
             let start_pos = Vec2::new(self.chat_bounds.left,
@@ -404,7 +409,7 @@ impl Chatbox {
         }
     }
 
-    pub fn add_chat(&mut self, systems: &mut DrawSetting, msg: String) {
+    pub fn add_chat(&mut self, systems: &mut DrawSetting, msg: (String, Color), header_msg: Option<(String, Color)>) {
         let start_pos = Vec2::new(self.chat_bounds.left,
             self.chat_bounds.bottom - self.chat_areasize.y);
         
@@ -419,13 +424,28 @@ impl Chatbox {
             .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
         
         let text = systems.gfx.add_text(text_data, 1);
-        systems.gfx.set_text(&mut systems.renderer, text, &msg);
+        let msg_color = Attrs::new().color(msg.1);
+
+        if let Some(header) = header_msg {
+            let header_color = Attrs::new().color(header.1);
+            systems.gfx.set_rich_text(&mut systems.renderer, text,
+                [
+                    (header.0.as_str(), header_color),
+                    (msg.0.as_str(), msg_color),
+                ]
+            );
+        } else {
+            systems.gfx.set_rich_text(&mut systems.renderer, text,
+                [
+                    (msg.0.as_str(), msg_color),
+                ]
+            );
+        }
         let size = systems.gfx.get_measure(text);
         systems.gfx.set_pos(text, Vec3::new(start_pos.x, start_pos.y + 2.0 + size.y, self.chat_zorder));
 
         let chat = Chat {
             text,
-            msg,
             size,
             adjust_y: size.y,
         };
@@ -446,7 +466,7 @@ impl Chatbox {
 
         let leftover = self.chat_line_size - VISIBLE_SIZE;
         if leftover > 0.0 {
-            self.scrollbar.set_max_value(systems, (leftover / 20.0).floor() as usize);
+            self.scrollbar.set_max_value(systems, (leftover / 16.0).floor() as usize);
             self.scrollbar.set_value(systems, 0);
         }
     }

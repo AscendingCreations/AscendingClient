@@ -1,6 +1,5 @@
 use graphics::*;
 use cosmic_text::{Attrs, Metrics};
-use enum_iterator::{all, Sequence};
 
 use winit::{
     event::*,
@@ -8,7 +7,7 @@ use winit::{
 };
 
 use crate::{
-    gfx_order::*, is_within_area, widget::*, DrawSetting, GameContent, MouseInputType
+    gfx_order::*, is_within_area, widget::*, DrawSetting, GameContent, MouseInputType, interface::chatbox::*,
 };
 use hecs::World;
 
@@ -24,7 +23,7 @@ use setting::*;
 use screen::*;
 use chatbox::*;
 
-#[derive(PartialEq, Eq, Clone, Copy, Sequence, Debug)]
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Window {
     Inventory,
     Profile,
@@ -316,27 +315,29 @@ fn trigger_chatbox_button(
 ) {
     match index {
         0 => { // Scroll Up
-            println!("Scroll Up {:?}", game_content.interface.chatbox.scrollbar.value);
+            if game_content.interface.chatbox.scrollbar.max_value <= 0 {
+                return;
+            }
             let scrollbar_value = 
                 game_content.interface.chatbox.scrollbar.value
                     .saturating_add(1)
                     .min(game_content.interface.chatbox.scrollbar.max_value);
-            println!("Scroll Up Result {:?}", scrollbar_value);
             game_content.interface.chatbox.scrollbar.set_value(systems, scrollbar_value);
             game_content.interface.chatbox.set_chat_scrollbar(systems, true);
         }
         1 => { // Scroll Down
-            println!("Scroll Down {:?}", game_content.interface.chatbox.scrollbar.value);
+            if game_content.interface.chatbox.scrollbar.max_value <= 0 {
+                return;
+            }
             let scrollbar_value = 
                 game_content.interface.chatbox.scrollbar.value
                     .saturating_sub(1);
-            println!("Scroll Down Result {:?}", scrollbar_value);
             game_content.interface.chatbox.scrollbar.set_value(systems, scrollbar_value);
             game_content.interface.chatbox.set_chat_scrollbar(systems, true);
         }
         2 => { // Send
             let msg = game_content.interface.chatbox.textbox.text.clone();
-            game_content.interface.chatbox.add_chat(systems, msg);
+            game_content.interface.chatbox.add_chat(systems, (msg, COLOR_WHITE), Some(("[Sherwin]: ".to_string(), COLOR_RED)));
             game_content.interface.chatbox.textbox.set_text(systems, String::new());
         }
         _ => {}
@@ -531,16 +532,4 @@ pub fn print_z_order(game_content: &mut GameContent) {
     for data in game_content.interface.window_order.iter() {
         println!("Order: {:?}", data);
     }
-    /*for wndw in all::<Window>().collect::<Vec<_>>() {
-        let z_order = match wndw {
-            Window::Inventory => game_content.interface.inventory.z_order,
-            Window::Profile => game_content.interface.profile.z_order,
-            Window::Setting => game_content.interface.setting.z_order,
-        };
-        match wndw {
-            Window::Inventory => println!("Inventory {z_order}"),
-            Window::Profile => println!("Profile {z_order}"),
-            Window::Setting => println!("Setting {z_order}"),
-        }
-    }*/
 }
