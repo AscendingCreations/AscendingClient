@@ -21,13 +21,13 @@ use hecs::World;
 
 mod player;
 mod npc;
-mod map;
+pub mod map;
 mod camera;
 pub mod entity;
 
 use player::*;
 use npc::*;
-use map::*;
+pub use map::*;
 use camera::*;
 pub use entity::*;
 
@@ -41,7 +41,7 @@ const MAX_KEY: usize = 5;
 pub struct GameContent {
     players: IndexSet<Entity>,
     npcs: IndexSet<Entity>,
-    map: MapContent,
+    pub map: MapContent,
     camera: Camera,
     interface: Interface,
     keyinput: [bool; MAX_KEY],
@@ -88,8 +88,15 @@ impl GameContent {
     }
 
     pub fn setup_map(&mut self, systems: &mut DrawSetting, database: &mut Database) {
+        self.map.map_attribute.clear();
         for i in 0..9 {
             load_map_data(systems, &database.map[i], self.map.index[i]);
+
+            self.map.map_attribute.push(
+                MapAttributes {
+                    attribute: database.map[i].attribute.clone(),
+                }
+            )
         }
     }
 
@@ -110,16 +117,16 @@ impl GameContent {
 
     // TEMP //
     pub fn move_player(
-        &self,
+        &mut self,
         world: &mut World,
         systems: &mut DrawSetting,
         dir: &Direction,
     ) {
         let myentity = self.myentity.expect("Could not find myentity");
-        move_player(world, systems, &myentity, &dir);
+        move_player(world, systems, &myentity, self, &dir);
     }
     pub fn player_attack(
-        &self,
+        &mut self,
         world: &mut World,
         systems: &mut DrawSetting,
         seconds: f32,

@@ -1,7 +1,7 @@
 use graphics::*;
 use hecs::World;
 
-const SPRITE_FRAME_X: f32 = 6.0;
+pub const NPC_SPRITE_FRAME_X: f32 = 6.0;
 
 use crate::{
     gfx_order::*,
@@ -61,6 +61,7 @@ pub fn move_npc(
     if world.get_or_panic::<Attacking>(entity).0 {
         return;
     }
+    
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         if movement.is_moving {
             return;
@@ -82,7 +83,7 @@ pub fn move_npc(
     {
         world.get::<&mut LastMoveFrame>(entity.0).expect("Could not find LastFrame").0 = last_frame;
     }
-    let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
+    let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
     set_npc_frame(world, systems, entity, frame as usize + last_frame);
 }
 
@@ -100,7 +101,7 @@ pub fn end_npc_move(
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
-    let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
+    let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
     set_npc_frame(world, systems, entity, frame as usize);
 }
 
@@ -132,8 +133,8 @@ pub fn set_npc_frame(
 ) {
     let sprite_index = world.get_or_panic::<Sprite>(entity).0;
     let size = systems.gfx.get_size(sprite_index);
-    let frame_pos = Vec2::new(frame_index as f32 % SPRITE_FRAME_X,
-        (frame_index  as f32 / SPRITE_FRAME_X).floor());
+    let frame_pos = Vec2::new(frame_index as f32 % NPC_SPRITE_FRAME_X,
+        (frame_index  as f32 / NPC_SPRITE_FRAME_X).floor());
     systems.gfx.set_uv(sprite_index,
         Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y));
 }
@@ -156,7 +157,7 @@ pub fn init_npc_attack(
             attackframe.timer = seconds + 0.16;
         }
     }
-    let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
+    let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
     set_npc_frame(world, systems, entity, frame as usize + 3);
 }
 
@@ -179,14 +180,14 @@ pub fn process_npc_attack(
 
             let mut attackframe = world.get_or_panic::<AttackFrame>(entity).frame;
             if attackframe > 2 { attackframe = 2; }
-            let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
+            let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
             set_npc_frame(world, systems, entity, frame as usize + 3 + attackframe);
         }
     } else {
         {
             world.get::<&mut Attacking>(entity.0).expect("Could not find attacking").0 = false;
         }
-        let frame = world.get_or_panic::<Dir>(entity).0 * SPRITE_FRAME_X as u8;
+        let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
         set_npc_frame(world, systems, entity, frame as usize);
     }
 }
