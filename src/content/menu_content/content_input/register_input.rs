@@ -62,14 +62,13 @@ fn trigger_button(
 ) {
     match index {
         0 => { // Register
-            println!("Register");
-            println!("Email: {:?}", menu_content.textbox[0].text);
-            println!("Retype Email: {:?}", menu_content.textbox[1].text);
-            println!("Password: {:?}", menu_content.textbox[2].text);
-            println!("Retype Password: {:?}", menu_content.textbox[3].text);
-            println!("Username: {:?}", menu_content.textbox[4].text);
-            socket.register().expect("Failed to register socket");
-            send_register(socket).expect("Failed to send register");
+            
+            send_register(
+                socket,
+                menu_content.textbox[4].text.clone(),
+                menu_content.textbox[2].text.clone(),
+                menu_content.textbox[0].text.clone(),
+                1).expect("Failed to send register");
         }
         1 => { // Sign In
             println!("Sign In");

@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use crate::game_content::entity::*;
+use bytey::{ByteBufferRead, ByteBufferWrite};
 
 pub const TILE_SIZE: usize = 20;
 pub const SCREEN_WIDTH: usize = 800;
@@ -29,6 +30,30 @@ pub enum EntityType {
     None,
     Player(Entity),
     Npc(Entity),
+}
+
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    PartialEq,
+    Eq,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
+#[repr(u8)]
+pub enum MessageChannel {
+    #[default]
+    Map,
+    Global,
+    Trade,
+    Party,
+    Private,
+    Guild,
+    Help,
+    Quest,
+    Npc,
 }
 
 pub const ORDER_MENU_BG: f32 = 10.9;

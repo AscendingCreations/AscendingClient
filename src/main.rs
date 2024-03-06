@@ -223,6 +223,7 @@ async fn main() -> Result<(), AscendingError> {
     let mut database = Database::new();
 
     let mut socket = Socket::new();
+    socket.register().expect("Failed to register socket");
 
     // setup our system which includes Camera and projection as well as our controls.
     // for the camera.

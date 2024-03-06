@@ -109,7 +109,7 @@ pub fn can_move(world: &mut World, systems: &mut DrawSetting, entity: &Entity, c
         }
         _ => {}
     }
-    let attribute = content.map.get_attribute(pos.pos, direction);
+    let attribute = content.map.get_attribute(Vec2::new(pos.x as f32, pos.y as f32), direction);
     match attribute {
         MapAttribute::Blocked => return false,
         _ => {}

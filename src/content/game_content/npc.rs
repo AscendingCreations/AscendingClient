@@ -26,9 +26,15 @@ pub fn add_npc(
     
     let entity = world.spawn((
         Position {
-            pos: tile_pos,
-            offset: Vec2::new(0.0, 0.0),
+            x: tile_pos.x as i32,
+            y: tile_pos.y as i32,
+            map: MapPosition {
+                x: 0_i32,
+                y: 0_i32,
+                group: 0_i32,
+            }
         },
+        PositionOffset::default(),
         Sprite(sprite),
         Movement::default(),
         Dir::default(),
@@ -111,10 +117,11 @@ pub fn update_npc_position(
     entity: &Entity,
 ) {
     let npc_sprite = world.get_or_panic::<Sprite>(entity).0;
-    let cur_tile_pos = world.get_or_panic::<Position>(entity).pos;
+    let cur_tile_pos = world.get_or_panic::<Position>(entity);
     let cur_pos = systems.gfx.get_pos(npc_sprite);
-    let offset = world.get_or_panic::<Position>(entity).offset;
-    let texture_pos = camera.pos + (cur_tile_pos * TILE_SIZE as f32) + offset - Vec2::new(10.0, 4.0);
+    let offset = world.get_or_panic::<PositionOffset>(entity).offset;
+    let texture_pos = camera.pos + 
+        (Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) * TILE_SIZE as f32) + offset - Vec2::new(10.0, 4.0);
     if texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
@@ -213,19 +220,20 @@ pub fn process_npc_movement(
                 Direction::Left => Vec2::new(-moveoffset, 0.0),
                 Direction::Right => Vec2::new(moveoffset, 0.0),
             };
-            world.get::<&mut Position>(entity.0).expect("Could not find Position").offset = offset;
+            world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = offset;
         }
     } else {
-        let cur_tile_pos = world.get_or_panic::<Position>(entity).pos;
+        let cur_tile_pos = world.get_or_panic::<Position>(entity);
         let new_tile_pos = match movement.move_direction {
-            Direction::Up => cur_tile_pos + Vec2::new(0.0, 1.0),
-            Direction::Down => cur_tile_pos + Vec2::new(0.0, -1.0),
-            Direction::Left => cur_tile_pos + Vec2::new(-1.0, 0.0),
-            Direction::Right => cur_tile_pos + Vec2::new(1.0, 0.0),
+            Direction::Up => Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) + Vec2::new(0.0, 1.0),
+            Direction::Down => Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) + Vec2::new(0.0, -1.0),
+            Direction::Left => Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) + Vec2::new(-1.0, 0.0),
+            Direction::Right => Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) + Vec2::new(1.0, 0.0),
         };
         {
-            world.get::<&mut Position>(entity.0).expect("Could not find Position").pos = new_tile_pos;
-            world.get::<&mut Position>(entity.0).expect("Could not find Position").offset = Vec2::new(0.0, 0.0);
+            world.get::<&mut Position>(entity.0).expect("Could not find Position").x = new_tile_pos.x as i32;
+            world.get::<&mut Position>(entity.0).expect("Could not find Position").y = new_tile_pos.y as i32;
+            world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = Vec2::new(0.0, 0.0);
         }
         end_npc_move(world, systems, entity);
     }

@@ -154,8 +154,9 @@ pub fn update_npc(world: &mut World, systems: &mut DrawSetting, content: &mut Ga
 
 pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut DrawSetting) {
     let player_pos = if let Some(entity) = content.myentity {
+        let pos_offset = world.get_or_panic::<PositionOffset>(&entity);
         let pos = world.get_or_panic::<Position>(&entity);
-        (pos.pos * TILE_SIZE as f32) + pos.offset
+        (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32) + pos_offset.offset
     } else {
         Vec2::new(0.0, 0.0)
     };
