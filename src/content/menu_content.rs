@@ -5,7 +5,7 @@ pub mod content_input;
 pub use content_input::*;
 
 use crate::{
-    content::*, gfx_order::*, is_within_area, widget::*, DrawSetting, SCREEN_HEIGHT, SCREEN_WIDTH
+    content::*, values::*, is_within_area, widget::*, DrawSetting, SCREEN_HEIGHT, SCREEN_WIDTH
 };
 use hecs::World;
 
@@ -34,7 +34,7 @@ impl MenuContent {
     pub fn new(_world: &mut World, systems: &mut DrawSetting) -> Self {
         let mut bg_image = Image::new(Some(systems.resource.menu_bg.allocation),
             &mut systems.renderer, 0);
-        bg_image.pos = Vec3::new(0.0, 0.0, MENU_BG);
+        bg_image.pos = Vec3::new(0.0, 0.0, ORDER_MENU_BG);
         bg_image.hw = Vec2::new(800.0, 600.0);
         bg_image.uv = Vec4::new(0.0, 0.0, 800.0, 600.0);
         let bg = systems.gfx.add_image(bg_image, 0);
@@ -241,7 +241,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
             let pos = Vec2::new((screen_size.x - size.x) * 0.5, 80.0);
 
             let mut menu_rect = Rect::new(&mut systems.renderer, 0);
-            menu_rect.set_position(Vec3::new(pos.x - 1.0, pos.y - 1.0, MENU_WINDOW))
+            menu_rect.set_position(Vec3::new(pos.x - 1.0, pos.y - 1.0, ORDER_MENU_WINDOW))
                 .set_size(size + 2.0)
                 .set_color(Color::rgba(160, 160, 160, 255))
                 .set_border_color(Color::rgba(10, 10, 10, 255))
@@ -249,13 +249,13 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
             content.window.push(systems.gfx.add_rect(menu_rect, 0));
 
             let mut header_rect = Rect::new(&mut systems.renderer, 0);
-            header_rect.set_position(Vec3::new(pos.x, pos.y + 196.0, MENU_WINDOW_CONTENT))
+            header_rect.set_position(Vec3::new(pos.x, pos.y + 196.0, ORDER_MENU_WINDOW_CONTENT))
                 .set_size(Vec2::new(size.x, 30.0))
                 .set_color(Color::rgba(120, 120, 120, 255));
             content.window.push(systems.gfx.add_rect(header_rect, 0));
 
             let header_text = create_label(systems, 
-                Vec3::new(pos.x, pos.y + 199.0, MENU_WINDOW_CONTENT_DETAIL), 
+                Vec3::new(pos.x, pos.y + 199.0, ORDER_MENU_WINDOW_CONTENT_DETAIL), 
                 Vec2::new(size.x, 20.0),
                 Bounds::new(pos.x, pos.y + 199.0, pos.x + size.x, pos.y + 219.0),
                 Color::rgba(240, 240, 240, 255));
@@ -271,10 +271,10 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     1 => 123.0,
                     _ => 154.0,
                 };
-                labelbox.set_position(Vec3::new(pos.x + 24.0, pos.y + addy, MENU_WINDOW_CONTENT))
+                labelbox.set_position(Vec3::new(pos.x + 24.0, pos.y + addy, ORDER_MENU_WINDOW_CONTENT))
                     .set_size(Vec2::new(116.0, 24.0))
                     .set_color(Color::rgba(208, 208, 208, 255));
-                textbox.set_position(Vec3::new(pos.x + 140.0, pos.y + addy, MENU_WINDOW_CONTENT))
+                textbox.set_position(Vec3::new(pos.x + 140.0, pos.y + addy, ORDER_MENU_WINDOW_CONTENT))
                     .set_size(Vec2::new(184.0, 24.0))
                     .set_color(Color::rgba(90, 90, 90, 255));
                 content.window.push(systems.gfx.add_rect(labelbox, 0));
@@ -282,7 +282,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
 
                 let tpos = Vec2::new(pos.x + 27.0, pos.y + addy + 2.0);
                 let text = create_label(systems,
-                    Vec3::new(tpos.x, tpos.y, MENU_WINDOW_CONTENT_DETAIL),
+                    Vec3::new(tpos.x, tpos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                     Vec2::new(110.0, 20.0),
                     Bounds::new(tpos.x, tpos.y, tpos.x + 110.0, tpos.y + 20.0),
                     Color::rgba(100, 100, 100, 255));
@@ -300,7 +300,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 };
 
                 let textbox = Textbox::new(systems,
-                    Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, MENU_WINDOW_CONTENT_DETAIL),
+                    Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                     (0.01, 2),
                     Vec2::new(180.0, 20.0),
                     Color::rgba(240, 240, 240, 255),
@@ -333,7 +333,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(104.0, 45.0),
-                MENU_WINDOW_CONTENT,
+                ORDER_MENU_WINDOW_CONTENT,
                 (0.01, 2),
                 Vec2::new(140.0, 34.0),
                 0,
@@ -353,7 +353,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(104.0, 19.0),
-                MENU_WINDOW_CONTENT,
+                ORDER_MENU_WINDOW_CONTENT,
                 (0.01, 2),
                 Vec2::new(140.0, 20.0),
                 0,
@@ -382,7 +382,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(116.0, 92.0),
-                MENU_WINDOW_CONTENT,
+                ORDER_MENU_WINDOW_CONTENT,
                 (0.01, 2),
                 Vec2::new(24.0, 24.0),
                 0,
@@ -403,7 +403,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
             let pos = Vec2::new((screen_size.x - size.x) * 0.5, 20.0);
 
             let mut menu_rect = Rect::new(&mut systems.renderer, 0);
-            menu_rect.set_position(Vec3::new(pos.x - 1.0, pos.y - 1.0, MENU_WINDOW))
+            menu_rect.set_position(Vec3::new(pos.x - 1.0, pos.y - 1.0, ORDER_MENU_WINDOW))
                 .set_size(size + 2.0)
                 .set_color(Color::rgba(160, 160, 160, 255))
                 .set_border_color(Color::rgba(10, 10, 10, 255))
@@ -411,13 +411,13 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
             content.window.push(systems.gfx.add_rect(menu_rect, 0));
             
             let mut header_rect = Rect::new(&mut systems.renderer, 0);
-            header_rect.set_position(Vec3::new(pos.x, pos.y + 345.0, MENU_WINDOW_CONTENT))
+            header_rect.set_position(Vec3::new(pos.x, pos.y + 345.0, ORDER_MENU_WINDOW_CONTENT))
                 .set_size(Vec2::new(size.x, 30.0))
                 .set_color(Color::rgba(120, 120, 120, 255));
             content.window.push(systems.gfx.add_rect(header_rect, 0));
 
             let header_text = create_label(systems, 
-                Vec3::new(pos.x, pos.y + 348.0, MENU_WINDOW_CONTENT_DETAIL), 
+                Vec3::new(pos.x, pos.y + 348.0, ORDER_MENU_WINDOW_CONTENT_DETAIL), 
                 Vec2::new(size.x, 20.0),
                 Bounds::new(pos.x, pos.y + 348.0, pos.x + size.x, pos.y + 368.0),
                 Color::rgba(240, 240, 240, 255));
@@ -436,10 +436,10 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     4 => 191.0,
                     _ => 303.0,
                 };
-                labelbox.set_position(Vec3::new(pos.x + 24.0, pos.y + addy, MENU_WINDOW_CONTENT))
+                labelbox.set_position(Vec3::new(pos.x + 24.0, pos.y + addy, ORDER_MENU_WINDOW_CONTENT))
                     .set_size(Vec2::new(116.0, 24.0))
                     .set_color(Color::rgba(208, 208, 208, 255));
-                textbox_bg.set_position(Vec3::new(pos.x + 140.0, pos.y + addy, MENU_WINDOW_CONTENT))
+                textbox_bg.set_position(Vec3::new(pos.x + 140.0, pos.y + addy, ORDER_MENU_WINDOW_CONTENT))
                     .set_size(Vec2::new(184.0, 24.0))
                     .set_color(Color::rgba(90, 90, 90, 255));
                 content.window.push(systems.gfx.add_rect(labelbox, 0));
@@ -447,7 +447,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
 
                 let tpos = Vec2::new(pos.x + 27.0, pos.y + addy + 2.0);
                 let text = create_label(systems,
-                    Vec3::new(tpos.x, tpos.y, MENU_WINDOW_CONTENT_DETAIL),
+                    Vec3::new(tpos.x, tpos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                     Vec2::new(110.0, 20.0),
                     Bounds::new(tpos.x, tpos.y, tpos.x + 110.0, tpos.y + 20.0),
                     Color::rgba(100, 100, 100, 255));
@@ -463,7 +463,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 content.label.push(textindex);
 
                 let textbox = Textbox::new(systems,
-                    Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, MENU_WINDOW_CONTENT_DETAIL),
+                    Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                     (0.01, 2),
                     Vec2::new(180.0, 20.0),
                     Color::rgba(240, 240, 240, 255),
@@ -476,13 +476,13 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
             }
 
             let mut sprite_bg = Rect::new(&mut systems.renderer, 0);
-            sprite_bg.set_position(Vec3::new(pos.x + 34.0, pos.y + 98.0, MENU_WINDOW_CONTENT))
+            sprite_bg.set_position(Vec3::new(pos.x + 34.0, pos.y + 98.0, ORDER_MENU_WINDOW_CONTENT))
                 .set_size(Vec2::new(80.0, 80.0))
                 .set_color(Color::rgba(120, 120, 120, 255));
             content.window.push(systems.gfx.add_rect(sprite_bg, 0));
 
             let sprite_label = create_label(systems, 
-                Vec3::new(pos.x + 142.0, pos.y + 148.0, MENU_WINDOW_CONTENT_DETAIL), 
+                Vec3::new(pos.x + 142.0, pos.y + 148.0, ORDER_MENU_WINDOW_CONTENT_DETAIL), 
                 Vec2::new(size.x, 20.0),
                 Bounds::new(pos.x + 142.0, pos.y + 148.0, pos.x + 306.0, pos.y + 168.0),
                 Color::rgba(80, 80, 80, 255));
@@ -512,7 +512,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(104.0, 45.0),
-                MENU_WINDOW_CONTENT,
+                ORDER_MENU_WINDOW_CONTENT,
                 (0.01, 2),
                 Vec2::new(140.0, 34.0),
                 0,
@@ -532,7 +532,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(104.0, 19.0),
-                MENU_WINDOW_CONTENT,
+                ORDER_MENU_WINDOW_CONTENT,
                 (0.01, 2),
                 Vec2::new(140.0, 20.0),
                 0,
@@ -560,7 +560,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(142.0, 118.0),
-                MENU_WINDOW_CONTENT,
+                ORDER_MENU_WINDOW_CONTENT,
                 (0.01, 2),
                 Vec2::new(24.0, 24.0),
                 0,
@@ -588,7 +588,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     }),
                 Vec2::new(pos.x, pos.y),
                 Vec2::new(282.0, 118.0),
-                MENU_WINDOW_CONTENT,
+                ORDER_MENU_WINDOW_CONTENT,
                 (0.01, 2),
                 Vec2::new(24.0, 24.0),
                 0,
@@ -596,7 +596,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
             content.button.push(button);
 
             let sprite_number_text = create_label(systems, 
-                Vec3::new(pos.x + 170.0, pos.y + 120.0, MENU_WINDOW_CONTENT_DETAIL), 
+                Vec3::new(pos.x + 170.0, pos.y + 120.0, ORDER_MENU_WINDOW_CONTENT_DETAIL), 
                 Vec2::new(size.x, 20.0),
                 Bounds::new(pos.x + 170.0, pos.y + 120.0, pos.x + 278.0, pos.y + 140.0),
                 Color::rgba(80, 80, 80, 255));

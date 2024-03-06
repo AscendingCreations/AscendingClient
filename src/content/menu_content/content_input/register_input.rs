@@ -5,12 +5,13 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{button, content::*, ContentType, DrawSetting, MouseInputType};
+use crate::{button, content::*, ContentType, DrawSetting, MouseInputType, socket::*};
 
 pub fn register_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut DrawSetting,
+    socket: &mut Socket,
     input_type: MouseInputType,
     screen_pos: Vec2,
 ) {
@@ -23,7 +24,7 @@ pub fn register_mouse_input(
             let button_index = click_buttons(menu_content, systems, screen_pos);
             if let Some(index) = button_index {
                 menu_content.did_button_click = true;
-                trigger_button(menu_content, systems, index);
+                trigger_button(menu_content, systems, socket, index);
             }
 
             let checkbox_index = click_checkbox(menu_content, systems, screen_pos);
@@ -56,6 +57,7 @@ pub fn register_key_input(
 fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut DrawSetting,
+    socket: &mut Socket,
     index: usize,
 ) {
     match index {
@@ -66,6 +68,8 @@ fn trigger_button(
             println!("Password: {:?}", menu_content.textbox[2].text);
             println!("Retype Password: {:?}", menu_content.textbox[3].text);
             println!("Username: {:?}", menu_content.textbox[4].text);
+            socket.register().expect("Failed to register socket");
+            send_register(socket).expect("Failed to send register");
         }
         1 => { // Sign In
             println!("Sign In");

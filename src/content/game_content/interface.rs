@@ -7,7 +7,7 @@ use winit::{
 };
 
 use crate::{
-    gfx_order::*, is_within_area, widget::*, DrawSetting, GameContent, MouseInputType, interface::chatbox::*,
+    is_within_area, widget::*, DrawSetting, GameContent, MouseInputType, interface::chatbox::*,
 };
 use hecs::World;
 

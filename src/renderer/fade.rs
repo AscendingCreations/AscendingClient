@@ -4,7 +4,7 @@ use hecs::World;
 use winit::dpi::PhysicalSize;
 
 use crate::{
-    gfx_collection::*, gfx_order::*, content::*, DrawSetting, Database,
+    gfx_collection::*, values::*, content::*, DrawSetting, Database,
 };
 
 pub enum FadeType {

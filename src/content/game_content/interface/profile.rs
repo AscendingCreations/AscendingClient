@@ -1,7 +1,7 @@
 use graphics::*;
 
 use crate::{
-    gfx_order::*, is_within_area, widget::*, DrawSetting, logic::*,
+    values::*, is_within_area, widget::*, DrawSetting, logic::*,
 };
 
 pub struct Profile {

@@ -19,9 +19,6 @@
                     "kind": "bin"
                 }
             },
-            "args": [
-                "RUST_LOG=debug ./main"
-            ],
             "cwd": "${workspaceFolder}"
         },
         {

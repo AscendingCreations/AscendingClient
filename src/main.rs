@@ -37,11 +37,11 @@ mod resource;
 mod widget;
 mod content;
 mod values;
-mod gfx_order;
 mod inputs;
 mod mainloop;
 mod logic;
 mod database;
+mod socket;
 
 use renderer::*;
 use gfx_collection::*;
@@ -49,11 +49,11 @@ use resource::*;
 use widget::*;
 use content::*;
 use values::*;
-use gfx_order::*;
 use inputs::*;
 use mainloop::*;
 use logic::*;
 use database::*;
+use socket::*;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
 enum Action {
@@ -222,6 +222,8 @@ async fn main() -> Result<(), AscendingError> {
     let mut content = Content::new(&mut world, &mut systems);
     let mut database = Database::new();
 
+    let mut socket = Socket::new();
+
     // setup our system which includes Camera and projection as well as our controls.
     // for the camera.
     let system = System::new(
@@ -272,6 +274,7 @@ async fn main() -> Result<(), AscendingError> {
     let mut input_handler = InputHandler::new(bindings);
 
     let mut frame_time = FrameTime::new();
+    let mut socket_timer =  0.0f32;
     let mut time = 0.0f32;
     let mut fps = 0u32;
     let fps_label_color = Attrs::new().color(Color::rgba(200, 100, 100, 255));
@@ -298,6 +301,7 @@ async fn main() -> Result<(), AscendingError> {
                         handle_key_input(
                             &mut world,
                             &mut systems,
+                            &mut socket,
                             &mut content,
                             event);
                     }
@@ -307,6 +311,7 @@ async fn main() -> Result<(), AscendingError> {
                         if mouse_press {
                             handle_mouse_input(&mut world,
                                 &mut systems, 
+                                &mut socket,
                                 MouseInputType::MouseLeftDownMove, 
                                 &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                 &mut content,
@@ -314,6 +319,7 @@ async fn main() -> Result<(), AscendingError> {
                         } else {
                             handle_mouse_input(&mut world,
                                 &mut systems, 
+                                &mut socket,
                                 MouseInputType::MouseMove, 
                                 &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                 &mut content,
@@ -325,6 +331,7 @@ async fn main() -> Result<(), AscendingError> {
                             ElementState::Pressed => {
                                 handle_mouse_input(&mut world,
                                     &mut systems, 
+                                    &mut socket,
                                     MouseInputType::MouseLeftDown, 
                                     &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                     &mut content,
@@ -334,6 +341,7 @@ async fn main() -> Result<(), AscendingError> {
                             ElementState::Released => {
                                 handle_mouse_input(&mut world,
                                     &mut systems, 
+                                    &mut socket,
                                     MouseInputType::MouseRelease, 
                                     &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                     &mut content,
@@ -419,6 +427,15 @@ async fn main() -> Result<(), AscendingError> {
         // Submit our command queue. for it to upload all the changes that were made.
         // Also tells the system to begin running the commands on the GPU.
         systems.renderer.queue().submit(std::iter::once(encoder.finish()));
+
+        if socket_timer < seconds {
+            if let Err(e) = poll_events(&mut socket) {
+                println!("Poll event error: {:?}", e);
+            }
+            socket_timer = seconds + 0.5;
+        }
+
+        process_packets(&mut socket, &mut world, &mut systems, &mut content);
 
         if time < seconds {
             systems.gfx.set_rich_text(&mut systems.renderer, text, 

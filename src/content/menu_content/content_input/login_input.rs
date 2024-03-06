@@ -5,12 +5,13 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{button, content::*, ContentType, DrawSetting, MouseInputType, fade::*, logic::FloatFix};
+use crate::{button, content::*, ContentType, DrawSetting, MouseInputType, fade::*, logic::FloatFix, socket::*};
 
 pub fn login_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut DrawSetting,
+    socket: &mut Socket,
     input_type: MouseInputType,
     screen_pos: Vec2,
 ) {
@@ -23,7 +24,7 @@ pub fn login_mouse_input(
             let button_index = click_buttons(menu_content, systems, screen_pos);
             if let Some(index) = button_index {
                 menu_content.did_button_click = true;
-                trigger_button(menu_content, systems, index);
+                trigger_button(menu_content, systems, socket, index);
             }
 
             let checkbox_index = click_checkbox(menu_content, systems, screen_pos);
@@ -56,6 +57,7 @@ pub fn login_key_input(
 fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut DrawSetting,
+    _socket: &mut Socket,
     index: usize,
 ) {
     match index {
@@ -66,15 +68,7 @@ fn trigger_button(
             systems.fade.init_fade(&mut systems.gfx, FadeType::In, FADE_LOGIN);
         }
         1 => { // Register
-            let fvalue = 0.09999;
-            let result = fvalue.add_f32(0.00001, 5);
-            println!("result: {result}");
-            let resultb = result.add_f32(0.00001, 5);
-            println!("result b: {resultb}");
-            /*println!("Register");
-            println!("Old Collection {:?}", systems.gfx.count_collection());
             create_window(systems, menu_content, WindowType::Register);
-            println!("New Collection {:?}", systems.gfx.count_collection());*/
         }
         _ => {}
     }

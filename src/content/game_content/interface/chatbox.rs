@@ -2,7 +2,7 @@ use graphics::*;
 use cosmic_text::{Attrs, Metrics};
 
 use crate::{
-    gfx_order::*, is_within_area, widget::*, DrawSetting, logic::*,
+    values::*, is_within_area, widget::*, DrawSetting, logic::*,
 };
 
 const MAX_CHAT_LINE: usize = 8;

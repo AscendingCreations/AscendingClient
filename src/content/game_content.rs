@@ -9,11 +9,10 @@ pub use content_input::*;
 pub use interface::*;
 
 use crate::{
-    gfx_order::*,
+    values::*,
     logic::*,
     Direction,
     DrawSetting,
-    values::TILE_SIZE,
     content::*,
     database::*,
 };

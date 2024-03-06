@@ -4,7 +4,6 @@ use hecs::World;
 pub const NPC_SPRITE_FRAME_X: f32 = 6.0;
 
 use crate::{
-    gfx_order::*,
     Direction,
     DrawSetting,
     game_content::entity::*,

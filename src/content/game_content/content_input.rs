@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{ContentType, DrawSetting, content::*, MouseInputType};
+use crate::{ContentType, DrawSetting, content::*, MouseInputType, socket::*};
 
 use super::{KEY_ATTACK, KEY_MOVEDOWN, KEY_MOVELEFT, KEY_MOVERIGHT, KEY_MOVEUP};
 
@@ -14,6 +14,7 @@ impl GameContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut DrawSetting,
+        _socket: &mut Socket,
         input_type: MouseInputType,
         screen_pos: Vec2,
     ) {
@@ -26,6 +27,7 @@ impl GameContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut DrawSetting,
+        _socket: &mut Socket,
         event: &KeyEvent,
     ) {
         if let ContentHolder::Game(data) = &mut content.holder {

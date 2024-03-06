@@ -2,7 +2,7 @@ use graphics::*;
 use hecs::World;
 
 use crate::{
-    database::map::*, entity::*, gfx_order::*, values::TILE_SIZE, Direction, DrawSetting, EntityType, MapAttribute, WorldExtras, 
+    database::map::*, entity::*, values::*, Direction, DrawSetting, EntityType, MapAttribute, WorldExtras, 
     content::game_content::player::*, content::game_content::*,
 };
 
