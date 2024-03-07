@@ -6,14 +6,24 @@ use bytey::{ByteBufferRead, ByteBufferWrite, ByteBufferError};
 
 use crate::Direction;
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
 pub struct MapPosition {
     pub x: i32,
     pub y: i32,
     pub group: i32,
 }
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+impl MapPosition {
+    pub fn new(x: i32, y: i32, group: i32) -> Self {
+        MapPosition {
+            x,
+            y,
+            group,
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
@@ -52,6 +62,16 @@ pub struct Movement {
     pub move_direction: Direction,
     pub move_timer: f32,
     pub move_offset: f32,
+}
+
+#[derive(Copy, Clone, Debug, Default)]
+pub enum WorldEntityType {
+    #[default]
+    None,
+    Player,
+    Npc,
+    MapItem,
+    Map,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Deserialize, Serialize, Hash)]

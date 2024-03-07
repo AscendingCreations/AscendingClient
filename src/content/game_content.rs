@@ -40,6 +40,7 @@ const MAX_KEY: usize = 5;
 pub struct GameContent {
     players: IndexSet<Entity>,
     npcs: IndexSet<Entity>,
+    mapitems: IndexSet<Entity>,
     pub map: MapContent,
     camera: Camera,
     interface: Interface,
@@ -49,29 +50,18 @@ pub struct GameContent {
 }
 
 impl GameContent {
-    pub fn new(world: &mut World, systems: &mut DrawSetting) -> Self {
-        let mut content = GameContent {
+    pub fn new(systems: &mut DrawSetting) -> Self {
+        GameContent {
             players: IndexSet::default(),
             npcs: IndexSet::default(),
+            mapitems: IndexSet::default(),
             map: MapContent::new(systems),
             camera: Camera::new(Vec2::new(0.0, 0.0)),
             interface: Interface::new(systems),
             keyinput: [false; MAX_KEY],
 
             myentity: None,
-        };
-
-        // TEMP //
-        let player = add_player(world, systems, Vec2::new(0.0, 0.0));
-        content.myentity = Some(player.clone());
-        content.players.insert(player);
-        let npcentity = add_npc(world, systems, Vec2::new(3.0, 2.0));
-        content.npcs.insert(npcentity);
-        // ---
-
-        update_camera(world, &mut content, systems);
-
-        content
+        }
     }
 
     pub fn unload(&mut self, world: &mut World, systems: &mut DrawSetting) {
@@ -86,16 +76,55 @@ impl GameContent {
         self.map.unload(systems);
     }
 
-    pub fn setup_map(&mut self, systems: &mut DrawSetting, database: &mut Database) {
+    pub fn init_map(&mut self, systems: &mut DrawSetting, database: &mut Database, map: MapPosition) {
+        self.map.map_pos = map;
+
         self.map.map_attribute.clear();
         for i in 0..9 {
-            load_map_data(systems, &database.map[i], self.map.index[i]);
+            load_map_data(systems, &database.map[i], self.map.index[i].0);
 
             self.map.map_attribute.push(
                 MapAttributes {
                     attribute: database.map[i].attribute.clone(),
                 }
             )
+        }
+    }
+
+    pub fn move_map(&mut self, systems: &mut DrawSetting, database: &mut Database, dir: Direction) {
+        /*1 => Vec2::new(map_size.x * -1.0, map_size.y * -1.0), // Top Left
+        2 => Vec2::new(0.0, map_size.y * -1.0), // Top
+        3 => Vec2::new(map_size.x, map_size.y * -1.0), // Top Right
+        4 => Vec2::new(map_size.x * -1.0, 0.0), // Left
+        5 => Vec2::new(map_size.x, 0.0), // Right
+        6 => Vec2::new(map_size.x * -1.0, map_size.y), // Bottom Left
+        7 => Vec2::new(0.0, map_size.y), // Bottom
+        8 => Vec2::new(map_size.x, map_size.y), // Bottom Right
+        _ => Vec2::new(0.0, 0.0), // Center*/
+
+        match dir {
+            Direction::Down => {
+                self.map.index[0].1 = 2; // Center to Top
+                self.map.index[4].1 = 1; // Left to Top Left
+                self.map.index[5].1 = 3; // Right to Top Right
+                self.map.index[7].1 = 0; // Bottom to Center
+                self.map.index[6].1 = 4; // Bottom Left to Left
+                self.map.index[8].1 = 5; // Bottom Right to Right
+
+                //load_map_data(systems, &database.map[i], self.map.index[i].0);
+                self.map.index[1].1 = 6;
+                self.map.index[2].1 = 7;
+                self.map.index[3].1 = 8;
+            }
+            Direction::Left => {
+
+            }
+            Direction::Right => {
+
+            }
+            Direction::Up => {
+
+            }
         }
     }
 
@@ -114,7 +143,82 @@ impl GameContent {
         }
     }
 
+    pub fn spawn_item(
+        &mut self,
+        world: &mut World,
+        systems: &mut DrawSetting,
+        pos: Position,
+        cur_map: MapPosition,
+        sprite: usize,
+    ) {
+        let entity = MapItem::new(world, systems, sprite, pos, cur_map);
+        self.mapitems.insert(entity);
+    }
+
     // TEMP //
+    pub fn init_data(
+        &mut self,
+        world: &mut World,
+        systems: &mut DrawSetting,
+    ) {
+        // TEMP //
+        let player = add_player(world, systems,
+            Position {
+                x: 1,
+                y: 1,
+                map: MapPosition {
+                    x: 0,
+                    y: 0,
+                    group: 0,
+                },
+            },
+            self.map.map_pos,
+        );
+        self.myentity = Some(player.clone());
+        self.players.insert(player);
+        let npcentity = add_npc(world, systems,
+            Position {
+                x: 3,
+                y: 2,
+                map: MapPosition {
+                    x: 0,
+                    y: 0,
+                    group: 0,
+                },
+            },
+            self.map.map_pos,
+        );
+        self.npcs.insert(npcentity);
+        self.spawn_item(world, systems, 
+            Position {
+                x: 0,
+                y: 3,
+                map: MapPosition {
+                    x: 0,
+                    y: 0,
+                    group: 0,
+                },
+            },
+            self.map.map_pos,
+            1,
+        );
+        self.spawn_item(world, systems, 
+            Position {
+                x: 0,
+                y: 29,
+                map: MapPosition {
+                    x: 0,
+                    y: -1,
+                    group: 0,
+                },
+            },
+            self.map.map_pos,
+            0,
+        );
+        // ---
+
+        update_camera(world, self, systems);
+    }
     pub fn move_player(
         &mut self,
         world: &mut World,
@@ -166,9 +270,12 @@ pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut
     content.map.move_pos(systems, content.camera.pos);
     
     for entity in content.players.iter() {
-        update_player_position(world, systems, &content.camera, entity);
+        update_player_position(world, systems, &content, entity);
     }
     for entity in content.npcs.iter() {
-        update_npc_position(world, systems, &content.camera, entity);
+        update_npc_position(world, systems, &content, entity);
+    }
+    for entity in content.mapitems.iter() {
+        update_mapitem_position(world, systems, &content, entity);
     }
 }

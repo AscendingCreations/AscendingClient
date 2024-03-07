@@ -31,7 +31,7 @@ pub struct MenuContent {
 }
 
 impl MenuContent {
-    pub fn new(_world: &mut World, systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut DrawSetting) -> Self {
         let mut bg_image = Image::new(Some(systems.resource.menu_bg.allocation),
             &mut systems.renderer, 0);
         bg_image.pos = Vec3::new(0.0, 0.0, ORDER_MENU_BG);

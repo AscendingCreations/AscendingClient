@@ -1,6 +1,8 @@
 pub mod map;
+pub mod items;
 
 pub use map::*;
+pub use items::*;
 
 pub struct Database {
     pub map: Vec<MapData>,

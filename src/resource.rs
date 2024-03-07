@@ -21,6 +21,7 @@ pub struct TextureAllocation {
     pub button_icon: TextureData,
     pub player: TextureData,
     pub tilesheet: Vec<TilesheetData>,
+    pub items: Vec<TextureData>,
 }
 
 impl TextureAllocation {
@@ -90,6 +91,27 @@ impl TextureAllocation {
             }
         }
 
+        let mut items = Vec::new();
+        let mut count = 1;
+        let mut path_found = true;
+        while path_found {
+            let path = format!("./images/items/item_{}.png", count);
+            if Path::new(&path).exists() {
+                items.push(
+                    TextureData {
+                        name: format!("item_{}.png", count),
+                        allocation: Texture::from_file(&format!("images/items/item_{}.png", count))?
+                            .upload(&mut atlases[0], renderer)
+                            .ok_or_else(|| OtherError::new("failed to upload image"))?,
+                    }
+                );
+
+                count += 1;
+            } else {
+                path_found = false;
+            }
+        }
+
         // Complete! We can now pass the result
         Ok(Self {
             menu_bg,
@@ -98,6 +120,7 @@ impl TextureAllocation {
             button_icon,
             player,
             tilesheet,
+            items,
         })
     }
 }

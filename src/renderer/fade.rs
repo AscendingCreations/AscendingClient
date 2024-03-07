@@ -104,8 +104,10 @@ pub fn fade_end(
     match systems.fade.f_end_index {
         FADE_LOGIN => {
             content.switch_content(world, systems, ContentType::Game);
-            database.load_map(0, 0, 0);
-            content.init_map(systems, database);
+            content.init_map(systems, database, MapPosition::new(0, 0, 0));
+            if let ContentHolder::Game(data) = &mut content.holder {
+                data.init_data(world, systems);
+            }
             
             systems.fade.init_fade(&mut systems.gfx, FadeType::Out, 0);
         }

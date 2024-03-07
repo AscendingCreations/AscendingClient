@@ -14,26 +14,20 @@ use crate::{
 pub fn add_player(
     world: &mut World,
     systems: &mut DrawSetting,
-    tile_pos: Vec2,
+    pos: Position,
+    cur_map: MapPosition,
 ) -> Entity {
-    let texture_pos = tile_pos * TILE_SIZE as f32;
+    let start_pos = get_start_map_pos(cur_map, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
+    let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
     let mut image = Image::new(Some(systems.resource.player.allocation),
             &mut systems.renderer, 0);
-    image.pos = Vec3::new(texture_pos.x, texture_pos.y, ORDER_PLAYER);
+    image.pos = Vec3::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y, ORDER_PLAYER);
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
     let sprite = systems.gfx.add_image(image, 0);
     
     let entity = world.spawn((
-        Position {
-            x: tile_pos.x as i32,
-            y: tile_pos.y as i32,
-            map: MapPosition {
-                x: 0_i32,
-                y: 0_i32,
-                group: 0_i32,
-            }
-        },
+        pos,
         PositionOffset::default(),
         Sprite(sprite),
         Movement::default(),
@@ -42,6 +36,7 @@ pub fn add_player(
         Attacking::default(),
         AttackTimer::default(),
         AttackFrame::default(),
+        WorldEntityType::Player,
     ));
     let _ = world.insert_one(entity, EntityType::Player(Entity(entity)));
     Entity(entity)
@@ -64,21 +59,29 @@ pub fn move_player(
     content: &mut GameContent,
     dir: &Direction,
 ) {
-    if world.get_or_panic::<Attacking>(entity).0 {
-        return;
-    }
-    if !can_move(world, systems, entity, content, dir) {
-        return;
-    }
-    if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
-        if movement.is_moving {
+    if let Some(p) = content.myentity {
+        if world.get_or_panic::<Attacking>(entity).0 {
             return;
         }
+
+        if world.get_or_panic::<Movement>(entity).is_moving {
+            return;
+        }
+
+        if &p == entity {
+            if !can_move(world, systems, entity, content, dir) {
+                return;
+            }
+        }
+    }
+
+    if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         movement.is_moving = true;
         movement.move_direction = dir.clone();
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
+
     {
         world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = match dir {
             Direction::Up => 2,
@@ -91,6 +94,7 @@ pub fn move_player(
     {
         world.get::<&mut LastMoveFrame>(entity.0).expect("Could not find LastFrame").0 = last_frame;
     }
+    
     let frame = world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
     set_player_frame(world, systems, entity, frame as usize + last_frame);
 }
@@ -116,21 +120,22 @@ pub fn end_player_move(
 pub fn update_player_position(
     world: &mut World,
     systems: &mut DrawSetting,
-    camera: &Camera,
+    content: &GameContent,
     entity: &Entity,
 ) {
     let player_sprite = world.get_or_panic::<Sprite>(entity).0;
     let cur_tile_pos = world.get_or_panic::<Position>(entity);
+    let start_pos = get_start_map_pos(content.map.map_pos, cur_tile_pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let cur_pos = systems.gfx.get_pos(player_sprite);
     let offset = world.get_or_panic::<PositionOffset>(entity).offset;
-    let texture_pos = camera.pos + 
+    let texture_pos = content.camera.pos + 
         (Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) * TILE_SIZE as f32) + offset - Vec2::new(10.0, 4.0);
     if texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
     systems.gfx.set_pos(player_sprite,
-        Vec3::new(texture_pos.x, 
-                texture_pos.y,
+        Vec3::new(start_pos.x + texture_pos.x, 
+                start_pos.y + texture_pos.y,
                 cur_pos.z));
 }
 

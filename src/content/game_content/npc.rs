@@ -14,26 +14,20 @@ use crate::{
 pub fn add_npc(
     world: &mut World,
     systems: &mut DrawSetting,
-    tile_pos: Vec2,
+    pos: Position,
+    cur_map: MapPosition,
 ) -> Entity {
-    let texture_pos = tile_pos * TILE_SIZE as f32;
+    let start_pos = get_start_map_pos(cur_map, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
+    let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
     let mut image = Image::new(Some(systems.resource.player.allocation), // ToDo Change Sprite
             &mut systems.renderer, 0);
-    image.pos = Vec3::new(texture_pos.x, texture_pos.y, ORDER_NPC);
+    image.pos = Vec3::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y, ORDER_NPC);
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
     let sprite = systems.gfx.add_image(image, 0);
     
     let entity = world.spawn((
-        Position {
-            x: tile_pos.x as i32,
-            y: tile_pos.y as i32,
-            map: MapPosition {
-                x: 0_i32,
-                y: 0_i32,
-                group: 0_i32,
-            }
-        },
+        pos,
         PositionOffset::default(),
         Sprite(sprite),
         Movement::default(),
@@ -42,6 +36,7 @@ pub fn add_npc(
         Attacking::default(),
         AttackTimer::default(),
         AttackFrame::default(),
+        WorldEntityType::Npc,
     ));
     let _ = world.insert_one(entity, EntityType::Npc(Entity(entity)));
     Entity(entity)
@@ -113,21 +108,22 @@ pub fn end_npc_move(
 pub fn update_npc_position(
     world: &mut World,
     systems: &mut DrawSetting,
-    camera: &Camera,
+    content: &GameContent,
     entity: &Entity,
 ) {
     let npc_sprite = world.get_or_panic::<Sprite>(entity).0;
     let cur_tile_pos = world.get_or_panic::<Position>(entity);
+    let start_pos = get_start_map_pos(content.map.map_pos, cur_tile_pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let cur_pos = systems.gfx.get_pos(npc_sprite);
     let offset = world.get_or_panic::<PositionOffset>(entity).offset;
-    let texture_pos = camera.pos + 
+    let texture_pos = content.camera.pos + 
         (Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) * TILE_SIZE as f32) + offset - Vec2::new(10.0, 4.0);
     if texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
     systems.gfx.set_pos(npc_sprite,
-        Vec3::new(texture_pos.x, 
-                texture_pos.y,
+        Vec3::new(start_pos.x + texture_pos.x, 
+                start_pos.y + texture_pos.y,
                 cur_pos.z));
 }
 

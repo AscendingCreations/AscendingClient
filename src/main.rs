@@ -42,6 +42,8 @@ mod mainloop;
 mod logic;
 mod database;
 mod socket;
+mod time_ext;
+mod data_types;
 
 use renderer::*;
 use gfx_collection::*;
@@ -219,7 +221,7 @@ async fn main() -> Result<(), AscendingError> {
     let mut world = World::new();
 
     // Initiate Game Content
-    let mut content = Content::new(&mut world, &mut systems);
+    let mut content = Content::new(&mut systems);
     let mut database = Database::new();
 
     let mut socket = Socket::new();

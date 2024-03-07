@@ -27,9 +27,9 @@ pub struct Content {
 }
 
 impl Content {
-    pub fn new(world: &mut World, systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut DrawSetting) -> Self {
         Content {
-            holder: ContentHolder::Menu(MenuContent::new(world, systems)),
+            holder: ContentHolder::Menu(MenuContent::new(systems)),
             content_type: ContentType::Menu,
         }
     }
@@ -51,19 +51,20 @@ impl Content {
         self.content_type = contenttype;
         match self.content_type {
             ContentType::Game => {
-                self.holder = ContentHolder::Game(GameContent::new(world, systems));
+                self.holder = ContentHolder::Game(GameContent::new(systems));
             }
             ContentType::Menu => {
-                self.holder = ContentHolder::Menu(MenuContent::new(world, systems));
+                self.holder = ContentHolder::Menu(MenuContent::new(systems));
             }
         }
 
         println!("Gfx Collection: {:?}", systems.gfx.count_collection())
     }
 
-    pub fn init_map(&mut self, systems: &mut DrawSetting, database: &mut Database) {
+    pub fn init_map(&mut self, systems: &mut DrawSetting, database: &mut Database, map: MapPosition) {
         if let ContentHolder::Game(data) = &mut self.holder {
-            data.setup_map(systems, database)
+            database.load_map(map.x, map.y, map.group as u64);
+            data.init_map(systems, database, map)
         }
     }
 }

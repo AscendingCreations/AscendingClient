@@ -78,6 +78,11 @@ fn trigger_button(
         }
         2 => { // Sprite Left
             println!("Sprite Left");
+            let x: i32 = menu_content.textbox[0].text.clone().parse().unwrap();
+            let y: i32 = menu_content.textbox[1].text.clone().parse().unwrap();
+            let g: i32 = menu_content.textbox[2].text.clone().parse().unwrap();
+            let result = get_start_map_pos(MapPosition::new(0, 0, 0), MapPosition::new(x, y, g));
+            println!("Result {:?} x: {x} y: {y} g: {g}", result);
         }
         3 => { // Sprite Right
             println!("Sprite Right");
