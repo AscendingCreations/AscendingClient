@@ -140,7 +140,7 @@ impl GameContent {
                     KEY_ATTACK => self.player_attack(world, systems, seconds),
                     KEY_MOVEDOWN => self.move_player(world, systems, &Direction::Down),
                     KEY_MOVELEFT => self.move_player(world, systems, &Direction::Left),
-                    KEY_MOVEUP => self.move_player(world, systems, &Direction::Up),
+                    KEY_MOVEUP => self.move_player(world, systems,&Direction::Up),
                     KEY_MOVERIGHT => self.move_player(world, systems, &Direction::Right),
                     _ => {}
                 }
@@ -231,7 +231,7 @@ impl GameContent {
         dir: &Direction,
     ) {
         let myentity = self.myentity.expect("Could not find myentity");
-        move_player(world, systems, &myentity, self, &dir);
+        move_player(world, systems, &myentity, self, &dir, None);
     }
     pub fn player_attack(
         &mut self,

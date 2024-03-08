@@ -31,6 +31,7 @@ pub fn add_npc(
         PositionOffset::default(),
         Sprite(sprite),
         Movement::default(),
+        EndMovement::default(),
         Dir::default(),
         LastMoveFrame::default(),
         Attacking::default(),
@@ -57,9 +58,43 @@ pub fn move_npc(
     systems: &mut DrawSetting,
     entity: &Entity,
     dir: &Direction,
+    end: Option<Position>,
 ) {
     if world.get_or_panic::<Attacking>(entity).0 {
         return;
+    }
+
+    if let Some(end_pos) = end {
+        world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = end_pos.clone();
+    } else {
+        let mut pos = world.get_or_panic::<Position>(entity);
+        pos.x += match dir {
+            Direction::Left => -1,
+            Direction::Right => 1,
+            _ => 0,
+        };
+        pos.y += match dir {
+            Direction::Up => 1,
+            Direction::Down => -1,
+            _ => 0,
+        };
+
+        if pos.x < 0 {
+            pos.x = 31;
+            pos.map.x -= 1;
+        } else if pos.x >= 32 {
+            pos.x = 0;
+            pos.map.x += 1;
+        }
+        if pos.y < 0 {
+            pos.y = 31;
+            pos.map.y -= 1;
+        } else if pos.y >= 32 {
+            pos.y = 0;
+            pos.map.y += 1;
+        }
+
+        world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = pos.clone();
     }
     
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
@@ -97,10 +132,22 @@ pub fn end_npc_move(
             return;
         }
         movement.is_moving = false;
-        movement.move_direction = Direction::default();
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
+
+    let end_pos = world.get_or_panic::<EndMovement>(entity).0;
+    {
+        if let Ok(mut pos) = world.get::<&mut Position>(entity.0) {
+            pos.x = end_pos.x as i32;
+            pos.y = end_pos.y as i32;
+            if pos.map != end_pos.map {
+                pos.map = end_pos.map;
+            }
+        }
+        world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = Vec2::new(0.0, 0.0);
+    }
+
     let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
     set_npc_frame(world, systems, entity, frame as usize);
 }
@@ -217,36 +264,6 @@ pub fn process_npc_movement(
             world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = offset;
         }
     } else {
-        let cur_tile_pos = world.get_or_panic::<Position>(entity);
-        let mut new_tile_pos = match movement.move_direction {
-            Direction::Up => Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) + Vec2::new(0.0, 1.0),
-            Direction::Down => Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) + Vec2::new(0.0, -1.0),
-            Direction::Left => Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) + Vec2::new(-1.0, 0.0),
-            Direction::Right => Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) + Vec2::new(1.0, 0.0),
-        };
-        let mut map_pos = cur_tile_pos.map;
-        if new_tile_pos.x < 0.0 {
-            new_tile_pos.x = 31.0;
-            map_pos.x -= 1;
-        } else if new_tile_pos.x >= 32.0 {
-            new_tile_pos.x = 0.0;
-            map_pos.x += 1;
-        }
-        if new_tile_pos.y < 0.0 {
-            new_tile_pos.y = 31.0;
-            map_pos.y -= 1;
-        } else if new_tile_pos.y >= 32.0 {
-            new_tile_pos.y = 0.0;
-            map_pos.x += 1;
-        }
-        {
-            if let Ok(mut pos) = world.get::<&mut Position>(entity.0) {
-                pos.x = new_tile_pos.x as i32;
-                pos.y = new_tile_pos.y as i32;
-                pos.map = map_pos;
-            }
-            world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = Vec2::new(0.0, 0.0);
-        }
         end_npc_move(world, systems, entity);
     }
 }

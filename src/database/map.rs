@@ -84,7 +84,7 @@ pub fn is_map_exist(x: i32, y: i32, group: u64) -> bool {
 }
 
 pub fn clear_map(systems: &mut DrawSetting, map_index: usize) {
-    (0..8).for_each(|layer| {
+    (0..9).for_each(|layer| {
         (0..32).for_each(|x| {
             (0..32).for_each(|y| {
                 systems.gfx

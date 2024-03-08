@@ -65,6 +65,9 @@ pub struct Movement {
 }
 
 #[derive(Copy, Clone, Debug, Default)]
+pub struct EndMovement(pub Position);
+
+#[derive(Copy, Clone, Debug, Default)]
 pub enum WorldEntityType {
     #[default]
     None,
