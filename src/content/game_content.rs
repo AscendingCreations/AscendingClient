@@ -76,56 +76,61 @@ impl GameContent {
         self.map.unload(systems);
     }
 
-    pub fn init_map(&mut self, systems: &mut DrawSetting, database: &mut Database, map: MapPosition) {
+    pub fn init_map(&mut self, systems: &mut DrawSetting, map: MapPosition) {
         self.map.map_pos = map;
 
         self.map.map_attribute.clear();
         for i in 0..9 {
-            load_map_data(systems, &database.map[i], self.map.index[i].0);
+            let (mx, my) = get_map_loc(map.x, map.y, i);
+            let mapdata = load_file(mx, my, map.group as u64);
+            load_map_data(systems, &mapdata, self.map.index[i].0);
 
             self.map.map_attribute.push(
-                MapAttributes {
-                    attribute: database.map[i].attribute.clone(),
-                }
+                (MapAttributes { attribute: mapdata.attribute.clone() }, i)
             )
         }
     }
 
-    pub fn move_map(&mut self, systems: &mut DrawSetting, database: &mut Database, dir: Direction) {
-        /*1 => Vec2::new(map_size.x * -1.0, map_size.y * -1.0), // Top Left
-        2 => Vec2::new(0.0, map_size.y * -1.0), // Top
-        3 => Vec2::new(map_size.x, map_size.y * -1.0), // Top Right
-        4 => Vec2::new(map_size.x * -1.0, 0.0), // Left
-        5 => Vec2::new(map_size.x, 0.0), // Right
-        6 => Vec2::new(map_size.x * -1.0, map_size.y), // Bottom Left
-        7 => Vec2::new(0.0, map_size.y), // Bottom
-        8 => Vec2::new(map_size.x, map_size.y), // Bottom Right
-        _ => Vec2::new(0.0, 0.0), // Center*/
-
+    pub fn move_map(&mut self, world: &mut World, systems: &mut DrawSetting, dir: Direction) {
         match dir {
-            Direction::Down => {
-                self.map.index[0].1 = 2; // Center to Top
-                self.map.index[4].1 = 1; // Left to Top Left
-                self.map.index[5].1 = 3; // Right to Top Right
-                self.map.index[7].1 = 0; // Bottom to Center
-                self.map.index[6].1 = 4; // Bottom Left to Left
-                self.map.index[8].1 = 5; // Bottom Right to Right
-
-                //load_map_data(systems, &database.map[i], self.map.index[i].0);
-                self.map.index[1].1 = 6;
-                self.map.index[2].1 = 7;
-                self.map.index[3].1 = 8;
-            }
-            Direction::Left => {
-
-            }
-            Direction::Right => {
-
-            }
-            Direction::Up => {
-
-            }
+            Direction::Down => self.map.map_pos.y -= 1,
+            Direction::Left => self.map.map_pos.x -= 1,
+            Direction::Right => self.map.map_pos.x += 1,
+            Direction::Up => self.map.map_pos.y += 1,
         }
+        
+        let move_maps = match dir {
+            Direction::Up => [(0, 2), (4, 1), (5, 3), (7, 0), (6, 4), (8, 5)],
+            Direction::Left => [(0, 5), (2, 3), (7, 8), (1, 2), (4, 0), (6, 7)],
+            Direction::Right => [(0, 4), (2, 1), (7, 6), (3, 2), (5, 0), (8, 7)],
+            Direction::Down => [(0, 7), (4, 6), (5, 8), (2, 0), (1, 4), (3, 5)],
+        };
+        for (from, to) in move_maps {
+            self.map.index[from].1 = to;
+            self.map.map_attribute[from].1 = to;
+        }
+
+        let load_maps = match dir {
+            Direction::Up => [(1, 6), (2, 7), (3, 8)],
+            Direction::Left => [(3, 1), (5, 4), (8, 6)],
+            Direction::Right => [(1, 3), (4, 5), (6, 8)],
+            Direction::Down => [(6, 1), (7, 2), (8, 3)],
+        };
+        for (from, to) in load_maps {
+            let (mx, my) = get_map_loc(
+                self.map.map_pos.x, 
+                self.map.map_pos.y, to);
+            let mapdata = load_file(
+                mx, my, self.map.map_pos.group as u64);
+            
+            load_map_data(systems, &mapdata, self.map.index[from].0);
+            self.map.index[from].1 = to;
+            self.map.map_attribute[from].1 = to;
+            self.map.map_attribute[from].0 = MapAttributes { attribute: mapdata.attribute.clone() };
+        }
+
+        self.map.sort_map();
+        update_camera(world, self, systems);
     }
 
     pub fn handle_key_input(&mut self, world: &mut World, systems: &mut DrawSetting, seconds: f32) {
@@ -243,7 +248,7 @@ impl GameContent {
 pub fn update_player(world: &mut World, systems: &mut DrawSetting, content: &mut GameContent, seconds: f32) {
     let players = content.players.clone();
     for entity in players.iter() {
-        process_player_movement(world, systems, entity);
+        process_player_movement(world, systems, entity, content);
         process_player_attack(world, systems, entity, seconds)
     }
 }
@@ -269,13 +274,19 @@ pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut
 
     content.map.move_pos(systems, content.camera.pos);
     
-    for entity in content.players.iter() {
-        update_player_position(world, systems, &content, entity);
-    }
-    for entity in content.npcs.iter() {
-        update_npc_position(world, systems, &content, entity);
-    }
-    for entity in content.mapitems.iter() {
-        update_mapitem_position(world, systems, &content, entity);
+    for (_, (worldentitytype, sprite, pos, pos_offset)) in 
+        world.query_mut::<(&WorldEntityType, &Sprite, &Position, &PositionOffset)>().into_iter() {
+        match worldentitytype {
+            WorldEntityType::Player => {
+                update_player_position(systems, &content, sprite.0, pos, pos_offset);
+            }
+            WorldEntityType::Npc => {
+                update_npc_position(systems, &content, sprite.0, pos, pos_offset);
+            }
+            WorldEntityType::MapItem => {
+                update_mapitem_position(systems, &content, sprite.0, pos, pos_offset);
+            }
+            _ => {}
+        }
     }
 }

@@ -4,7 +4,7 @@ use hecs::World;
 use winit::dpi::PhysicalSize;
 
 use crate::{
-    gfx_collection::*, values::*, content::*, DrawSetting, Database,
+    gfx_collection::*, values::*, content::*, DrawSetting,
 };
 
 pub enum FadeType {
@@ -99,12 +99,11 @@ pub fn fade_end(
     systems: &mut DrawSetting,
     world: &mut World,
     content: &mut Content,
-    database: &mut Database,
 ) {
     match systems.fade.f_end_index {
         FADE_LOGIN => {
             content.switch_content(world, systems, ContentType::Game);
-            content.init_map(systems, database, MapPosition::new(0, 0, 0));
+            content.init_map(systems, MapPosition::new(0, 0, 0));
             if let ContentHolder::Game(data) = &mut content.holder {
                 data.init_data(world, systems);
             }

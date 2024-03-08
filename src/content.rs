@@ -61,10 +61,9 @@ impl Content {
         println!("Gfx Collection: {:?}", systems.gfx.count_collection())
     }
 
-    pub fn init_map(&mut self, systems: &mut DrawSetting, database: &mut Database, map: MapPosition) {
+    pub fn init_map(&mut self, systems: &mut DrawSetting, map: MapPosition) {
         if let ContentHolder::Game(data) = &mut self.holder {
-            database.load_map(map.x, map.y, map.group as u64);
-            data.init_map(systems, database, map)
+            data.init_map(systems, map)
         }
     }
 }

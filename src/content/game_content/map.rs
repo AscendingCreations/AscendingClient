@@ -29,7 +29,7 @@ impl MapAttributes {
 pub struct MapContent {
     pub map_pos: MapPosition,
     pub index: [(usize, usize); 9], // (MapIndex, Order)
-    pub map_attribute: Vec<MapAttributes>,
+    pub map_attribute: Vec<(MapAttributes, usize)>,
 }
 
 impl MapContent {
@@ -56,14 +56,11 @@ impl MapContent {
         });
     }
 
-    pub fn sort_map(&mut self, systems: &mut DrawSetting) {
+    pub fn sort_map(&mut self) {
         self.index
             .sort_by(|a, b| a.1.cmp(&b.1));
-        
-        for (mapindex, order) in self.index.iter() {
-            let new_pos = get_mapindex_base_pos(*order);
-            systems.gfx.set_pos(*mapindex, Vec3::new(new_pos.x, new_pos.y, 0.0));
-        }
+        self.map_attribute
+            .sort_by(|a, b| a.1.cmp(&b.1));
     }
 
     pub fn move_pos(&mut self, systems: &mut DrawSetting, pos: Vec2) {
@@ -102,15 +99,12 @@ impl MapContent {
         if new_pos.x >= 32.0 { new_pos.x = 0.0; }
         if new_pos.y >= 32.0 { new_pos.y = 0.0; }
         let tile_num = get_tile_pos(new_pos.x as i32, new_pos.y as i32);
-        self.map_attribute[map_index].attribute[tile_num].clone()
+        self.map_attribute[map_index].0.attribute[tile_num].clone()
     }
 }
 
 pub fn can_move(world: &mut World, systems: &mut DrawSetting, entity: &Entity, content: &mut GameContent, direction: &Direction) -> bool {
     let pos = world.get_or_panic::<Position>(entity);
-    if world.get_or_panic::<Movement>(entity).is_moving {
-        return false;
-    }
     {
         world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = match direction {
             Direction::Up => 2,
@@ -155,6 +149,20 @@ pub fn get_mapindex_base_pos(index: usize) -> Vec2 {
         7 => Vec2::new(0.0, map_size.y), // Bottom
         8 => Vec2::new(map_size.x, map_size.y), // Bottom Right
         _ => Vec2::new(0.0, 0.0), // Center
+    }
+}
+
+pub fn get_map_loc(mx: i32, my: i32, index: usize) -> (i32, i32) {
+    match index {
+        1 => (mx - 1, my - 1), // Top Left
+        2 => (mx, my - 1), // Top
+        3 => (mx + 1, my - 1), // Top Right
+        4 => (mx - 1, my), // Left
+        5 => (mx + 1, my), // Right
+        6 => (mx - 1, my + 1), // Bottom Left
+        7 => (mx, my + 1), // Bottom
+        8 => (mx + 1, my + 1), // Bottom Right
+        _ => (mx, my), // Center
     }
 }
 

@@ -60,22 +60,20 @@ impl MapItem {
 }
 
 pub fn update_mapitem_position(
-    world: &mut World,
     systems: &mut DrawSetting,
     content: &GameContent,
-    entity: &Entity,
+    sprite: usize,
+    pos: &Position,
+    pos_offset: &PositionOffset,
 ) {
-    let item_sprite = world.get_or_panic::<Sprite>(entity).0;
-    let cur_tile_pos = world.get_or_panic::<Position>(entity);
-    let start_pos = get_start_map_pos(content.map.map_pos, cur_tile_pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
-    let cur_pos = systems.gfx.get_pos(item_sprite);
-    let offset = world.get_or_panic::<PositionOffset>(entity).offset;
+    let start_pos = get_start_map_pos(content.map.map_pos, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
+    let cur_pos = systems.gfx.get_pos(sprite);
     let texture_pos = content.camera.pos + 
-        (Vec2::new(cur_tile_pos.x as f32, cur_tile_pos.y as f32) * TILE_SIZE as f32) + offset;
-    if texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
+        (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32) + pos_offset.offset;
+    if start_pos + texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
-    systems.gfx.set_pos(item_sprite,
+    systems.gfx.set_pos(sprite,
         Vec3::new(start_pos.x + texture_pos.x, 
                 start_pos.y + texture_pos.y,
                 cur_pos.z));

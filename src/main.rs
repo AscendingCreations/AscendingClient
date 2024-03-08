@@ -222,7 +222,6 @@ async fn main() -> Result<(), AscendingError> {
 
     // Initiate Game Content
     let mut content = Content::new(&mut systems);
-    let mut database = Database::new();
 
     let mut socket = Socket::new();
     socket.register().expect("Failed to register socket");
@@ -395,7 +394,7 @@ async fn main() -> Result<(), AscendingError> {
         // Game Loop
         game_loop(&mut world, &mut systems, &mut content, seconds, &mut loop_timer);
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
-            fade_end(&mut systems, &mut world, &mut content, &mut database);
+            fade_end(&mut systems, &mut world, &mut content);
         }
 
         // update our systems data to the gpu. this is the Camera in the shaders.
