@@ -25,6 +25,9 @@ pub struct MenuContent {
     checkbox: Vec<Checkbox>,
     textbox: Vec<Textbox>,
     selected_textbox: Option<usize>,
+    image: Vec<usize>,
+
+    pub content_data: usize,
 
     pub did_button_click: bool,
     pub did_checkbox_click: bool,
@@ -48,9 +51,11 @@ impl MenuContent {
             button: Vec::new(),
             checkbox: Vec::new(),
             textbox: Vec::new(),
+            image: Vec::new(),
             did_button_click: false,
             did_checkbox_click: false,
             selected_textbox: None,
+            content_data: 0,
         };
 
         create_window(systems, &mut content, WindowType::Login);
@@ -78,12 +83,16 @@ impl MenuContent {
         self.textbox.iter_mut().for_each(|textbox| {
             textbox.unload(systems);
         });
+        self.image.iter_mut().for_each(|gfx_index| {
+            systems.gfx.remove_gfx(*gfx_index);
+        });
         self.window.clear();
         self.button.clear();
         self.label.clear();
         self.unique_label.clear();
         self.checkbox.clear();
         self.textbox.clear();
+        self.image.clear();
         self.selected_textbox = None;
     }
 }
@@ -225,13 +234,18 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
     content.textbox.iter_mut().for_each(|textbox| {
         textbox.unload(systems);
     });
+    content.image.iter_mut().for_each(|gfx_index| {
+        systems.gfx.remove_gfx(*gfx_index);
+    });
     content.window.clear();
     content.button.clear();
     content.label.clear();
     content.unique_label.clear();
     content.checkbox.clear();
     content.textbox.clear();
+    content.image.clear();
     content.selected_textbox = None;
+    content.content_data = 0;
 
     let screen_size = Vec2::new(SCREEN_WIDTH as f32, SCREEN_HEIGHT as f32);
 
@@ -480,6 +494,12 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 .set_size(Vec2::new(80.0, 80.0))
                 .set_color(Color::rgba(120, 120, 120, 255));
             content.window.push(systems.gfx.add_rect(sprite_bg, 0));
+
+            let mut image = Image::new(Some(systems.resource.players[0].allocation), &mut systems.renderer, 0);
+            image.hw = Vec2::new(80.0, 80.0);
+            image.pos = Vec3::new(pos.x + 34.0, pos.y + 98.0, ORDER_MENU_WINDOW_CONTENT_DETAIL);
+            image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
+            content.image.push(systems.gfx.add_image(image, 0));
 
             let sprite_label = create_label(systems, 
                 Vec3::new(pos.x + 142.0, pos.y + 148.0, ORDER_MENU_WINDOW_CONTENT_DETAIL), 

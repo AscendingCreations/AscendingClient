@@ -19,9 +19,10 @@ pub struct TextureAllocation {
     pub horizontal_arrow: TextureData,
     pub vertical_arrow: TextureData,
     pub button_icon: TextureData,
-    pub player: TextureData,
     pub tilesheet: Vec<TilesheetData>,
     pub items: Vec<TextureData>,
+    pub players: Vec<TextureData>,
+
 }
 
 impl TextureAllocation {
@@ -56,13 +57,6 @@ impl TextureAllocation {
         let button_icon = TextureData {
             name: "button_icon.png".to_string(),
             allocation: Texture::from_file("images/gui/button_icon.png")?
-                .upload(&mut atlases[0], renderer)
-                .ok_or_else(|| OtherError::new("failed to upload image"))?,
-        };
-
-        let player = TextureData {
-            name: "player.png".to_string(),
-            allocation: Texture::from_file("images/player.png")?
                 .upload(&mut atlases[0], renderer)
                 .ok_or_else(|| OtherError::new("failed to upload image"))?,
         };
@@ -112,15 +106,36 @@ impl TextureAllocation {
             }
         }
 
+        let mut players = Vec::new();
+        let mut count = 1;
+        let mut path_found = true;
+        while path_found {
+            let path = format!("./images/player/player_{}.png", count);
+            if Path::new(&path).exists() {
+                players.push(
+                    TextureData {
+                        name: format!("player_{}.png", count),
+                        allocation: Texture::from_file(&format!("images/player/player_{}.png", count))?
+                            .upload(&mut atlases[0], renderer)
+                            .ok_or_else(|| OtherError::new("failed to upload image"))?,
+                    }
+                );
+
+                count += 1;
+            } else {
+                path_found = false;
+            }
+        }
+
         // Complete! We can now pass the result
         Ok(Self {
             menu_bg,
             horizontal_arrow,
             vertical_arrow,
             button_icon,
-            player,
             tilesheet,
             items,
+            players,
         })
     }
 }

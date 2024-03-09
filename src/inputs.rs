@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{content::{*, menu_content::content_input::*}, Direction, DrawSetting, socket::*};
+use crate::{content::{menu_content::content_input::*, *}, socket::*, Alert, Direction, DrawSetting};
 
 pub enum MouseInputType {
     MouseLeftDown,
@@ -21,6 +21,7 @@ pub fn handle_mouse_input(
     input_type: MouseInputType,
     mouse_pos: &Vec2,
     content: &mut Content,
+    alert: &mut Alert,
 ) {
     // We convert the mouse position to render position as the y pos increase upward
     let screen_pos = Vec2::new(
@@ -31,10 +32,10 @@ pub fn handle_mouse_input(
     let content_type = content.content_type.clone();
     match content_type {
         ContentType::Game => {
-            GameContent::mouse_input(content, world, systems, socket, input_type, screen_pos);
+            GameContent::mouse_input(content, world, systems, socket, alert, input_type, screen_pos);
         }
         ContentType::Menu => {
-            MenuContent::mouse_input(content, world, systems, socket, input_type, screen_pos);
+            MenuContent::mouse_input(content, world, systems, socket, alert, input_type, screen_pos);
         }
     }
 }
@@ -44,15 +45,16 @@ pub fn handle_key_input(
     systems: &mut DrawSetting,
     socket: &mut Socket,
     content: &mut Content,
+    alert: &mut Alert,
     event: &KeyEvent,
 ) {
     let content_type = content.content_type.clone();
     match content_type {
         ContentType::Game => {
-            GameContent::key_input(content, world, systems, socket, event);
+            GameContent::key_input(content, world, systems, socket, alert, event);
         }
         ContentType::Menu => {
-            MenuContent::key_input(content, world, systems, socket, event);
+            MenuContent::key_input(content, world, systems, socket, alert, event);
         }
     }
 }

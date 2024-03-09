@@ -19,7 +19,7 @@ pub fn add_player(
 ) -> Entity {
     let start_pos = get_start_map_pos(cur_map, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
-    let mut image = Image::new(Some(systems.resource.player.allocation),
+    let mut image = Image::new(Some(systems.resource.players[0].allocation),
             &mut systems.renderer, 0);
     image.pos = Vec3::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y, ORDER_PLAYER);
     image.hw = Vec2::new(40.0, 40.0);
@@ -29,7 +29,7 @@ pub fn add_player(
     let entity = world.spawn((
         pos,
         PositionOffset::default(),
-        Sprite(sprite),
+        SpriteIndex(sprite),
         Movement::default(),
         EndMovement::default(),
         Dir::default(),
@@ -48,7 +48,7 @@ pub fn unload_player(
     systems: &mut DrawSetting,
     entity: &Entity,
 ) {
-    let player_sprite = world.get_or_panic::<Sprite>(entity).0;
+    let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
     systems.gfx.remove_gfx(player_sprite);
     let _ = world.despawn(entity.0);
 }
@@ -139,6 +139,7 @@ pub fn end_player_move(
     systems: &mut DrawSetting,
     content: &mut GameContent,
     entity: &Entity,
+    buffer: &mut BufferTask,
 ) {
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         if !movement.is_moving {
@@ -166,7 +167,7 @@ pub fn end_player_move(
     if let Some(p) = &content.myentity {
         if p == entity && move_map {
             let dir = world.get_or_panic::<Movement>(entity).move_direction;
-            GameContent::move_map(content, world, systems, dir);
+            GameContent::move_map(content, world, systems, dir, buffer);
         }
     }
 
@@ -200,7 +201,7 @@ pub fn set_player_frame(
     entity: &Entity,
     frame_index: usize,
 ) {
-    let sprite_index = world.get_or_panic::<Sprite>(entity).0;
+    let sprite_index = world.get_or_panic::<SpriteIndex>(entity).0;
     let size = systems.gfx.get_size(sprite_index);
     let frame_pos = Vec2::new(frame_index as f32 % PLAYER_SPRITE_FRAME_X,
         (frame_index  as f32 / PLAYER_SPRITE_FRAME_X).floor());
@@ -266,6 +267,7 @@ pub fn process_player_movement(
     systems: &mut DrawSetting,
     entity: &Entity,
     content: &mut GameContent,
+    buffer: &mut BufferTask,
 ) {
     let movement = world.get_or_panic::<Movement>(entity);
     if !movement.is_moving { return };
@@ -287,7 +289,6 @@ pub fn process_player_movement(
             world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = offset;
         }
     } else {
-        end_player_move(world, systems, content, entity);
+        end_player_move(world, systems, content, entity, buffer);
     }
 }
-

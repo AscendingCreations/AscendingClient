@@ -44,6 +44,8 @@ mod database;
 mod socket;
 mod time_ext;
 mod data_types;
+mod buffer;
+mod alert;
 
 use renderer::*;
 use gfx_collection::*;
@@ -56,6 +58,8 @@ use mainloop::*;
 use logic::*;
 use database::*;
 use socket::*;
+use buffer::*;
+use alert::*;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
 enum Action {
@@ -219,9 +223,12 @@ async fn main() -> Result<(), AscendingError> {
     let ui_renderer = RectRenderer::new(&mut systems.renderer).unwrap();
 
     let mut world = World::new();
+    let mut buffertask = BufferTask::new();
 
     // Initiate Game Content
     let mut content = Content::new(&mut systems);
+
+    let mut alert = Alert::new();
 
     let mut socket = Socket::new();
     socket.register().expect("Failed to register socket");
@@ -249,7 +256,7 @@ async fn main() -> Result<(), AscendingError> {
         Vec2::new(100.0, 20.0),
         Bounds::new(txt_pos.x, txt_pos.y, txt_pos.x + 100.0, txt_pos.y + 20.0),
         Color::rgba(255, 255, 255, 255));
-    let text = systems.gfx.add_text(txt, 2);
+    let text = systems.gfx.add_text(txt, 4);
 
     // Allow the window to be seen. hiding it then making visible speeds up
     // load times.
@@ -305,6 +312,7 @@ async fn main() -> Result<(), AscendingError> {
                             &mut systems,
                             &mut socket,
                             &mut content,
+                            &mut alert,
                             event);
                     }
                     WindowEvent::CursorMoved { position, .. } => {
@@ -317,6 +325,7 @@ async fn main() -> Result<(), AscendingError> {
                                 MouseInputType::MouseLeftDownMove, 
                                 &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                 &mut content,
+                                &mut alert,
                             );
                         } else {
                             handle_mouse_input(&mut world,
@@ -325,6 +334,7 @@ async fn main() -> Result<(), AscendingError> {
                                 MouseInputType::MouseMove, 
                                 &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                 &mut content,
+                                &mut alert,
                             );
                         }
                     }
@@ -337,6 +347,7 @@ async fn main() -> Result<(), AscendingError> {
                                     MouseInputType::MouseLeftDown, 
                                     &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                     &mut content,
+                                    &mut alert,
                                 );
                                 mouse_press = true;
                             }
@@ -347,6 +358,7 @@ async fn main() -> Result<(), AscendingError> {
                                     MouseInputType::MouseRelease, 
                                     &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                     &mut content,
+                                    &mut alert,
                                 );
                                 mouse_press = false;
                             }
@@ -392,7 +404,7 @@ async fn main() -> Result<(), AscendingError> {
         let seconds = frame_time.seconds();
 
         // Game Loop
-        game_loop(&mut world, &mut systems, &mut content, seconds, &mut loop_timer);
+        game_loop(&mut world, &mut systems, &mut content, &mut buffertask, seconds, &mut loop_timer);
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
             fade_end(&mut systems, &mut world, &mut content);
         }
@@ -437,7 +449,9 @@ async fn main() -> Result<(), AscendingError> {
             socket_timer = seconds + 0.5;
         }
 
-        process_packets(&mut socket, &mut world, &mut systems, &mut content);
+        process_packets(&mut socket, &mut world, &mut systems, &mut content, &mut alert);
+
+        buffertask.process_buffer(&mut systems, &mut content);
 
         if time < seconds {
             systems.gfx.set_rich_text(&mut systems.renderer, text, 

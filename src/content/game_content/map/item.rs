@@ -3,7 +3,7 @@ use bytey::{ByteBufferRead, ByteBufferWrite};
 use hecs::World;
 use serde::{Deserialize, Serialize};
 
-use crate::{game_content::Camera, get_start_map_pos, DrawSetting, Entity, EntityType, GameContent, MapPosition, Position, PositionOffset, Sprite, WorldEntityType, WorldExtras, ORDER_MAP_ITEM, TILE_SIZE};
+use crate::{game_content::Camera, get_start_map_pos, DrawSetting, Entity, EntityType, GameContent, MapPosition, Position, PositionOffset, SpriteIndex, WorldEntityType, WorldExtras, ORDER_MAP_ITEM, TILE_SIZE};
 
 #[derive(
     Debug,
@@ -51,7 +51,7 @@ impl MapItem {
         let entity = world.spawn((
             pos,
             WorldEntityType::MapItem,
-            Sprite(index),
+            SpriteIndex(index),
             PositionOffset::default(),
         ));
         let _ = world.insert_one(entity, EntityType::MapItem(Entity(entity)));
@@ -77,4 +77,14 @@ pub fn update_mapitem_position(
         Vec3::new(start_pos.x + texture_pos.x, 
                 start_pos.y + texture_pos.y,
                 cur_pos.z));
+}
+
+pub fn unload_mapitems(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    entity: &Entity,
+) {
+    let item_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+    systems.gfx.remove_gfx(item_sprite);
+    let _ = world.despawn(entity.0);
 }

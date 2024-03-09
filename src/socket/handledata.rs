@@ -2,7 +2,7 @@ use crate::{socket::*, Entity, Position};
 use bytey::ByteBuffer;
 use phf::phf_map;
 
-type PacketFunction = fn(&mut Socket, &mut World, &mut DrawSetting, &mut Content, &mut ByteBuffer) -> Result<()>;
+type PacketFunction = fn(&mut Socket, &mut World, &mut DrawSetting, &mut Content, &mut Alert, &mut ByteBuffer) -> Result<()>;
 
 static PACKET_MAP: phf::Map<u32, PacketFunction> = phf_map! {
     0u32 => handle_ping,
@@ -53,7 +53,7 @@ static PACKET_MAP: phf::Map<u32, PacketFunction> = phf_map! {
     45u32 => handle_loadstatus, 
 };
 
-pub fn handle_data(socket: &mut Socket, world: &mut World, systems: &mut DrawSetting, content: &mut Content, data: &mut ByteBuffer) -> Result<()> {
+pub fn handle_data(socket: &mut Socket, world: &mut World, systems: &mut DrawSetting, content: &mut Content, alert: &mut Alert, data: &mut ByteBuffer) -> Result<()> {
     let id: u32 = data.read()?;
 
     if id > 80 {
@@ -65,7 +65,7 @@ pub fn handle_data(socket: &mut Socket, world: &mut World, systems: &mut DrawSet
         None => return Err(AscendingError::InvalidPacket),
     };
 
-    fun(socket, world, systems, content, data)
+    fun(socket, world, systems, content, alert, data)
 }
 
 fn handle_ping(
@@ -73,6 +73,7 @@ fn handle_ping(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     Ok(())
@@ -83,6 +84,7 @@ fn handle_status(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     Ok(())
@@ -93,6 +95,7 @@ fn handle_alertmsg(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     data: &mut ByteBuffer
 ) -> Result<()> {
     let message = data.read::<String>()?;
@@ -107,6 +110,7 @@ fn handle_fltalert(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     data: &mut ByteBuffer
 ) -> Result<()> {
     let _flttype = data.read::<u8>()?;
@@ -120,6 +124,7 @@ fn handle_loginok(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     data: &mut ByteBuffer
 ) -> Result<()> {
     let _hour = data.read::<u32>()?;
@@ -135,6 +140,7 @@ fn handle_ingame(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -146,6 +152,7 @@ fn handle_updatemap(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -157,6 +164,7 @@ fn handle_mapitems(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     data: &mut ByteBuffer
 ) -> Result<()> {
 
@@ -170,6 +178,7 @@ fn handle_mapitemsunload(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -181,6 +190,7 @@ fn handle_playerdata(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -192,6 +202,7 @@ fn handle_playerspawn(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -203,6 +214,7 @@ fn handle_playermove(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     data: &mut ByteBuffer
 ) -> Result<()> {
     let _entity = data.read::<Entity>()?;
@@ -218,6 +230,7 @@ fn handle_playermapswap(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -229,6 +242,7 @@ fn handle_dataremovelist(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -240,6 +254,7 @@ fn handle_dataremove(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -251,6 +266,7 @@ fn handle_playerdir(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     data: &mut ByteBuffer
 ) -> Result<()> {
 
@@ -264,6 +280,7 @@ fn handle_playervitals(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -275,6 +292,7 @@ fn handle_playerinv(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -286,6 +304,7 @@ fn handle_playerinvslot(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -297,6 +316,7 @@ fn handle_keyinput(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -308,6 +328,7 @@ fn handle_playerattack(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -319,6 +340,7 @@ fn handle_playerequipment(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -330,6 +352,7 @@ fn handle_playeraction(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -341,6 +364,7 @@ fn handle_playerlevel(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -352,6 +376,7 @@ fn handle_playermoney(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -363,6 +388,7 @@ fn handle_playerstun(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -374,6 +400,7 @@ fn handle_playervariables(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -385,6 +412,7 @@ fn handle_playervariable(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -396,6 +424,7 @@ fn handle_playerdeath(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -407,6 +436,7 @@ fn handle_npcdeath(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -418,6 +448,7 @@ fn handle_playerpvp(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -429,6 +460,7 @@ fn handle_playerpk(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -440,6 +472,7 @@ fn handle_playeremail(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -451,6 +484,7 @@ fn handle_npcunload(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -462,6 +496,7 @@ fn handle_npcdata(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -473,6 +508,7 @@ fn handle_npcmove(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -484,6 +520,7 @@ fn handle_npcdir(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -495,6 +532,7 @@ fn handle_npcvital(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -506,6 +544,7 @@ fn handle_npcattack(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -517,6 +556,7 @@ fn handle_npcstun(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -528,6 +568,7 @@ fn handle_chatmsg(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -539,6 +580,7 @@ fn handle_sound(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -550,6 +592,7 @@ fn handle_target(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -561,6 +604,7 @@ fn handle_synccheck(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -572,6 +616,7 @@ fn handle_playerunload(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     
@@ -583,6 +628,7 @@ fn handle_loadstatus(
     _world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
+    _alert: &mut Alert,
     _data: &mut ByteBuffer
 ) -> Result<()> {
     

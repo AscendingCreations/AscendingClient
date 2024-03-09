@@ -80,6 +80,18 @@ impl GfxCollection {
         }
     }
 
+    pub fn set_image(&mut self, index: usize, texture: usize) {
+        if let Some(data) = self.collection.get_mut(index) {
+            match &mut data.gfx {
+                GfxType::Image(image) => {
+                    image.texture = Some(texture);
+                    image.changed = true;
+                }
+                _ => {}
+            }
+        }
+    }
+
     pub fn set_color(&mut self, index: usize, color: Color) {
         if let Some(data) = self.collection.get_mut(index) {
             match &mut data.gfx {

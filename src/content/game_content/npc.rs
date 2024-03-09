@@ -19,7 +19,7 @@ pub fn add_npc(
 ) -> Entity {
     let start_pos = get_start_map_pos(cur_map, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
-    let mut image = Image::new(Some(systems.resource.player.allocation), // ToDo Change Sprite
+    let mut image = Image::new(Some(systems.resource.players[0].allocation), // ToDo Change Sprite
             &mut systems.renderer, 0);
     image.pos = Vec3::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y, ORDER_NPC);
     image.hw = Vec2::new(40.0, 40.0);
@@ -29,7 +29,7 @@ pub fn add_npc(
     let entity = world.spawn((
         pos,
         PositionOffset::default(),
-        Sprite(sprite),
+        SpriteIndex(sprite),
         Movement::default(),
         EndMovement::default(),
         Dir::default(),
@@ -48,7 +48,7 @@ pub fn unload_npc(
     systems: &mut DrawSetting,
     entity: &Entity,
 ) {
-    let npc_sprite = world.get_or_panic::<Sprite>(entity).0;
+    let npc_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
     systems.gfx.remove_gfx(npc_sprite);
     let _ = world.despawn(entity.0);
 }
@@ -178,7 +178,7 @@ pub fn set_npc_frame(
     entity: &Entity,
     frame_index: usize,
 ) {
-    let sprite_index = world.get_or_panic::<Sprite>(entity).0;
+    let sprite_index = world.get_or_panic::<SpriteIndex>(entity).0;
     let size = systems.gfx.get_size(sprite_index);
     let frame_pos = Vec2::new(frame_index as f32 % NPC_SPRITE_FRAME_X,
         (frame_index  as f32 / NPC_SPRITE_FRAME_X).floor());

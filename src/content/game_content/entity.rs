@@ -42,7 +42,7 @@ pub struct Dir(pub u8);
 pub struct LastMoveFrame(pub usize);
 
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
-pub struct Sprite(pub usize);
+pub struct SpriteIndex(pub usize);
 
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
 pub struct Attacking(pub bool);

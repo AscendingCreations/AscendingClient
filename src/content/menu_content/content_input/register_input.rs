@@ -5,13 +5,14 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{button, content::*, ContentType, DrawSetting, MouseInputType, socket::*};
+use crate::{button, content::*, socket::*, Alert, AlertType, ContentType, DrawSetting, MouseInputType};
 
 pub fn register_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut DrawSetting,
     socket: &mut Socket,
+    alert: &mut Alert,
     input_type: MouseInputType,
     screen_pos: Vec2,
 ) {
@@ -24,7 +25,7 @@ pub fn register_mouse_input(
             let button_index = click_buttons(menu_content, systems, screen_pos);
             if let Some(index) = button_index {
                 menu_content.did_button_click = true;
-                trigger_button(menu_content, systems, socket, index);
+                trigger_button(menu_content, systems, socket, alert, index);
             }
 
             let checkbox_index = click_checkbox(menu_content, systems, screen_pos);
@@ -58,34 +59,40 @@ fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut DrawSetting,
     socket: &mut Socket,
+    alert: &mut Alert,
     index: usize,
 ) {
     match index {
         0 => { // Register
-            
-            send_register(
+            if menu_content.textbox[0].text != menu_content.textbox[1].text {
+                alert.show_alert(systems, AlertType::Inform, "Email did not match!".into(), "Alert Message".into(), 250, None);
+                return;
+            }
+
+            if menu_content.textbox[2].text != menu_content.textbox[3].text {
+                alert.show_alert(systems, AlertType::Inform, "Password did not match!".into(), "Alert Message".into(), 250, None);
+                return;
+            }
+
+            /*send_register(
                 socket,
                 menu_content.textbox[4].text.clone(),
                 menu_content.textbox[2].text.clone(),
                 menu_content.textbox[0].text.clone(),
-                1).expect("Failed to send register");
+                1).expect("Failed to send register");*/
         }
         1 => { // Sign In
-            println!("Sign In");
-            println!("Old Collection {:?}", systems.gfx.count_collection());
             create_window(systems, menu_content, WindowType::Login);
-            println!("New Collection {:?}", systems.gfx.count_collection());
         }
         2 => { // Sprite Left
-            println!("Sprite Left");
-            let x: i32 = menu_content.textbox[0].text.clone().parse().unwrap();
-            let y: i32 = menu_content.textbox[1].text.clone().parse().unwrap();
-            let g: i32 = menu_content.textbox[2].text.clone().parse().unwrap();
-            let result = get_start_map_pos(MapPosition::new(0, 0, 0), MapPosition::new(x, y, g));
-            println!("Result {:?} x: {x} y: {y} g: {g}", result);
+            menu_content.content_data = menu_content.content_data.saturating_sub(1).max(0);
+            systems.gfx.set_image(menu_content.image[0], systems.resource.players[menu_content.content_data].allocation);
+            systems.gfx.set_text(&mut systems.renderer, menu_content.unique_label[0], &format!("{}", menu_content.content_data));
         }
         3 => { // Sprite Right
-            println!("Sprite Right");
+            menu_content.content_data = menu_content.content_data.saturating_add(1).min(2);
+            systems.gfx.set_image(menu_content.image[0], systems.resource.players[menu_content.content_data].allocation);
+            systems.gfx.set_text(&mut systems.renderer, menu_content.unique_label[0], &format!("{}", menu_content.content_data));
         }
         _ => {}
     }

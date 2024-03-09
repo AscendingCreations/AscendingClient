@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{ContentType, DrawSetting, content::*, MouseInputType, socket::*};
+use crate::{content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType};
 
 use super::{KEY_ATTACK, KEY_MOVEDOWN, KEY_MOVELEFT, KEY_MOVERIGHT, KEY_MOVEUP};
 
@@ -15,9 +15,15 @@ impl GameContent {
         world: &mut World,
         systems: &mut DrawSetting,
         _socket: &mut Socket,
+        alert: &mut Alert,
         input_type: MouseInputType,
         screen_pos: Vec2,
     ) {
+        if alert.visible {
+            alert.alert_mouse_input(systems, input_type, screen_pos);
+            return;
+        }
+
         if let ContentHolder::Game(data) = &mut content.holder {
             Interface::mouse_input(&mut data.interface, world, systems, input_type, screen_pos);
         }
@@ -28,6 +34,7 @@ impl GameContent {
         world: &mut World,
         systems: &mut DrawSetting,
         _socket: &mut Socket,
+        _alert: &mut Alert,
         event: &KeyEvent,
     ) {
         if let ContentHolder::Game(data) = &mut content.holder {

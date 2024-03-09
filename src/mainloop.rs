@@ -1,8 +1,7 @@
 use hecs::World;
 
 use crate::{
-    content::*,
-    DrawSetting,
+    content::*, BufferTask, DrawSetting
 };
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -16,6 +15,7 @@ pub fn game_loop(
     world: &mut World,
     systems: &mut DrawSetting,
     content: &mut Content,
+    buffer: &mut BufferTask,
     seconds: f32,
     loop_timer: &mut LoopTimer
 ) {
@@ -24,7 +24,7 @@ pub fn game_loop(
             update_camera(world, data, systems);
     
             if seconds > loop_timer.player_tmr {
-                update_player(world, systems, data, seconds);
+                update_player(world, systems, data, buffer, seconds);
                 loop_timer.player_tmr = seconds + 0.01;
             }
 

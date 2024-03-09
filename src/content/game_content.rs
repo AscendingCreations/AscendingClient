@@ -9,12 +9,7 @@ pub use content_input::*;
 pub use interface::*;
 
 use crate::{
-    values::*,
-    logic::*,
-    Direction,
-    DrawSetting,
-    content::*,
-    database::*,
+    content::*, database::*, logic::*, values::*, buffer::*, Direction, DrawSetting
 };
 use hecs::World;
 
@@ -71,6 +66,10 @@ impl GameContent {
         for entity in self.npcs.iter() {
             unload_npc(world, systems, entity);
         }
+        for entity in self.mapitems.iter() {
+            unload_mapitems(world, systems, entity);
+        }
+
         self.myentity = None;
         self.interface.unload(systems);
         self.map.unload(systems);
@@ -91,7 +90,7 @@ impl GameContent {
         }
     }
 
-    pub fn move_map(&mut self, world: &mut World, systems: &mut DrawSetting, dir: Direction) {
+    pub fn move_map(&mut self, world: &mut World, systems: &mut DrawSetting, dir: Direction, buffer: &mut BufferTask) {
         match dir {
             Direction::Down => self.map.map_pos.y -= 1,
             Direction::Left => self.map.map_pos.x -= 1,
@@ -120,13 +119,13 @@ impl GameContent {
             let (mx, my) = get_map_loc(
                 self.map.map_pos.x, 
                 self.map.map_pos.y, to);
-            let mapdata = load_file(
-                mx, my, self.map.map_pos.group as u64);
-            
-            load_map_data(systems, &mapdata, self.map.index[from].0);
             self.map.index[from].1 = to;
             self.map.map_attribute[from].1 = to;
-            self.map.map_attribute[from].0 = MapAttributes { attribute: mapdata.attribute.clone() };
+            
+            buffer.add_task(BufferTaskEnum::LoadMap(mx, my, self.map.map_pos.group as u64));
+            buffer.add_task(BufferTaskEnum::ApplyMap(mx, my, self.map.map_pos.group as u64, to));
+            buffer.add_task(BufferTaskEnum::ApplyMapAttribute(mx, my, self.map.map_pos.group as u64, to));
+            buffer.add_task(BufferTaskEnum::UnloadMap(mx, my, self.map.map_pos.group as u64));   
         }
 
         self.map.sort_map();
@@ -245,10 +244,10 @@ impl GameContent {
     // ---
 }
 
-pub fn update_player(world: &mut World, systems: &mut DrawSetting, content: &mut GameContent, seconds: f32) {
+pub fn update_player(world: &mut World, systems: &mut DrawSetting, content: &mut GameContent, buffer: &mut BufferTask, seconds: f32) {
     let players = content.players.clone();
     for entity in players.iter() {
-        process_player_movement(world, systems, entity, content);
+        process_player_movement(world, systems, entity, content, buffer);
         process_player_attack(world, systems, entity, seconds)
     }
 }
@@ -275,7 +274,7 @@ pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut
     content.map.move_pos(systems, content.camera.pos);
     
     for (_, (worldentitytype, sprite, pos, pos_offset)) in 
-        world.query_mut::<(&WorldEntityType, &Sprite, &Position, &PositionOffset)>().into_iter() {
+        world.query_mut::<(&WorldEntityType, &SpriteIndex, &Position, &PositionOffset)>().into_iter() {
         match worldentitytype {
             WorldEntityType::Player => {
                 update_player_position(systems, &content, sprite.0, pos, pos_offset);

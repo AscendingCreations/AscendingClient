@@ -88,20 +88,13 @@ where
         );
 
         pass.render_map(renderer, &self.map_renderer, &self.map_atlas, 0);
-
-        pass.render_image(renderer, &self.image_renderer, &self.image_atlas, 0);
-
         pass.render_map(renderer, &self.map_renderer, &self.map_atlas, 1);
-
-        pass.render_text(renderer, &self.text_renderer, &self.text_atlas, 0);
-
-        pass.render_rects(renderer, &self.ui_renderer, &self.ui_atlas, 0);
-
-        pass.render_text(renderer, &self.text_renderer, &self.text_atlas, 1);
-
-        pass.render_rects(renderer, &self.ui_renderer, &self.ui_atlas, 2);
-
-        pass.render_text(renderer, &self.text_renderer, &self.text_atlas, 2);
+        for layer in 0..=5 {
+            pass.render_map(renderer, &self.map_renderer, &self.map_atlas, layer);
+            pass.render_image(renderer, &self.image_renderer, &self.image_atlas, layer);
+            pass.render_text(renderer, &self.text_renderer, &self.text_atlas, layer);
+            pass.render_rects(renderer, &self.ui_renderer, &self.ui_atlas, layer);
+        }
     }
 }
 

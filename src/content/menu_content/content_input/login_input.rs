@@ -5,13 +5,14 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{button, content::*, ContentType, DrawSetting, MouseInputType, fade::*, logic::FloatFix, socket::*};
+use crate::{button, content::*, fade::*, logic::FloatFix, socket::*, Alert, ContentType, DrawSetting, MouseInputType};
 
 pub fn login_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut DrawSetting,
     socket: &mut Socket,
+    _alert: &mut Alert,
     input_type: MouseInputType,
     screen_pos: Vec2,
 ) {
