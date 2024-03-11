@@ -30,6 +30,7 @@ pub struct Textbox {
     special_key_hold: [bool; MAX_KEY],
     hide_content: bool,
     z_step: (f32, i32),
+    pub tooltip: Option<String>,
 }
 
 impl Textbox {
@@ -44,6 +45,7 @@ impl Textbox {
         selected_bg_color: Color,
         hide_content: bool,
         visible: bool,
+        tooltip: Option<String>,
     ) -> Self {
         let mut rect = Rect::new(&mut systems.renderer, 0);
         rect.set_color(selected_bg_color)
@@ -73,6 +75,7 @@ impl Textbox {
             is_selected: false,
             special_key_hold: [false; MAX_KEY],
             hide_content,
+            tooltip,
         }
     }
 

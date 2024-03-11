@@ -93,6 +93,7 @@ impl Chatbox {
             Color::rgba(120, 120, 120, 255),
             false,
             true,
+            None,
         );
 
         let button = [
@@ -124,7 +125,8 @@ impl Chatbox {
                 (0.0001, 5),
                 Vec2::new(24.0, 24.0),
                 0,
-                true
+                true,
+                None,
             ),
             Button::new(
                 systems,
@@ -154,7 +156,8 @@ impl Chatbox {
                 (0.0001, 5),
                 Vec2::new(24.0, 24.0),
                 0,
-                true
+                true,
+                None,
             ),
             Button::new(
                 systems,
@@ -184,7 +187,8 @@ impl Chatbox {
                 (0.0001, 5),
                 Vec2::new(60.0, 24.0),
                 0,
-                true
+                true,
+                None,
             ),
         ];
 
@@ -217,6 +221,7 @@ impl Chatbox {
             20.0,
             true,
             true,
+            None,
         );
 
         Chatbox {

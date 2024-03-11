@@ -83,4 +83,6 @@ pub const ORDER_ALERT_HEADER: f32 = 1.7;
 pub const ORDER_ALERT_HEADER_TEXT: f32 = 1.6;
 pub const ORDER_ALERT_TEXT: f32 = 1.7;
 pub const ORDER_ALERT_BUTTON: f32 = 1.6;
+pub const ORDER_TOOLTIP: f32 = 1.05;
+pub const ORDER_TOOLTIP_TEXT: f32 = 1.0;
 pub const ORDER_FADE: f32 = 0.9;

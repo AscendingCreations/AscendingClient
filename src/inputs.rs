@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{content::{menu_content::content_input::*, *}, socket::*, Alert, Direction, DrawSetting};
+use crate::{content::{menu_content::content_input::*, *}, socket::*, Alert, Direction, DrawSetting, Tooltip};
 
 pub enum MouseInputType {
     MouseLeftDown,
@@ -22,20 +22,23 @@ pub fn handle_mouse_input(
     mouse_pos: &Vec2,
     content: &mut Content,
     alert: &mut Alert,
+    tooltip: &mut Tooltip,
 ) {
     // We convert the mouse position to render position as the y pos increase upward
     let screen_pos = Vec2::new(
         mouse_pos.x,
         systems.size.height - mouse_pos.y,
     );
+    
+    tooltip.check_tooltip(systems, screen_pos);
 
     let content_type = content.content_type.clone();
     match content_type {
         ContentType::Game => {
-            GameContent::mouse_input(content, world, systems, socket, alert, input_type, screen_pos);
+            GameContent::mouse_input(content, world, systems, socket, alert, tooltip, input_type, screen_pos);
         }
         ContentType::Menu => {
-            MenuContent::mouse_input(content, world, systems, socket, alert, input_type, screen_pos);
+            MenuContent::mouse_input(content, world, systems, socket, alert, tooltip, input_type, screen_pos);
         }
     }
 }

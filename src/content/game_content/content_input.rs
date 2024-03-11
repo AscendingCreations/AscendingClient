@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType};
+use crate::{content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType, Tooltip};
 
 use super::{KEY_ATTACK, KEY_MOVEDOWN, KEY_MOVELEFT, KEY_MOVERIGHT, KEY_MOVEUP};
 
@@ -16,6 +16,7 @@ impl GameContent {
         systems: &mut DrawSetting,
         _socket: &mut Socket,
         alert: &mut Alert,
+        _tooltip: &mut Tooltip,
         input_type: MouseInputType,
         screen_pos: Vec2,
     ) {

@@ -165,6 +165,10 @@ impl GfxCollection {
                 GfxType::Rect(rect) => {
                     rect.set_size(size);
                 }
+                GfxType::Text(text) => {
+                    text.size = size;
+                    text.changed = true;
+                }
                 _ => {}
             }
         }

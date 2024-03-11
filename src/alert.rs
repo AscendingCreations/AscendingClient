@@ -140,7 +140,7 @@ impl Alert {
                     ORDER_ALERT_BUTTON,
                     (0.01, 2),
                     Vec2::new(60.0, 30.0),
-                    4, true
+                    4, true, None,
                 ));
             }
             AlertType::Confirm => {
@@ -162,7 +162,7 @@ impl Alert {
                     ORDER_ALERT_BUTTON,
                     (0.01, 2),
                     Vec2::new(60.0, 30.0),
-                    4, true
+                    4, true, None,
                 ));
                 self.button.push(Button::new(systems,
                     ButtonType::Rect(button_detail.clone()),
@@ -181,7 +181,7 @@ impl Alert {
                     ORDER_ALERT_BUTTON,
                     (0.01, 2),
                     Vec2::new(60.0, 30.0),
-                    4, true
+                    4, true, None,
                 ));
             }
         }

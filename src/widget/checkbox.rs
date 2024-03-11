@@ -90,6 +90,7 @@ pub struct Checkbox {
     pub box_size: Vec2,
     pub adjust_x: f32,
     z_step: (f32, i32),
+    pub tooltip: Option<String>,
 }
 
 impl Checkbox {
@@ -105,6 +106,7 @@ impl Checkbox {
         render_layer: usize,
         text_data: Option<CheckboxText>,
         visible: bool,
+        tooltip: Option<String>,
     ) -> Self {
         let boxtype = box_type.clone();
         let checktype = check_type.clone();
@@ -190,6 +192,7 @@ impl Checkbox {
             z_step,
             box_size,
             adjust_x,
+            tooltip,
         }
     }
 

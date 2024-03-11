@@ -4,8 +4,9 @@ use winit::{
     keyboard::*,
 };
 use hecs::World;
+use regex::Regex;
 
-use crate::{button, content::*, socket::*, Alert, AlertType, ContentType, DrawSetting, MouseInputType};
+use crate::{button, content::*, logic::*, socket::*, Alert, AlertType, ContentType, DrawSetting, MouseInputType, Tooltip};
 
 pub fn register_mouse_input(
     menu_content: &mut MenuContent,
@@ -13,13 +14,15 @@ pub fn register_mouse_input(
     systems: &mut DrawSetting,
     socket: &mut Socket,
     alert: &mut Alert,
+    tooltip: &mut Tooltip,
     input_type: MouseInputType,
     screen_pos: Vec2,
 ) {
     match input_type {
         MouseInputType::MouseMove => {
-            hover_buttons(menu_content, systems, screen_pos);
-            hover_checkbox(menu_content, systems, screen_pos);
+            hover_buttons(menu_content, systems, tooltip, screen_pos);
+            hover_checkbox(menu_content, systems, tooltip, screen_pos);
+            hover_textbox(menu_content, systems, tooltip, screen_pos);
         }
         MouseInputType::MouseLeftDown => {
             let button_index = click_buttons(menu_content, systems, screen_pos);
@@ -64,22 +67,77 @@ fn trigger_button(
 ) {
     match index {
         0 => { // Register
+            let email_regex = Regex::new(
+                r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})",
+            ).expect("Could not create email regex");
+
             if menu_content.textbox[0].text != menu_content.textbox[1].text {
-                alert.show_alert(systems, AlertType::Inform, "Email did not match!".into(), "Alert Message".into(), 250, None);
+                alert.show_alert(systems, AlertType::Inform, 
+                    "Email did not match".into(), 
+                    "Alert Message".into(), 
+                    250, 
+                    None);
                 return;
             }
 
             if menu_content.textbox[2].text != menu_content.textbox[3].text {
-                alert.show_alert(systems, AlertType::Inform, "Password did not match!".into(), "Alert Message".into(), 250, None);
+                alert.show_alert(systems, AlertType::Inform, 
+                    "Password did not match".into(), 
+                    "Alert Message".into(), 
+                    250, 
+                    None);
                 return;
             }
 
-            /*send_register(
+            let email = menu_content.textbox[0].text.clone();
+            let password = menu_content.textbox[2].text.clone();
+            let username = menu_content.textbox[4].text.clone();
+
+            if !username.chars().all(is_name_acceptable)
+                || !password.chars().all(is_password_acceptable)
+            {
+                alert.show_alert(systems, AlertType::Inform, 
+                    "Username or Password contains unaccepted Characters".into(), 
+                    "Alert Message".into(), 
+                    250, 
+                    None);
+                return;
+            }
+
+            if username.len() >= 64 {
+                alert.show_alert(systems, AlertType::Inform, 
+                    "Username has too many Characters, 64 Characters Max".into(), 
+                    "Alert Message".into(), 
+                    250, 
+                    None);
+                return;
+            }
+    
+            if password.len() >= 128 {
+                alert.show_alert(systems, AlertType::Inform, 
+                    "Password has too many Characters, 128 Characters Max".into(), 
+                    "Alert Message".into(), 
+                    250, 
+                    None);
+                return;
+            }
+
+            if !email_regex.is_match(&email) {
+                alert.show_alert(systems, AlertType::Inform, 
+                    "Email must be an actual email.".into(), 
+                    "Alert Message".into(), 
+                    250, 
+                    None);
+                return;
+            }
+
+            send_register(
                 socket,
                 menu_content.textbox[4].text.clone(),
                 menu_content.textbox[2].text.clone(),
                 menu_content.textbox[0].text.clone(),
-                1).expect("Failed to send register");*/
+                1
+            ).expect("Failed to send register");
         }
         1 => { // Sign In
             create_window(systems, menu_content, WindowType::Login);

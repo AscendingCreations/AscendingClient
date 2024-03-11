@@ -230,6 +230,8 @@ async fn main() -> Result<(), AscendingError> {
 
     let mut alert = Alert::new();
 
+    let mut tooltip = Tooltip::new(&mut systems);
+
     let mut socket = Socket::new();
     socket.register().expect("Failed to register socket");
 
@@ -326,6 +328,7 @@ async fn main() -> Result<(), AscendingError> {
                                 &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                 &mut content,
                                 &mut alert,
+                                &mut tooltip,
                             );
                         } else {
                             handle_mouse_input(&mut world,
@@ -335,6 +338,7 @@ async fn main() -> Result<(), AscendingError> {
                                 &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                 &mut content,
                                 &mut alert,
+                                &mut tooltip,
                             );
                         }
                     }
@@ -348,6 +352,7 @@ async fn main() -> Result<(), AscendingError> {
                                     &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                     &mut content,
                                     &mut alert,
+                                    &mut tooltip,
                                 );
                                 mouse_press = true;
                             }
@@ -359,6 +364,7 @@ async fn main() -> Result<(), AscendingError> {
                                     &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                                     &mut content,
                                     &mut alert,
+                                    &mut tooltip,
                                 );
                                 mouse_press = false;
                             }
@@ -408,6 +414,7 @@ async fn main() -> Result<(), AscendingError> {
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
             fade_end(&mut systems, &mut world, &mut content);
         }
+        tooltip.handle_tooltip_logic(&mut systems, seconds);
 
         // update our systems data to the gpu. this is the Camera in the shaders.
         graphics.system.update(&systems.renderer, &frame_time);

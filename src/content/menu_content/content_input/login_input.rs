@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{button, content::*, fade::*, logic::FloatFix, socket::*, Alert, ContentType, DrawSetting, MouseInputType};
+use crate::{button, content::*, fade::*, logic::FloatFix, socket::*, Alert, ContentType, DrawSetting, MouseInputType, Tooltip};
 
 pub fn login_mouse_input(
     menu_content: &mut MenuContent,
@@ -13,13 +13,14 @@ pub fn login_mouse_input(
     systems: &mut DrawSetting,
     socket: &mut Socket,
     _alert: &mut Alert,
+    tooltip: &mut Tooltip,
     input_type: MouseInputType,
     screen_pos: Vec2,
 ) {
     match input_type {
         MouseInputType::MouseMove => {
-            hover_buttons(menu_content, systems, screen_pos);
-            hover_checkbox(menu_content, systems, screen_pos);
+            hover_buttons(menu_content, systems, tooltip, screen_pos);
+            hover_checkbox(menu_content, systems, tooltip, screen_pos);
         }
         MouseInputType::MouseLeftDown => {
             let button_index = click_buttons(menu_content, systems, screen_pos);

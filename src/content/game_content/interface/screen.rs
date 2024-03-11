@@ -31,6 +31,7 @@ pub fn create_menu_button(systems: &mut DrawSetting) -> [Button; 3] {
         Vec2::new(40.0, 40.0),
         0,
         true,
+        None,
     );
     image_properties.uv.x = 32.0;
     let inventory_button = Button::new(systems,
@@ -43,6 +44,7 @@ pub fn create_menu_button(systems: &mut DrawSetting) -> [Button; 3] {
         Vec2::new(40.0, 40.0),
         0,
         true,
+        None,
     );
     image_properties.uv.x = 64.0;
     let setting_button = Button::new(systems,
@@ -55,6 +57,7 @@ pub fn create_menu_button(systems: &mut DrawSetting) -> [Button; 3] {
         Vec2::new(40.0, 40.0),
         0,
         true,
+        None,
     );
     
     [character_button, inventory_button, setting_button]

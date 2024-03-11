@@ -65,6 +65,14 @@ pub fn is_within_area(area: Vec2, target_pos: Vec2, target_size: Vec2) -> bool {
         area.y <= target_pos.y + target_size.y
 }
 
+pub const fn is_name_acceptable(n: char) -> bool {
+    matches!(n, '!' | '$' | '&' | '_' | '~' | '0'..='9' | 'A'..='Z' | 'a'..='z')
+}
+
+pub const fn is_password_acceptable(n: char) -> bool {
+    matches!(n, '!' | '$' | '&' | '_' | '%' | '@' | '?' | '~' | '0'..='9' | 'A'..='Z' | 'a'..='z')
+}
+
 /*pub fn next_down(f: f32) -> f32 {
     // We must use strictly integer arithmetic to prevent denormals from
     // flushing to zero after an arithmetic operation on some platforms.

@@ -52,6 +52,7 @@ pub struct Scrollbar {
     in_hover: bool,
     pub in_hold: bool,
     z_step: (f32, i32),
+    pub tooltip: Option<String>,
 }
 
 impl Scrollbar {
@@ -70,6 +71,7 @@ impl Scrollbar {
         min_bar_size: f32,
         reverse_value: bool,
         visible: bool,
+        tooltip: Option<String>,
     ) -> Self {
         let bg = if let Some(data) = background {
             let mut scrollbg_rect = Rect::new(&mut systems.renderer, 0);
@@ -153,6 +155,7 @@ impl Scrollbar {
             hold_color: scrollbar.hold_color,
             in_hover: false,
             in_hold: false,
+            tooltip,
         }
     }
 

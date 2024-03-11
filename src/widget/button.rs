@@ -81,6 +81,7 @@ pub struct Button {
     pub z_order: f32,
     pub size: Vec2,
     z_step: (f32, i32),
+    pub tooltip: Option<String>,
 }
 
 impl Button {
@@ -95,6 +96,7 @@ impl Button {
         size: Vec2,
         render_layer: usize,
         visible: bool,
+        tooltip: Option<String>,
     ) -> Self {
         let buttontype = button_type.clone();
         let index = match buttontype {
@@ -169,6 +171,7 @@ impl Button {
             z_order,
             z_step,
             size,
+            tooltip,
         }
     }
 

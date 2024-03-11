@@ -100,6 +100,7 @@ impl MenuContent {
 pub fn hover_buttons(
     menu_content: &mut MenuContent,
     systems: &mut DrawSetting,
+    tooltip: &mut Tooltip,
     screen_pos: Vec2,
 ) {
     for button in menu_content.button.iter_mut() {
@@ -107,6 +108,10 @@ pub fn hover_buttons(
             Vec2::new(button.base_pos.x + button.adjust_pos.x, 
                 button.base_pos.y + button.adjust_pos.y), button.size) {
             button.set_hover(systems, true);
+
+            if let Some(msg) = &button.tooltip {
+                tooltip.init_tooltip(systems, screen_pos, msg.clone());
+            }
         } else {
             button.set_hover(systems, false);
         }
@@ -147,6 +152,7 @@ pub fn reset_buttons(
 pub fn hover_checkbox(
     menu_content: &mut MenuContent,
     systems: &mut DrawSetting,
+    tooltip: &mut Tooltip,
     screen_pos: Vec2,
 ) {
     for checkbox in menu_content.checkbox.iter_mut() {
@@ -155,6 +161,10 @@ pub fn hover_checkbox(
                 checkbox.base_pos.y + checkbox.adjust_pos.y),
                 Vec2::new(checkbox.box_size.x + checkbox.adjust_x, checkbox.box_size.y)) {
             checkbox.set_hover(systems, true);
+
+            if let Some(msg) = &checkbox.tooltip {
+                tooltip.init_tooltip(systems, screen_pos, msg.clone());
+            }
         } else {
             checkbox.set_hover(systems, false);
         }
@@ -212,6 +222,24 @@ pub fn click_textbox(
         menu_content.textbox[index].set_select(systems, true);
     }
     menu_content.selected_textbox = checkbox_found;
+}
+
+pub fn hover_textbox(
+    menu_content: &mut MenuContent,
+    systems: &mut DrawSetting,
+    tooltip: &mut Tooltip,
+    screen_pos: Vec2,
+) {
+    for (index, textbox) in menu_content.textbox.iter_mut().enumerate() {
+        if is_within_area(screen_pos, 
+            Vec2::new(textbox.pos.x, textbox.pos.y),
+            Vec2::new(textbox.size.x, textbox.size.y)) {
+            if let Some(msg) = &textbox.tooltip {
+                tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                println!("Init Tool Tip {index}");
+            }
+        }
+    }
 }
 
 pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, window_type: WindowType) {
@@ -322,7 +350,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     255,
                     Color::rgba(120, 120, 120, 255),
                     is_hidden,
-                    true);
+                    true,
+                    None);
                 content.textbox.push(textbox);
             }
 
@@ -351,7 +380,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 (0.01, 2),
                 Vec2::new(140.0, 34.0),
                 0,
-                true);
+                true,
+                None);
             content.button.push(button);
 
             let button = Button::new(systems,
@@ -371,7 +401,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 (0.01, 2),
                 Vec2::new(140.0, 20.0),
                 0,
-                true);
+                true,
+                None);
             content.button.push(button);
 
             let checkbox = Checkbox::new(
@@ -409,7 +440,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     hover_change: CheckboxChangeType::ColorChange(Color::rgba(240, 240, 240, 255)),
                     click_change: CheckboxChangeType::ColorChange(Color::rgba(80, 80, 80, 255)),
                 }),
-                true);
+                true,
+                None);
             content.checkbox.push(checkbox);
         }
         WindowType::Register => {
@@ -476,6 +508,12 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 systems.gfx.set_text(&mut systems.renderer, textindex, msg);
                 content.label.push(textindex);
 
+                let tooltip = match index {
+                    0 | 1 => Some("The quick brown fox jumps over the lazy dog, this is a very long message that should wrap around".to_string()),
+                    4 => Some("This is a tip msg for Username".to_string()),
+                    _ => None,
+                };
+
                 let textbox = Textbox::new(systems,
                     Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                     (0.01, 2),
@@ -485,7 +523,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     255,
                     Color::rgba(120, 120, 120, 255),
                     false,
-                    true);
+                    true,
+                    tooltip);
                 content.textbox.push(textbox);
             }
 
@@ -536,7 +575,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 (0.01, 2),
                 Vec2::new(140.0, 34.0),
                 0,
-                true);
+                true,
+                None);
             content.button.push(button);
 
             let button = Button::new(systems,
@@ -556,7 +596,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 (0.01, 2),
                 Vec2::new(140.0, 20.0),
                 0,
-                true);
+                true,
+                None);
             content.button.push(button);
 
             let button = Button::new(systems,
@@ -584,7 +625,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 (0.01, 2),
                 Vec2::new(24.0, 24.0),
                 0,
-                true);
+                true,
+                None);
             content.button.push(button);
 
             let button = Button::new(systems,
@@ -612,7 +654,8 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 (0.01, 2),
                 Vec2::new(24.0, 24.0),
                 0,
-                true);
+                true,
+                None);
             content.button.push(button);
 
             let sprite_number_text = create_label(systems, 

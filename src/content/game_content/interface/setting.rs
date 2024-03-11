@@ -89,7 +89,8 @@ impl Setting {
             8,
             20.0,
             false,
-            false);
+            false,
+            None);
 
         let bgm_scroll = Scrollbar::new(systems,
             Vec2::new(w_pos.x, w_pos.y),
@@ -118,7 +119,8 @@ impl Setting {
             8,
             20.0,
             false,
-            false);
+            false,
+            None);
 
         Setting {
             visible: false,

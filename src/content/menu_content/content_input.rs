@@ -5,7 +5,7 @@ use winit::{
 };
 use hecs::World;
 
-use crate::{content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType};
+use crate::{content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType, Tooltip};
 
 mod register_input;
 mod login_input;
@@ -20,6 +20,7 @@ impl MenuContent {
         systems: &mut DrawSetting,
         socket: &mut Socket,
         alert: &mut Alert,
+        tooltip: &mut Tooltip,
         input_type: MouseInputType,
         screen_pos: Vec2,
     ) {
@@ -32,10 +33,10 @@ impl MenuContent {
             ContentHolder::Menu(data) => {
                 match data.cur_window {
                     WindowType::Register => {
-                        register_mouse_input(data, world, systems, socket, alert, input_type, screen_pos);
+                        register_mouse_input(data, world, systems, socket, alert, tooltip, input_type, screen_pos);
                     }
                     WindowType::Login => {
-                        login_mouse_input(data, world, systems, socket, alert, input_type, screen_pos);
+                        login_mouse_input(data, world, systems, socket, alert, tooltip, input_type, screen_pos);
                     }
                     _ => {}
                 }
