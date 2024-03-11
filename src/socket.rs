@@ -10,6 +10,9 @@ use std::net::ToSocketAddrs;
 use std::sync::Arc;
 use std::time::Duration;
 
+use bytey::{ByteBufferRead, ByteBufferWrite};
+use serde_repr::*;
+
 mod error;
 pub mod handledata;
 pub mod config;

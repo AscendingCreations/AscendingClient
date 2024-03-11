@@ -1,7 +1,15 @@
 use crate::{socket::{error, *}, Position, values::*};
 use bytey::ByteBuffer;
 
-#[repr(u32)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 enum ClientPacket {
     Register,
     Login,
@@ -26,7 +34,7 @@ pub fn send_register(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::Register as u32)?;
+    buf.write(ClientPacket::Register)?;
     buf.write(username)?;
     buf.write(password)?;
     buf.write(email)?;
@@ -45,7 +53,7 @@ pub fn send_login(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::Login as u32)?;
+    buf.write(ClientPacket::Login)?;
     buf.write(username)?;
     buf.write(password)?;
     buf.write(app_version.0)?;
@@ -64,7 +72,7 @@ pub fn send_move(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::Move as u32)?;
+    buf.write(ClientPacket::Move)?;
     buf.write(dir)?;
     buf.write(pos)?;
     buf.finish()?;
@@ -79,7 +87,7 @@ pub fn send_dir(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::Dir as u32)?;
+    buf.write(ClientPacket::Dir)?;
     buf.write(dir)?;
     buf.finish()?;
 
@@ -93,7 +101,7 @@ pub fn send_attack(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::Attack as u32)?;
+    buf.write(ClientPacket::Attack)?;
     buf.write(dir)?;
     buf.write(1 as u8)?;
     buf.finish()?;
@@ -109,7 +117,7 @@ pub fn send_useitem(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::UseItem as u32)?;
+    buf.write(ClientPacket::UseItem)?;
     buf.write(slot)?;
     buf.write(targettype)?;
     buf.finish()?;
@@ -124,7 +132,7 @@ pub fn send_unequip(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::Unequip as u32)?;
+    buf.write(ClientPacket::Unequip)?;
     buf.write(slot)?;
     buf.finish()?;
 
@@ -140,7 +148,7 @@ pub fn send_switchinvslot(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::SwitchInvSlot as u32)?;
+    buf.write(ClientPacket::SwitchInvSlot)?;
     buf.write(oldslot)?;
     buf.write(newslot)?;
     buf.write(amount)?;
@@ -155,7 +163,7 @@ pub fn send_pickup(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::PickUp as u32)?;
+    buf.write(ClientPacket::PickUp)?;
     buf.finish()?;
 
     socket.send(buf);
@@ -169,7 +177,7 @@ pub fn send_dropitem(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::DropItem as u32)?;
+    buf.write(ClientPacket::DropItem)?;
     buf.write(slot)?;
     buf.write(amount)?;
     buf.finish()?;
@@ -184,7 +192,7 @@ pub fn send_deleteitem(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::DeleteItem as u32)?;
+    buf.write(ClientPacket::DeleteItem)?;
     buf.write(slot)?;
     buf.finish()?;
 
@@ -200,7 +208,7 @@ pub fn send_message(
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
-    buf.write(ClientPacket::Message as u32)?;
+    buf.write(ClientPacket::Message)?;
     buf.write(channel)?;
     buf.write(msg)?;
     buf.write(name)?;

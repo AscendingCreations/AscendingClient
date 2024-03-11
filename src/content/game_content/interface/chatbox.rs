@@ -491,25 +491,4 @@ impl Chatbox {
             self.scrollbar.set_value(systems, 0);
         }
     }
-
-
-    // TEST
-    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
-        let pos = systems.gfx.get_pos(self.window);
-        println!("BG: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.textbox_bg);
-        println!("Text BG: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.chatarea_bg);
-        println!("Chat Area BG: {}", pos.z);
-
-        self.textbox.print_z_order(systems);
-        self.button.iter_mut().for_each(|button| {
-            button.print_z_order(systems);
-        });
-        self.scrollbar.print_z_order(systems);
-
-        println!("Chat Z Order: {}", self.chat_zorder);
-    }
 }

@@ -133,9 +133,9 @@ fn trigger_button(
 
             send_register(
                 socket,
-                menu_content.textbox[4].text.clone(),
-                menu_content.textbox[2].text.clone(),
-                menu_content.textbox[0].text.clone(),
+                username,
+                password,
+                email,
                 1
             ).expect("Failed to send register");
         }

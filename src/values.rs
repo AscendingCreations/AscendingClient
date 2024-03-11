@@ -67,6 +67,7 @@ pub const ORDER_MAP_ITEM: f32 = 8.5;
 pub const ORDER_PLAYER: f32 = 8.0;
 pub const ORDER_NPC: f32 = 8.0;
 // Upper Map Order 5.1 - 5.0
+pub const ORDER_MAP_FADE: f32 = 4.0;
 pub const ORDER_GUI_BUTTON: f32 = 3.9;
 pub const ORDER_GUI_BUTTON_DETAIL: f32 = 3.8;
 pub const ORDER_GUI_CHATBOX: f32 = 3.9;

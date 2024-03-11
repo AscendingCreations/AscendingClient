@@ -315,15 +315,4 @@ impl Scrollbar {
                     self.z_pos.sub_f32(self.z_step.0, self.z_step.1)));
         systems.gfx.set_size(self.scroll, self.size);
     }
-
-
-    // TEST
-    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
-        if let Some(index) = self.bg {
-            let pos = systems.gfx.get_pos(index);
-            println!("Scrollbar BG: {}", pos.z);
-        }
-        let pos = systems.gfx.get_pos(self.scroll);
-        println!("Scrollbar Scroll: {}", pos.z);
-    }
 }

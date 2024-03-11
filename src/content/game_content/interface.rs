@@ -207,28 +207,6 @@ impl Interface {
             }
             _ => {}
         }
-
-        if event.state.is_pressed() {
-            match event.physical_key {
-                PhysicalKey::Code(KeyCode::F2) => {
-                    println!("=== CHATBOX ===");
-                    game_content.interface.chatbox.print_z_order(systems);
-                }
-                PhysicalKey::Code(KeyCode::F3) => {
-                    println!("=== INVENTORY ===");
-                    game_content.interface.inventory.print_z_order(systems);
-                }
-                PhysicalKey::Code(KeyCode::F4) => {
-                    println!("=== PROFILE ===");
-                    game_content.interface.profile.print_z_order(systems);
-                }
-                PhysicalKey::Code(KeyCode::F5) => {
-                    println!("=== SETTING ===");
-                    game_content.interface.setting.print_z_order(systems);
-                }
-                _ => {}
-            }
-        }
     }
 
     pub fn hover_buttons(
@@ -541,18 +519,5 @@ fn adjust_window_zorder(
             Window::Chatbox => interface.chatbox.set_z_order(systems, order),
         }
         order -= 0.01;
-    }
-
-    print_z_order(interface);
-}
-
-
-
-
-
-// TEST //
-pub fn print_z_order(interface: &mut Interface) {
-    for data in interface.window_order.iter() {
-        println!("Order: {:?}", data);
     }
 }

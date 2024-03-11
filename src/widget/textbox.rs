@@ -204,15 +204,6 @@ impl Textbox {
         systems.gfx.set_pos(self.text_index, 
             Vec3::new(self.pos.x - self.adjust_x, self.pos.y, self.pos.z));
     }
-
-
-    // TEST
-    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
-        let pos = systems.gfx.get_pos(self.bg);
-        println!("Textbox BG: {}", pos.z);
-        let pos = systems.gfx.get_pos(self.text_index);
-        println!("Textbox Text: {}", pos.z);
-    }
 }
 
 pub fn is_text(event: &KeyEvent) -> bool {

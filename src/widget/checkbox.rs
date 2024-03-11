@@ -369,17 +369,4 @@ impl Checkbox {
             systems.gfx.set_color(data.0, data.1.color);
         }
     }
-
-    
-    // TEST
-    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
-        let pos = systems.gfx.get_pos(self.image);
-        println!("Checkbox Image: {}", pos.z);
-        let pos = systems.gfx.get_pos(self.check_image);
-        println!("Checkbox Check: {}", pos.z);
-        if let Some(data) = &mut self.text_type {
-            let pos = systems.gfx.get_pos(data.0);
-            println!("Checkbox Text: {}", pos.z);
-        }
-    }
 }

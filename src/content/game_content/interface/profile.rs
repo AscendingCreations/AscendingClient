@@ -165,17 +165,4 @@ impl Profile {
             Bounds::new(self.pos.x, self.pos.y + 242.0, self.pos.x + self.size.x, self.pos.y + 262.0));
         systems.gfx.center_text(self.header_text);
     }
-
-
-    // TEST
-    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
-        let pos = systems.gfx.get_pos(self.bg);
-        println!("BG: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.header);
-        println!("Header: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.header_text);
-        println!("Header Text: {}", pos.z);
-    }
 }

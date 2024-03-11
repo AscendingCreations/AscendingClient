@@ -438,17 +438,4 @@ impl Button {
             }
         }
     }
-
-
-    // TEST
-    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
-        if let Some(index) = self.index {
-            let pos = systems.gfx.get_pos(index);
-            println!("Button BG: {}", pos.z);
-        }
-        if let Some(content_index) = self.content {
-            let pos = systems.gfx.get_pos(content_index);
-            println!("Button Content: {}", pos.z);
-        }
-    }
 }

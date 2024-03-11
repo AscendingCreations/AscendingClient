@@ -67,11 +67,6 @@ impl GameContent {
                     content.switch_content(world, systems, ContentType::Menu);
                     return;
                 }
-                PhysicalKey::Code(KeyCode::F5) => {
-                    if let ContentHolder::Game(data) = &mut content.holder {
-                        print_z_order(&mut data.interface);
-                    }
-                }
                 _ => {}
             }
         }

@@ -238,20 +238,4 @@ impl Setting {
         self.sfx_scroll.set_pos(systems, self.pos);
         self.bgm_scroll.set_pos(systems, self.pos);
     }
-
-
-    // TEST
-    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
-        let pos = systems.gfx.get_pos(self.bg);
-        println!("BG: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.header);
-        println!("Header: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.header_text);
-        println!("Header Text: {}", pos.z);
-
-        self.sfx_scroll.print_z_order(systems);
-        self.bgm_scroll.print_z_order(systems);
-    }
 }

@@ -16,6 +16,7 @@ pub struct DrawSetting {
     pub scale: f64,
     pub resource: TextureAllocation,
     pub fade: Fade,
+    pub map_fade: MapFade,
 }
 
 pub struct State<Controls>

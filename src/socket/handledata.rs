@@ -1,4 +1,4 @@
-use crate::{socket::*, Entity, Position};
+use crate::{socket::*, Entity, Position, fade::*};
 use bytey::ByteBuffer;
 use phf::phf_map;
 
@@ -59,6 +59,8 @@ pub fn handle_data(socket: &mut Socket, world: &mut World, systems: &mut DrawSet
     if id > 80 {
         return Err(AscendingError::InvalidPacket);
     }
+
+    println!("id: {id}");
 
     let fun = match PACKET_MAP.get(&id) {
         Some(fun) => fun,
@@ -122,7 +124,7 @@ fn handle_fltalert(
 fn handle_loginok(
     _socket: &mut Socket, 
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
@@ -131,6 +133,7 @@ fn handle_loginok(
     let _min = data.read::<u32>()?;
 
     println!("Login Ok");
+    systems.fade.init_fade(&mut systems.gfx, FadeType::In, FADE_LOGIN);
     
     Ok(())
 }

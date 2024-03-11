@@ -230,13 +230,12 @@ pub fn hover_textbox(
     tooltip: &mut Tooltip,
     screen_pos: Vec2,
 ) {
-    for (index, textbox) in menu_content.textbox.iter_mut().enumerate() {
+    for textbox in menu_content.textbox.iter_mut() {
         if is_within_area(screen_pos, 
             Vec2::new(textbox.pos.x, textbox.pos.y),
             Vec2::new(textbox.size.x, textbox.size.y)) {
             if let Some(msg) = &textbox.tooltip {
                 tooltip.init_tooltip(systems, screen_pos, msg.clone());
-                println!("Init Tool Tip {index}");
             }
         }
     }

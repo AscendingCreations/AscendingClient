@@ -207,20 +207,4 @@ impl Inventory {
                         self.pos.y + 10.0 + (37.0 * frame_pos.y), pos.z));
         }
     }
-
-
-    // TEST
-    pub fn print_z_order(&mut self, systems: &mut DrawSetting) {
-        let pos = systems.gfx.get_pos(self.bg);
-        println!("BG: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.header);
-        println!("Header: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.header_text);
-        println!("Header Text: {}", pos.z);
-
-        let pos = systems.gfx.get_pos(self.slot[0]);
-        println!("Inv Slot: {}", pos.z);
-    }
 }

@@ -9,6 +9,7 @@ use crate::{
     game_content::entity::*,
     values::*,
     game_content::*,
+    fade::*,
 };
 
 pub fn add_player(
@@ -168,6 +169,7 @@ pub fn end_player_move(
         if p == entity && move_map {
             let dir = world.get_or_panic::<Movement>(entity).move_direction;
             GameContent::move_map(content, world, systems, dir, buffer);
+            systems.map_fade.init_fade(&mut systems.gfx, FadeType::In, 1);
         }
     }
 

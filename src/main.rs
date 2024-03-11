@@ -213,8 +213,10 @@ async fn main() -> Result<(), AscendingError> {
         scale,
         resource,
         fade: Fade::new(),
+        map_fade: MapFade::new(),
     };
     systems.fade.init_setup(&mut systems.renderer, &mut systems.gfx, &systems.size);
+    systems.map_fade.init_setup(&mut systems.renderer, &mut systems.gfx, &systems.size);
 
     // We establish the different renderers here to load their data up to use them.
     let text_renderer = TextRenderer::new(&systems.renderer).unwrap();
@@ -413,6 +415,9 @@ async fn main() -> Result<(), AscendingError> {
         game_loop(&mut world, &mut systems, &mut content, &mut buffertask, seconds, &mut loop_timer);
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
             fade_end(&mut systems, &mut world, &mut content);
+        }
+        if systems.map_fade.fade_logic(&mut systems.gfx, seconds) {
+            map_fade_end(&mut systems, &mut world, &mut content);
         }
         tooltip.handle_tooltip_logic(&mut systems, seconds);
 
