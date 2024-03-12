@@ -1,7 +1,14 @@
 use graphics::*;
 use hecs::World;
+use bytey::{ByteBufferRead, ByteBufferWrite, ByteBufferError};
 
 pub const PLAYER_SPRITE_FRAME_X: f32 = 6.0;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite)]
+pub struct PlayerPvP {
+    pub pk: bool,
+    pub pvpon: bool,
+}
 
 use crate::{
     Direction,
@@ -38,6 +45,7 @@ pub fn add_player(
         Attacking::default(),
         AttackTimer::default(),
         AttackFrame::default(),
+        EntityName::default(),
         WorldEntityType::Player,
     ));
     let _ = world.insert_one(entity, EntityType::Player(Entity(entity)));
@@ -169,7 +177,6 @@ pub fn end_player_move(
         if p == entity && move_map {
             let dir = world.get_or_panic::<Movement>(entity).move_direction;
             GameContent::move_map(content, world, systems, dir, buffer);
-            systems.map_fade.init_fade(&mut systems.gfx, FadeType::In, 1);
         }
     }
 

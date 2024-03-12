@@ -38,6 +38,7 @@ webpki = "0.22.4"
 serde_repr = "0.1.18"
 phf = { version = "0.11.2", features = ["macros"] }
 regex = "1.10.3"
+derivative = "2.2.0"
 
 [dependencies.camera]
 git = "https://github.com/AscendingCreations/AscendingLibraries"

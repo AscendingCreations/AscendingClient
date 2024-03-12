@@ -37,6 +37,7 @@ pub fn add_npc(
         Attacking::default(),
         AttackTimer::default(),
         AttackFrame::default(),
+        EntityName::default(),
         WorldEntityType::Npc,
     ));
     let _ = world.insert_one(entity, EntityType::Npc(Entity(entity)));

@@ -1,5 +1,8 @@
 #![allow(dead_code, clippy::collapsible_match, unused_imports)]
 use backtrace::Backtrace;
+#[macro_use]
+extern crate derivative;
+
 use camera::{
     controls::{Controls, FlatControls, FlatSettings},
     Projection,
@@ -228,13 +231,14 @@ async fn main() -> Result<(), AscendingError> {
     let mut buffertask = BufferTask::new();
 
     // Initiate Game Content
-    let mut content = Content::new(&mut systems);
+    let mut content = Content::new(&mut world, &mut systems);
 
     let mut alert = Alert::new();
 
     let mut tooltip = Tooltip::new(&mut systems);
 
     let mut socket = Socket::new();
+    let router = PacketRouter::init();
     socket.register().expect("Failed to register socket");
 
     // setup our system which includes Camera and projection as well as our controls.
@@ -461,7 +465,7 @@ async fn main() -> Result<(), AscendingError> {
             socket_timer = seconds + 0.5;
         }
 
-        process_packets(&mut socket, &mut world, &mut systems, &mut content, &mut alert);
+        process_packets(&mut socket, &router, &mut world, &mut systems, &mut content, &mut alert);
 
         buffertask.process_buffer(&mut systems, &mut content);
 

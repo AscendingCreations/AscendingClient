@@ -42,7 +42,7 @@ impl MenuContent {
         bg_image.uv = Vec4::new(0.0, 0.0, 800.0, 600.0);
         let bg = systems.gfx.add_image(bg_image, 0);
 
-        let mut content = MenuContent {
+        MenuContent {
             bg,
             cur_window: WindowType::None,
             window: Vec::new(),
@@ -56,26 +56,31 @@ impl MenuContent {
             did_checkbox_click: false,
             selected_textbox: None,
             content_data: 0,
-        };
-
-        create_window(systems, &mut content, WindowType::Login);
-
-        content
+        }
     }
 
-    pub fn unload(&mut self, _world: &mut World, systems: &mut DrawSetting) {
-        systems.gfx.remove_gfx(self.bg);
+    pub fn show(&mut self, systems: &mut DrawSetting) {
+        systems.gfx.set_visible(self.bg, true);
+        create_window(systems, self, WindowType::Login);
+    }
+
+    pub fn hide(&mut self, systems: &mut DrawSetting) {
+        systems.gfx.set_visible(self.bg, false);
+        self.clear_window(systems)
+    }
+
+    pub fn clear_window(&mut self, systems: &mut DrawSetting) {
         self.window.iter().for_each(|gfx_index| {
             systems.gfx.remove_gfx(*gfx_index);
+        });
+        self.button.iter_mut().for_each(|button| {
+            button.unload(systems);
         });
         self.label.iter().for_each(|gfx_index| {
             systems.gfx.remove_gfx(*gfx_index);
         });
         self.unique_label.iter().for_each(|gfx_index| {
             systems.gfx.remove_gfx(*gfx_index);
-        });
-        self.button.iter_mut().for_each(|button| {
-            button.unload(systems);
         });
         self.checkbox.iter_mut().for_each(|checkbox| {
             checkbox.unload(systems);
@@ -94,6 +99,7 @@ impl MenuContent {
         self.textbox.clear();
         self.image.clear();
         self.selected_textbox = None;
+        self.content_data = 0;
     }
 }
 
@@ -243,36 +249,7 @@ pub fn hover_textbox(
 
 pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, window_type: WindowType) {
     content.cur_window = window_type;
-    content.window.iter().for_each(|gfx_index| {
-        systems.gfx.remove_gfx(*gfx_index);
-    });
-    content.button.iter_mut().for_each(|button| {
-        button.unload(systems);
-    });
-    content.label.iter().for_each(|gfx_index| {
-        systems.gfx.remove_gfx(*gfx_index);
-    });
-    content.unique_label.iter().for_each(|gfx_index| {
-        systems.gfx.remove_gfx(*gfx_index);
-    });
-    content.checkbox.iter_mut().for_each(|checkbox| {
-        checkbox.unload(systems);
-    });
-    content.textbox.iter_mut().for_each(|textbox| {
-        textbox.unload(systems);
-    });
-    content.image.iter_mut().for_each(|gfx_index| {
-        systems.gfx.remove_gfx(*gfx_index);
-    });
-    content.window.clear();
-    content.button.clear();
-    content.label.clear();
-    content.unique_label.clear();
-    content.checkbox.clear();
-    content.textbox.clear();
-    content.image.clear();
-    content.selected_textbox = None;
-    content.content_data = 0;
+    content.clear_window(systems);
 
     let screen_size = Vec2::new(SCREEN_WIDTH as f32, SCREEN_HEIGHT as f32);
 

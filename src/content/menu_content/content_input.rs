@@ -29,17 +29,12 @@ impl MenuContent {
             return;
         }
         
-        match &mut content.holder {
-            ContentHolder::Menu(data) => {
-                match data.cur_window {
-                    WindowType::Register => {
-                        register_mouse_input(data, world, systems, socket, alert, tooltip, input_type, screen_pos);
-                    }
-                    WindowType::Login => {
-                        login_mouse_input(data, world, systems, socket, alert, tooltip, input_type, screen_pos);
-                    }
-                    _ => {}
-                }
+        match content.menu_content.cur_window {
+            WindowType::Register => {
+                register_mouse_input(&mut content.menu_content, world, systems, socket, alert, tooltip, input_type, screen_pos);
+            }
+            WindowType::Login => {
+                login_mouse_input(&mut content.menu_content, world, systems, socket, alert, tooltip, input_type, screen_pos);
             }
             _ => {}
         }
@@ -53,17 +48,12 @@ impl MenuContent {
         _alert: &mut Alert,
         event: &KeyEvent,
     ) {
-        match &mut content.holder {
-            ContentHolder::Menu(data) => {
-                match data.cur_window {
-                    WindowType::Register => {
-                        register_key_input(data, world, systems, event);
-                    }
-                    WindowType::Login => {
-                        login_key_input(data, world, systems, event);
-                    }
-                    _ => {}
-                }
+        match content.menu_content.cur_window {
+            WindowType::Register => {
+                register_key_input(&mut content.menu_content, world, systems, event);
+            }
+            WindowType::Login => {
+                login_key_input(&mut content.menu_content, world, systems, event);
             }
             _ => {}
         }

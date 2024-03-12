@@ -65,7 +65,9 @@ impl GfxCollection {
     }
 
     pub fn remove_gfx(&mut self, index: usize) {
-        self.collection.remove(index);
+        if self.collection.contains(index) {
+            self.collection.remove(index);
+        }
     }
 
     pub fn set_visible(&mut self, index: usize, visible: bool) {

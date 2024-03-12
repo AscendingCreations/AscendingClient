@@ -1,7 +1,7 @@
 use indexmap::IndexMap;
 use std::collections::VecDeque;
 
-use crate::{database::map::*, Content, ContentHolder, DrawSetting, MapAttributes};
+use crate::{database::map::*, Content, DrawSetting, MapAttributes};
 
 pub struct StoredData {
     pub map_data: IndexMap<String, MapData>,
@@ -37,19 +37,15 @@ impl BufferTask {
         if let Some(task) = self.task.pop_front() {
             match task {
                 BufferTaskEnum::ApplyMap(mx, my, mg, map_index) => {
-                    if let ContentHolder::Game(data) = &mut content.holder {
-                        let key = format!("{}_{}_{}", mx, my, mg);
-                        if let Some(mapdata) = self.storage.map_data.get(&key) {
-                            load_map_data(systems, mapdata, data.map.index[map_index].0);
-                        }
+                    let key = format!("{}_{}_{}", mx, my, mg);
+                    if let Some(mapdata) = self.storage.map_data.get(&key) {
+                        load_map_data(systems, mapdata, content.game_content.map.index[map_index].0);
                     }
                 }
                 BufferTaskEnum::ApplyMapAttribute(mx, my, mg, map_index) => {
-                    if let ContentHolder::Game(data) = &mut content.holder {
-                        let key = format!("{}_{}_{}", mx, my, mg);
-                        if let Some(mapdata) = self.storage.map_data.get(&key) {
-                            data.map.map_attribute[map_index].0 = MapAttributes { attribute: mapdata.attribute.clone() };
-                        }
+                    let key = format!("{}_{}_{}", mx, my, mg);
+                    if let Some(mapdata) = self.storage.map_data.get(&key) {
+                        content.game_content.map.map_attribute[map_index].0 = MapAttributes { attribute: mapdata.attribute.clone() };
                     }
                 }
                 BufferTaskEnum::LoadMap(mx, my, mg) => {

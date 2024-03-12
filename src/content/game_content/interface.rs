@@ -52,23 +52,42 @@ impl Interface {
     pub fn new(systems: &mut DrawSetting) -> Self {
         let menu_button = create_menu_button(systems);
 
-        Interface {
+        let mut interface = Interface {
             menu_button,
             did_button_click: false,
             inventory: Inventory::new(systems),
             profile: Profile::new(systems),
             setting: Setting::new(systems),
             chatbox: Chatbox::new(systems),
-            window_order: 
-                vec![
-                    (Window::Chatbox, 0),
-                    (Window::Inventory, 1),
-                    (Window::Profile, 2),
-                    (Window::Setting, 3),
-                ],
+            window_order: Vec::new(),
             drag_window: None,
             selected_textbox: SelectedTextbox::None,
-        }
+        };
+
+        interface.add_window_order();
+
+        interface
+    }
+
+    pub fn add_window_order(&mut self) {
+        self.window_order.push((Window::Chatbox, 0));
+        self.window_order.push((Window::Inventory, 1));
+        self.window_order.push((Window::Profile, 2));
+        self.window_order.push((Window::Setting, 3));
+        self.window_order
+            .sort_by(|a, b| a.1.cmp(&b.1));
+    }
+
+    pub fn recreate(&mut self, systems: &mut DrawSetting) {
+        self.menu_button = create_menu_button(systems);
+        self.inventory = Inventory::new(systems);
+        self.profile = Profile::new(systems);
+        self.setting = Setting::new(systems);
+        self.chatbox = Chatbox::new(systems);
+        self.add_window_order();
+        self.did_button_click = false;
+        self.drag_window = None;
+        self.selected_textbox = SelectedTextbox::None;
     }
 
     pub fn unload(&mut self, systems: &mut DrawSetting) {
@@ -79,6 +98,7 @@ impl Interface {
         self.profile.unload(systems);
         self.setting.unload(systems);
         self.chatbox.unload(systems);
+        self.window_order.clear();
     }
 
     pub fn mouse_input(

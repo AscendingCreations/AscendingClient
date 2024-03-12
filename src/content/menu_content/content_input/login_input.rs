@@ -67,7 +67,7 @@ fn trigger_button(
             println!("Login");
             println!("Email: {:?}", menu_content.textbox[0].text);
             println!("Password: {:?}", menu_content.textbox[1].text);
-            systems.fade.init_fade(&mut systems.gfx, FadeType::In, FADE_LOGIN);
+            systems.fade.init_fade(&mut systems.gfx, FadeType::In, FADE_SWITCH_TO_GAME, FadeData::None);
         }
         1 => { // Register
             create_window(systems, menu_content, WindowType::Register);

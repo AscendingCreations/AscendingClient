@@ -7,12 +7,17 @@ use crate::{
     gfx_collection::*, values::*, content::*, DrawSetting,
 };
 
+pub enum FadeData {
+    None,
+    Entity(Entity),
+}
+
 pub enum FadeType {
     In,
     Out,
 }
 
-pub const FADE_LOGIN: usize = 1;
+pub const FADE_SWITCH_TO_GAME: usize = 1;
 
 pub struct Fade {
     show: bool,
@@ -21,6 +26,7 @@ pub struct Fade {
     f_alpha: isize,
     f_type: FadeType,
     f_end_index: usize,
+    f_data: FadeData,
 }
 
 impl Fade {
@@ -32,6 +38,7 @@ impl Fade {
             f_alpha: 0,
             f_type: FadeType::In,
             f_end_index: 0,
+            f_data: FadeData::None,
         }
     }
 
@@ -79,7 +86,7 @@ impl Fade {
         did_end
     }
 
-    pub fn init_fade(&mut self, gfx_collection: &mut GfxCollection, fade_type: FadeType, fade_end_index: usize) {
+    pub fn init_fade(&mut self, gfx_collection: &mut GfxCollection, fade_type: FadeType, fade_end_index: usize, fade_data: FadeData) {
         match fade_type {
             FadeType::In => {
                 self.f_alpha = 0;
@@ -91,6 +98,7 @@ impl Fade {
         gfx_collection.set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
         self.f_type = fade_type;
         self.f_end_index = fade_end_index;
+        self.f_data = fade_data;
         self.show = true;
     }
 }
@@ -102,6 +110,7 @@ pub struct MapFade {
     f_alpha: isize,
     f_type: FadeType,
     f_end_index: usize,
+    f_data: FadeData,
 }
 
 impl MapFade {
@@ -113,6 +122,7 @@ impl MapFade {
             f_alpha: 0,
             f_type: FadeType::In,
             f_end_index: 0,
+            f_data: FadeData::None,
         }
     }
 
@@ -160,7 +170,7 @@ impl MapFade {
         did_end
     }
 
-    pub fn init_fade(&mut self, gfx_collection: &mut GfxCollection, fade_type: FadeType, fade_end_index: usize) {
+    pub fn init_fade(&mut self, gfx_collection: &mut GfxCollection, fade_type: FadeType, fade_end_index: usize, fade_data: FadeData) {
         match fade_type {
             FadeType::In => {
                 self.f_alpha = 0;
@@ -172,6 +182,7 @@ impl MapFade {
         gfx_collection.set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
         self.f_type = fade_type;
         self.f_end_index = fade_end_index;
+        self.f_data = fade_data;
         self.show = true;
     }
 }
@@ -182,14 +193,15 @@ pub fn fade_end(
     content: &mut Content,
 ) {
     match systems.fade.f_end_index {
-        FADE_LOGIN => {
+        FADE_SWITCH_TO_GAME => {
             content.switch_content(world, systems, ContentType::Game);
             content.init_map(systems, MapPosition::new(0, 0, 0));
-            if let ContentHolder::Game(data) = &mut content.holder {
-                data.init_data(world, systems);
+            if let FadeData::Entity(entity) = systems.fade.f_data {
+                content.game_content.myentity = Some(entity);
             }
+            content.game_content.init_data(world, systems);
             
-            systems.fade.init_fade(&mut systems.gfx, FadeType::Out, 0);
+            systems.fade.init_fade(&mut systems.gfx, FadeType::Out, 0, FadeData::None);
         }
         _ => {}
     }
@@ -202,7 +214,7 @@ pub fn map_fade_end(
 ) {
     match systems.map_fade.f_end_index {
         1 => {            
-            systems.map_fade.init_fade(&mut systems.gfx, FadeType::Out, 0);
+            systems.map_fade.init_fade(&mut systems.gfx, FadeType::Out, 0, FadeData::None);
         }
         _ => {}
     }

@@ -13,14 +13,14 @@ use crate::{
 };
 use hecs::World;
 
-mod player;
-mod npc;
+pub mod player;
+pub mod npc;
 pub mod map;
 mod camera;
 pub mod entity;
 
-use player::*;
-use npc::*;
+pub use player::*;
+pub use npc::*;
 pub use map::*;
 use camera::*;
 pub use entity::*;
@@ -41,7 +41,7 @@ pub struct GameContent {
     interface: Interface,
     keyinput: [bool; MAX_KEY],
     // Test
-    myentity: Option<Entity>,
+    pub myentity: Option<Entity>,
 }
 
 impl GameContent {
@@ -59,7 +59,15 @@ impl GameContent {
         }
     }
 
-    pub fn unload(&mut self, world: &mut World, systems: &mut DrawSetting) {
+    pub fn show(&mut self, systems: &mut DrawSetting) {
+        self.map.recreate(systems);
+        self.interface.recreate(systems);
+        self.keyinput.iter_mut().for_each(|key| {
+            *key = false;
+        });
+    }
+
+    pub fn hide(&mut self, world: &mut World, systems: &mut DrawSetting) {
         for entity in self.players.iter() {
             unload_player(world, systems, entity);
         }
@@ -69,7 +77,10 @@ impl GameContent {
         for entity in self.mapitems.iter() {
             unload_mapitems(world, systems, entity);
         }
-
+        self.players.clear();
+        self.npcs.clear();
+        self.mapitems.clear();
+        
         self.myentity = None;
         self.interface.unload(systems);
         self.map.unload(systems);
@@ -165,6 +176,7 @@ impl GameContent {
         world: &mut World,
         systems: &mut DrawSetting,
     ) {
+        println!("Creating Temp Data");
         // TEMP //
         let player = add_player(world, systems,
             Position {

@@ -19,25 +19,25 @@ pub fn game_loop(
     seconds: f32,
     loop_timer: &mut LoopTimer
 ) {
-    match &mut content.holder {
-        ContentHolder::Game(data) => {
-            update_camera(world, data, systems);
-    
+    match content.content_type {
+        ContentType::Game => {
+            update_camera(world,  &mut content.game_content, systems);
+        
             if seconds > loop_timer.player_tmr {
-                update_player(world, systems, data, buffer, seconds);
+                update_player(world, systems,  &mut content.game_content, buffer, seconds);
                 loop_timer.player_tmr = seconds + 0.01;
             }
 
             if seconds > loop_timer.npc_tmr {
-                update_npc(world, systems, data, seconds);
+                update_npc(world, systems,  &mut content.game_content, seconds);
                 loop_timer.npc_tmr = seconds + 0.01;
             }
 
             if seconds > loop_timer.input_tmr {
-                data.handle_key_input(world, systems, seconds);
+                content.game_content.handle_key_input(world, systems, seconds);
                 loop_timer.input_tmr = seconds + 0.032;
             }
         }
-        ContentHolder::Menu(_content) => {}
+        ContentType::Menu => {}
     }
 }

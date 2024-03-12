@@ -50,10 +50,21 @@ impl MapContent {
         }
     }
 
+    pub fn recreate(&mut self, systems: &mut DrawSetting) {
+        for i in 0..9 {
+            let mut mapdata = Map::new(&mut systems.renderer, TILE_SIZE as u32);
+            mapdata.pos = get_mapindex_base_pos(i);
+            mapdata.can_render = true;
+            self.index[i] = (systems.gfx.add_map(mapdata, 0), i);
+        }
+        self.map_pos = MapPosition::default();
+    }
+
     pub fn unload(&mut self, systems: &mut DrawSetting) {
         self.index.iter().for_each(|(index, _)| {
             systems.gfx.remove_gfx(*index);
         });
+        self.map_attribute.clear();
     }
 
     pub fn sort_map(&mut self) {

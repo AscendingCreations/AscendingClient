@@ -1,10 +1,11 @@
 use graphics::*;
 use hecs::{EntityRef, World};
 use serde::{Deserialize, Serialize};
+use serde_repr::*;
 use core::any::type_name;
 use bytey::{ByteBufferRead, ByteBufferWrite, ByteBufferError};
 
-use crate::Direction;
+use crate::{Direction, values::*};
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
 pub struct MapPosition {
@@ -39,6 +40,9 @@ pub struct PositionOffset {
 pub struct Dir(pub u8);
 
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+pub struct Level(pub i32);
+
+#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
 pub struct LastMoveFrame(pub usize);
 
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
@@ -56,6 +60,25 @@ pub struct AttackFrame {
     pub timer: f32,
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite)]
+pub struct Physical {
+    pub damage: u32,
+    pub defense: u32,
+}
+
+#[derive(Derivative, Debug, Copy, Clone, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
+#[derivative(Default)]
+pub struct Vitals {
+    #[derivative(Default(value = "[25, 2, 100]"))]
+    pub vital: [i32; VITALS_MAX],
+    #[derivative(Default(value = "[25, 2, 100]"))]
+    pub vitalmax: [i32; VITALS_MAX],
+    #[derivative(Default(value = "[0; VITALS_MAX]"))]
+    pub vitalbuffs: [i32; VITALS_MAX],
+    #[derivative(Default(value = "[0; VITALS_MAX]"))]
+    pub regens: [u32; VITALS_MAX],
+}
+
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Movement {
     pub is_moving: bool,
@@ -67,6 +90,29 @@ pub struct Movement {
 #[derive(Copy, Clone, Debug, Default)]
 pub struct EndMovement(pub Position);
 
+#[derive(Debug, Copy, Clone, Default)]
+pub struct Hidden(pub bool);
+
+#[derive(Debug, Default)]
+pub struct EntityName(pub String);
+
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq, Derivative, ByteBufferWrite, ByteBufferRead)]
+#[derivative(Default)]
+pub struct Item {
+    pub num: u32,
+    pub val: u16,
+    #[derivative(Default(value = "1"))]
+    pub level: u8,
+    pub data: [i16; 5],
+}
+
+#[derive(PartialEq, Eq, Clone, Debug, Derivative, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite)]
+#[derivative(Default)]
+pub struct Equipment {
+    #[derivative(Default(value = "(0..MAX_EQPT).map(|_| Item::default()).collect()"))]
+    pub items: Vec<Item>,
+}
+
 #[derive(Copy, Clone, Debug, Default)]
 pub enum WorldEntityType {
     #[default]
@@ -75,6 +121,25 @@ pub enum WorldEntityType {
     Npc,
     MapItem,
     Map,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default, Serialize_repr, Deserialize_repr, ByteBufferRead, ByteBufferWrite)]
+#[repr(u8)]
+pub enum DeathType {
+    #[default]
+    Alive,
+    Spirit,
+    Dead,
+    UnSpawned,
+    Spawning,
+}
+
+#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+pub enum UserAccess {
+    #[default]
+    None,
+    Monitor,
+    Admin,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Deserialize, Serialize, Hash)]

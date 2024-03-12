@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_repr::*;
 use crate::game_content::entity::*;
 use bytey::{ByteBufferRead, ByteBufferWrite};
 
@@ -56,6 +57,19 @@ pub enum MessageChannel {
     Quest,
     Npc,
 }
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize_repr, Deserialize_repr, Default, ByteBufferRead, ByteBufferWrite)]
+#[repr(u8)]
+pub enum VitalTypes {
+    Hp,
+    Mp,
+    Sp,
+    #[default]
+    Count,
+}
+
+pub const VITALS_MAX: usize = VitalTypes::Count as usize;
+pub const MAX_EQPT: usize = 5;
 
 pub const ORDER_MENU_BG: f32 = 10.9;
 pub const ORDER_MENU_WINDOW: f32 = 10.8;

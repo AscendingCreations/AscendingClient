@@ -25,9 +25,7 @@ impl GameContent {
             return;
         }
 
-        if let ContentHolder::Game(data) = &mut content.holder {
-            Interface::mouse_input(&mut data.interface, world, systems, input_type, screen_pos);
-        }
+        Interface::mouse_input(&mut content.game_content.interface, world, systems, input_type, screen_pos);
     }
 
     pub fn key_input(
@@ -38,27 +36,25 @@ impl GameContent {
         _alert: &mut Alert,
         event: &KeyEvent,
     ) {
-        if let ContentHolder::Game(data) = &mut content.holder {
-            Interface::key_input(data, world, systems, event);
+        Interface::key_input(&mut content.game_content, world, systems, event);
 
-            match event.physical_key {
-                PhysicalKey::Code(KeyCode::ArrowUp) => {
-                    data.keyinput[KEY_MOVEUP] = event.state.is_pressed();
-                }
-                PhysicalKey::Code(KeyCode::ArrowDown) => {
-                    data.keyinput[KEY_MOVEDOWN] = event.state.is_pressed();
-                }
-                PhysicalKey::Code(KeyCode::ArrowLeft) => {
-                    data.keyinput[KEY_MOVELEFT] = event.state.is_pressed();
-                }
-                PhysicalKey::Code(KeyCode::ArrowRight) => {
-                    data.keyinput[KEY_MOVERIGHT] = event.state.is_pressed();
-                }
-                PhysicalKey::Code(KeyCode::Space) => {
-                    data.keyinput[KEY_ATTACK] = event.state.is_pressed();
-                }
-                _ => {}
+        match event.physical_key {
+            PhysicalKey::Code(KeyCode::ArrowUp) => {
+                content.game_content.keyinput[KEY_MOVEUP] = event.state.is_pressed();
             }
+            PhysicalKey::Code(KeyCode::ArrowDown) => {
+                content.game_content.keyinput[KEY_MOVEDOWN] = event.state.is_pressed();
+            }
+            PhysicalKey::Code(KeyCode::ArrowLeft) => {
+                content.game_content.keyinput[KEY_MOVELEFT] = event.state.is_pressed();
+            }
+            PhysicalKey::Code(KeyCode::ArrowRight) => {
+                content.game_content.keyinput[KEY_MOVERIGHT] = event.state.is_pressed();
+            }
+            PhysicalKey::Code(KeyCode::Space) => {
+                content.game_content.keyinput[KEY_ATTACK] = event.state.is_pressed();
+            }
+            _ => {}
         }
 
         if event.state.is_pressed() {
