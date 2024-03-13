@@ -108,12 +108,7 @@ pub fn move_npc(
         movement.move_timer = 0.0;
     }
     {
-        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = match dir {
-            Direction::Up => 2,
-            Direction::Down => 0,
-            Direction::Left => 3,
-            Direction::Right => 1,
-        };
+        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = enum_to_dir(*dir);
     }
     let last_frame = if world.get_or_panic::<LastMoveFrame>(entity).0 == 1 { 2 } else { 1 };
     {

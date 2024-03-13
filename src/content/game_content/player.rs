@@ -11,12 +11,7 @@ pub struct PlayerPvP {
 }
 
 use crate::{
-    Direction,
-    DrawSetting,
-    game_content::entity::*,
-    values::*,
-    game_content::*,
-    fade::*,
+    fade::*, game_content::{entity::*, *}, send_move, values::*, Direction, DrawSetting, Socket
 };
 
 pub fn add_player(
@@ -24,6 +19,7 @@ pub fn add_player(
     systems: &mut DrawSetting,
     pos: Position,
     cur_map: MapPosition,
+    entity: Option<&Entity>,
 ) -> Entity {
     let start_pos = get_start_map_pos(cur_map, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
@@ -34,7 +30,7 @@ pub fn add_player(
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
     let sprite = systems.gfx.add_image(image, 0);
     
-    let entity = world.spawn((
+    let component1 = (
         pos,
         PositionOffset::default(),
         SpriteIndex(sprite),
@@ -46,10 +42,30 @@ pub fn add_player(
         AttackTimer::default(),
         AttackFrame::default(),
         EntityName::default(),
+        UserAccess::default(),
+        Equipment::default(),
+        Hidden::default(),
         WorldEntityType::Player,
-    ));
-    let _ = world.insert_one(entity, EntityType::Player(Entity(entity)));
-    Entity(entity)
+    );
+    let component2 = (
+        Level::default(),
+        DeathType::default(),
+        Physical::default(),
+        Vitals::default(),
+        SpriteImage::default(),
+    );
+
+    if let Some(data) = entity {
+        world.spawn_at(data.0, component1);
+        let _ = world.insert(data.0, component2);
+        let _ = world.insert_one(data.0, EntityType::Player(Entity(data.0)));
+        Entity(data.0)
+    } else {
+        let entity = world.spawn(component1);
+        let _ = world.insert(entity, component2);
+        let _ = world.insert_one(entity, EntityType::Player(Entity(entity)));
+        Entity(entity)
+    }
 }
 
 pub fn unload_player(
@@ -65,6 +81,7 @@ pub fn unload_player(
 pub fn move_player(
     world: &mut World,
     systems: &mut DrawSetting,
+    socket: &mut Socket,
     entity: &Entity,
     content: &mut GameContent,
     dir: &Direction,
@@ -119,6 +136,15 @@ pub fn move_player(
         world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = pos.clone();
     }
 
+    let dir_u8 = enum_to_dir(*dir);
+
+    if let Some(p) = content.myentity {
+        if &p == entity {
+            let pos = world.get_or_panic::<Position>(entity);
+            let _ = send_move(socket, dir_u8, pos);
+        }
+    }
+
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         movement.is_moving = true;
         movement.move_direction = dir.clone();
@@ -127,12 +153,7 @@ pub fn move_player(
     }
 
     {
-        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = match dir {
-            Direction::Up => 2,
-            Direction::Down => 0,
-            Direction::Left => 3,
-            Direction::Right => 1,
-        };
+        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = dir_u8;
     }
     let last_frame = if world.get_or_panic::<LastMoveFrame>(entity).0 == 1 { 2 } else { 1 };
     {

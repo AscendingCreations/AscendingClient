@@ -416,7 +416,7 @@ async fn main() -> Result<(), AscendingError> {
         let seconds = frame_time.seconds();
 
         // Game Loop
-        game_loop(&mut world, &mut systems, &mut content, &mut buffertask, seconds, &mut loop_timer);
+        game_loop(&mut socket, &mut world, &mut systems, &mut content, &mut buffertask, seconds, &mut loop_timer);
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
             fade_end(&mut systems, &mut world, &mut content);
         }

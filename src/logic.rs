@@ -1,6 +1,8 @@
 use graphics::*;
 use winit::dpi::PhysicalSize;
 
+use crate::Direction;
+
 pub trait FloatFix {
     fn add_f32(&self, b: f32, dec: i32) -> Self;
     fn sub_f32(&self, b: f32, dec: i32) -> Self;
@@ -71,6 +73,24 @@ pub const fn is_name_acceptable(n: char) -> bool {
 
 pub const fn is_password_acceptable(n: char) -> bool {
     matches!(n, '!' | '$' | '&' | '_' | '%' | '@' | '?' | '~' | '0'..='9' | 'A'..='Z' | 'a'..='z')
+}
+
+pub const fn dir_to_enum(dir: u8) -> Direction {
+    match dir {
+        1 => Direction::Right,
+        2 => Direction::Up,
+        3 => Direction::Left,
+        _ => Direction::Down,
+    }
+}
+
+pub const fn enum_to_dir(dir: Direction) -> u8 {
+    match dir {
+        Direction::Up => 2,
+        Direction::Down => 0,
+        Direction::Left => 3,
+        Direction::Right => 1,
+    }
 }
 
 /*pub fn next_down(f: f32) -> f32 {

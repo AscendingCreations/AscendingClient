@@ -9,7 +9,6 @@ use crate::{
 
 pub enum FadeData {
     None,
-    Entity(Entity),
 }
 
 pub enum FadeType {
@@ -195,11 +194,14 @@ pub fn fade_end(
     match systems.fade.f_end_index {
         FADE_SWITCH_TO_GAME => {
             content.switch_content(world, systems, ContentType::Game);
-            content.init_map(systems, MapPosition::new(0, 0, 0));
-            if let FadeData::Entity(entity) = systems.fade.f_data {
-                content.game_content.myentity = Some(entity);
-            }
-            content.game_content.init_data(world, systems);
+
+            let pos = if let Some(entity) = content.game_content.myentity {
+                world.get_or_panic::<Position>(&entity)
+            } else {
+                Position::default()
+            };
+            content.init_map(systems, pos.map);
+            update_camera(world, &mut content.game_content, systems);
             
             systems.fade.init_fade(&mut systems.gfx, FadeType::Out, 0, FadeData::None);
         }

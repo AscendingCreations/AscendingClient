@@ -49,6 +49,9 @@ pub struct LastMoveFrame(pub usize);
 pub struct SpriteIndex(pub usize);
 
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+pub struct SpriteImage(pub u8);
+
+#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
 pub struct Attacking(pub bool);
 
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]

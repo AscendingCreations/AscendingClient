@@ -361,7 +361,7 @@ pub fn process_packets(socket: &mut Socket, router: &PacketRouter, world: &mut W
                 }
             };
 
-            if handle_data(router, world, systems, content, alert, &mut buffer).is_err() {
+            if handle_data(socket, router, world, systems, content, alert, &mut buffer).is_err() {
                 socket.set_to_closing();
                 break;
             }

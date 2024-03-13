@@ -6,7 +6,7 @@ use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-type PacketFunction = fn(&mut World, &mut DrawSetting, &mut Content, &mut Alert, &mut ByteBuffer) -> Result<()>;
+type PacketFunction = fn(&mut Socket, &mut World, &mut DrawSetting, &mut Content, &mut Alert, &mut ByteBuffer) -> Result<()>;
 
 #[derive(
     Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, ByteBufferRead, ByteBufferWrite, Hash,
@@ -21,6 +21,8 @@ pub enum ServerPackets {
     UpdateMap,
     MapItems,
     MapItemsUnload,
+    MyIndex,
+    PlayerData,
     PlayerSpawn,
     PlayerMove,
     PlayerWarp,
@@ -101,6 +103,14 @@ impl PacketRouter {
             (
                 ServerPackets::MapItemsUnload,
                 routes::handle_mapitemsunload as PacketFunction,
+            ),
+            (
+                ServerPackets::MyIndex,
+                routes::handle_myindex as PacketFunction,
+            ),
+            (
+                ServerPackets::PlayerData,
+                routes::handle_playerdata as PacketFunction,
             ),
             (
                 ServerPackets::PlayerSpawn,

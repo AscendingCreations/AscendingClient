@@ -1,7 +1,7 @@
 use hecs::World;
 
 use crate::{
-    content::*, BufferTask, DrawSetting
+    content::*, BufferTask, DrawSetting, Socket
 };
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -12,6 +12,7 @@ pub struct LoopTimer {
 }
 
 pub fn game_loop(
+    socket: &mut Socket,
     world: &mut World,
     systems: &mut DrawSetting,
     content: &mut Content,
@@ -34,7 +35,7 @@ pub fn game_loop(
             }
 
             if seconds > loop_timer.input_tmr {
-                content.game_content.handle_key_input(world, systems, seconds);
+                content.game_content.handle_key_input(world, systems, socket, seconds);
                 loop_timer.input_tmr = seconds + 0.032;
             }
         }

@@ -9,7 +9,7 @@ pub use content_input::*;
 pub use interface::*;
 
 use crate::{
-    content::*, database::*, logic::*, values::*, buffer::*, Direction, DrawSetting
+    buffer::*, content::*, database::*, logic::*, values::*, Direction, DrawSetting, Socket
 };
 use hecs::World;
 
@@ -33,14 +33,13 @@ const KEY_MOVERIGHT: usize = 4;
 const MAX_KEY: usize = 5;
 
 pub struct GameContent {
-    players: IndexSet<Entity>,
+    pub players: IndexSet<Entity>,
     npcs: IndexSet<Entity>,
     mapitems: IndexSet<Entity>,
     pub map: MapContent,
     camera: Camera,
     interface: Interface,
     keyinput: [bool; MAX_KEY],
-    // Test
     pub myentity: Option<Entity>,
 }
 
@@ -143,15 +142,15 @@ impl GameContent {
         update_camera(world, self, systems);
     }
 
-    pub fn handle_key_input(&mut self, world: &mut World, systems: &mut DrawSetting, seconds: f32) {
+    pub fn handle_key_input(&mut self, world: &mut World, systems: &mut DrawSetting, socket: &mut Socket, seconds: f32) {
         for i in 0..MAX_KEY {
             if self.keyinput[i] {
                 match i {
                     KEY_ATTACK => self.player_attack(world, systems, seconds),
-                    KEY_MOVEDOWN => self.move_player(world, systems, &Direction::Down),
-                    KEY_MOVELEFT => self.move_player(world, systems, &Direction::Left),
-                    KEY_MOVEUP => self.move_player(world, systems,&Direction::Up),
-                    KEY_MOVERIGHT => self.move_player(world, systems, &Direction::Right),
+                    KEY_MOVEDOWN => self.move_player(world, systems, socket, &Direction::Down),
+                    KEY_MOVELEFT => self.move_player(world, systems, socket, &Direction::Left),
+                    KEY_MOVEUP => self.move_player(world, systems, socket,&Direction::Up),
+                    KEY_MOVERIGHT => self.move_player(world, systems, socket, &Direction::Right),
                     _ => {}
                 }
             }
@@ -171,78 +170,16 @@ impl GameContent {
     }
 
     // TEMP //
-    pub fn init_data(
-        &mut self,
-        world: &mut World,
-        systems: &mut DrawSetting,
-    ) {
-        println!("Creating Temp Data");
-        // TEMP //
-        let player = add_player(world, systems,
-            Position {
-                x: 1,
-                y: 1,
-                map: MapPosition {
-                    x: 0,
-                    y: 0,
-                    group: 0,
-                },
-            },
-            self.map.map_pos,
-        );
-        self.myentity = Some(player.clone());
-        self.players.insert(player);
-        let npcentity = add_npc(world, systems,
-            Position {
-                x: 3,
-                y: 2,
-                map: MapPosition {
-                    x: 0,
-                    y: 0,
-                    group: 0,
-                },
-            },
-            self.map.map_pos,
-        );
-        self.npcs.insert(npcentity);
-        self.spawn_item(world, systems, 
-            Position {
-                x: 0,
-                y: 3,
-                map: MapPosition {
-                    x: 0,
-                    y: 0,
-                    group: 0,
-                },
-            },
-            self.map.map_pos,
-            1,
-        );
-        self.spawn_item(world, systems, 
-            Position {
-                x: 0,
-                y: 29,
-                map: MapPosition {
-                    x: 0,
-                    y: -1,
-                    group: 0,
-                },
-            },
-            self.map.map_pos,
-            0,
-        );
-        // ---
-
-        update_camera(world, self, systems);
-    }
     pub fn move_player(
         &mut self,
         world: &mut World,
         systems: &mut DrawSetting,
+        socket: &mut Socket,
         dir: &Direction,
     ) {
-        let myentity = self.myentity.expect("Could not find myentity");
-        move_player(world, systems, &myentity, self, &dir, None);
+        if let Some(myentity) = self.myentity {
+            move_player(world, systems, socket, &myentity, self, &dir, None);
+        }
     }
     pub fn player_attack(
         &mut self,
@@ -250,8 +187,9 @@ impl GameContent {
         systems: &mut DrawSetting,
         seconds: f32,
     ) {
-        let myentity = self.myentity.expect("Could not find myentity");
-        init_player_attack(world, systems, &myentity, seconds);
+        if let Some(myentity) = self.myentity {
+            init_player_attack(world, systems, &myentity, seconds);
+        }
     }
     // ---
 }

@@ -70,7 +70,7 @@ pub fn send_move(
     dir: u8,
     pos: Position,
 ) -> Result<()> {
-    let mut buf = ByteBuffer::new_packet_with(128)?;
+    let mut buf = ByteBuffer::new_packet_with(25)?;
 
     buf.write(ClientPacket::Move)?;
     buf.write(dir)?;
