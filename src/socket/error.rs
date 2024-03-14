@@ -1,9 +1,9 @@
 use thiserror::Error;
 
-pub type Result<T> = std::result::Result<T, AscendingError>;
+pub type SocketResult<T> = std::result::Result<T, AscendingSocketError>;
 
 #[derive(Error, Debug)]
-pub enum AscendingError {
+pub enum AscendingSocketError {
     #[error("Currently Unhandled data error")]
     Unhandled,
     #[error("Multiple Logins Detected")]

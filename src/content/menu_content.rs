@@ -5,7 +5,7 @@ pub mod content_input;
 pub use content_input::*;
 
 use crate::{
-    content::*, values::*, is_within_area, widget::*, DrawSetting, SCREEN_HEIGHT, SCREEN_WIDTH
+    content::*, is_within_area, values::*, widget::*, Config, DrawSetting, SCREEN_HEIGHT, SCREEN_WIDTH
 };
 use hecs::World;
 
@@ -317,7 +317,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     _ => false,
                 };
 
-                let textbox = Textbox::new(systems,
+                let mut textbox = Textbox::new(systems,
                     Vec3::new(pos.x + 142.0, pos.y + addy + 2.0, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                     (0.01, 2),
                     Vec2::new(180.0, 20.0),
@@ -328,6 +328,11 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                     is_hidden,
                     true,
                     None);
+
+                match index {
+                    1 => textbox.set_text(systems, systems.config.password.clone()),
+                    _ => textbox.set_text(systems, systems.config.username.clone()),
+                }
                 content.textbox.push(textbox);
             }
 
@@ -381,7 +386,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 None);
             content.button.push(button);
 
-            let checkbox = Checkbox::new(
+            let mut checkbox = Checkbox::new(
                 systems,
                 CheckboxType::Rect(
                     CheckboxRect {
@@ -418,6 +423,7 @@ pub fn create_window(systems: &mut DrawSetting, content: &mut MenuContent, windo
                 }),
                 true,
                 None);
+            checkbox.set_click(systems, systems.config.save_password);
             content.checkbox.push(checkbox);
         }
         WindowType::Register => {

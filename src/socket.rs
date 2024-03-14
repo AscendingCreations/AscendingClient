@@ -13,17 +13,15 @@ use std::time::Duration;
 use bytey::{ByteBufferRead, ByteBufferWrite};
 use serde_repr::*;
 
-mod error;
+pub mod error;
 pub mod handledata;
-pub mod config;
 pub mod sends;
 
-use error::*;
+pub use error::*;
 pub use handledata::*;
-pub use config::*;
 pub use sends::*;
 
-use crate::{Alert, Content, DrawSetting};
+use crate::{Alert, config::*, Content, DrawSetting};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ClientState {
@@ -76,9 +74,8 @@ pub struct Socket {
 }
 
 impl Socket {
-    pub fn new() -> Self {
-        let config = config::read_config("settings.toml");
-        let tls_config = build_tls_config(&config.client_key).expect("Could not create tls config");
+    pub fn new(_config: &Config) -> Self {
+        let tls_config = build_tls_config("keys/ca.pem").expect("Could not create tls config");
 
         Socket {
             client: Client::new("127.0.0.1", 7010, mio::Token(0), tls_config).expect("Could not create Client"),
@@ -96,7 +93,7 @@ impl Socket {
         self.reregister().unwrap();
     }
 
-    fn process(&mut self, event: &mio::event::Event) -> Result<()> {
+    fn process(&mut self, event: &mio::event::Event) -> SocketResult<()> {
         self.client.poll_state.set(SocketPollState::Read);
 
         if event.is_readable() {
@@ -181,7 +178,7 @@ impl Socket {
         }
     }
 
-    pub fn register(&mut self) -> Result<()> {
+    pub fn register(&mut self) -> SocketResult<()> {
         if let Some(interest) = self.event_set() {
             self.poll
                 .registry()
@@ -190,7 +187,7 @@ impl Socket {
         Ok(())
     }
 
-    fn reregister(&mut self) -> Result<()> {
+    fn reregister(&mut self) -> SocketResult<()> {
         if let Some(interest) = self.event_set() {
             self.poll.registry().reregister(
                 &mut self.client.socket,
@@ -271,7 +268,7 @@ impl ByteBufferExt for ByteBuffer {
     }
 }
 
-fn connect(host: &str, port: u16) -> Result<TcpStream> {
+fn connect(host: &str, port: u16) -> SocketResult<TcpStream> {
     let addrs = (host, port).to_socket_addrs()?;
 
     for addr in addrs {
@@ -283,7 +280,7 @@ fn connect(host: &str, port: u16) -> Result<TcpStream> {
         }
     }
 
-    Err(AscendingError::BadConnection {
+    Err(AscendingSocketError::BadConnection {
         num: port as usize,
         message: format!("Cannot connect to {}:{}", host, port),
     })
@@ -295,7 +292,7 @@ impl Client {
         port: u16,
         token: mio::Token,
         config: Arc<rustls::ClientConfig>,
-    ) -> Result<Client> {
+    ) -> SocketResult<Client> {
         let socket = connect(host, port)?;
 
         let servername = ServerName::try_from(host)
@@ -312,7 +309,7 @@ impl Client {
     }
 }
 
-pub fn poll_events(socket: &mut Socket) -> Result<bool> {
+pub fn poll_events(socket: &mut Socket) -> SocketResult<bool> {
     let mut events = Events::with_capacity(32);
     socket.poll.poll(&mut events, Some(Duration::new(0,1)))?;
 

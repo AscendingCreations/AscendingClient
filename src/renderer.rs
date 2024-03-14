@@ -6,7 +6,7 @@ pub mod fade;
 pub use fade::*;
 
 use crate::{
-    gfx_collection::*, game_content::*, TextureAllocation
+    game_content::*, gfx_collection::*, Config, TextureAllocation
 };
 
 pub struct DrawSetting {
@@ -17,6 +17,7 @@ pub struct DrawSetting {
     pub resource: TextureAllocation,
     pub fade: Fade,
     pub map_fade: MapFade,
+    pub config: Config,
 }
 
 pub struct State<Controls>

@@ -1,11 +1,12 @@
 use graphics::{AscendingError, OtherError};
 use serde::{Deserialize, Serialize};
+use serde_repr::*;
 use std::fs::OpenOptions;
 use std::io::BufReader;
 use std::path::Path;
 use graphics::*;
 
-use crate::DrawSetting;
+use crate::{DrawSetting, MapPosition};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum MapAttribute {
@@ -16,6 +17,31 @@ pub enum MapAttribute {
     Count,
 }
 
+#[derive(
+    Copy,
+    Clone,
+    Serialize_repr,
+    Deserialize_repr,
+    PartialEq,
+    Eq,
+    Default,
+    Debug,
+)]
+#[repr(u8)]
+pub enum Weather {
+    #[default]
+    None,
+    Rain,
+    Snow,
+    Sunny,
+    Storm,
+    Blizzard,
+    Heat,
+    Hail,
+    SandStorm,
+    Windy,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Tile {
     pub id: Vec<u32>,
@@ -23,27 +49,29 @@ pub struct Tile {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MapData {
-    pub x: i32,
-    pub y: i32,
-    pub group: u64,
+    pub position: MapPosition,
     pub tile: Vec<Tile>,
     pub attribute: Vec<MapAttribute>,
     pub zonespawns: [Vec<(u16, u16)>; 5],
     pub zones: [(u64, [Option<u64>; 5]); 5],
-    pub fixed_weather: u8,
+    pub music: u32,
+    pub weather: Weather,
 }
 
 impl MapData {
     pub fn default(x: i32, y: i32, group: u64) -> Self {
         Self {
-            x,
-            y,
-            group,
+            position: MapPosition {
+                x,
+                y,
+                group: group as i32,
+            },
             tile: vec![Tile { id: vec![0; 1024] }; 9],
             attribute: vec![MapAttribute::Walkable; 1024],
             zonespawns: Default::default(),
             zones: Default::default(),
-            fixed_weather: 0,
+            music: 0,
+            weather: Weather::default(),
         }
     }
 }

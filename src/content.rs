@@ -1,6 +1,5 @@
 use crate::{
-    DrawSetting,
-    database::*,
+    database::*, Config, DrawSetting
 };
 use hecs::World;
 

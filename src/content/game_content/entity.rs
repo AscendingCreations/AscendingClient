@@ -7,7 +7,7 @@ use bytey::{ByteBufferRead, ByteBufferWrite, ByteBufferError};
 
 use crate::{Direction, values::*};
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
+#[derive(Copy, Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
 pub struct MapPosition {
     pub x: i32,
     pub y: i32,

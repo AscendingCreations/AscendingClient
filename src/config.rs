@@ -1,4 +1,4 @@
-use crate::socket::Result;
+use crate::socket::SocketResult;
 use rustls::{
     client::danger,
     crypto::{ring as provider, CryptoProvider},
@@ -6,26 +6,34 @@ use rustls::{
     server::WebPkiClientVerifier,
     ClientConfig, RootCertStore, ServerConfig,
 };
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 use std::{fs, io::BufReader, sync::Arc};
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Config {
-    pub listen: String,
-    pub certs: String,
-    pub server_key: String,
-    pub client_key: String,
-    pub maxconnections: usize,
-    pub database: String,
+    pub host: Option<String>,
+    pub port: Option<u16>,
     pub username: String,
     pub password: String,
-    pub host: String,
-    pub port: u16,
+    pub save_password: bool,
 }
 
-pub fn read_config(path: &str) -> Config {
-    let data = fs::read_to_string(path).unwrap();
-    toml::from_str(&data).unwrap()
+impl Config {
+    pub fn read_config(path: &str) -> Self {
+        match fs::read_to_string(path) {
+            Ok(data) => toml::from_str(&data).unwrap(),
+            Err(_) => {
+                let config = Config::default();
+                config.save_config(path);
+                config
+            }
+        }
+    }
+
+    pub fn save_config(&self, path: &str) {
+        let toml_data = toml::to_string(self).unwrap();
+        fs::write(path, toml_data).unwrap();
+    }
 }
 
 fn load_certs(filename: &str) -> Vec<CertificateDer<'static>> {
@@ -56,7 +64,7 @@ fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
     );
 }
 
-pub fn build_tls_config(certs_path: &str) -> Result<Arc<rustls::ClientConfig>> {
+pub fn build_tls_config(certs_path: &str) -> SocketResult<Arc<rustls::ClientConfig>> {
     let mut root_store = RootCertStore::empty();
     let certs = load_certs(certs_path);
 

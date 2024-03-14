@@ -9,7 +9,7 @@ pub fn handle_ping(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     Ok(())
 }
 
@@ -20,7 +20,7 @@ pub fn handle_status(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     Ok(())
 }
 
@@ -31,7 +31,7 @@ pub fn handle_alertmsg(
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     let message = data.read::<String>()?;
     let close = data.read::<u8>()?;
 
@@ -46,7 +46,7 @@ pub fn handle_fltalert(
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     let _flttype = data.read::<u8>()?;
     let _message = data.read::<String>()?;
     
@@ -60,7 +60,7 @@ pub fn handle_loginok(
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     let _hour = data.read::<u32>()?;
     let _min = data.read::<u32>()?;
 
@@ -75,7 +75,7 @@ pub fn handle_ingame(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -87,7 +87,7 @@ pub fn handle_updatemap(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -99,7 +99,7 @@ pub fn handle_mapitems(
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
 
     let _item_entity = data.read::<Entity>()?;
     
@@ -113,7 +113,7 @@ pub fn handle_mapitemsunload(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -125,7 +125,7 @@ pub fn handle_myindex(
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     let entity = data.read::<Entity>()?;
     content.game_content.myentity = Some(entity);
     println!("Got Entity {:?}", content.game_content.myentity);
@@ -140,7 +140,7 @@ pub fn handle_playerdata(
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     if let Some(entity) = content.game_content.myentity {
         println!("Received Data {:?}", entity);
 
@@ -210,7 +210,7 @@ pub fn handle_playerspawn(
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     println!("Received player spawn");
 
     let entity = data.read::<Entity>()?;
@@ -292,7 +292,7 @@ pub fn handle_playermove(
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     println!("Receiving Movement");
 
     let entity = data.read::<Entity>()?;
@@ -318,7 +318,7 @@ pub fn handle_playerwarp(
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     let _entity = data.read::<Entity>()?;
     let _pos = data.read::<Position>()?;
     
@@ -332,7 +332,7 @@ pub fn handle_playermapswap(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -344,7 +344,7 @@ pub fn handle_dataremovelist(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -356,7 +356,7 @@ pub fn handle_dataremove(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -368,7 +368,7 @@ pub fn handle_playerdir(
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
 
     let _dir = data.read::<u8>()?;
     
@@ -382,7 +382,7 @@ pub fn handle_playervitals(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -394,7 +394,7 @@ pub fn handle_playerinv(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -406,7 +406,7 @@ pub fn handle_playerinvslot(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -418,7 +418,7 @@ pub fn handle_keyinput(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -430,7 +430,7 @@ pub fn handle_playerattack(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -442,7 +442,7 @@ pub fn handle_playerequipment(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -454,7 +454,7 @@ pub fn handle_playeraction(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -466,7 +466,7 @@ pub fn handle_playerlevel(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -478,7 +478,7 @@ pub fn handle_playermoney(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -490,7 +490,7 @@ pub fn handle_playerstun(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -502,7 +502,7 @@ pub fn handle_playervariables(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -514,7 +514,7 @@ pub fn handle_playervariable(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -526,7 +526,7 @@ pub fn handle_playerdeath(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -538,7 +538,7 @@ pub fn handle_npcdeath(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -550,7 +550,7 @@ pub fn handle_playerpvp(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -562,7 +562,7 @@ pub fn handle_playerpk(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -574,7 +574,7 @@ pub fn handle_playeremail(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -586,7 +586,7 @@ pub fn handle_npcunload(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -598,7 +598,7 @@ pub fn handle_npcdata(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -610,7 +610,7 @@ pub fn handle_npcmove(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -622,7 +622,7 @@ pub fn handle_npcdir(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -634,7 +634,7 @@ pub fn handle_npcvital(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -646,7 +646,7 @@ pub fn handle_npcattack(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -658,7 +658,7 @@ pub fn handle_npcstun(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -670,7 +670,7 @@ pub fn handle_chatmsg(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -682,7 +682,7 @@ pub fn handle_sound(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -694,7 +694,7 @@ pub fn handle_target(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -706,7 +706,7 @@ pub fn handle_synccheck(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -718,7 +718,7 @@ pub fn handle_playerunload(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }
@@ -730,7 +730,7 @@ pub fn handle_loadstatus(
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer
-) -> Result<()> {
+) -> SocketResult<()> {
     
     Ok(())
 }

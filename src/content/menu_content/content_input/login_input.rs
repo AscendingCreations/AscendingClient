@@ -59,15 +59,24 @@ pub fn login_key_input(
 fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut DrawSetting,
-    _socket: &mut Socket,
+    socket: &mut Socket,
     index: usize,
 ) {
     match index {
         0 => { // Login
-            println!("Login");
-            println!("Email: {:?}", menu_content.textbox[0].text);
-            println!("Password: {:?}", menu_content.textbox[1].text);
-            systems.fade.init_fade(&mut systems.gfx, FadeType::In, FADE_SWITCH_TO_GAME, FadeData::None);
+            let username = menu_content.textbox[0].text.clone();
+            let password = menu_content.textbox[1].text.clone();
+
+            systems.config.username = username.clone();
+            systems.config.password = password.clone();
+            systems.config.save_config("settings.toml");
+
+            send_login(
+                socket,
+                username,
+                password,
+                (1, 1, 1),
+            ).expect("Failed to send login");
         }
         1 => { // Register
             create_window(systems, menu_content, WindowType::Register);
@@ -77,13 +86,13 @@ fn trigger_button(
 }
 
 fn trigger_checkbox(
-    _menu_content: &mut MenuContent,
-    _systems: &mut DrawSetting,
+    menu_content: &mut MenuContent,
+    systems: &mut DrawSetting,
     index: usize,
 ) {
     match index {
         0 => { // Remember Account
-            println!("Remember Account");
+            systems.config.save_password = menu_content.checkbox[index].value;
         }
         _ => {}
     }

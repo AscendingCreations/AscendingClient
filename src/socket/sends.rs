@@ -31,7 +31,7 @@ pub fn send_register(
     password: String,
     email: String,
     sprite: u8,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Register)?;
@@ -50,8 +50,8 @@ pub fn send_login(
     username: String,
     password: String,
     app_version: (u16, u16, u16),
-) -> Result<()> {
-    let mut buf = ByteBuffer::new_packet_with(128)?;
+) -> SocketResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(778)?;
 
     buf.write(ClientPacket::Login)?;
     buf.write(username)?;
@@ -69,7 +69,7 @@ pub fn send_move(
     socket: &mut Socket,
     dir: u8,
     pos: Position,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(25)?;
 
     buf.write(ClientPacket::Move)?;
@@ -84,7 +84,7 @@ pub fn send_move(
 pub fn send_dir(
     socket: &mut Socket,
     dir: u8,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Dir)?;
@@ -98,7 +98,7 @@ pub fn send_dir(
 pub fn send_attack(
     socket: &mut Socket,
     dir: u8,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Attack)?;
@@ -114,7 +114,7 @@ pub fn send_useitem(
     socket: &mut Socket,
     slot: u16,
     targettype: u8,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::UseItem)?;
@@ -129,7 +129,7 @@ pub fn send_useitem(
 pub fn send_unequip(
     socket: &mut Socket,
     slot: u16,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Unequip)?;
@@ -145,7 +145,7 @@ pub fn send_switchinvslot(
     oldslot: u16,
     newslot: u16,
     amount: u16,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::SwitchInvSlot)?;
@@ -160,7 +160,7 @@ pub fn send_switchinvslot(
 
 pub fn send_pickup(
     socket: &mut Socket,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::PickUp)?;
@@ -174,7 +174,7 @@ pub fn send_dropitem(
     socket: &mut Socket,
     slot: u16,
     amount: u16,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::DropItem)?;
@@ -189,7 +189,7 @@ pub fn send_dropitem(
 pub fn send_deleteitem(
     socket: &mut Socket,
     slot: u16,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::DeleteItem)?;
@@ -205,7 +205,7 @@ pub fn send_message(
     channel: MessageChannel,
     msg: String,
     name: String,
-) -> Result<()> {
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Message)?;

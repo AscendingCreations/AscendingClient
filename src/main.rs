@@ -49,6 +49,7 @@ mod time_ext;
 mod data_types;
 mod buffer;
 mod alert;
+pub mod config;
 
 use renderer::*;
 use gfx_collection::*;
@@ -63,6 +64,7 @@ use database::*;
 use socket::*;
 use buffer::*;
 use alert::*;
+pub use config::*;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
 enum Action {
@@ -208,6 +210,9 @@ async fn main() -> Result<(), AscendingError> {
     // Load textures image
     let resource = TextureAllocation::new(&mut atlases, &renderer)?;
 
+    // Load config
+    let config = Config::read_config("settings.toml");
+
     // Compile all rendering data in one type for quick access and passing
     let mut systems = DrawSetting {
         gfx: GfxCollection::new(),
@@ -217,6 +222,7 @@ async fn main() -> Result<(), AscendingError> {
         resource,
         fade: Fade::new(),
         map_fade: MapFade::new(),
+        config,
     };
     systems.fade.init_setup(&mut systems.renderer, &mut systems.gfx, &systems.size);
     systems.map_fade.init_setup(&mut systems.renderer, &mut systems.gfx, &systems.size);
@@ -237,7 +243,7 @@ async fn main() -> Result<(), AscendingError> {
 
     let mut tooltip = Tooltip::new(&mut systems);
 
-    let mut socket = Socket::new();
+    let mut socket = Socket::new(&systems.config);
     let router = PacketRouter::init();
     socket.register().expect("Failed to register socket");
 
