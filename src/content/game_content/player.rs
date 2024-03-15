@@ -29,6 +29,7 @@ pub fn add_player(
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
     let sprite = systems.gfx.add_image(image, 0);
+    systems.gfx.set_visible(sprite, false);
     
     let component1 = (
         pos,
@@ -53,6 +54,7 @@ pub fn add_player(
         Physical::default(),
         Vitals::default(),
         SpriteImage::default(),
+        MovementBuffer::default(),
     );
 
     if let Some(data) = entity {
@@ -66,6 +68,15 @@ pub fn add_player(
         let _ = world.insert_one(entity, EntityType::Player(Entity(entity)));
         Entity(entity)
     }
+}
+
+pub fn player_finalized(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    entity: &Entity,
+) {
+    let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+    systems.gfx.set_visible(player_sprite, true);
 }
 
 pub fn unload_player(
@@ -84,9 +95,31 @@ pub fn move_player(
     socket: &mut Socket,
     entity: &Entity,
     content: &mut GameContent,
-    dir: &Direction,
-    end: Option<Position>,
+    move_type: MovementType,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+    
+    let (dir, end) = match move_type {
+        MovementType::MovementBuffer => {
+            let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
+            let movement = world.get_or_panic::<Movement>(entity);
+            if movementbuffer.data.is_empty() || movement.is_moving {
+                return;
+            }
+            let movement_data = movementbuffer.data.pop_front();
+            if let Some(data) = movement_data {
+                (dir_to_enum(data.dir), Some(data.end_pos))
+            } else {
+                return;
+            }
+        }
+        MovementType::Manual(m_dir, m_end) => {
+            (dir_to_enum(m_dir), m_end)
+        }
+    };
+
     if let Some(p) = content.myentity {
         if &p == entity {
             if world.get_or_panic::<Attacking>(entity).0 {
@@ -97,7 +130,7 @@ pub fn move_player(
                 return;
             }
 
-            if !can_move(world, systems, entity, content, dir) {
+            if !can_move(world, systems, entity, content, &dir) {
                 return;
             }
         }
@@ -136,7 +169,7 @@ pub fn move_player(
         world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = pos.clone();
     }
 
-    let dir_u8 = enum_to_dir(*dir);
+    let dir_u8 = enum_to_dir(dir);
 
     if let Some(p) = content.myentity {
         if &p == entity {
@@ -171,6 +204,10 @@ pub fn end_player_move(
     entity: &Entity,
     buffer: &mut BufferTask,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         if !movement.is_moving {
             return;
@@ -231,6 +268,10 @@ pub fn set_player_frame(
     entity: &Entity,
     frame_index: usize,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+    
     let sprite_index = world.get_or_panic::<SpriteIndex>(entity).0;
     let size = systems.gfx.get_size(sprite_index);
     let frame_pos = Vec2::new(frame_index as f32 % PLAYER_SPRITE_FRAME_X,
@@ -245,6 +286,10 @@ pub fn init_player_attack(
     entity: &Entity,
     seconds: f32,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+
     if world.get_or_panic::<Attacking>(entity).0 || world.get_or_panic::<Movement>(entity).is_moving {
         return;
     }
@@ -267,6 +312,10 @@ pub fn process_player_attack(
     entity: &Entity,
     seconds: f32,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+
     if !world.get_or_panic::<Attacking>(entity).0 {
         return;
     }
@@ -299,6 +348,10 @@ pub fn process_player_movement(
     content: &mut GameContent,
     buffer: &mut BufferTask,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+
     let movement = world.get_or_panic::<Movement>(entity);
     if !movement.is_moving { return };
     

@@ -63,8 +63,4 @@ impl Content {
 
         println!("Gfx Count: {:?}", systems.gfx.count_collection());
     }
-
-    pub fn init_map(&mut self, systems: &mut DrawSetting, map: MapPosition) {
-        self.game_content.init_map(systems, map)
-    }
 }

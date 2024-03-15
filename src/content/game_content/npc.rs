@@ -25,6 +25,7 @@ pub fn add_npc(
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
     let sprite = systems.gfx.add_image(image, 0);
+    systems.gfx.set_visible(sprite, false);
     
     let entity = world.spawn((
         pos,
@@ -38,10 +39,20 @@ pub fn add_npc(
         AttackTimer::default(),
         AttackFrame::default(),
         EntityName::default(),
+        MovementBuffer::default(),
         WorldEntityType::Npc,
     ));
     let _ = world.insert_one(entity, EntityType::Npc(Entity(entity)));
     Entity(entity)
+}
+
+pub fn npc_finalized(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    entity: &Entity,
+) {
+    let npc_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+    systems.gfx.set_visible(npc_sprite, true);
 }
 
 pub fn unload_npc(

@@ -200,8 +200,8 @@ pub fn fade_end(
             } else {
                 Position::default()
             };
-            content.init_map(systems, pos.map);
-            update_camera(world, &mut content.game_content, systems);
+            content.game_content.init_map(systems, pos.map);
+            content.game_content.finalized_data(world, systems);
             
             systems.fade.init_fade(&mut systems.gfx, FadeType::Out, 0, FadeData::None);
         }

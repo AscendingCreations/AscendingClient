@@ -2,6 +2,20 @@ use crate::{socket::{error, *}, Position, values::*};
 use bytey::ByteBuffer;
 
 #[derive(
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
+pub enum AdminCommand {
+    KickPlayer(String),
+    WarpTo(Position),
+    SpawnNpc(i32, Position),
+}
+
+#[derive(
     Copy,
     Clone,
     Debug,
@@ -23,6 +37,7 @@ enum ClientPacket {
     DropItem,
     DeleteItem,
     Message,
+    AdminCommand,
 }
 
 pub fn send_register(
@@ -212,6 +227,22 @@ pub fn send_message(
     buf.write(channel)?;
     buf.write(msg)?;
     buf.write(name)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_admincommand(
+    socket: &mut Socket,
+    command: AdminCommand
+) -> SocketResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(262)?;
+
+    println!("Sending Command {:?}", command);
+
+    buf.write(ClientPacket::AdminCommand)?;
+    buf.write(command)?;
     buf.finish()?;
 
     socket.send(buf);

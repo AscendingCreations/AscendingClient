@@ -32,7 +32,7 @@ impl GameContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut DrawSetting,
-        _socket: &mut Socket,
+        socket: &mut Socket,
         _alert: &mut Alert,
         event: &KeyEvent,
     ) {
@@ -60,7 +60,7 @@ impl GameContent {
         if event.state.is_pressed() {
             match event.physical_key {
                 PhysicalKey::Code(KeyCode::F1) => {
-                    content.switch_content(world, systems, ContentType::Menu);
+                    let _ = send_admincommand(socket, AdminCommand::KickPlayer("This is test name".into()));
                     return;
                 }
                 _ => {}

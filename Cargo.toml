@@ -60,3 +60,7 @@ git = "https://github.com/AscendingCreations/AscendingLibraries"
 #rev = "f2324c1"
 package = "ascending_graphics"
 version = "0.1.0"
+
+[profile.release]
+opt-level = 2
+debug = true

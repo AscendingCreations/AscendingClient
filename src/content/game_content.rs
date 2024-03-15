@@ -34,7 +34,7 @@ const MAX_KEY: usize = 5;
 
 pub struct GameContent {
     pub players: IndexSet<Entity>,
-    npcs: IndexSet<Entity>,
+    pub npcs: IndexSet<Entity>,
     mapitems: IndexSet<Entity>,
     pub map: MapContent,
     camera: Camera,
@@ -98,6 +98,19 @@ impl GameContent {
                 (MapAttributes { attribute: mapdata.attribute.clone() }, i)
             )
         }
+    }
+
+    pub fn finalized_data(&mut self, world: &mut World, systems: &mut DrawSetting) {
+        for entity in self.players.iter() {
+            player_finalized(world, systems, entity);
+        }
+        for entity in self.npcs.iter() {
+            npc_finalized(world, systems, entity);
+        }
+        for entity in self.mapitems.iter() {
+            MapItem::finalized(world, systems, entity);
+        } 
+        update_camera(world, self, systems);
     }
 
     pub fn move_map(&mut self, world: &mut World, systems: &mut DrawSetting, dir: Direction, buffer: &mut BufferTask) {
@@ -178,7 +191,7 @@ impl GameContent {
         dir: &Direction,
     ) {
         if let Some(myentity) = self.myentity {
-            move_player(world, systems, socket, &myentity, self, &dir, None);
+            move_player(world, systems, socket, &myentity, self, MovementType::Manual(enum_to_dir(*dir), None));
         }
     }
     pub fn player_attack(
@@ -194,9 +207,20 @@ impl GameContent {
     // ---
 }
 
-pub fn update_player(world: &mut World, systems: &mut DrawSetting, content: &mut GameContent, buffer: &mut BufferTask, seconds: f32) {
+pub fn update_player(world: &mut World, systems: &mut DrawSetting, socket: &mut Socket, content: &mut GameContent, buffer: &mut BufferTask, seconds: f32) {
     let players = content.players.clone();
     for entity in players.iter() {
+        if let Some(myentity) = content.myentity {
+            if entity != &myentity {
+                move_player(world, 
+                    systems, 
+                    socket, 
+                    entity, 
+                    content, 
+                    MovementType::MovementBuffer);
+            }
+        }
+        
         process_player_movement(world, systems, entity, content, buffer);
         process_player_attack(world, systems, entity, seconds)
     }

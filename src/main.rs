@@ -150,7 +150,7 @@ async fn main() -> Result<(), AscendingError> {
     // play the game basically.
     let instance = wgpu::Instance::new(InstanceDescriptor {
         backends: Backends::all(),
-        flags: InstanceFlags::default(),
+        flags: InstanceFlags::empty(),
         dx12_shader_compiler: Dx12Compiler::default(),
         gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
     });
@@ -464,13 +464,9 @@ async fn main() -> Result<(), AscendingError> {
         // Also tells the system to begin running the commands on the GPU.
         systems.renderer.queue().submit(std::iter::once(encoder.finish()));
 
-        if socket_timer < seconds {
-            if let Err(e) = poll_events(&mut socket) {
-                println!("Poll event error: {:?}", e);
-            }
-            socket_timer = seconds + 0.5;
+        if let Err(e) = poll_events(&mut socket) {
+            println!("Poll event error: {:?}", e);
         }
-
         process_packets(&mut socket, &router, &mut world, &mut systems, &mut content, &mut alert);
 
         buffertask.process_buffer(&mut systems, &mut content);

@@ -40,5 +40,23 @@
             "args": [],
             "cwd": "${workspaceFolder}"
         },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable release 'client'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--release",
+                    "--bin=client",
+                    "--package=client"
+                ],
+                "filter": {
+                    "name": "client",
+                    "kind": "bin"
+                }
+            },
+            "cwd": "${workspaceFolder}"
+        },
     ]
 }

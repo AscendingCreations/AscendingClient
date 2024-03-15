@@ -3,9 +3,15 @@ use hecs::{EntityRef, World};
 use serde::{Deserialize, Serialize};
 use serde_repr::*;
 use core::any::type_name;
+use std::collections::VecDeque;
 use bytey::{ByteBufferRead, ByteBufferWrite, ByteBufferError};
 
 use crate::{Direction, values::*};
+
+pub enum MovementType {
+    MovementBuffer,
+    Manual(u8, Option<Position>),
+}
 
 #[derive(Copy, Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
 pub struct MapPosition {
@@ -92,6 +98,17 @@ pub struct Movement {
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct EndMovement(pub Position);
+
+#[derive(Debug, Copy, Clone, Default)]
+pub struct MovementData {
+    pub end_pos: Position,
+    pub dir: u8,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct MovementBuffer {
+    pub data: VecDeque<MovementData>,
+}
 
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Hidden(pub bool);

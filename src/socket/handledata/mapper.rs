@@ -20,7 +20,6 @@ pub enum ServerPackets {
     Ingame,
     UpdateMap,
     MapItems,
-    MapItemsUnload,
     MyIndex,
     PlayerData,
     PlayerSpawn,
@@ -47,7 +46,6 @@ pub enum ServerPackets {
     PlayerPvp,
     PlayerPk,
     PlayerEmail,
-    NpcUnload,
     NpcData,
     NpcMove,
     NpcDir,
@@ -58,7 +56,7 @@ pub enum ServerPackets {
     Sound,
     Target,
     SyncCheck,
-    PlayerUnload,
+    EntityUnload,
     LoadStatus,
     ServerPacketCount,
 }
@@ -99,10 +97,6 @@ impl PacketRouter {
             (
                 ServerPackets::MapItems,
                 routes::handle_mapitems as PacketFunction,
-            ),
-            (
-                ServerPackets::MapItemsUnload,
-                routes::handle_mapitemsunload as PacketFunction,
             ),
             (
                 ServerPackets::MyIndex,
@@ -209,10 +203,6 @@ impl PacketRouter {
                 routes::handle_playeremail as PacketFunction,
             ),
             (
-                ServerPackets::NpcUnload,
-                routes::handle_npcunload as PacketFunction,
-            ),
-            (
                 ServerPackets::NpcData,
                 routes::handle_npcdata as PacketFunction,
             ),
@@ -253,8 +243,8 @@ impl PacketRouter {
                 routes::handle_synccheck as PacketFunction,
             ),
             (
-                ServerPackets::PlayerUnload,
-                routes::handle_playerunload as PacketFunction,
+                ServerPackets::EntityUnload,
+                routes::handle_entityunload as PacketFunction,
             ),
             (
                 ServerPackets::LoadStatus,

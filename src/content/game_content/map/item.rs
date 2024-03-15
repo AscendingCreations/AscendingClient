@@ -3,7 +3,7 @@ use bytey::{ByteBufferRead, ByteBufferWrite};
 use hecs::World;
 use serde::{Deserialize, Serialize};
 
-use crate::{game_content::Camera, get_start_map_pos, DrawSetting, Entity, EntityType, GameContent, MapPosition, Position, PositionOffset, SpriteIndex, WorldEntityType, WorldExtras, ORDER_MAP_ITEM, TILE_SIZE};
+use crate::{game_content::Camera, get_start_map_pos, DrawSetting, Entity, EntityType, GameContent, MapPosition, Position, PositionOffset, SpriteImage, SpriteIndex, WorldEntityType, WorldExtras, ORDER_MAP_ITEM, TILE_SIZE};
 
 #[derive(
     Debug,
@@ -47,15 +47,26 @@ impl MapItem {
         image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         image.hw = Vec2::new(20.0, 20.0);
         let index = systems.gfx.add_image(image, 0);
+        systems.gfx.set_visible(index, false);
 
         let entity = world.spawn((
             pos,
             WorldEntityType::MapItem,
             SpriteIndex(index),
+            SpriteImage(sprite as u8),
             PositionOffset::default(),
         ));
         let _ = world.insert_one(entity, EntityType::MapItem(Entity(entity)));
         Entity(entity)
+    }
+    
+    pub fn finalized(
+        world: &mut World,
+        systems: &mut DrawSetting,
+        entity: &Entity,
+    ) {
+        let sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+        systems.gfx.set_visible(sprite, true);
     }
 }
 

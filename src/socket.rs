@@ -311,7 +311,7 @@ impl Client {
 
 pub fn poll_events(socket: &mut Socket) -> SocketResult<bool> {
     let mut events = Events::with_capacity(32);
-    socket.poll.poll(&mut events, Some(Duration::new(0,1)))?;
+    socket.poll.poll(&mut events, Some(Duration::new(0,0)))?;
 
     for event in events.into_iter() {
         socket.process(event)?;
