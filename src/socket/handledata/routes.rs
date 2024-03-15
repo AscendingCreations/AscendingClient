@@ -128,8 +128,6 @@ pub fn handle_myindex(
 ) -> SocketResult<()> {
     let entity = data.read::<Entity>()?;
     content.game_content.myentity = Some(entity);
-    println!("Got Entity {:?}", content.game_content.myentity);
-    
     Ok(())
 }
 
@@ -142,8 +140,6 @@ pub fn handle_playerdata(
     data: &mut ByteBuffer
 ) -> SocketResult<()> {
     if let Some(entity) = content.game_content.myentity {
-        println!("Received Data {:?}", entity);
-
         let username = data.read::<String>()?;
         let useraccess = data.read::<UserAccess>()?;
         let dir = data.read::<u8>()?;
@@ -211,74 +207,69 @@ pub fn handle_playerspawn(
     _alert: &mut Alert,
     data: &mut ByteBuffer
 ) -> SocketResult<()> {
-    println!("Received player spawn");
+    let count = data.read::<u32>()?;
 
-    let entity = data.read::<Entity>()?;
+    for _ in 0..count {
+        let entity = data.read::<Entity>()?;
+        let username = data.read::<String>()?;
+        let useraccess = data.read::<UserAccess>()?;
+        let dir = data.read::<u8>()?;
+        let equipment = data.read::<Equipment>()?;
+        let hidden = data.read::<bool>()?;
+        let level = data.read::<i32>()?;
+        let deathtype = data.read::<DeathType>()?;
+        let pdamage = data.read::<u32>()?;
+        let pdefense = data.read::<u32>()?;
+        let pos = data.read::<Position>()?;
+        let pk = data.read::<bool>()?;
+        let pvpon = data.read::<bool>()?;
+        let sprite = data.read::<u8>()?;
+        let mut vitals = [0; VITALS_MAX];
+        vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
+        let mut vitalmax = [0; VITALS_MAX];
+        vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
 
-    if let Some(myentity) = content.game_content.myentity {
-        if myentity == entity && world.contains(entity.0) {
-            return Ok(());
-        }
-    }
-
-    let username = data.read::<String>()?;
-    let useraccess = data.read::<UserAccess>()?;
-    let dir = data.read::<u8>()?;
-    let equipment = data.read::<Equipment>()?;
-    let hidden = data.read::<bool>()?;
-    let level = data.read::<i32>()?;
-    let deathtype = data.read::<DeathType>()?;
-    let pdamage = data.read::<u32>()?;
-    let pdefense = data.read::<u32>()?;
-    let pos = data.read::<Position>()?;
-    let pk = data.read::<bool>()?;
-    let pvpon = data.read::<bool>()?;
-    let sprite = data.read::<u8>()?;
-    let mut vitals = [0; VITALS_MAX];
-    vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
-    let mut vitalmax = [0; VITALS_MAX];
-    vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
-
-    if !world.contains(entity.0) {
-        let client_map = if let Some(data) = &content.game_content.myentity {
-            world.get_or_panic::<Position>(data).map
-        } else {
-            MapPosition::default()
-        };
-        let player = add_player(world, systems, pos, client_map, Some(&entity));
-        content.game_content.players.insert(player);
-    }
-
-    {
-        world.get::<&mut EntityName>(entity.0).expect("Could not find EntityName").0
-            = username;
-        *world.get::<&mut UserAccess>(entity.0).expect("Could not find UserAccess")
-            = useraccess;
-        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0
-            = dir;
-        *world.get::<&mut Equipment>(entity.0).expect("Could not find Equipment")
-            = equipment;
-        world.get::<&mut Hidden>(entity.0).expect("Could not find Hidden").0
-            = hidden;
-        world.get::<&mut Level>(entity.0).expect("Could not find Level").0
-            = level;
-        *world.get::<&mut DeathType>(entity.0).expect("Could not find DeathType")
-            = deathtype;
-        if let Ok(mut physical) = world.get::<&mut Physical>(entity.0) {
-            physical.damage = pdamage;
-            physical.defense = pdefense;
-        }
-        *world.get::<&mut Position>(entity.0).expect("Could not find Position")
-            = pos;
-        if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity.0) {
-            pvp.pk = pk;
-            pvp.pvpon = pvpon;
-        }
-        world.get::<&mut SpriteImage>(entity.0).expect("Could not find SpriteIndex").0
-            = sprite;
-        if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
-            vital.vital = vitals;
-            vital.vitalmax = vitalmax;
+        if let Some(myentity) = content.game_content.myentity {
+            if myentity != entity {
+                if !world.contains(entity.0) {
+                    let client_map = world.get_or_panic::<Position>(&myentity).map;
+                    let player = add_player(world, systems, pos, client_map, Some(&entity));
+                    content.game_content.players.insert(player);
+                }
+            
+                {
+                    world.get::<&mut EntityName>(entity.0).expect("Could not find EntityName").0
+                        = username;
+                    *world.get::<&mut UserAccess>(entity.0).expect("Could not find UserAccess")
+                        = useraccess;
+                    world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0
+                        = dir;
+                    *world.get::<&mut Equipment>(entity.0).expect("Could not find Equipment")
+                        = equipment;
+                    world.get::<&mut Hidden>(entity.0).expect("Could not find Hidden").0
+                        = hidden;
+                    world.get::<&mut Level>(entity.0).expect("Could not find Level").0
+                        = level;
+                    *world.get::<&mut DeathType>(entity.0).expect("Could not find DeathType")
+                        = deathtype;
+                    if let Ok(mut physical) = world.get::<&mut Physical>(entity.0) {
+                        physical.damage = pdamage;
+                        physical.defense = pdefense;
+                    }
+                    *world.get::<&mut Position>(entity.0).expect("Could not find Position")
+                        = pos;
+                    if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity.0) {
+                        pvp.pk = pk;
+                        pvp.pvpon = pvpon;
+                    }
+                    world.get::<&mut SpriteImage>(entity.0).expect("Could not find SpriteIndex").0
+                        = sprite;
+                    if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
+                        vital.vital = vitals;
+                        vital.vitalmax = vitalmax;
+                    }
+                }
+            }
         }
     }
     
@@ -293,20 +284,23 @@ pub fn handle_playermove(
     _alert: &mut Alert,
     data: &mut ByteBuffer
 ) -> SocketResult<()> {
-    println!("Receiving Movement");
+    //let count = data.read::<u32>()?;
 
-    let entity = data.read::<Entity>()?;
+    println!("Receiving movement");
 
-    if let Some(myentity) = content.game_content.myentity {
-        if myentity == entity && world.contains(entity.0) {
-            return Ok(());
+    //for _ in 0..count {
+        let entity = data.read::<Entity>()?;
+        let pos = data.read::<Position>()?;
+        let warp = data.read::<bool>()?;
+        let switch = data.read::<bool>()?;
+        let dir = data.read::<u8>()?;
+
+        if let Some(myentity) = content.game_content.myentity {
+            if myentity != entity && world.contains(entity.0) {
+                move_player(world, systems, socket, &entity, &mut content.game_content, &dir_to_enum(dir), Some(pos));
+            }
         }
-    }
-    
-    let pos = data.read::<Position>()?;
-    let dir = data.read::<u8>()?;
-
-    move_player(world, systems, socket, &entity, &mut content.game_content, &dir_to_enum(dir), Some(pos));
+    //}
     
     Ok(())
 }
@@ -343,8 +337,11 @@ pub fn handle_dataremovelist(
     _systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer
+    data: &mut ByteBuffer
 ) -> SocketResult<()> {
+
+    let remove_list = data.read::<Vec<Entity>>()?;
+    
     
     Ok(())
 }

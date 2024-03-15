@@ -169,7 +169,7 @@ impl ByteBufferRead for Entity {
     {
         Ok(Entity(
             hecs::Entity::from_bits(buffer.read::<u64>()?).ok_or(ByteBufferError::OtherError {
-                error: "Bits could nto be converted to hecs Entity. Is your Struct wrong?"
+                error: "Bits could not be converted to hecs Entity. Is your Struct wrong?"
                     .to_owned(),
             })?,
         ))
@@ -182,7 +182,7 @@ impl ByteBufferRead for Entity {
         Ok(Entity(
             hecs::Entity::from_bits(buffer.read_le::<u64>()?).ok_or(
                 ByteBufferError::OtherError {
-                    error: "Bits could nto be converted to hecs Entity. Is your Struct wrong?"
+                    error: "Bits could not be converted to hecs Entity. Is your Struct wrong?"
                         .to_owned(),
                 },
             )?,
@@ -196,7 +196,7 @@ impl ByteBufferRead for Entity {
         Ok(Entity(
             hecs::Entity::from_bits(buffer.read_be::<u64>()?).ok_or(
                 ByteBufferError::OtherError {
-                    error: "Bits could nto be converted to hecs Entity. Is your Struct wrong?"
+                    error: "Bits could not be converted to hecs Entity. Is your Struct wrong?"
                         .to_owned(),
                 },
             )?,
