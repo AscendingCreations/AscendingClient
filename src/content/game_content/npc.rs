@@ -27,6 +27,27 @@ pub fn add_npc(
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
     let sprite = systems.gfx.add_image(image, 0);
     systems.gfx.set_visible(sprite, false);
+
+    let mut bg_image = Rect::new(&mut systems.renderer, 0);
+    bg_image.set_size(Vec2::new(20.0, 6.0))
+        .set_position(Vec3::new(0.0, 0.0, ORDER_HPBAR_BG))
+        .set_color(Color::rgba(80, 80, 80, 255))
+        .set_border_width(1.0)
+        .set_border_color(Color::rgba(10, 10, 10, 255));
+    let bg_index = systems.gfx.add_rect(bg_image, 0);
+    systems.gfx.set_visible(bg_index, true);
+    let mut bar_image = Rect::new(&mut systems.renderer, 0);
+    bar_image.set_size(Vec2::new(18.0, 4.0))
+        .set_position(Vec3::new(1.0, 1.0, ORDER_HPBAR))
+        .set_color(Color::rgba(180, 30, 30, 255));
+    let bar_index = systems.gfx.add_rect(bar_image, 0);
+    systems.gfx.set_visible(bar_index, true);
+
+    let hpbar = HPBar {
+        visible: false,
+        bg_index,
+        bar_index,
+    };
     
     let component1 = (
         pos,
@@ -52,6 +73,7 @@ pub fn add_npc(
         NpcIndex::default(),
         Physical::default(),
         Level::default(),
+        hpbar,
     );
 
     if let Some(data) = entity {
@@ -205,18 +227,24 @@ pub fn update_npc_position(
     sprite: usize,
     pos: &Position,
     pos_offset: &PositionOffset,
+    hpbar: &HPBar,
 ) {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let cur_pos = systems.gfx.get_pos(sprite);
     let texture_pos = content.camera.pos + 
         (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32) + pos_offset.offset - Vec2::new(10.0, 4.0);
+    
     if start_pos + texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
-    systems.gfx.set_pos(sprite,
-        Vec3::new(start_pos.x + texture_pos.x, 
-                start_pos.y + texture_pos.y,
-                cur_pos.z));
+
+    let pos = Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
+    systems.gfx.set_pos(sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+    
+    let sprite_size = systems.gfx.get_size(sprite);
+    let bar_pos = pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
+    systems.gfx.set_pos(hpbar.bar_index, Vec3::new(bar_pos.x + 1.0, bar_pos.y + 1.0, ORDER_HPBAR));
+    systems.gfx.set_pos(hpbar.bg_index, Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG));
 }
 
 pub fn set_npc_frame(

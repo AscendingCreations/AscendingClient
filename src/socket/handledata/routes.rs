@@ -1,7 +1,7 @@
 use hecs::World;
 use bytey::ByteBuffer;
 use graphics::*;
-use crate::{add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX};
+use crate::{add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, get_start_map_pos, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX};
 
 pub fn handle_ping(
     _socket: &mut Socket,
@@ -283,7 +283,7 @@ pub fn handle_playerspawn(
 pub fn handle_playermove(
     _socket: &mut Socket,
     world: &mut World,
-    _systems: &mut DrawSetting,
+    systems: &mut DrawSetting,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,

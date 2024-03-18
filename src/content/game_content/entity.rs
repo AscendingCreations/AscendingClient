@@ -42,6 +42,13 @@ pub struct PositionOffset {
     pub offset: Vec2,
 }
 
+#[derive(Copy, Clone, Debug, Default)]
+pub struct HPBar {
+    pub visible: bool,
+    pub bg_index: usize,
+    pub bar_index: usize,
+}
+
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
 pub struct Dir(pub u8);
 

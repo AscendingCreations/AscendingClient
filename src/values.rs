@@ -80,6 +80,8 @@ pub const ORDER_MENU_WINDOW_CONTENT_DETAIL2: f32 = 10.5;
 pub const ORDER_MAP_ITEM: f32 = 8.5;
 pub const ORDER_PLAYER: f32 = 8.0;
 pub const ORDER_NPC: f32 = 8.0;
+pub const ORDER_HPBAR_BG: f32 = 7.9;
+pub const ORDER_HPBAR: f32 = 7.8;
 // Upper Map Order 5.1 - 5.0
 pub const ORDER_MAP_FADE: f32 = 4.0;
 pub const ORDER_GUI_BUTTON: f32 = 3.9;
