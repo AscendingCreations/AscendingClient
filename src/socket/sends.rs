@@ -1,4 +1,4 @@
-use crate::{socket::{error, *}, Position, values::*};
+use crate::{socket::{error, *}, values::*, Entity, Position};
 use bytey::ByteBuffer;
 
 #[derive(
@@ -113,12 +113,13 @@ pub fn send_dir(
 pub fn send_attack(
     socket: &mut Socket,
     dir: u8,
+    entity: Option<Entity>,
 ) -> SocketResult<()> {
-    let mut buf = ByteBuffer::new_packet_with(128)?;
+    let mut buf = ByteBuffer::new_packet_with(13)?;
 
     buf.write(ClientPacket::Attack)?;
     buf.write(dir)?;
-    buf.write(1 as u8)?;
+    buf.write(entity)?;
     buf.finish()?;
 
     socket.send(buf);
@@ -238,8 +239,6 @@ pub fn send_admincommand(
     command: AdminCommand
 ) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(262)?;
-
-    println!("Sending Command {:?}", command);
 
     buf.write(ClientPacket::AdminCommand)?;
     buf.write(command)?;

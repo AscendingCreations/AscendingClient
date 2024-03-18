@@ -60,7 +60,10 @@ impl GameContent {
         if event.state.is_pressed() {
             match event.physical_key {
                 PhysicalKey::Code(KeyCode::F1) => {
-                    let _ = send_admincommand(socket, AdminCommand::KickPlayer("This is test name".into()));
+                    if let Some(entity) = content.game_content.myentity {
+                        let pos = world.get_or_panic::<Position>(&entity);
+                        let _ = send_admincommand(socket, AdminCommand::SpawnNpc(0, pos));
+                    }
                     return;
                 }
                 _ => {}

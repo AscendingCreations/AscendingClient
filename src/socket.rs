@@ -339,7 +339,7 @@ pub fn get_length(socket: &mut Socket) -> Option<u64> {
     }
 }
 
-pub fn process_packets(socket: &mut Socket, router: &PacketRouter, world: &mut World, systems: &mut DrawSetting, content: &mut Content, alert: &mut Alert) {
+pub fn process_packets(socket: &mut Socket, router: &PacketRouter, world: &mut World, systems: &mut DrawSetting, content: &mut Content, alert: &mut Alert, seconds: f32) {
     let mut count: usize = 0;
     let mut length: u64;
 
@@ -358,7 +358,7 @@ pub fn process_packets(socket: &mut Socket, router: &PacketRouter, world: &mut W
                 }
             };
 
-            if handle_data(socket, router, world, systems, content, alert, &mut buffer).is_err() {
+            if handle_data(socket, router, world, systems, content, alert, &mut buffer, seconds).is_err() {
                 socket.set_to_closing();
                 break;
             }

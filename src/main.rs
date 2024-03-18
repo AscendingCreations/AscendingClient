@@ -467,7 +467,7 @@ async fn main() -> Result<(), AscendingError> {
         if let Err(e) = poll_events(&mut socket) {
             println!("Poll event error: {:?}", e);
         }
-        process_packets(&mut socket, &router, &mut world, &mut systems, &mut content, &mut alert);
+        process_packets(&mut socket, &router, &mut world, &mut systems, &mut content, &mut alert, seconds);
 
         buffertask.process_buffer(&mut systems, &mut content);
 

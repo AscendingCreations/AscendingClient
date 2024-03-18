@@ -99,7 +99,7 @@ pub struct Movement {
 #[derive(Copy, Clone, Debug, Default)]
 pub struct EndMovement(pub Position);
 
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
 pub struct MovementData {
     pub end_pos: Position,
     pub dir: u8,
@@ -133,7 +133,7 @@ pub struct Equipment {
     pub items: Vec<Item>,
 }
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 pub enum WorldEntityType {
     #[default]
     None,
@@ -161,6 +161,20 @@ pub enum UserAccess {
     Monitor,
     Admin,
 }
+
+#[derive(Copy, Clone, Debug, Serialize_repr, Deserialize_repr, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite)]
+#[repr(u8)]
+pub enum NpcMode {
+    None,
+    #[default]
+    Normal,
+    Pet,
+    Summon,
+    Boss,
+}
+
+#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+pub struct NpcIndex(pub u64);
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Deserialize, Serialize, Hash)]
 pub struct Entity(pub hecs::Entity);

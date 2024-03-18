@@ -16,10 +16,11 @@ pub fn add_npc(
     systems: &mut DrawSetting,
     pos: Position,
     cur_map: MapPosition,
+    entity: Option<&Entity>,
 ) -> Entity {
     let start_pos = get_start_map_pos(cur_map, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
-    let mut image = Image::new(Some(systems.resource.players[0].allocation), // ToDo Change Sprite
+    let mut image = Image::new(Some(systems.resource.players[1].allocation), // ToDo Change Sprite
             &mut systems.renderer, 0);
     image.pos = Vec3::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y, ORDER_NPC);
     image.hw = Vec2::new(40.0, 40.0);
@@ -27,7 +28,7 @@ pub fn add_npc(
     let sprite = systems.gfx.add_image(image, 0);
     systems.gfx.set_visible(sprite, false);
     
-    let entity = world.spawn((
+    let component1 = (
         pos,
         PositionOffset::default(),
         SpriteIndex(sprite),
@@ -40,10 +41,30 @@ pub fn add_npc(
         AttackFrame::default(),
         EntityName::default(),
         MovementBuffer::default(),
+        Vitals::default(),
+        SpriteImage::default(),
         WorldEntityType::Npc,
-    ));
-    let _ = world.insert_one(entity, EntityType::Npc(Entity(entity)));
-    Entity(entity)
+    );
+    let component2 = (
+        Hidden::default(),
+        DeathType::default(),
+        NpcMode::default(),
+        NpcIndex::default(),
+        Physical::default(),
+        Level::default(),
+    );
+
+    if let Some(data) = entity {
+        world.spawn_at(data.0, component1);
+        let _ = world.insert(data.0, component2);
+        let _ = world.insert_one(data.0, EntityType::Npc(Entity(data.0)));
+        Entity(data.0)
+    } else {
+        let entity = world.spawn(component1);
+        let _ = world.insert(entity, component2);
+        let _ = world.insert_one(entity, EntityType::Npc(Entity(entity)));
+        Entity(entity)
+    }
 }
 
 pub fn npc_finalized(
@@ -69,12 +90,30 @@ pub fn move_npc(
     world: &mut World,
     systems: &mut DrawSetting,
     entity: &Entity,
-    dir: &Direction,
-    end: Option<Position>,
+    move_type: MovementType,
 ) {
-    if world.get_or_panic::<Attacking>(entity).0 {
+    if !world.contains(entity.0) {
         return;
     }
+    
+    let (dir, end) = match move_type {
+        MovementType::MovementBuffer => {
+            let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
+            let movement = world.get_or_panic::<Movement>(entity);
+            if movementbuffer.data.is_empty() || movement.is_moving {
+                return;
+            }
+            let movement_data = movementbuffer.data.pop_front();
+            if let Some(data) = movement_data {
+                (dir_to_enum(data.dir), Some(data.end_pos))
+            } else {
+                return;
+            }
+        }
+        MovementType::Manual(m_dir, m_end) => {
+            (dir_to_enum(m_dir), m_end)
+        }
+    };
 
     if let Some(end_pos) = end {
         world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = end_pos.clone();
@@ -110,16 +149,13 @@ pub fn move_npc(
     }
     
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
-        if movement.is_moving {
-            return;
-        }
         movement.is_moving = true;
         movement.move_direction = dir.clone();
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
     {
-        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = enum_to_dir(*dir);
+        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = enum_to_dir(dir);
     }
     let last_frame = if world.get_or_panic::<LastMoveFrame>(entity).0 == 1 { 2 } else { 1 };
     {
@@ -134,6 +170,10 @@ pub fn end_npc_move(
     systems: &mut DrawSetting,
     entity: &Entity,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         if !movement.is_moving {
             return;
@@ -185,6 +225,10 @@ pub fn set_npc_frame(
     entity: &Entity,
     frame_index: usize,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+
     let sprite_index = world.get_or_panic::<SpriteIndex>(entity).0;
     let size = systems.gfx.get_size(sprite_index);
     let frame_pos = Vec2::new(frame_index as f32 % NPC_SPRITE_FRAME_X,
@@ -199,7 +243,7 @@ pub fn init_npc_attack(
     entity: &Entity,
     seconds: f32,
 ) {
-    if world.get_or_panic::<Attacking>(entity).0 || world.get_or_panic::<Movement>(entity).is_moving {
+    if !world.contains(entity.0) {
         return;
     }
 
@@ -221,6 +265,10 @@ pub fn process_npc_attack(
     entity: &Entity,
     seconds: f32,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+
     if !world.get_or_panic::<Attacking>(entity).0 {
         return;
     }
@@ -251,6 +299,10 @@ pub fn process_npc_movement(
     systems: &mut DrawSetting,
     entity: &Entity,
 ) {
+    if !world.contains(entity.0) {
+        return;
+    }
+    
     let movement = world.get_or_panic::<Movement>(entity);
     if !movement.is_moving { return };
     
