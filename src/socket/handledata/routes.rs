@@ -480,17 +480,21 @@ pub fn handle_playerattack(
     _socket: &mut Socket,
     world: &mut World,
     systems: &mut DrawSetting,
-    _content: &mut Content,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     seconds: f32,
 ) -> SocketResult<()> {
     let entity = data.read::<Entity>()?;
 
-    let world_entity_type = world.get_or_panic::<WorldEntityType>(&entity);
-    match world_entity_type {
-        WorldEntityType::Player => init_player_attack(world, systems, &entity, seconds),
-        _ => {}
+    if let Some(myentity) = content.game_content.myentity {
+        if myentity != entity {
+            let world_entity_type = world.get_or_panic::<WorldEntityType>(&entity);
+            match world_entity_type {
+                WorldEntityType::Player => init_player_attack(world, systems, &entity, seconds),
+                _ => {}
+            }
+        }
     }
 
     Ok(())
