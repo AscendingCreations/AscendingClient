@@ -213,7 +213,7 @@ pub fn get_start_map_pos(from: MapPosition, to: MapPosition) -> Option<Vec2> {
     }
     let from_vec = Vec2::new(from.x as f32, from.y as f32);
     let to_vec = Vec2::new(to.x as f32, to.y as f32);
-     match from_vec {
+    match from_vec {
         Vec2 { x, y } if x + 1.0 == to_vec.x && y + 1.0 == to_vec.y => {
             Some(get_mapindex_base_pos(8))
         } // Bottom Right

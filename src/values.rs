@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
-use serde_repr::*;
 use crate::game_content::entity::*;
 use bytey::{ByteBufferRead, ByteBufferWrite};
+use serde::{Deserialize, Serialize};
+use serde_repr::*;
 
 pub const TILE_SIZE: usize = 20;
 pub const SCREEN_WIDTH: usize = 800;
@@ -17,14 +17,7 @@ pub enum Direction {
 }
 
 #[derive(
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    Default,
-    Deserialize,
-    Serialize,
+    Copy, Clone, Debug, PartialEq, Eq, Default, Deserialize, Serialize,
 )]
 pub enum EntityType {
     #[default]
@@ -35,14 +28,7 @@ pub enum EntityType {
 }
 
 #[derive(
-    Copy,
-    Clone,
-    Debug,
-    Default,
-    PartialEq,
-    Eq,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
 )]
 #[repr(u8)]
 pub enum MessageChannel {
@@ -58,7 +44,18 @@ pub enum MessageChannel {
     Npc,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize_repr, Deserialize_repr, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Serialize_repr,
+    Deserialize_repr,
+    Default,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 #[repr(u8)]
 pub enum VitalTypes {
     Hp,

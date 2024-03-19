@@ -6,7 +6,7 @@ use rustls::{
     server::WebPkiClientVerifier,
     ClientConfig, RootCertStore, ServerConfig,
 };
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::{fs, io::BufReader, sync::Arc};
 
 #[derive(Serialize, Deserialize, Debug, Default)]
@@ -37,7 +37,8 @@ impl Config {
 }
 
 fn load_certs(filename: &str) -> Vec<CertificateDer<'static>> {
-    let certfile = fs::File::open(filename).expect("cannot open certificate file");
+    let certfile =
+        fs::File::open(filename).expect("cannot open certificate file");
     let mut reader = BufReader::new(certfile);
     rustls_pemfile::certs(&mut reader)
         .map(|result| result.unwrap())
@@ -45,11 +46,14 @@ fn load_certs(filename: &str) -> Vec<CertificateDer<'static>> {
 }
 
 fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
-    let keyfile = fs::File::open(filename).expect("cannot open private key file");
+    let keyfile =
+        fs::File::open(filename).expect("cannot open private key file");
     let mut reader = BufReader::new(keyfile);
 
     loop {
-        match rustls_pemfile::read_one(&mut reader).expect("cannot parse private key .pem file") {
+        match rustls_pemfile::read_one(&mut reader)
+            .expect("cannot parse private key .pem file")
+        {
             Some(rustls_pemfile::Item::Pkcs1Key(key)) => return key.into(),
             Some(rustls_pemfile::Item::Pkcs8Key(key)) => return key.into(),
             Some(rustls_pemfile::Item::Sec1Key(key)) => return key.into(),
@@ -64,7 +68,9 @@ fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
     );
 }
 
-pub fn build_tls_config(certs_path: &str) -> SocketResult<Arc<rustls::ClientConfig>> {
+pub fn build_tls_config(
+    certs_path: &str,
+) -> SocketResult<Arc<rustls::ClientConfig>> {
     let mut root_store = RootCertStore::empty();
     let certs = load_certs(certs_path);
 

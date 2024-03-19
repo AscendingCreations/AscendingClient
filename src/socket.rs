@@ -21,7 +21,7 @@ pub use error::*;
 pub use handledata::*;
 pub use sends::*;
 
-use crate::{Alert, config::*, Content, DrawSetting};
+use crate::{config::*, Alert, Content, DrawSetting};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ClientState {
@@ -43,8 +43,12 @@ impl SocketPollState {
     pub fn add(&mut self, state: SocketPollState) {
         match (*self, state) {
             (SocketPollState::None, _) => *self = state,
-            (SocketPollState::Read, SocketPollState::Write) => *self = SocketPollState::ReadWrite,
-            (SocketPollState::Write, SocketPollState::Read) => *self = SocketPollState::ReadWrite,
+            (SocketPollState::Read, SocketPollState::Write) => {
+                *self = SocketPollState::ReadWrite
+            }
+            (SocketPollState::Write, SocketPollState::Read) => {
+                *self = SocketPollState::ReadWrite
+            }
             (_, _) => {}
         }
     }
@@ -57,10 +61,18 @@ impl SocketPollState {
     #[inline]
     pub fn remove(&mut self, state: SocketPollState) {
         match (*self, state) {
-            (SocketPollState::Read, SocketPollState::Read) => *self = SocketPollState::None,
-            (SocketPollState::Write, SocketPollState::Write) => *self = SocketPollState::None,
-            (SocketPollState::ReadWrite, SocketPollState::Write) => *self = SocketPollState::Read,
-            (SocketPollState::ReadWrite, SocketPollState::Read) => *self = SocketPollState::Write,
+            (SocketPollState::Read, SocketPollState::Read) => {
+                *self = SocketPollState::None
+            }
+            (SocketPollState::Write, SocketPollState::Write) => {
+                *self = SocketPollState::None
+            }
+            (SocketPollState::ReadWrite, SocketPollState::Write) => {
+                *self = SocketPollState::Read
+            }
+            (SocketPollState::ReadWrite, SocketPollState::Read) => {
+                *self = SocketPollState::Write
+            }
             (_, SocketPollState::ReadWrite) => *self = SocketPollState::None,
             (_, _) => {}
         }
@@ -75,13 +87,16 @@ pub struct Socket {
 
 impl Socket {
     pub fn new(_config: &Config) -> Self {
-        let tls_config = build_tls_config("keys/ca.pem").expect("Could not create tls config");
+        let tls_config = build_tls_config("keys/ca.pem")
+            .expect("Could not create tls config");
 
         Socket {
-            client: Client::new("127.0.0.1", 7010, mio::Token(0), tls_config).expect("Could not create Client"),
+            client: Client::new("127.0.0.1", 7010, mio::Token(0), tls_config)
+                .expect("Could not create Client"),
             poll: Poll::new().expect("Could not create poll"),
 
-            buffer: ByteBuffer::new_packet_with(8192).expect("Could not create buffer"),
+            buffer: ByteBuffer::new_packet_with(8192)
+                .expect("Could not create buffer"),
         }
     }
 
@@ -122,8 +137,12 @@ impl Socket {
         loop {
             let mut buf: [u8; 2048] = [0; 2048];
             match self.client.socket.read(&mut buf) {
-                Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => break,
-                Err(ref err) if err.kind() == io::ErrorKind::Interrupted => continue,
+                Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
+                    break
+                }
+                Err(ref err) if err.kind() == io::ErrorKind::Interrupted => {
+                    continue
+                }
                 Ok(0) | Err(_) => {
                     self.client.state = ClientState::Closing;
                     return;
@@ -174,15 +193,19 @@ impl Socket {
             SocketPollState::None => None,
             SocketPollState::Read => Some(Interest::READABLE),
             SocketPollState::Write => Some(Interest::WRITABLE),
-            SocketPollState::ReadWrite => Some(Interest::READABLE.add(Interest::WRITABLE)),
+            SocketPollState::ReadWrite => {
+                Some(Interest::READABLE.add(Interest::WRITABLE))
+            }
         }
     }
 
     pub fn register(&mut self) -> SocketResult<()> {
         if let Some(interest) = self.event_set() {
-            self.poll
-                .registry()
-                .register(&mut self.client.socket, self.client.token, interest)?;
+            self.poll.registry().register(
+                &mut self.client.socket,
+                self.client.token,
+                interest,
+            )?;
         }
         Ok(())
     }
@@ -311,7 +334,7 @@ impl Client {
 
 pub fn poll_events(socket: &mut Socket) -> SocketResult<bool> {
     let mut events = Events::with_capacity(32);
-    socket.poll.poll(&mut events, Some(Duration::new(0,0)))?;
+    socket.poll.poll(&mut events, Some(Duration::new(0, 0)))?;
 
     for event in events.into_iter() {
         socket.process(event)?;
@@ -339,7 +362,15 @@ pub fn get_length(socket: &mut Socket) -> Option<u64> {
     }
 }
 
-pub fn process_packets(socket: &mut Socket, router: &PacketRouter, world: &mut World, systems: &mut DrawSetting, content: &mut Content, alert: &mut Alert, seconds: f32) {
+pub fn process_packets(
+    socket: &mut Socket,
+    router: &PacketRouter,
+    world: &mut World,
+    systems: &mut DrawSetting,
+    content: &mut Content,
+    alert: &mut Alert,
+    seconds: f32,
+) {
     let mut count: usize = 0;
     let mut length: u64;
 
@@ -349,8 +380,12 @@ pub fn process_packets(socket: &mut Socket, router: &PacketRouter, world: &mut W
             None => return,
         };
 
-        if length > 0 && length <= (socket.buffer.length() - socket.buffer.cursor()) as u64 {
-            let mut buffer = match socket.buffer.read_to_buffer(length as usize) {
+        if length > 0
+            && length
+                <= (socket.buffer.length() - socket.buffer.cursor()) as u64
+        {
+            let mut buffer = match socket.buffer.read_to_buffer(length as usize)
+            {
                 Ok(n) => n,
                 Err(_) => {
                     socket.set_to_closing();
@@ -358,7 +393,18 @@ pub fn process_packets(socket: &mut Socket, router: &PacketRouter, world: &mut W
                 }
             };
 
-            if handle_data(socket, router, world, systems, content, alert, &mut buffer, seconds).is_err() {
+            if handle_data(
+                socket,
+                router,
+                world,
+                systems,
+                content,
+                alert,
+                &mut buffer,
+                seconds,
+            )
+            .is_err()
+            {
                 socket.set_to_closing();
                 break;
             }

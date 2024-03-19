@@ -1,10 +1,10 @@
+use graphics::*;
 use graphics::{AscendingError, OtherError};
 use serde::{Deserialize, Serialize};
 use serde_repr::*;
 use std::fs::OpenOptions;
 use std::io::BufReader;
 use std::path::Path;
-use graphics::*;
 
 use crate::{DrawSetting, MapPosition};
 
@@ -18,14 +18,7 @@ pub enum MapAttribute {
 }
 
 #[derive(
-    Copy,
-    Clone,
-    Serialize_repr,
-    Deserialize_repr,
-    PartialEq,
-    Eq,
-    Default,
-    Debug,
+    Copy, Clone, Serialize_repr, Deserialize_repr, PartialEq, Eq, Default, Debug,
 )]
 #[repr(u8)]
 pub enum Weather {
@@ -76,11 +69,7 @@ impl MapData {
     }
 }
 
-pub fn load_file(
-    x: i32,
-    y: i32,
-    group: u64,
-) -> MapData {
+pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
     if !is_map_exist(x, y, group) {
         println!("Map does not exist");
         return MapData::default(x, y, group);
@@ -115,8 +104,11 @@ pub fn clear_map(systems: &mut DrawSetting, map_index: usize) {
     (0..9).for_each(|layer| {
         (0..32).for_each(|x| {
             (0..32).for_each(|y| {
-                systems.gfx
-                    .set_map_tile(map_index, (x, y, layer), TileData::default());
+                systems.gfx.set_map_tile(
+                    map_index,
+                    (x, y, layer),
+                    TileData::default(),
+                );
             });
         });
     });

@@ -1,6 +1,4 @@
-use crate::{
-    database::*, Config, DrawSetting
-};
+use crate::{database::*, Config, DrawSetting};
 use hecs::World;
 
 pub mod game_content;
@@ -37,11 +35,16 @@ impl Content {
         content
     }
 
-    pub fn switch_content(&mut self, world: &mut World, systems: &mut DrawSetting, contenttype: ContentType) {
+    pub fn switch_content(
+        &mut self,
+        world: &mut World,
+        systems: &mut DrawSetting,
+        contenttype: ContentType,
+    ) {
         if self.content_type == contenttype {
             return;
         }
-        
+
         match self.content_type {
             ContentType::Game => {
                 self.game_content.hide(world, systems);

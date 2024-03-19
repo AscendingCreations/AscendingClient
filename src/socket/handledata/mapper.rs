@@ -1,15 +1,30 @@
-
-
-use crate::{socket::*, Entity, Position, fade::*};
+use crate::{fade::*, socket::*, Entity, Position};
 
 use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-type PacketFunction = fn(&mut Socket, &mut World, &mut DrawSetting, &mut Content, &mut Alert, &mut ByteBuffer, f32) -> SocketResult<()>;
+type PacketFunction = fn(
+    &mut Socket,
+    &mut World,
+    &mut DrawSetting,
+    &mut Content,
+    &mut Alert,
+    &mut ByteBuffer,
+    f32,
+) -> SocketResult<()>;
 
 #[derive(
-    Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, ByteBufferRead, ByteBufferWrite, Hash,
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Serialize,
+    Deserialize,
+    ByteBufferRead,
+    ByteBufferWrite,
+    Hash,
 )]
 pub enum ServerPackets {
     Ping,
@@ -67,10 +82,7 @@ pub struct PacketRouter(pub HashMap<ServerPackets, PacketFunction>);
 impl PacketRouter {
     pub fn init() -> Self {
         Self(HashMap::from([
-            (
-                ServerPackets::Ping,
-                routes::handle_ping as PacketFunction,
-            ),
+            (ServerPackets::Ping, routes::handle_ping as PacketFunction),
             (
                 ServerPackets::Status,
                 routes::handle_status as PacketFunction,
@@ -235,10 +247,7 @@ impl PacketRouter {
                 ServerPackets::ChatMsg,
                 routes::handle_chatmsg as PacketFunction,
             ),
-            (
-                ServerPackets::Sound,
-                routes::handle_sound as PacketFunction,
-            ),
+            (ServerPackets::Sound, routes::handle_sound as PacketFunction),
             (
                 ServerPackets::Target,
                 routes::handle_target as PacketFunction,

@@ -12,14 +12,14 @@ impl FloatFix for f32 {
     fn add_f32(&self, b: f32, dec: i32) -> Self {
         let a_convert_to_int = (self * 10_f32.powi(dec)) as i32;
         let b_convert_to_int = (b * 10_f32.powi(dec)) as i32;
-        let total = a_convert_to_int + b_convert_to_int; 
+        let total = a_convert_to_int + b_convert_to_int;
         total as f32 / 10_f32.powi(dec)
     }
 
     fn sub_f32(&self, b: f32, dec: i32) -> Self {
         let a_convert_to_int = (self * 10_f32.powi(dec)) as i32;
         let b_convert_to_int = (b * 10_f32.powi(dec)) as i32;
-        let total = a_convert_to_int - b_convert_to_int; 
+        let total = a_convert_to_int - b_convert_to_int;
         total as f32 / 10_f32.powi(dec)
     }
 }
@@ -56,15 +56,14 @@ impl InsertTypes {
 }
 
 pub fn get_screen_center(size: &PhysicalSize<f32>) -> Vec2 {
-    Vec2::new((size.width * 0.5).floor(),
-        (size.height * 0.5).floor())
+    Vec2::new((size.width * 0.5).floor(), (size.height * 0.5).floor())
 }
 
 pub fn is_within_area(area: Vec2, target_pos: Vec2, target_size: Vec2) -> bool {
-    area.x >= target_pos.x &&
-        area.x <= target_pos.x + target_size.x &&
-        area.y >= target_pos.y &&
-        area.y <= target_pos.y + target_size.y
+    area.x >= target_pos.x
+        && area.x <= target_pos.x + target_size.x
+        && area.y >= target_pos.y
+        && area.y <= target_pos.y + target_size.y
 }
 
 pub const fn is_name_acceptable(n: char) -> bool {

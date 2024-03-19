@@ -1,8 +1,6 @@
 use graphics::*;
 
-use crate::{
-    values::*, is_within_area, widget::*, DrawSetting, logic::*,
-};
+use crate::{is_within_area, logic::*, values::*, widget::*, DrawSetting};
 
 pub struct Setting {
     pub visible: bool,
@@ -27,7 +25,11 @@ pub struct Setting {
 impl Setting {
     pub fn new(systems: &mut DrawSetting) -> Self {
         let w_size = Vec2::new(200.0, 267.0);
-        let w_pos = Vec3::new(systems.size.width - w_size.x - 10.0, 60.0, ORDER_GUI_WINDOW);
+        let w_pos = Vec3::new(
+            systems.size.width - w_size.x - 10.0,
+            60.0,
+            ORDER_GUI_WINDOW,
+        );
         let pos = Vec2::new(w_pos.x, w_pos.y);
 
         let detail_1 = w_pos.z.sub_f32(0.001, 3);
@@ -46,23 +48,34 @@ impl Setting {
         let header_pos = Vec2::new(w_pos.x, w_pos.y + 237.0);
         let header_size = Vec2::new(w_size.x, 30.0);
         let header_zpos = detail_1;
-        header_rect.set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
+        header_rect
+            .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
         let header = systems.gfx.add_rect(header_rect, 0);
         systems.gfx.set_visible(header, false);
 
-        let text = create_label(systems, 
+        let text = create_label(
+            systems,
             Vec3::new(w_pos.x, w_pos.y + 242.0, detail_2),
             Vec2::new(w_size.x, 20.0),
-            Bounds::new(w_pos.x, w_pos.y + 242.0, w_pos.x + w_size.x, w_pos.y + 262.0),
-            Color::rgba(200, 200, 200, 255));
+            Bounds::new(
+                w_pos.x,
+                w_pos.y + 242.0,
+                w_pos.x + w_size.x,
+                w_pos.y + 262.0,
+            ),
+            Color::rgba(200, 200, 200, 255),
+        );
         let header_text = systems.gfx.add_text(text, 1);
-        systems.gfx.set_text(&mut systems.renderer, header_text, "Setting");
+        systems
+            .gfx
+            .set_text(&mut systems.renderer, header_text, "Setting");
         systems.gfx.center_text(header_text);
         systems.gfx.set_visible(header_text, false);
 
-        let sfx_scroll = Scrollbar::new(systems,
+        let sfx_scroll = Scrollbar::new(
+            systems,
             Vec2::new(w_pos.x, w_pos.y),
             Vec2::new(5.0, 5.0),
             130.0,
@@ -74,7 +87,7 @@ impl Setting {
                 color: Color::rgba(70, 70, 70, 255),
                 render_layer: 0,
                 got_border: false,
-                border_color: Color::rgba(0,0,0,0),
+                border_color: Color::rgba(0, 0, 0, 0),
                 hover_color: Color::rgba(100, 100, 100, 255),
                 hold_color: Color::rgba(40, 40, 40, 255),
                 radius: 0.0,
@@ -83,16 +96,18 @@ impl Setting {
                 color: Color::rgba(150, 150, 150, 255),
                 render_layer: 0,
                 got_border: false,
-                border_color: Color::rgba(0,0,0,0),
+                border_color: Color::rgba(0, 0, 0, 0),
                 radius: 0.0,
             }),
             8,
             20.0,
             false,
             false,
-            None);
+            None,
+        );
 
-        let bgm_scroll = Scrollbar::new(systems,
+        let bgm_scroll = Scrollbar::new(
+            systems,
             Vec2::new(w_pos.x, w_pos.y),
             Vec2::new(5.0, 35.0),
             130.0,
@@ -104,7 +119,7 @@ impl Setting {
                 color: Color::rgba(70, 70, 70, 255),
                 render_layer: 0,
                 got_border: false,
-                border_color: Color::rgba(0,0,0,0),
+                border_color: Color::rgba(0, 0, 0, 0),
                 hover_color: Color::rgba(100, 100, 100, 255),
                 hold_color: Color::rgba(40, 40, 40, 255),
                 radius: 0.0,
@@ -113,14 +128,15 @@ impl Setting {
                 color: Color::rgba(150, 150, 150, 255),
                 render_layer: 0,
                 got_border: false,
-                border_color: Color::rgba(0,0,0,0),
+                border_color: Color::rgba(0, 0, 0, 0),
                 radius: 0.0,
             }),
             8,
             20.0,
             false,
             false,
-            None);
+            None,
+        );
 
         Setting {
             visible: false,
@@ -138,7 +154,10 @@ impl Setting {
             header_pos,
             header_size,
 
-            min_bound: Vec2::new(systems.size.width - w_size.x - 1.0, systems.size.height - w_size.y - 1.0),
+            min_bound: Vec2::new(
+                systems.size.width - w_size.x - 1.0,
+                systems.size.height - w_size.y - 1.0,
+            ),
             max_bound: Vec2::new(1.0, 1.0),
         }
     }
@@ -226,14 +245,30 @@ impl Setting {
             .min(self.min_bound);
 
         let pos = systems.gfx.get_pos(self.bg);
-        systems.gfx.set_pos(self.bg, Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z));
+        systems.gfx.set_pos(
+            self.bg,
+            Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z),
+        );
         let pos = systems.gfx.get_pos(self.header);
         self.header_pos = Vec2::new(self.pos.x, self.pos.y + 237.0);
-        systems.gfx.set_pos(self.header, Vec3::new(self.pos.x, self.pos.y + 237.0, pos.z));
+        systems.gfx.set_pos(
+            self.header,
+            Vec3::new(self.pos.x, self.pos.y + 237.0, pos.z),
+        );
         let pos = systems.gfx.get_pos(self.header_text);
-        systems.gfx.set_pos(self.header_text, Vec3::new(self.pos.x, self.pos.y + 242.0, pos.z));
-        systems.gfx.set_bound(self.header_text,
-            Bounds::new(self.pos.x, self.pos.y + 242.0, self.pos.x + self.size.x, self.pos.y + 262.0));
+        systems.gfx.set_pos(
+            self.header_text,
+            Vec3::new(self.pos.x, self.pos.y + 242.0, pos.z),
+        );
+        systems.gfx.set_bound(
+            self.header_text,
+            Bounds::new(
+                self.pos.x,
+                self.pos.y + 242.0,
+                self.pos.x + self.size.x,
+                self.pos.y + 262.0,
+            ),
+        );
         systems.gfx.center_text(self.header_text);
         self.sfx_scroll.set_pos(systems, self.pos);
         self.bgm_scroll.set_pos(systems, self.pos);

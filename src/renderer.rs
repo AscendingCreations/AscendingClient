@@ -5,9 +5,7 @@ pub mod fade;
 
 pub use fade::*;
 
-use crate::{
-    game_content::*, gfx_collection::*, Config, TextureAllocation
-};
+use crate::{game_content::*, gfx_collection::*, Config, TextureAllocation};
 
 pub struct DrawSetting {
     pub gfx: GfxCollection,
@@ -92,10 +90,30 @@ where
         pass.render_map(renderer, &self.map_renderer, &self.map_atlas, 0);
         pass.render_map(renderer, &self.map_renderer, &self.map_atlas, 1);
         for layer in 0..=5 {
-            pass.render_map(renderer, &self.map_renderer, &self.map_atlas, layer);
-            pass.render_image(renderer, &self.image_renderer, &self.image_atlas, layer);
-            pass.render_text(renderer, &self.text_renderer, &self.text_atlas, layer);
-            pass.render_rects(renderer, &self.ui_renderer, &self.ui_atlas, layer);
+            pass.render_map(
+                renderer,
+                &self.map_renderer,
+                &self.map_atlas,
+                layer,
+            );
+            pass.render_image(
+                renderer,
+                &self.image_renderer,
+                &self.image_atlas,
+                layer,
+            );
+            pass.render_text(
+                renderer,
+                &self.text_renderer,
+                &self.text_atlas,
+                layer,
+            );
+            pass.render_rects(
+                renderer,
+                &self.ui_renderer,
+                &self.ui_atlas,
+                layer,
+            );
         }
     }
 }
@@ -103,26 +121,46 @@ where
 pub fn add_image_to_buffer<Controls>(
     systems: &mut DrawSetting,
     graphics: &mut State<Controls>,
-) 
-where
-    Controls: camera::controls::Controls, 
+) where
+    Controls: camera::controls::Controls,
 {
     systems.gfx.collection.iter_mut().for_each(|data| {
         if data.1.visible {
             match &mut data.1.gfx {
                 GfxType::Image(image) => {
-                    graphics.image_renderer.image_update(image, &mut systems.renderer, &mut graphics.image_atlas, data.1.layer);
+                    graphics.image_renderer.image_update(
+                        image,
+                        &mut systems.renderer,
+                        &mut graphics.image_atlas,
+                        data.1.layer,
+                    );
                 }
                 GfxType::Rect(rect) => {
-                    graphics.ui_renderer.rect_update(rect, &mut systems.renderer, &mut graphics.ui_atlas, data.1.layer);
+                    graphics.ui_renderer.rect_update(
+                        rect,
+                        &mut systems.renderer,
+                        &mut graphics.ui_atlas,
+                        data.1.layer,
+                    );
                 }
                 GfxType::Text(text) => {
-                    graphics.text_renderer
-                        .text_update(text, &mut graphics.text_atlas, &mut systems.renderer, data.1.layer)
+                    graphics
+                        .text_renderer
+                        .text_update(
+                            text,
+                            &mut graphics.text_atlas,
+                            &mut systems.renderer,
+                            data.1.layer,
+                        )
                         .unwrap();
                 }
                 GfxType::Map(map) => {
-                    graphics.map_renderer.map_update(map, &mut systems.renderer, &mut graphics.map_atlas, [0, 1]);
+                    graphics.map_renderer.map_update(
+                        map,
+                        &mut systems.renderer,
+                        &mut graphics.map_atlas,
+                        [0, 1],
+                    );
                 }
             }
         }

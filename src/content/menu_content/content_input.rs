@@ -1,17 +1,17 @@
 use graphics::*;
-use winit::{
-    event::*,
-    keyboard::*,
-};
 use hecs::World;
+use winit::{event::*, keyboard::*};
 
-use crate::{content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType, Tooltip};
+use crate::{
+    content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType,
+    Tooltip,
+};
 
-mod register_input;
 mod login_input;
+mod register_input;
 
-use register_input::*;
 use login_input::*;
+use register_input::*;
 
 impl MenuContent {
     pub fn mouse_input(
@@ -28,13 +28,31 @@ impl MenuContent {
             alert.alert_mouse_input(systems, input_type, screen_pos);
             return;
         }
-        
+
         match content.menu_content.cur_window {
             WindowType::Register => {
-                register_mouse_input(&mut content.menu_content, world, systems, socket, alert, tooltip, input_type, screen_pos);
+                register_mouse_input(
+                    &mut content.menu_content,
+                    world,
+                    systems,
+                    socket,
+                    alert,
+                    tooltip,
+                    input_type,
+                    screen_pos,
+                );
             }
             WindowType::Login => {
-                login_mouse_input(&mut content.menu_content, world, systems, socket, alert, tooltip, input_type, screen_pos);
+                login_mouse_input(
+                    &mut content.menu_content,
+                    world,
+                    systems,
+                    socket,
+                    alert,
+                    tooltip,
+                    input_type,
+                    screen_pos,
+                );
             }
             _ => {}
         }
@@ -50,10 +68,20 @@ impl MenuContent {
     ) {
         match content.menu_content.cur_window {
             WindowType::Register => {
-                register_key_input(&mut content.menu_content, world, systems, event);
+                register_key_input(
+                    &mut content.menu_content,
+                    world,
+                    systems,
+                    event,
+                );
             }
             WindowType::Login => {
-                login_key_input(&mut content.menu_content, world, systems, event);
+                login_key_input(
+                    &mut content.menu_content,
+                    world,
+                    systems,
+                    event,
+                );
             }
             _ => {}
         }

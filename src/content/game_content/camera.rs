@@ -48,7 +48,7 @@ impl Camera {
     }
 
     pub fn camera_move(&mut self, seconds: f32) -> bool {
-        if !self.did_move || 
+        if !self.did_move ||
             self.interval + self.timer > seconds ||
             self.pos == self.target_pos {
             return false;

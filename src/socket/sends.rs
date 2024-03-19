@@ -1,14 +1,11 @@
-use crate::{socket::{error, *}, values::*, Entity, Position};
+use crate::{
+    socket::{error, *},
+    values::*,
+    Entity, Position,
+};
 use bytey::ByteBuffer;
 
-#[derive(
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    ByteBufferRead,
-    ByteBufferWrite,
-)]
+#[derive(Clone, Debug, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
 pub enum AdminCommand {
     KickPlayer(String),
     WarpTo(Position),
@@ -16,13 +13,7 @@ pub enum AdminCommand {
 }
 
 #[derive(
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Copy, Clone, Debug, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
 )]
 enum ClientPacket {
     Register,
@@ -96,10 +87,7 @@ pub fn send_move(
     Ok(())
 }
 
-pub fn send_dir(
-    socket: &mut Socket,
-    dir: u8,
-) -> SocketResult<()> {
+pub fn send_dir(socket: &mut Socket, dir: u8) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Dir)?;
@@ -142,10 +130,7 @@ pub fn send_useitem(
     Ok(())
 }
 
-pub fn send_unequip(
-    socket: &mut Socket,
-    slot: u16,
-) -> SocketResult<()> {
+pub fn send_unequip(socket: &mut Socket, slot: u16) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Unequip)?;
@@ -174,9 +159,7 @@ pub fn send_switchinvslot(
     Ok(())
 }
 
-pub fn send_pickup(
-    socket: &mut Socket,
-) -> SocketResult<()> {
+pub fn send_pickup(socket: &mut Socket) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::PickUp)?;
@@ -202,10 +185,7 @@ pub fn send_dropitem(
     Ok(())
 }
 
-pub fn send_deleteitem(
-    socket: &mut Socket,
-    slot: u16,
-) -> SocketResult<()> {
+pub fn send_deleteitem(socket: &mut Socket, slot: u16) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::DeleteItem)?;
@@ -236,7 +216,7 @@ pub fn send_message(
 
 pub fn send_admincommand(
     socket: &mut Socket,
-    command: AdminCommand
+    command: AdminCommand,
 ) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(262)?;
 

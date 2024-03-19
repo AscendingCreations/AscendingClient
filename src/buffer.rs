@@ -29,7 +29,11 @@ impl BufferTask {
         }
     }
 
-    pub fn process_buffer(&mut self, systems: &mut DrawSetting, content: &mut Content) {
+    pub fn process_buffer(
+        &mut self,
+        systems: &mut DrawSetting,
+        content: &mut Content,
+    ) {
         if self.task.is_empty() {
             return;
         }
@@ -39,13 +43,20 @@ impl BufferTask {
                 BufferTaskEnum::ApplyMap(mx, my, mg, map_index) => {
                     let key = format!("{}_{}_{}", mx, my, mg);
                     if let Some(mapdata) = self.storage.map_data.get(&key) {
-                        load_map_data(systems, mapdata, content.game_content.map.index[map_index].0);
+                        load_map_data(
+                            systems,
+                            mapdata,
+                            content.game_content.map.index[map_index].0,
+                        );
                     }
                 }
                 BufferTaskEnum::ApplyMapAttribute(mx, my, mg, map_index) => {
                     let key = format!("{}_{}_{}", mx, my, mg);
                     if let Some(mapdata) = self.storage.map_data.get(&key) {
-                        content.game_content.map.map_attribute[map_index].0 = MapAttributes { attribute: mapdata.attribute.clone() };
+                        content.game_content.map.map_attribute[map_index].0 =
+                            MapAttributes {
+                                attribute: mapdata.attribute.clone(),
+                            };
                     }
                 }
                 BufferTaskEnum::LoadMap(mx, my, mg) => {
