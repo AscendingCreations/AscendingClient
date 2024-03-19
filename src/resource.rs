@@ -1,3 +1,4 @@
+use std::fs;
 use std::path::Path;
 
 use graphics::*;
@@ -22,117 +23,86 @@ pub struct TextureAllocation {
     pub tilesheet: Vec<TilesheetData>,
     pub items: Vec<TextureData>,
     pub players: Vec<TextureData>,
-
 }
 
 impl TextureAllocation {
     pub fn new(
-        atlases: &mut Vec<AtlasSet>,
+        atlases: &mut [AtlasSet],
         renderer: &GpuRenderer,
     ) -> Result<Self, AscendingError> {
         // This is how we load a image into a atlas/Texture. It returns the location of the image
         // within the texture. its x, y, w, h.  Texture loads the file. group_uploads sends it to the Texture
         // renderer is used to upload it to the GPU when done.
-        let menu_bg = TextureData {
-            name: "bg.png".to_string(),
-            allocation: Texture::from_file("images/gui/bg.png")?
-                .upload(&mut atlases[0], renderer)
-                .ok_or_else(|| OtherError::new("failed to upload image"))?,
-        };
+        let mut textures = Vec::with_capacity(4);
+        for (name, path) in [
+            ("bg.png", "images/gui/bg.png"),
+            ("horizontal_arrow.png", "images/gui/horizontal_arrow.png"),
+            ("vertical_arrow.png", "images/gui/vertical_arrow.png"),
+            ("button_icon.png", "images/gui/button_icon.png"),
+        ] {
+            textures.push(TextureData {
+                name: name.to_string(),
+                allocation: Texture::from_file(path)?
+                    .upload(&mut atlases[0], renderer)
+                    .ok_or_else(|| OtherError::new("failed to upload image"))?,
+            })
+        }
 
-        let horizontal_arrow = TextureData {
-            name: "horizontal_arrow.png".to_string(),
-            allocation: Texture::from_file("images/gui/horizontal_arrow.png")?
-                .upload(&mut atlases[0], renderer)
-                .ok_or_else(|| OtherError::new("failed to upload image"))?,
-        };
+        let (mut tilesheet, mut items, mut players) = (
+            Vec::with_capacity(32),
+            Vec::with_capacity(32),
+            Vec::with_capacity(32),
+        );
 
-        let vertical_arrow = TextureData {
-            name: "vertical_arrow.png".to_string(),
-            allocation: Texture::from_file("images/gui/vertical_arrow.png")?
-                .upload(&mut atlases[0], renderer)
-                .ok_or_else(|| OtherError::new("failed to upload image"))?,
-        };
-
-        let button_icon = TextureData {
-            name: "button_icon.png".to_string(),
-            allocation: Texture::from_file("images/gui/button_icon.png")?
-                .upload(&mut atlases[0], renderer)
-                .ok_or_else(|| OtherError::new("failed to upload image"))?,
-        };
-
-        let mut tilesheet = Vec::new();
-        let mut count = 0;
-        let mut path_found = true;
-        while path_found {
-            let path = format!("./images/tiles/tile_{}.png", count);
-            if Path::new(&path).exists() {
-                let res = TilesheetData {
-                    name: format!("tile_{}.png", count),
-                    tile: Texture::from_file(format!(
-                        "images/tiles/tile_{}.png",
-                        count
-                    ))?
-                    .new_tilesheet(&mut atlases[1], &renderer, TILE_SIZE as u32)
-                    .ok_or_else(|| OtherError::new("failed to upload tiles"))?,
-                };
-
-                tilesheet.push(res);
-
-                count += 1;
-            } else {
-                path_found = false;
+        if let Ok(mut paths) = fs::read_dir("./images/tiles/") {
+            while let Some(path) = paths.next().and_then(|p| p.ok()) {
+                tilesheet.push(TilesheetData {
+                    name: path.path().display().to_string(),
+                    tile: Texture::from_file(path.path())?
+                        .new_tilesheet(
+                            &mut atlases[1],
+                            renderer,
+                            TILE_SIZE as u32,
+                        )
+                        .ok_or_else(|| {
+                            OtherError::new("failed to upload tiles")
+                        })?,
+                });
             }
         }
 
-        let mut items = Vec::new();
-        let mut count = 1;
-        let mut path_found = true;
-        while path_found {
-            let path = format!("./images/items/item_{}.png", count);
-            if Path::new(&path).exists() {
-                items.push(
-                    TextureData {
-                        name: format!("item_{}.png", count),
-                        allocation: Texture::from_file(&format!("images/items/item_{}.png", count))?
-                            .upload(&mut atlases[0], renderer)
-                            .ok_or_else(|| OtherError::new("failed to upload image"))?,
-                    }
-                );
-
-                count += 1;
-            } else {
-                path_found = false;
+        if let Ok(mut paths) = fs::read_dir("./images/items/") {
+            while let Some(path) = paths.next().and_then(|p| p.ok()) {
+                items.push(TextureData {
+                    name: path.path().display().to_string(),
+                    allocation: Texture::from_file(path.path())?
+                        .upload(&mut atlases[0], renderer)
+                        .ok_or_else(|| {
+                            OtherError::new("failed to upload image")
+                        })?,
+                });
             }
         }
 
-        let mut players = Vec::new();
-        let mut count = 1;
-        let mut path_found = true;
-        while path_found {
-            let path = format!("./images/player/player_{}.png", count);
-            if Path::new(&path).exists() {
-                players.push(
-                    TextureData {
-                        name: format!("player_{}.png", count),
-                        allocation: Texture::from_file(&format!("images/player/player_{}.png", count))?
-                            .upload(&mut atlases[0], renderer)
-                            .ok_or_else(|| OtherError::new("failed to upload image"))?,
-                    }
-                );
-
-                count += 1;
-            } else {
-                path_found = false;
+        if let Ok(mut paths) = fs::read_dir("./images/player/") {
+            while let Some(path) = paths.next().and_then(|p| p.ok()) {
+                players.push(TextureData {
+                    name: path.path().display().to_string(),
+                    allocation: Texture::from_file(path.path())?
+                        .upload(&mut atlases[0], renderer)
+                        .ok_or_else(|| {
+                            OtherError::new("failed to upload image")
+                        })?,
+                });
             }
         }
 
         // Complete! We can now pass the result
         Ok(Self {
-            menu_bg,
-            horizontal_arrow,
-            vertical_arrow,
-            button_icon,
+            menu_bg: textures.remove(0),
+            horizontal_arrow: textures.remove(0),
+            vertical_arrow: textures.remove(0),
+            button_icon: textures.remove(0),
             tilesheet,
             items,
             players,
