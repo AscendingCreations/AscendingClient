@@ -1,7 +1,9 @@
 use chrono::{offset::Utc, Duration, NaiveDate};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(
+    Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize,
+)]
 pub struct MyDate(pub NaiveDate);
 
 impl MyDate {
@@ -10,7 +12,10 @@ impl MyDate {
     }
 
     pub fn add_days(&mut self, days: i64) {
-        if let Some(i) = self.0.checked_add_signed(Duration::days(days)) {
+        if let Some(i) = self
+            .0
+            .checked_add_signed(Duration::try_days(days).unwrap_or_default())
+        {
             self.0 = i;
         }
     }

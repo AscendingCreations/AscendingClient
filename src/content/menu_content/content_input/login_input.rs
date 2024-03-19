@@ -1,11 +1,11 @@
 use graphics::*;
-use winit::{
-    event::*,
-    keyboard::*,
-};
 use hecs::World;
+use winit::{event::*, keyboard::*};
 
-use crate::{button, content::*, fade::*, logic::FloatFix, socket::*, Alert, ContentType, DrawSetting, MouseInputType, Tooltip};
+use crate::{
+    button, content::*, fade::*, logic::FloatFix, socket::*, Alert,
+    ContentType, DrawSetting, MouseInputType, Tooltip,
+};
 
 pub fn login_mouse_input(
     menu_content: &mut MenuContent,
@@ -29,7 +29,8 @@ pub fn login_mouse_input(
                 trigger_button(menu_content, systems, socket, index);
             }
 
-            let checkbox_index = click_checkbox(menu_content, systems, screen_pos);
+            let checkbox_index =
+                click_checkbox(menu_content, systems, screen_pos);
             if let Some(index) = checkbox_index {
                 menu_content.did_checkbox_click = true;
                 trigger_checkbox(menu_content, systems, index);
@@ -63,22 +64,20 @@ fn trigger_button(
     index: usize,
 ) {
     match index {
-        0 => { // Login
+        0 => {
+            // Login
             let username = menu_content.textbox[0].text.clone();
             let password = menu_content.textbox[1].text.clone();
 
-            systems.config.username = username.clone();
-            systems.config.password = password.clone();
+            systems.config.username.clone_from(&username);
+            systems.config.password.clone_from(&password);
             systems.config.save_config("settings.toml");
 
-            send_login(
-                socket,
-                username,
-                password,
-                (1, 1, 1),
-            ).expect("Failed to send login");
+            send_login(socket, username, password, (1, 1, 1))
+                .expect("Failed to send login");
         }
-        1 => { // Register
+        1 => {
+            // Register
             create_window(systems, menu_content, WindowType::Register);
         }
         _ => {}
@@ -90,8 +89,10 @@ fn trigger_checkbox(
     systems: &mut DrawSetting,
     index: usize,
 ) {
+    #[allow(clippy::single_match)]
     match index {
-        0 => { // Remember Account
+        0 => {
+            // Remember Account
             systems.config.save_password = menu_content.checkbox[index].value;
         }
         _ => {}

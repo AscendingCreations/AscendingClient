@@ -9,21 +9,22 @@ pub use content_input::*;
 pub use interface::*;
 
 use crate::{
-    buffer::*, content::*, database::*, logic::*, send_attack, values::*, Direction, DrawSetting, Socket
+    buffer::*, content::*, database::*, logic::*, send_attack, values::*,
+    Direction, DrawSetting, Socket,
 };
 use hecs::World;
 
-pub mod player;
-pub mod npc;
-pub mod map;
 mod camera;
 pub mod entity;
+pub mod map;
+pub mod npc;
+pub mod player;
 
-pub use player::*;
-pub use npc::*;
-pub use map::*;
 use camera::*;
 pub use entity::*;
+pub use map::*;
+pub use npc::*;
+pub use player::*;
 
 const KEY_ATTACK: usize = 0;
 const KEY_MOVEUP: usize = 1;
@@ -96,13 +97,20 @@ impl GameContent {
             let mapdata = load_file(mx, my, map.group as u64);
             load_map_data(systems, &mapdata, self.map.index[i].0);
 
-            self.map.map_attribute.push(
-                (MapAttributes { attribute: mapdata.attribute.clone() }, i)
-            )
+            self.map.map_attribute.push((
+                MapAttributes {
+                    attribute: mapdata.attribute.clone(),
+                },
+                i,
+            ))
         }
     }
 
-    pub fn finalized_data(&mut self, world: &mut World, systems: &mut DrawSetting) {
+    pub fn finalized_data(
+        &mut self,
+        world: &mut World,
+        systems: &mut DrawSetting,
+    ) {
         for entity in self.players.iter() {
             player_finalized(world, systems, entity);
         }
@@ -111,23 +119,31 @@ impl GameContent {
         }
         for entity in self.mapitems.iter() {
             MapItem::finalized(world, systems, entity);
-        } 
+        }
         update_camera(world, self, systems);
         self.finalized = true;
     }
 
-    pub fn move_map(&mut self, world: &mut World, systems: &mut DrawSetting, dir: Direction, buffer: &mut BufferTask) {
+    pub fn move_map(
+        &mut self,
+        world: &mut World,
+        systems: &mut DrawSetting,
+        dir: Direction,
+        buffer: &mut BufferTask,
+    ) {
         match dir {
             Direction::Down => self.map.map_pos.y -= 1,
             Direction::Left => self.map.map_pos.x -= 1,
             Direction::Right => self.map.map_pos.x += 1,
             Direction::Up => self.map.map_pos.y += 1,
         }
-        
+
         let move_maps = match dir {
             Direction::Up => [(0, 2), (4, 1), (5, 3), (7, 0), (6, 4), (8, 5)],
             Direction::Left => [(0, 5), (2, 3), (7, 8), (1, 2), (4, 0), (6, 7)],
-            Direction::Right => [(0, 4), (2, 1), (7, 6), (3, 2), (5, 0), (8, 7)],
+            Direction::Right => {
+                [(0, 4), (2, 1), (7, 6), (3, 2), (5, 0), (8, 7)]
+            }
             Direction::Down => [(0, 7), (4, 6), (5, 8), (2, 0), (1, 4), (3, 5)],
         };
         for (from, to) in move_maps {
@@ -142,31 +158,73 @@ impl GameContent {
             Direction::Down => [(6, 1), (7, 2), (8, 3)],
         };
         for (from, to) in load_maps {
-            let (mx, my) = get_map_loc(
-                self.map.map_pos.x, 
-                self.map.map_pos.y, to);
+            let (mx, my) =
+                get_map_loc(self.map.map_pos.x, self.map.map_pos.y, to);
             self.map.index[from].1 = to;
             self.map.map_attribute[from].1 = to;
-            
-            buffer.add_task(BufferTaskEnum::LoadMap(mx, my, self.map.map_pos.group as u64));
-            buffer.add_task(BufferTaskEnum::ApplyMap(mx, my, self.map.map_pos.group as u64, to));
-            buffer.add_task(BufferTaskEnum::ApplyMapAttribute(mx, my, self.map.map_pos.group as u64, to));
-            buffer.add_task(BufferTaskEnum::UnloadMap(mx, my, self.map.map_pos.group as u64));   
+
+            buffer.add_task(BufferTaskEnum::LoadMap(
+                mx,
+                my,
+                self.map.map_pos.group as u64,
+            ));
+            buffer.add_task(BufferTaskEnum::ApplyMap(
+                mx,
+                my,
+                self.map.map_pos.group as u64,
+                to,
+            ));
+            buffer.add_task(BufferTaskEnum::ApplyMapAttribute(
+                mx,
+                my,
+                self.map.map_pos.group as u64,
+                to,
+            ));
+            buffer.add_task(BufferTaskEnum::UnloadMap(
+                mx,
+                my,
+                self.map.map_pos.group as u64,
+            ));
         }
 
         self.map.sort_map();
         update_camera(world, self, systems);
     }
 
-    pub fn handle_key_input(&mut self, world: &mut World, systems: &mut DrawSetting, socket: &mut Socket, seconds: f32) {
+    pub fn handle_key_input(
+        &mut self,
+        world: &mut World,
+        systems: &mut DrawSetting,
+        socket: &mut Socket,
+        seconds: f32,
+    ) {
         for i in 0..MAX_KEY {
             if self.keyinput[i] {
                 match i {
-                    KEY_ATTACK => self.player_attack(world, systems, socket, seconds),
-                    KEY_MOVEDOWN => self.move_player(world, systems, socket, &Direction::Down),
-                    KEY_MOVELEFT => self.move_player(world, systems, socket, &Direction::Left),
-                    KEY_MOVEUP => self.move_player(world, systems, socket,&Direction::Up),
-                    KEY_MOVERIGHT => self.move_player(world, systems, socket, &Direction::Right),
+                    KEY_ATTACK => {
+                        self.player_attack(world, systems, socket, seconds)
+                    }
+                    KEY_MOVEDOWN => self.move_player(
+                        world,
+                        systems,
+                        socket,
+                        &Direction::Down,
+                    ),
+                    KEY_MOVELEFT => self.move_player(
+                        world,
+                        systems,
+                        socket,
+                        &Direction::Left,
+                    ),
+                    KEY_MOVEUP => {
+                        self.move_player(world, systems, socket, &Direction::Up)
+                    }
+                    KEY_MOVERIGHT => self.move_player(
+                        world,
+                        systems,
+                        socket,
+                        &Direction::Right,
+                    ),
                     _ => {}
                 }
             }
@@ -181,7 +239,7 @@ impl GameContent {
         cur_map: MapPosition,
         sprite: usize,
     ) {
-        let entity = MapItem::new(world, systems, sprite, pos, cur_map);
+        let entity = MapItem::create(world, systems, sprite, pos, cur_map);
         self.mapitems.insert(entity);
     }
 
@@ -193,8 +251,14 @@ impl GameContent {
         dir: &Direction,
     ) {
         if let Some(myentity) = self.myentity {
-
-            move_player(world, systems, socket, &myentity, self, MovementType::Manual(enum_to_dir(*dir), None));
+            move_player(
+                world,
+                systems,
+                socket,
+                &myentity,
+                self,
+                MovementType::Manual(enum_to_dir(*dir), None),
+            );
         }
     }
 
@@ -248,53 +312,65 @@ impl GameContent {
                 }
             };
 
-            let target_entity = world.query::<(&Position, &WorldEntityType)>()
+            let target_entity = world
+                .query::<(&Position, &WorldEntityType)>()
                 .iter()
                 .find_map(|(entity, (pos, world_type))| {
-                    if *pos == target_pos && 
-                        (*world_type == WorldEntityType::Npc ||
-                            *world_type == WorldEntityType::Player)
+                    if *pos == target_pos
+                        && (*world_type == WorldEntityType::Npc
+                            || *world_type == WorldEntityType::Player)
                     {
                         Some(Entity(entity))
                     } else {
                         None
                     }
                 });
-            
+
             let _ = send_attack(socket, dir, target_entity);
             init_player_attack(world, systems, &myentity, seconds);
         }
     }
 }
 
-pub fn update_player(world: &mut World, systems: &mut DrawSetting, socket: &mut Socket, content: &mut GameContent, buffer: &mut BufferTask, seconds: f32) {
+pub fn update_player(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    socket: &mut Socket,
+    content: &mut GameContent,
+    buffer: &mut BufferTask,
+    seconds: f32,
+) {
     let players = content.players.clone();
     for entity in players.iter() {
         if let Some(myentity) = content.myentity {
             if entity != &myentity {
-                move_player(world, 
-                    systems, 
-                    socket, 
-                    entity, 
-                    content, 
-                    MovementType::MovementBuffer);
+                move_player(
+                    world,
+                    systems,
+                    socket,
+                    entity,
+                    content,
+                    MovementType::MovementBuffer,
+                );
             }
         }
-        
+
         process_player_movement(world, systems, entity, content, buffer);
         process_player_attack(world, systems, entity, seconds)
     }
 }
 
-pub fn update_npc(world: &mut World, systems: &mut DrawSetting, content: &mut GameContent, seconds: f32) {
+pub fn update_npc(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    content: &mut GameContent,
+    seconds: f32,
+) {
     let npcs = content.npcs.clone();
     for entity in npcs.iter() {
         if let Some(myentity) = content.myentity {
             if entity != &myentity {
-                move_npc(world, 
-                    systems, 
-                    entity, 
-                    MovementType::MovementBuffer);
+                move_npc(world, systems, entity, MovementType::MovementBuffer);
             }
         }
 
@@ -303,11 +379,16 @@ pub fn update_npc(world: &mut World, systems: &mut DrawSetting, content: &mut Ga
     }
 }
 
-pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut DrawSetting) {
+pub fn update_camera(
+    world: &mut World,
+    content: &mut GameContent,
+    systems: &mut DrawSetting,
+) {
     let player_pos = if let Some(entity) = content.myentity {
         let pos_offset = world.get_or_panic::<PositionOffset>(&entity);
         let pos = world.get_or_panic::<Position>(&entity);
-        (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32) + pos_offset.offset
+        (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
+            + pos_offset.offset
     } else {
         Vec2::new(0.0, 0.0)
     };
@@ -315,18 +396,27 @@ pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut
     content.camera.pos = adjust_pos;
 
     content.map.move_pos(systems, content.camera.pos);
-    
-    for (entity, (worldentitytype, sprite, pos, pos_offset, hp_bar, finalized)) in 
-        world.query_mut::<(
-            &WorldEntityType, &SpriteIndex, 
-            &Position, &PositionOffset, 
-            Option<&HPBar>, &mut Finalized)>()
-            .into_iter()
+
+    for (
+        _entity,
+        (worldentitytype, sprite, pos, pos_offset, hp_bar, finalized),
+    ) in world
+        .query_mut::<(
+            &WorldEntityType,
+            &SpriteIndex,
+            &Position,
+            &PositionOffset,
+            Option<&HPBar>,
+            &mut Finalized,
+        )>()
+        .into_iter()
     {
         match worldentitytype {
             WorldEntityType::Player => {
                 if let Some(hpbar) = hp_bar {
-                    update_player_position(systems, &content, sprite.0, pos, pos_offset, hpbar);
+                    update_player_position(
+                        systems, content, sprite.0, pos, pos_offset, hpbar,
+                    );
                     if !finalized.0 {
                         finalized.0 = true;
                         systems.gfx.set_visible(sprite.0, true);
@@ -335,7 +425,9 @@ pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut
             }
             WorldEntityType::Npc => {
                 if let Some(hpbar) = hp_bar {
-                    update_npc_position(systems, &content, sprite.0, pos, pos_offset, hpbar);
+                    update_npc_position(
+                        systems, content, sprite.0, pos, pos_offset, hpbar,
+                    );
                     if !finalized.0 {
                         finalized.0 = true;
                         systems.gfx.set_visible(sprite.0, true);
@@ -343,7 +435,9 @@ pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut
                 }
             }
             WorldEntityType::MapItem => {
-                update_mapitem_position(systems, &content, sprite.0, pos, pos_offset);
+                update_mapitem_position(
+                    systems, content, sprite.0, pos, pos_offset,
+                );
                 if !finalized.0 {
                     finalized.0 = true;
                     systems.gfx.set_visible(sprite.0, true);

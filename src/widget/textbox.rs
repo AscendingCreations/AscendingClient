@@ -1,20 +1,13 @@
-use graphics::*;
-use cosmic_text::{Attrs, Metrics};
 use arboard::Clipboard;
+use cosmic_text::{Attrs, Metrics};
+use graphics::*;
 
 const KEY_CTRL: usize = 0;
 const MAX_KEY: usize = 1;
 
-use winit::{
-    event::*,
-    keyboard::*,
-};
+use winit::{event::*, keyboard::*};
 
-use crate::{
-    widget::*,
-    DrawSetting,
-    logic::*,
-};
+use crate::{logic::*, widget::*, DrawSetting};
 
 pub struct Textbox {
     visible: bool,
@@ -34,6 +27,7 @@ pub struct Textbox {
 }
 
 impl Textbox {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         systems: &mut DrawSetting,
         pos: Vec3,
@@ -54,11 +48,13 @@ impl Textbox {
         let bg = systems.gfx.add_rect(rect, 0);
         systems.gfx.set_visible(bg, false);
 
-        let text_data = create_label(systems, 
-            Vec3::new(pos.x, pos.y, pos.z.sub_f32(z_step.0, z_step.1)), 
-            size, 
+        let text_data = create_label(
+            systems,
+            Vec3::new(pos.x, pos.y, pos.z.sub_f32(z_step.0, z_step.1)),
+            size,
             Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
-            text_color);
+            text_color,
+        );
         let text_index = systems.gfx.add_text(text_data, render_layer);
         systems.gfx.set_visible(text_index, visible);
 
@@ -104,25 +100,42 @@ impl Textbox {
     pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
         self.pos.z = z_order;
         systems.gfx.set_pos(self.bg, self.pos);
-        systems.gfx.set_pos(self.text_index, Vec3::new(self.pos.x, self.pos.y, self.pos.z.sub_f32(self.z_step.0, self.z_step.1)));
+        systems.gfx.set_pos(
+            self.text_index,
+            Vec3::new(
+                self.pos.x,
+                self.pos.y,
+                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+            ),
+        );
     }
 
     pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
         self.pos.x = new_pos.x;
         self.pos.y = new_pos.y;
         systems.gfx.set_pos(self.bg, self.pos);
-        systems.gfx.set_pos(self.text_index, Vec3::new(self.pos.x, self.pos.y, self.pos.z.sub_f32(self.z_step.0, self.z_step.1)));
-        systems.gfx.set_bound(self.text_index,
-            Bounds::new(self.pos.x, self.pos.y, self.pos.x + self.size.x, self.pos.y + self.size.y));
+        systems.gfx.set_pos(
+            self.text_index,
+            Vec3::new(
+                self.pos.x,
+                self.pos.y,
+                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+            ),
+        );
+        systems.gfx.set_bound(
+            self.text_index,
+            Bounds::new(
+                self.pos.x,
+                self.pos.y,
+                self.pos.x + self.size.x,
+                self.pos.y + self.size.y,
+            ),
+        );
     }
 
-    pub fn set_text(
-        &mut self,
-        systems: &mut DrawSetting,
-        text: String,
-    ) {
+    pub fn set_text(&mut self, systems: &mut DrawSetting, text: String) {
         self.text.clear();
-        if text.len() > 0 {
+        if !text.is_empty() {
             self.text.push_str(&text);
         }
         let msg = if self.hide_content {
@@ -130,21 +143,20 @@ impl Textbox {
         } else {
             self.text.clone()
         };
-        systems.gfx.set_text(&mut systems.renderer, self.text_index, &msg);
+        systems
+            .gfx
+            .set_text(&mut systems.renderer, self.text_index, &msg);
         self.adjust_text(systems);
     }
 
-    pub fn enter_text(
-        &mut self,
-        systems: &mut DrawSetting,
-        event: &KeyEvent,
-    ) {
+    pub fn enter_text(&mut self, systems: &mut DrawSetting, event: &KeyEvent) {
         if !self.visible {
             return;
         }
 
         match event.physical_key {
-            PhysicalKey::Code(KeyCode::ControlLeft) | PhysicalKey::Code(KeyCode::ControlRight) => {
+            PhysicalKey::Code(KeyCode::ControlLeft)
+            | PhysicalKey::Code(KeyCode::ControlRight) => {
                 self.special_key_hold[KEY_CTRL] = event.state.is_pressed();
             }
             _ => {}
@@ -168,8 +180,14 @@ impl Textbox {
             }
         } else {
             match event.physical_key {
-                PhysicalKey::Code(KeyCode::Backspace) => { self.text.pop(); did_edit = true; }
-                PhysicalKey::Code(KeyCode::Delete) => { self.text.clear(); did_edit = true; }
+                PhysicalKey::Code(KeyCode::Backspace) => {
+                    self.text.pop();
+                    did_edit = true;
+                }
+                PhysicalKey::Code(KeyCode::Delete) => {
+                    self.text.clear();
+                    did_edit = true;
+                }
                 _ => {
                     if self.text.len() >= self.limit {
                         return;
@@ -183,47 +201,88 @@ impl Textbox {
                 }
             };
         }
-        
+
         if did_edit {
             let msg = if self.hide_content {
                 self.text.chars().map(|_| '*').collect()
             } else {
                 self.text.clone()
             };
-            systems.gfx.set_text(&mut systems.renderer, self.text_index, &msg);
+            systems
+                .gfx
+                .set_text(&mut systems.renderer, self.text_index, &msg);
             self.adjust_text(systems);
         }
     }
 
     pub fn adjust_text(&mut self, systems: &mut DrawSetting) {
-        let adjust_x = (systems.gfx.get_measure(self.text_index).x - self.size.x).max(0.0);
+        let adjust_x =
+            (systems.gfx.get_measure(self.text_index).x - self.size.x).max(0.0);
         if self.adjust_x == adjust_x {
             return;
         }
         self.adjust_x = adjust_x;
-        systems.gfx.set_pos(self.text_index, 
-            Vec3::new(self.pos.x - self.adjust_x, self.pos.y, self.pos.z));
+        systems.gfx.set_pos(
+            self.text_index,
+            Vec3::new(self.pos.x - self.adjust_x, self.pos.y, self.pos.z),
+        );
     }
 }
 
 pub fn is_text(event: &KeyEvent) -> bool {
-    match event.physical_key {
+    matches!(
+        event.physical_key,
         PhysicalKey::Code(
-            KeyCode::KeyA | KeyCode::KeyB | KeyCode::KeyC | KeyCode::KeyD
-            | KeyCode::KeyE | KeyCode::KeyF | KeyCode::KeyG | KeyCode::KeyH
-            | KeyCode::KeyI | KeyCode::KeyJ | KeyCode::KeyK | KeyCode::KeyL
-            | KeyCode::KeyM | KeyCode::KeyN | KeyCode::KeyO | KeyCode::KeyP
-            | KeyCode::KeyQ | KeyCode::KeyR | KeyCode::KeyS | KeyCode::KeyT
-            | KeyCode::KeyU | KeyCode::KeyV | KeyCode::KeyW | KeyCode::KeyX
-            | KeyCode::KeyY | KeyCode::KeyZ | KeyCode::Digit1 | KeyCode::Digit2
-            | KeyCode::Digit3 | KeyCode::Digit4 | KeyCode::Digit5 | KeyCode::Digit6
-            | KeyCode::Digit7 | KeyCode::Digit8 | KeyCode::Digit9 | KeyCode::Digit0
-            | KeyCode::Comma | KeyCode::Period | KeyCode::BracketLeft | KeyCode::BracketRight
-            | KeyCode::Backquote | KeyCode::Minus | KeyCode::Equal | KeyCode::Quote
-            | KeyCode::Backslash | KeyCode::Semicolon | KeyCode::Slash | KeyCode::Space
-        ) => true,
-        _ => false,
-    }
+            KeyCode::KeyA
+                | KeyCode::KeyB
+                | KeyCode::KeyC
+                | KeyCode::KeyD
+                | KeyCode::KeyE
+                | KeyCode::KeyF
+                | KeyCode::KeyG
+                | KeyCode::KeyH
+                | KeyCode::KeyI
+                | KeyCode::KeyJ
+                | KeyCode::KeyK
+                | KeyCode::KeyL
+                | KeyCode::KeyM
+                | KeyCode::KeyN
+                | KeyCode::KeyO
+                | KeyCode::KeyP
+                | KeyCode::KeyQ
+                | KeyCode::KeyR
+                | KeyCode::KeyS
+                | KeyCode::KeyT
+                | KeyCode::KeyU
+                | KeyCode::KeyV
+                | KeyCode::KeyW
+                | KeyCode::KeyX
+                | KeyCode::KeyY
+                | KeyCode::KeyZ
+                | KeyCode::Digit1
+                | KeyCode::Digit2
+                | KeyCode::Digit3
+                | KeyCode::Digit4
+                | KeyCode::Digit5
+                | KeyCode::Digit6
+                | KeyCode::Digit7
+                | KeyCode::Digit8
+                | KeyCode::Digit9
+                | KeyCode::Digit0
+                | KeyCode::Comma
+                | KeyCode::Period
+                | KeyCode::BracketLeft
+                | KeyCode::BracketRight
+                | KeyCode::Backquote
+                | KeyCode::Minus
+                | KeyCode::Equal
+                | KeyCode::Quote
+                | KeyCode::Backslash
+                | KeyCode::Semicolon
+                | KeyCode::Slash
+                | KeyCode::Space,
+        )
+    )
 }
 
 pub fn get_clipboard_text() -> String {

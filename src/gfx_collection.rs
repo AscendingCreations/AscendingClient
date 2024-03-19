@@ -1,5 +1,5 @@
-use graphics::*;
 use cosmic_text::Attrs;
+use graphics::*;
 use slab::Slab;
 
 pub enum GfxType {
@@ -15,13 +15,14 @@ pub struct Gfx {
     pub visible: bool,
 }
 
+#[derive(Default)]
 pub struct GfxCollection {
     pub collection: Slab<Gfx>,
 }
 
 impl GfxCollection {
     pub fn new() -> Self {
-        Self { collection: Slab::new(), }
+        Self::default()
     }
 
     pub fn count_collection(&self) -> usize {
@@ -84,12 +85,9 @@ impl GfxCollection {
 
     pub fn set_image(&mut self, index: usize, texture: usize) {
         if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Image(image) => {
-                    image.texture = Some(texture);
-                    image.changed = true;
-                }
-                _ => {}
+            if let GfxType::Image(image) = &mut data.gfx {
+                image.texture = Some(texture);
+                image.changed = true;
             }
         }
     }
@@ -101,8 +99,12 @@ impl GfxCollection {
                     image.color = color;
                     image.changed = true;
                 }
-                GfxType::Rect(rect) => {rect.set_color(color);}
-                GfxType::Text(text) => {text.set_default_color(color);}
+                GfxType::Rect(rect) => {
+                    rect.set_color(color);
+                }
+                GfxType::Text(text) => {
+                    text.set_default_color(color);
+                }
                 _ => {}
             }
         }
@@ -133,15 +135,21 @@ impl GfxCollection {
                     image.changed = true;
                 }
                 GfxType::Rect(rect) => {
-                    if rect.position == pos { return }
+                    if rect.position == pos {
+                        return;
+                    }
                     rect.set_position(pos);
                 }
                 GfxType::Text(text) => {
-                    if text.pos == pos { return }
+                    if text.pos == pos {
+                        return;
+                    }
                     text.set_position(pos);
                 }
                 GfxType::Map(map) => {
-                    if map.pos == Vec2::new(pos.x, pos.y) { return }
+                    if map.pos == Vec2::new(pos.x, pos.y) {
+                        return;
+                    }
                     map.pos = Vec2::new(pos.x, pos.y);
                     map.changed = true;
                 }
@@ -185,26 +193,45 @@ impl GfxCollection {
         }
     }
 
-    pub fn set_text(&mut self, renderer: &mut GpuRenderer, index: usize, msg: &str) {
+    pub fn set_text(
+        &mut self,
+        renderer: &mut GpuRenderer,
+        index: usize,
+        msg: &str,
+    ) {
         if let Some(data) = self.collection.get_mut(index) {
             if let GfxType::Text(text) = &mut data.gfx {
-                text.set_text(renderer, msg, Attrs::new(), Shaping::Advanced,);
+                text.set_text(renderer, msg, Attrs::new(), Shaping::Advanced);
             }
         }
     }
 
-    pub fn set_rich_text<'s, 'r, I>(&mut self, renderer: &mut GpuRenderer, index: usize, msg: I)
-        where
-            I: IntoIterator<Item = (&'s str, Attrs<'r>)>
+    pub fn set_rich_text<'s, 'r, I>(
+        &mut self,
+        renderer: &mut GpuRenderer,
+        index: usize,
+        msg: I,
+    ) where
+        I: IntoIterator<Item = (&'s str, Attrs<'r>)>,
     {
         if let Some(data) = self.collection.get_mut(index) {
             if let GfxType::Text(text) = &mut data.gfx {
-                text.set_rich_text(renderer, msg, Attrs::new(), Shaping::Advanced);
+                text.set_rich_text(
+                    renderer,
+                    msg,
+                    Attrs::new(),
+                    Shaping::Advanced,
+                );
             }
         }
     }
 
-    pub fn set_text_wrap(&mut self, renderer: &mut GpuRenderer, index: usize, can_wrap: bool) {
+    pub fn set_text_wrap(
+        &mut self,
+        renderer: &mut GpuRenderer,
+        index: usize,
+        can_wrap: bool,
+    ) {
         if let Some(data) = self.collection.get_mut(index) {
             if let GfxType::Text(text) = &mut data.gfx {
                 if can_wrap {
@@ -222,7 +249,8 @@ impl GfxCollection {
                 let size = text.measure();
                 let bound = text.bounds.unwrap_or_default();
                 let textbox_size = bound.right - bound.left;
-                text.pos.x = bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
+                text.pos.x =
+                    bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
                 text.changed = true;
             }
         }
@@ -257,7 +285,7 @@ impl GfxCollection {
     pub fn get_uv(&mut self, index: usize) -> Vec4 {
         if let Some(data) = self.collection.get(index) {
             if let GfxType::Image(image) = &data.gfx {
-                return image.uv
+                return image.uv;
             }
         }
         Vec4::new(0.0, 0.0, 0.0, 0.0)
@@ -269,10 +297,10 @@ impl GfxCollection {
                 GfxType::Image(image) => image.color,
                 GfxType::Rect(rect) => rect.color,
                 GfxType::Text(text) => text.default_color,
-                _ => Color::rgba(0,0,0,0),
+                _ => Color::rgba(0, 0, 0, 0),
             }
         } else {
-            Color::rgba(0,0,0,0)
+            Color::rgba(0, 0, 0, 0)
         }
     }
 
@@ -287,7 +315,12 @@ impl GfxCollection {
         }
     }
 
-    pub fn set_map_tile(&mut self, index: usize, pos: (u32, u32, u32), tile: TileData) {
+    pub fn set_map_tile(
+        &mut self,
+        index: usize,
+        pos: (u32, u32, u32),
+        tile: TileData,
+    ) {
         if let Some(data) = self.collection.get_mut(index) {
             if let GfxType::Map(map) = &mut data.gfx {
                 map.set_tile(pos, tile);

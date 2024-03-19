@@ -1,6 +1,16 @@
-use crate::{socket::*, Entity, Position, fade::*};
+use crate::{fade::*, socket::*, Entity, Position};
 
-pub fn handle_data(socket: &mut Socket, router: &PacketRouter, world: &mut World, systems: &mut DrawSetting, content: &mut Content, alert: &mut Alert, data: &mut ByteBuffer, seconds: f32) -> SocketResult<()> {
+#[allow(clippy::too_many_arguments)]
+pub fn handle_data(
+    socket: &mut Socket,
+    router: &PacketRouter,
+    world: &mut World,
+    systems: &mut DrawSetting,
+    content: &mut Content,
+    alert: &mut Alert,
+    data: &mut ByteBuffer,
+    seconds: f32,
+) -> SocketResult<()> {
     let id: ServerPackets = data.read()?;
 
     println!("Receiving Packet ID {:?}", id);

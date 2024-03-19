@@ -6,7 +6,9 @@ pub struct MyDuration(pub chrono::Duration);
 
 impl MyDuration {
     pub fn milliseconds(mills: i64) -> MyDuration {
-        MyDuration(chrono::Duration::milliseconds(mills))
+        MyDuration(
+            chrono::Duration::try_milliseconds(mills).unwrap_or_default(),
+        )
     }
 
     pub fn as_std(&self) -> std::time::Duration {
@@ -52,29 +54,33 @@ impl<'de> Deserialize<'de> for MyDuration {
     where
         D: Deserializer<'de>,
     {
-        Ok(MyDuration(chrono::Duration::milliseconds(
-            i64::deserialize(deserializer)?,
-        )))
+        Ok(MyDuration(
+            chrono::Duration::try_milliseconds(i64::deserialize(deserializer)?)
+                .unwrap_or_default(),
+        ))
     }
 }
 
 impl ByteBufferRead for MyDuration {
     fn read_from_buffer(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
-        Ok(MyDuration(chrono::Duration::milliseconds(
-            buffer.read::<i64>()?,
-        )))
+        Ok(MyDuration(
+            chrono::Duration::try_milliseconds(buffer.read::<i64>()?)
+                .unwrap_or_default(),
+        ))
     }
 
     fn read_from_buffer_le(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
-        Ok(MyDuration(chrono::Duration::milliseconds(
-            buffer.read_le::<i64>()?,
-        )))
+        Ok(MyDuration(
+            chrono::Duration::try_milliseconds(buffer.read_le::<i64>()?)
+                .unwrap_or_default(),
+        ))
     }
 
     fn read_from_buffer_be(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
-        Ok(MyDuration(chrono::Duration::milliseconds(
-            buffer.read_be::<i64>()?,
-        )))
+        Ok(MyDuration(
+            chrono::Duration::try_milliseconds(buffer.read_be::<i64>()?)
+                .unwrap_or_default(),
+        ))
     }
 }
 

@@ -3,21 +3,24 @@ use graphics::*;
 use hecs::World;
 use winit::dpi::PhysicalSize;
 
-use crate::{
-    gfx_collection::*, values::*, content::*, DrawSetting,
-};
+use crate::{content::*, gfx_collection::*, values::*, DrawSetting};
 
+#[derive(Default)]
 pub enum FadeData {
+    #[default]
     None,
 }
 
+#[derive(Default)]
 pub enum FadeType {
+    #[default]
     In,
     Out,
 }
 
 pub const FADE_SWITCH_TO_GAME: usize = 1;
 
+#[derive(Default)]
 pub struct Fade {
     show: bool,
     f_image: usize,
@@ -30,18 +33,15 @@ pub struct Fade {
 
 impl Fade {
     pub fn new() -> Self {
-        Fade {
-            show: false,
-            f_image: 0,
-            f_tmr: 0.0,
-            f_alpha: 0,
-            f_type: FadeType::In,
-            f_end_index: 0,
-            f_data: FadeData::None,
-        }
+        Self::default()
     }
 
-    pub fn init_setup(&mut self, renderer: &mut GpuRenderer, gfx_collection: &mut GfxCollection, screen_size: &PhysicalSize<f32>) {
+    pub fn init_setup(
+        &mut self,
+        renderer: &mut GpuRenderer,
+        gfx_collection: &mut GfxCollection,
+        screen_size: &PhysicalSize<f32>,
+    ) {
         let mut rect = Rect::new(renderer, 0);
         rect.set_size(Vec2::new(screen_size.width, screen_size.height))
             .set_position(Vec3::new(0.0, 0.0, ORDER_FADE))
@@ -54,13 +54,17 @@ impl Fade {
         self.f_end_index = 0;
     }
 
-    pub fn fade_logic(&mut self, gfx_collection: &mut GfxCollection, seconds: f32) -> bool {
+    pub fn fade_logic(
+        &mut self,
+        gfx_collection: &mut GfxCollection,
+        seconds: f32,
+    ) -> bool {
         if !self.show {
             return false;
         }
 
         let mut did_end = false;
-        
+
         if self.f_tmr <= seconds {
             match self.f_type {
                 FadeType::In => {
@@ -78,14 +82,23 @@ impl Fade {
                     }
                 }
             }
-            gfx_collection.set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
+            gfx_collection.set_color(
+                self.f_image,
+                Color::rgba(0, 0, 0, self.f_alpha as u8),
+            );
             self.f_tmr = seconds + 0.03;
         }
 
         did_end
     }
 
-    pub fn init_fade(&mut self, gfx_collection: &mut GfxCollection, fade_type: FadeType, fade_end_index: usize, fade_data: FadeData) {
+    pub fn init_fade(
+        &mut self,
+        gfx_collection: &mut GfxCollection,
+        fade_type: FadeType,
+        fade_end_index: usize,
+        fade_data: FadeData,
+    ) {
         match fade_type {
             FadeType::In => {
                 self.f_alpha = 0;
@@ -94,7 +107,8 @@ impl Fade {
                 self.f_alpha = 255;
             }
         }
-        gfx_collection.set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
+        gfx_collection
+            .set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
         self.f_type = fade_type;
         self.f_end_index = fade_end_index;
         self.f_data = fade_data;
@@ -102,6 +116,7 @@ impl Fade {
     }
 }
 
+#[derive(Default)]
 pub struct MapFade {
     show: bool,
     f_image: usize,
@@ -114,18 +129,15 @@ pub struct MapFade {
 
 impl MapFade {
     pub fn new() -> Self {
-        MapFade {
-            show: false,
-            f_image: 0,
-            f_tmr: 0.0,
-            f_alpha: 0,
-            f_type: FadeType::In,
-            f_end_index: 0,
-            f_data: FadeData::None,
-        }
+        Self::default()
     }
 
-    pub fn init_setup(&mut self, renderer: &mut GpuRenderer, gfx_collection: &mut GfxCollection, screen_size: &PhysicalSize<f32>) {
+    pub fn init_setup(
+        &mut self,
+        renderer: &mut GpuRenderer,
+        gfx_collection: &mut GfxCollection,
+        screen_size: &PhysicalSize<f32>,
+    ) {
         let mut rect = Rect::new(renderer, 0);
         rect.set_size(Vec2::new(screen_size.width, screen_size.height))
             .set_position(Vec3::new(0.0, 0.0, ORDER_MAP_FADE))
@@ -138,13 +150,17 @@ impl MapFade {
         self.f_end_index = 0;
     }
 
-    pub fn fade_logic(&mut self, gfx_collection: &mut GfxCollection, seconds: f32) -> bool {
+    pub fn fade_logic(
+        &mut self,
+        gfx_collection: &mut GfxCollection,
+        seconds: f32,
+    ) -> bool {
         if !self.show {
             return false;
         }
 
         let mut did_end = false;
-        
+
         if self.f_tmr <= seconds {
             match self.f_type {
                 FadeType::In => {
@@ -162,14 +178,23 @@ impl MapFade {
                     }
                 }
             }
-            gfx_collection.set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
+            gfx_collection.set_color(
+                self.f_image,
+                Color::rgba(0, 0, 0, self.f_alpha as u8),
+            );
             self.f_tmr = seconds + 0.03;
         }
 
         did_end
     }
 
-    pub fn init_fade(&mut self, gfx_collection: &mut GfxCollection, fade_type: FadeType, fade_end_index: usize, fade_data: FadeData) {
+    pub fn init_fade(
+        &mut self,
+        gfx_collection: &mut GfxCollection,
+        fade_type: FadeType,
+        fade_end_index: usize,
+        fade_data: FadeData,
+    ) {
         match fade_type {
             FadeType::In => {
                 self.f_alpha = 0;
@@ -178,7 +203,8 @@ impl MapFade {
                 self.f_alpha = 255;
             }
         }
-        gfx_collection.set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
+        gfx_collection
+            .set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
         self.f_type = fade_type;
         self.f_end_index = fade_end_index;
         self.f_data = fade_data;
@@ -191,6 +217,7 @@ pub fn fade_end(
     world: &mut World,
     content: &mut Content,
 ) {
+    #[allow(clippy::single_match)]
     match systems.fade.f_end_index {
         FADE_SWITCH_TO_GAME => {
             content.switch_content(world, systems, ContentType::Game);
@@ -202,8 +229,13 @@ pub fn fade_end(
             };
             content.game_content.init_map(systems, pos.map);
             content.game_content.finalized_data(world, systems);
-            
-            systems.fade.init_fade(&mut systems.gfx, FadeType::Out, 0, FadeData::None);
+
+            systems.fade.init_fade(
+                &mut systems.gfx,
+                FadeType::Out,
+                0,
+                FadeData::None,
+            );
         }
         _ => {}
     }
@@ -214,9 +246,15 @@ pub fn map_fade_end(
     _world: &mut World,
     _content: &mut Content,
 ) {
+    #[allow(clippy::single_match)]
     match systems.map_fade.f_end_index {
-        1 => {            
-            systems.map_fade.init_fade(&mut systems.gfx, FadeType::Out, 0, FadeData::None);
+        1 => {
+            systems.map_fade.init_fade(
+                &mut systems.gfx,
+                FadeType::Out,
+                0,
+                FadeData::None,
+            );
         }
         _ => {}
     }

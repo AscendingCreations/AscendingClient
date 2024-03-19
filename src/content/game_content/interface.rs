@@ -248,15 +248,14 @@ impl Interface {
         systems: &mut DrawSetting,
         event: &KeyEvent,
     ) {
-        match game_content.interface.selected_textbox {
-            SelectedTextbox::Chatbox => {
-                game_content
-                    .interface
-                    .chatbox
-                    .textbox
-                    .enter_text(systems, event);
-            }
-            _ => {}
+        if let SelectedTextbox::Chatbox =
+            game_content.interface.selected_textbox
+        {
+            game_content
+                .interface
+                .chatbox
+                .textbox
+                .enter_text(systems, event);
         }
     }
 
@@ -329,11 +328,8 @@ impl Interface {
             return;
         }
 
-        match self.selected_textbox {
-            SelectedTextbox::Chatbox => {
-                self.chatbox.textbox.set_select(systems, false)
-            }
-            _ => {}
+        if let SelectedTextbox::Chatbox = self.selected_textbox {
+            self.chatbox.textbox.set_select(systems, false)
         }
         self.selected_textbox = SelectedTextbox::None;
     }

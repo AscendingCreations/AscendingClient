@@ -1,12 +1,12 @@
+use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
+use core::any::type_name;
 use graphics::*;
 use hecs::{EntityRef, World};
 use serde::{Deserialize, Serialize};
 use serde_repr::*;
-use core::any::type_name;
 use std::collections::VecDeque;
-use bytey::{ByteBufferRead, ByteBufferWrite, ByteBufferError};
 
-use crate::{Direction, values::*};
+use crate::{values::*, Direction};
 
 pub enum MovementType {
     MovementBuffer,
@@ -16,7 +16,18 @@ pub enum MovementType {
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Finalized(pub bool);
 
-#[derive(Copy, Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Serialize,
+    Deserialize,
+    Default,
+    PartialEq,
+    Eq,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct MapPosition {
     pub x: i32,
     pub y: i32,
@@ -25,15 +36,13 @@ pub struct MapPosition {
 
 impl MapPosition {
     pub fn new(x: i32, y: i32, group: i32) -> Self {
-        MapPosition {
-            x,
-            y,
-            group,
-        }
+        MapPosition { x, y, group }
     }
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
+)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
@@ -79,13 +88,24 @@ pub struct AttackFrame {
     pub timer: f32,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Debug, Copy, Clone, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite,
+)]
 pub struct Physical {
     pub damage: u32,
     pub defense: u32,
 }
 
-#[derive(Derivative, Debug, Copy, Clone, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Derivative,
+    Debug,
+    Copy,
+    Clone,
+    PartialEq,
+    Eq,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 #[derivative(Default)]
 pub struct Vitals {
     #[derivative(Default(value = "[25, 2, 100]"))]
@@ -126,7 +146,18 @@ pub struct Hidden(pub bool);
 #[derive(Debug, Default)]
 pub struct EntityName(pub String);
 
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq, Derivative, ByteBufferWrite, ByteBufferRead)]
+#[derive(
+    Debug,
+    Copy,
+    Clone,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Derivative,
+    ByteBufferWrite,
+    ByteBufferRead,
+)]
 #[derivative(Default)]
 pub struct Item {
     pub num: u32,
@@ -136,10 +167,22 @@ pub struct Item {
     pub data: [i16; 5],
 }
 
-#[derive(PartialEq, Eq, Clone, Debug, Derivative, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    PartialEq,
+    Eq,
+    Clone,
+    Debug,
+    Derivative,
+    Deserialize,
+    Serialize,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 #[derivative(Default)]
 pub struct Equipment {
-    #[derivative(Default(value = "(0..MAX_EQPT).map(|_| Item::default()).collect()"))]
+    #[derivative(Default(
+        value = "(0..MAX_EQPT).map(|_| Item::default()).collect()"
+    ))]
     pub items: Vec<Item>,
 }
 
@@ -153,7 +196,18 @@ pub enum WorldEntityType {
     Map,
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Default, Serialize_repr, Deserialize_repr, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Default,
+    Serialize_repr,
+    Deserialize_repr,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 #[repr(u8)]
 pub enum DeathType {
     #[default]
@@ -175,7 +229,18 @@ pub enum UserAccess {
 #[derive(Debug, Copy, Clone, Default)]
 pub struct PlayerMoveMap(pub Option<MapPosition>);
 
-#[derive(Copy, Clone, Debug, Serialize_repr, Deserialize_repr, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Serialize_repr,
+    Deserialize_repr,
+    PartialEq,
+    Eq,
+    Default,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 #[repr(u8)]
 pub enum NpcMode {
     None,
@@ -193,15 +258,24 @@ pub struct NpcIndex(pub u64);
 pub struct Entity(pub hecs::Entity);
 
 impl ByteBufferWrite for Entity {
-    fn write_to_buffer(&self, buffer: &mut bytey::ByteBuffer) -> bytey::Result<()> {
+    fn write_to_buffer(
+        &self,
+        buffer: &mut bytey::ByteBuffer,
+    ) -> bytey::Result<()> {
         self.0.to_bits().write_to_buffer(buffer)
     }
 
-    fn write_to_buffer_le(&self, buffer: &mut bytey::ByteBuffer) -> bytey::Result<()> {
+    fn write_to_buffer_le(
+        &self,
+        buffer: &mut bytey::ByteBuffer,
+    ) -> bytey::Result<()> {
         self.0.to_bits().write_to_buffer_le(buffer)
     }
 
-    fn write_to_buffer_be(&self, buffer: &mut bytey::ByteBuffer) -> bytey::Result<()> {
+    fn write_to_buffer_be(
+        &self,
+        buffer: &mut bytey::ByteBuffer,
+    ) -> bytey::Result<()> {
         self.0.to_bits().write_to_buffer_be(buffer)
     }
 }
@@ -219,7 +293,9 @@ impl ByteBufferRead for Entity {
         ))
     }
 
-    fn read_from_buffer_le(buffer: &mut bytey::ByteBuffer) -> bytey::Result<Self>
+    fn read_from_buffer_le(
+        buffer: &mut bytey::ByteBuffer,
+    ) -> bytey::Result<Self>
     where
         Self: Sized,
     {
@@ -233,7 +309,9 @@ impl ByteBufferRead for Entity {
         ))
     }
 
-    fn read_from_buffer_be(buffer: &mut bytey::ByteBuffer) -> bytey::Result<Self>
+    fn read_from_buffer_be(
+        buffer: &mut bytey::ByteBuffer,
+    ) -> bytey::Result<Self>
     where
         Self: Sized,
     {
@@ -254,13 +332,13 @@ pub trait WorldExtras {
         T: Default + Send + Sync + Copy + 'static;
     fn cloned_get_or_default<T>(&self, entity: &Entity) -> T
     where
-        T: Default + Send + Sync + Copy + 'static;
+        T: Default + Send + Sync + Clone + 'static;
     fn get_or_panic<T>(&self, entity: &Entity) -> T
     where
         T: Send + Sync + Copy + 'static;
     fn cloned_get_or_panic<T>(&self, entity: &Entity) -> T
     where
-        T: Send + Sync + Copy + 'static;
+        T: Send + Sync + Clone + 'static;
 }
 
 pub trait WorldEntityExtras {
@@ -269,13 +347,13 @@ pub trait WorldEntityExtras {
         T: Default + Send + Sync + Copy + 'static;
     fn cloned_get_or_default<T>(&self) -> T
     where
-        T: Default + Send + Sync + Copy + 'static;
+        T: Default + Send + Sync + Clone + 'static;
     fn get_or_panic<T>(&self) -> T
     where
         T: Send + Sync + Copy + 'static;
     fn cloned_get_or_panic<T>(&self) -> T
     where
-        T: Send + Sync + Copy + 'static;
+        T: Send + Sync + Clone + 'static;
 }
 
 impl WorldEntityExtras for EntityRef<'_> {
@@ -291,7 +369,7 @@ impl WorldEntityExtras for EntityRef<'_> {
 
     fn cloned_get_or_default<T>(&self) -> T
     where
-        T: Default + Send + Sync + Copy + 'static,
+        T: Default + Send + Sync + Clone + 'static,
     {
         match self.get::<&T>() {
             Some(t) => (*t).clone(),
@@ -311,7 +389,7 @@ impl WorldEntityExtras for EntityRef<'_> {
 
     fn cloned_get_or_panic<T>(&self) -> T
     where
-        T: Send + Sync + Copy + 'static,
+        T: Send + Sync + Clone + 'static,
     {
         match self.get::<&T>() {
             Some(t) => (*t).clone(),
@@ -333,7 +411,7 @@ impl WorldExtras for World {
 
     fn cloned_get_or_default<T>(&self, entity: &Entity) -> T
     where
-        T: Default + Send + Sync + Copy + 'static,
+        T: Default + Send + Sync + Clone + 'static,
     {
         match self.get::<&T>(entity.0) {
             Ok(t) => (*t).clone(),
@@ -353,7 +431,7 @@ impl WorldExtras for World {
 
     fn cloned_get_or_panic<T>(&self, entity: &Entity) -> T
     where
-        T: Send + Sync + Copy + 'static,
+        T: Send + Sync + Clone + 'static,
     {
         match self.get::<&T>(entity.0) {
             Ok(t) => (*t).clone(),

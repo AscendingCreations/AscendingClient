@@ -1,17 +1,23 @@
+use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use graphics::*;
 use hecs::World;
-use bytey::{ByteBufferRead, ByteBufferWrite, ByteBufferError};
 
 pub const PLAYER_SPRITE_FRAME_X: f32 = 6.0;
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Debug, Copy, Clone, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite,
+)]
 pub struct PlayerPvP {
     pub pk: bool,
     pub pvpon: bool,
 }
 
 use crate::{
-    fade::*, game_content::{entity::*, *}, send_move, values::*, Direction, DrawSetting, Socket
+    fade::*,
+    game_content::{entity::*, *},
+    send_move,
+    values::*,
+    Direction, DrawSetting, Socket,
 };
 
 pub fn add_player(
@@ -21,18 +27,27 @@ pub fn add_player(
     cur_map: MapPosition,
     entity: Option<&Entity>,
 ) -> Entity {
-    let start_pos = get_start_map_pos(cur_map, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
+    let start_pos = get_start_map_pos(cur_map, pos.map)
+        .unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
-    let mut image = Image::new(Some(systems.resource.players[0].allocation),
-            &mut systems.renderer, 0);
-    image.pos = Vec3::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y, ORDER_PLAYER);
+    let mut image = Image::new(
+        Some(systems.resource.players[0].allocation),
+        &mut systems.renderer,
+        0,
+    );
+    image.pos = Vec3::new(
+        start_pos.x + texture_pos.x,
+        start_pos.y + texture_pos.y,
+        ORDER_PLAYER,
+    );
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
     let sprite = systems.gfx.add_image(image, 0);
     systems.gfx.set_visible(sprite, false);
 
     let mut bg_image = Rect::new(&mut systems.renderer, 0);
-    bg_image.set_size(Vec2::new(20.0, 6.0))
+    bg_image
+        .set_size(Vec2::new(20.0, 6.0))
         .set_position(Vec3::new(0.0, 0.0, ORDER_HPBAR_BG))
         .set_color(Color::rgba(80, 80, 80, 255))
         .set_border_width(1.0)
@@ -40,7 +55,8 @@ pub fn add_player(
     let bg_index = systems.gfx.add_rect(bg_image, 0);
     systems.gfx.set_visible(bg_index, true);
     let mut bar_image = Rect::new(&mut systems.renderer, 0);
-    bar_image.set_size(Vec2::new(18.0, 4.0))
+    bar_image
+        .set_size(Vec2::new(18.0, 4.0))
         .set_position(Vec3::new(1.0, 1.0, ORDER_HPBAR))
         .set_color(Color::rgba(180, 30, 30, 255));
     let bar_index = systems.gfx.add_rect(bar_image, 0);
@@ -51,7 +67,7 @@ pub fn add_player(
         bg_index,
         bar_index,
     };
-    
+
     let component1 = (
         pos,
         PositionOffset::default(),
@@ -99,7 +115,10 @@ pub fn player_finalized(
     systems: &mut DrawSetting,
     entity: &Entity,
 ) {
-    world.get::<&mut Finalized>(entity.0).expect("Could not find Finalized").0 = true;
+    world
+        .get::<&mut Finalized>(entity.0)
+        .expect("Could not find Finalized")
+        .0 = true;
     let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
     systems.gfx.set_visible(player_sprite, true);
 }
@@ -128,10 +147,12 @@ pub fn move_player(
     if !world.contains(entity.0) {
         return;
     }
-    
+
     let (dir, end) = match move_type {
         MovementType::MovementBuffer => {
-            let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
+            let mut movementbuffer = world
+                .get::<&mut MovementBuffer>(entity.0)
+                .expect("Could not find MovementBuffer");
             let movement = world.get_or_panic::<Movement>(entity);
             if movementbuffer.data.is_empty() || movement.is_moving {
                 return;
@@ -143,9 +164,7 @@ pub fn move_player(
                 return;
             }
         }
-        MovementType::Manual(m_dir, m_end) => {
-            (dir_to_enum(m_dir), m_end)
-        }
+        MovementType::Manual(m_dir, m_end) => (dir_to_enum(m_dir), m_end),
     };
 
     if let Some(p) = content.myentity {
@@ -166,7 +185,10 @@ pub fn move_player(
 
     let mut did_map_move = false;
     if let Some(end_pos) = end {
-        world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = end_pos.clone();
+        world
+            .get::<&mut EndMovement>(entity.0)
+            .expect("Could not find EndMovement")
+            .0 = end_pos;
     } else {
         let pos = world.get_or_panic::<Position>(entity);
 
@@ -178,8 +200,17 @@ pub fn move_player(
             map: pos.map,
         };
 
-        if end_move.x < 0 || end_move.x >= 32 || end_move.y < 0 || end_move.y >= 32 {
-            let new_pos = [(end_move.x, 31), (0, end_move.y), (end_move.x, 0), (31, end_move.y)];
+        if end_move.x < 0
+            || end_move.x >= 32
+            || end_move.y < 0
+            || end_move.y >= 32
+        {
+            let new_pos = [
+                (end_move.x, 31),
+                (0, end_move.y),
+                (end_move.x, 0),
+                (31, end_move.y),
+            ];
             end_move.x = new_pos[dir_index].0;
             end_move.y = new_pos[dir_index].1;
             end_move.map.x += adj[dir_index].0;
@@ -187,7 +218,10 @@ pub fn move_player(
             did_map_move = true;
         }
 
-        world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = end_move.clone();
+        world
+            .get::<&mut EndMovement>(entity.0)
+            .expect("Could not find EndMovement")
+            .0 = end_move;
     }
 
     let dir_u8 = enum_to_dir(dir);
@@ -196,7 +230,10 @@ pub fn move_player(
         if &p == entity {
             if did_map_move {
                 let end_pos = world.get_or_panic::<EndMovement>(entity);
-                world.get::<&mut PlayerMoveMap>(entity.0).expect("Could not find PlayerMoveMap").0 = Some(end_pos.0.map);
+                world
+                    .get::<&mut PlayerMoveMap>(entity.0)
+                    .expect("Could not find PlayerMoveMap")
+                    .0 = Some(end_pos.0.map);
             }
             let pos = world.get_or_panic::<Position>(entity);
             let _ = send_move(socket, dir_u8, pos);
@@ -205,20 +242,31 @@ pub fn move_player(
 
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         movement.is_moving = true;
-        movement.move_direction = dir.clone();
+        movement.move_direction = dir;
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
 
     {
-        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0 = dir_u8;
+        world
+            .get::<&mut Dir>(entity.0)
+            .expect("Could not find Dir")
+            .0 = dir_u8;
     }
-    let last_frame = if world.get_or_panic::<LastMoveFrame>(entity).0 == 1 { 2 } else { 1 };
+    let last_frame = if world.get_or_panic::<LastMoveFrame>(entity).0 == 1 {
+        2
+    } else {
+        1
+    };
     {
-        world.get::<&mut LastMoveFrame>(entity.0).expect("Could not find LastFrame").0 = last_frame;
+        world
+            .get::<&mut LastMoveFrame>(entity.0)
+            .expect("Could not find LastFrame")
+            .0 = last_frame;
     }
-    
-    let frame = world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
+
+    let frame =
+        world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
     set_player_frame(world, systems, entity, frame as usize + last_frame);
 }
 
@@ -246,15 +294,21 @@ pub fn end_player_move(
     let end_pos = world.get_or_panic::<EndMovement>(entity).0;
     {
         if let Ok(mut pos) = world.get::<&mut Position>(entity.0) {
-            pos.x = end_pos.x as i32;
-            pos.y = end_pos.y as i32;
+            pos.x = end_pos.x;
+            pos.y = end_pos.y;
             if pos.map != end_pos.map {
                 pos.map = end_pos.map;
                 move_map = true;
             }
         }
-        world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = Vec2::new(0.0, 0.0);
-        world.get::<&mut PlayerMoveMap>(entity.0).expect("Could not find PlayerMoveMap").0 = None;
+        world
+            .get::<&mut PositionOffset>(entity.0)
+            .expect("Could not find Position")
+            .offset = Vec2::new(0.0, 0.0);
+        world
+            .get::<&mut PlayerMoveMap>(entity.0)
+            .expect("Could not find PlayerMoveMap")
+            .0 = None;
     }
 
     if let Some(p) = &content.myentity {
@@ -264,7 +318,8 @@ pub fn end_player_move(
         }
     }
 
-    let frame = world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
+    let frame =
+        world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
     set_player_frame(world, systems, entity, frame as usize);
 }
 
@@ -276,21 +331,33 @@ pub fn update_player_position(
     pos_offset: &PositionOffset,
     hpbar: &HPBar,
 ) {
-    let start_pos = get_start_map_pos(content.map.map_pos, pos.map).unwrap_or_else(|| Vec2::new(0.0, 0.0));
+    let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
+        .unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let cur_pos = systems.gfx.get_pos(sprite);
-    let texture_pos = content.camera.pos + 
-        (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32) + pos_offset.offset - Vec2::new(10.0, 4.0);
+    let texture_pos = content.camera.pos
+        + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
+        + pos_offset.offset
+        - Vec2::new(10.0, 4.0);
     if start_pos + texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
 
-    let pos = Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
-    systems.gfx.set_pos(sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+    let pos =
+        Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
+    systems
+        .gfx
+        .set_pos(sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
 
     let sprite_size = systems.gfx.get_size(sprite);
     let bar_pos = pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
-    systems.gfx.set_pos(hpbar.bar_index, Vec3::new(bar_pos.x + 1.0, bar_pos.y + 1.0, ORDER_HPBAR));
-    systems.gfx.set_pos(hpbar.bg_index, Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG));
+    systems.gfx.set_pos(
+        hpbar.bar_index,
+        Vec3::new(bar_pos.x + 1.0, bar_pos.y + 1.0, ORDER_HPBAR),
+    );
+    systems.gfx.set_pos(
+        hpbar.bg_index,
+        Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG),
+    );
 }
 
 pub fn set_player_frame(
@@ -302,13 +369,17 @@ pub fn set_player_frame(
     if !world.contains(entity.0) {
         return;
     }
-    
+
     let sprite_index = world.get_or_panic::<SpriteIndex>(entity).0;
     let size = systems.gfx.get_size(sprite_index);
-    let frame_pos = Vec2::new(frame_index as f32 % PLAYER_SPRITE_FRAME_X,
-        (frame_index  as f32 / PLAYER_SPRITE_FRAME_X).floor());
-    systems.gfx.set_uv(sprite_index,
-        Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y));
+    let frame_pos = Vec2::new(
+        frame_index as f32 % PLAYER_SPRITE_FRAME_X,
+        (frame_index as f32 / PLAYER_SPRITE_FRAME_X).floor(),
+    );
+    systems.gfx.set_uv(
+        sprite_index,
+        Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y),
+    );
 }
 
 pub fn init_player_attack(
@@ -321,19 +392,28 @@ pub fn init_player_attack(
         return;
     }
 
-    if world.get_or_panic::<Attacking>(entity).0 || world.get_or_panic::<Movement>(entity).is_moving {
+    if world.get_or_panic::<Attacking>(entity).0
+        || world.get_or_panic::<Movement>(entity).is_moving
+    {
         return;
     }
 
     {
-        world.get::<&mut Attacking>(entity.0).expect("Could not find attacking").0 = true;
-        world.get::<&mut AttackTimer>(entity.0).expect("Could not find AttackTimer").0 = seconds + 0.5;
+        world
+            .get::<&mut Attacking>(entity.0)
+            .expect("Could not find attacking")
+            .0 = true;
+        world
+            .get::<&mut AttackTimer>(entity.0)
+            .expect("Could not find AttackTimer")
+            .0 = seconds + 0.5;
         if let Ok(mut attackframe) = world.get::<&mut AttackFrame>(entity.0) {
             attackframe.frame = 0;
             attackframe.timer = seconds + 0.16;
         }
     }
-    let frame = world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
+    let frame =
+        world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
     set_player_frame(world, systems, entity, frame as usize + 3);
 }
 
@@ -350,24 +430,43 @@ pub fn process_player_attack(
     if !world.get_or_panic::<Attacking>(entity).0 {
         return;
     }
-    
+
     if seconds < world.get_or_panic::<AttackTimer>(entity).0 {
         if seconds > world.get_or_panic::<AttackFrame>(entity).timer {
             {
-                world.get::<&mut AttackFrame>(entity.0).expect("Could not find AttackTimer").frame += 1;
-                world.get::<&mut AttackFrame>(entity.0).expect("Could not find AttackTimer").timer = seconds + 0.16;
+                world
+                    .get::<&mut AttackFrame>(entity.0)
+                    .expect("Could not find AttackTimer")
+                    .frame += 1;
+                world
+                    .get::<&mut AttackFrame>(entity.0)
+                    .expect("Could not find AttackTimer")
+                    .timer = seconds + 0.16;
             }
 
-            let mut attackframe = world.get_or_panic::<AttackFrame>(entity).frame;
-            if attackframe > 2 { attackframe = 2; }
-            let frame = world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
-            set_player_frame(world, systems, entity, frame as usize + 3 + attackframe);
+            let mut attackframe =
+                world.get_or_panic::<AttackFrame>(entity).frame;
+            if attackframe > 2 {
+                attackframe = 2;
+            }
+            let frame = world.get_or_panic::<Dir>(entity).0
+                * PLAYER_SPRITE_FRAME_X as u8;
+            set_player_frame(
+                world,
+                systems,
+                entity,
+                frame as usize + 3 + attackframe,
+            );
         }
     } else {
         {
-            world.get::<&mut Attacking>(entity.0).expect("Could not find attacking").0 = false;
+            world
+                .get::<&mut Attacking>(entity.0)
+                .expect("Could not find attacking")
+                .0 = false;
         }
-        let frame = world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
+        let frame =
+            world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
         set_player_frame(world, systems, entity, frame as usize);
     }
 }
@@ -384,13 +483,18 @@ pub fn process_player_movement(
     }
 
     let movement = world.get_or_panic::<Movement>(entity);
-    if !movement.is_moving { return };
-    
+    if !movement.is_moving {
+        return;
+    };
+
     let add_offset = 2.0;
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         {
-            world.get::<&mut Movement>(entity.0).expect("Could not find movement").move_offset += add_offset;
+            world
+                .get::<&mut Movement>(entity.0)
+                .expect("Could not find movement")
+                .move_offset += add_offset;
         }
         let moveoffset = world.get_or_panic::<Movement>(entity).move_offset;
         {
@@ -400,7 +504,10 @@ pub fn process_player_movement(
                 Direction::Left => Vec2::new(-moveoffset, 0.0),
                 Direction::Right => Vec2::new(moveoffset, 0.0),
             };
-            world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = offset;
+            world
+                .get::<&mut PositionOffset>(entity.0)
+                .expect("Could not find Position")
+                .offset = offset;
         }
     } else {
         end_player_move(world, systems, content, entity, buffer);

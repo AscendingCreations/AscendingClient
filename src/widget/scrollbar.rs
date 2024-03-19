@@ -1,11 +1,7 @@
 use graphics::*;
 use guillotiere::euclid::num::Floor;
 
-use crate::{
-    is_within_area,
-    DrawSetting,
-    logic::*,
-};
+use crate::{is_within_area, logic::*, DrawSetting};
 
 pub struct ScrollbarBackground {
     pub color: Color,
@@ -56,6 +52,7 @@ pub struct Scrollbar {
 }
 
 impl Scrollbar {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         systems: &mut DrawSetting,
         base_pos: Vec2,
@@ -77,17 +74,21 @@ impl Scrollbar {
             let mut scrollbg_rect = Rect::new(&mut systems.renderer, 0);
             let pos = base_pos + adjust_pos;
             let bg_pos = Vec3::new(pos.x - 1.0, pos.y - 1.0, z_pos);
-            scrollbg_rect.set_position(bg_pos)
+            scrollbg_rect
+                .set_position(bg_pos)
                 .set_color(data.color)
                 .set_radius(data.radius);
             if data.got_border {
-                scrollbg_rect.set_border_width(1.0)
+                scrollbg_rect
+                    .set_border_width(1.0)
                     .set_border_color(data.border_color);
             }
             if is_vertical {
-                scrollbg_rect.set_size(Vec2::new(thickness + 2.0, bar_size + 2.0));
+                scrollbg_rect
+                    .set_size(Vec2::new(thickness + 2.0, bar_size + 2.0));
             } else {
-                scrollbg_rect.set_size(Vec2::new(bar_size + 2.0, thickness + 2.0));
+                scrollbg_rect
+                    .set_size(Vec2::new(bar_size + 2.0, thickness + 2.0));
             }
             let bg = systems.gfx.add_rect(scrollbg_rect, data.render_layer);
             systems.gfx.set_visible(bg, visible);
@@ -96,40 +97,57 @@ impl Scrollbar {
             None
         };
 
-        let scrollbar_size = 
+        let scrollbar_size =
             (bar_size - (min_bar_size * max_value as f32)).max(min_bar_size);
-        
+
         let (start_pos, end_pos) = if is_vertical {
-            (adjust_pos.y as usize + (bar_size as usize - scrollbar_size as usize),
-                adjust_pos.y as usize)
+            (
+                adjust_pos.y as usize
+                    + (bar_size as usize - scrollbar_size as usize),
+                adjust_pos.y as usize,
+            )
         } else {
-            (adjust_pos.x as usize,
-                adjust_pos.x as usize + (bar_size as usize - scrollbar_size as usize))
+            (
+                adjust_pos.x as usize,
+                adjust_pos.x as usize
+                    + (bar_size as usize - scrollbar_size as usize),
+            )
         };
-        let length =  if is_vertical { start_pos - end_pos } else { end_pos - start_pos };
+        let length = if is_vertical {
+            start_pos - end_pos
+        } else {
+            end_pos - start_pos
+        };
 
         let mut scroll_rect = Rect::new(&mut systems.renderer, 0);
         let (pos, size) = if is_vertical {
-            (Vec2::new(adjust_pos.x, start_pos as f32),
-                Vec2::new(thickness, scrollbar_size))
+            (
+                Vec2::new(adjust_pos.x, start_pos as f32),
+                Vec2::new(thickness, scrollbar_size),
+            )
         } else {
-            (Vec2::new(start_pos as f32, adjust_pos.y),
-                Vec2::new(scrollbar_size, thickness))
+            (
+                Vec2::new(start_pos as f32, adjust_pos.y),
+                Vec2::new(scrollbar_size, thickness),
+            )
         };
-        scroll_rect.set_position(
-                Vec3::new(base_pos.x + pos.x, 
-                    base_pos.y + pos.y, 
-                    z_pos.sub_f32(z_step.0, z_step.1)))
+        scroll_rect
+            .set_position(Vec3::new(
+                base_pos.x + pos.x,
+                base_pos.y + pos.y,
+                z_pos.sub_f32(z_step.0, z_step.1),
+            ))
             .set_color(scrollbar.color)
             .set_size(size)
             .set_radius(scrollbar.radius);
         if scrollbar.got_border {
-            scroll_rect.set_border_width(1.0)
+            scroll_rect
+                .set_border_width(1.0)
                 .set_border_color(scrollbar.border_color);
         }
         let scroll = systems.gfx.add_rect(scroll_rect, scrollbar.render_layer);
         systems.gfx.set_visible(scroll, visible);
-        
+
         Scrollbar {
             visible,
             bg,
@@ -185,7 +203,11 @@ impl Scrollbar {
         }
     }
 
-    pub fn set_move_scroll(&mut self, systems: &mut DrawSetting, screen_pos: Vec2) {
+    pub fn set_move_scroll(
+        &mut self,
+        systems: &mut DrawSetting,
+        screen_pos: Vec2,
+    ) {
         if !self.in_hold {
             return;
         }
@@ -200,8 +222,7 @@ impl Scrollbar {
             self.pos.x = new_pos;
             new_pos - self.start_pos as f32
         };
-        self.value = ((y_pos / self.length as f32)
-            * self.max_value as f32)
+        self.value = ((y_pos / self.length as f32) * self.max_value as f32)
             .floor() as usize;
 
         if self.reverse_value {
@@ -209,10 +230,22 @@ impl Scrollbar {
         }
 
         let pos = systems.gfx.get_pos(self.scroll);
-        systems.gfx.set_pos(self.scroll, Vec3::new(self.base_pos.x + self.pos.x, self.base_pos.y + self.pos.y, pos.z));
+        systems.gfx.set_pos(
+            self.scroll,
+            Vec3::new(
+                self.base_pos.x + self.pos.x,
+                self.base_pos.y + self.pos.y,
+                pos.z,
+            ),
+        );
     }
 
-    pub fn set_hold(&mut self, systems: &mut DrawSetting, in_hold: bool, screen_pos: Vec2) {
+    pub fn set_hold(
+        &mut self,
+        systems: &mut DrawSetting,
+        in_hold: bool,
+        screen_pos: Vec2,
+    ) {
         if self.in_hold == in_hold {
             return;
         }
@@ -220,12 +253,10 @@ impl Scrollbar {
         if self.in_hold {
             systems.gfx.set_color(self.scroll, self.default_color);
             self.hold_pos = screen_pos - (self.base_pos + self.pos);
+        } else if self.in_hover {
+            systems.gfx.set_color(self.scroll, self.hover_color);
         } else {
-            if self.in_hover {
-                systems.gfx.set_color(self.scroll, self.hover_color);
-            } else {
-                systems.gfx.set_color(self.scroll, self.default_color);
-            }
+            systems.gfx.set_color(self.scroll, self.default_color);
         }
     }
 
@@ -244,75 +275,130 @@ impl Scrollbar {
         self.z_pos = z_order;
         if let Some(index) = self.bg {
             let pos = systems.gfx.get_pos(index);
-            systems.gfx.set_pos(index, Vec3::new(pos.x, pos.y, self.z_pos));
+            systems
+                .gfx
+                .set_pos(index, Vec3::new(pos.x, pos.y, self.z_pos));
         }
         let pos = systems.gfx.get_pos(self.scroll);
-        systems.gfx.set_pos(self.scroll, Vec3::new(pos.x, pos.y, self.z_pos.sub_f32(self.z_step.0, self.z_step.1)));
+        systems.gfx.set_pos(
+            self.scroll,
+            Vec3::new(
+                pos.x,
+                pos.y,
+                self.z_pos.sub_f32(self.z_step.0, self.z_step.1),
+            ),
+        );
     }
 
     pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
         self.base_pos = new_pos;
         if let Some(index) = self.bg {
             let pos = systems.gfx.get_pos(index);
-            systems.gfx.set_pos(index, 
-                Vec3::new(new_pos.x + self.adjust_pos.x - 1.0,
-                        new_pos.y + self.adjust_pos.y - 1.0,
-                        pos.z));
+            systems.gfx.set_pos(
+                index,
+                Vec3::new(
+                    new_pos.x + self.adjust_pos.x - 1.0,
+                    new_pos.y + self.adjust_pos.y - 1.0,
+                    pos.z,
+                ),
+            );
         }
         let pos = systems.gfx.get_pos(self.scroll);
-        systems.gfx.set_pos(self.scroll, Vec3::new(new_pos.x + self.pos.x, new_pos.y + self.pos.y, pos.z));
+        systems.gfx.set_pos(
+            self.scroll,
+            Vec3::new(new_pos.x + self.pos.x, new_pos.y + self.pos.y, pos.z),
+        );
     }
 
     pub fn set_value(&mut self, systems: &mut DrawSetting, value: usize) {
-        let new_value = if self.reverse_value { self.max_value.saturating_sub(value) } else { value };
+        let new_value = if self.reverse_value {
+            self.max_value.saturating_sub(value)
+        } else {
+            value
+        };
         if new_value > self.max_value {
             return;
         }
-        let new_pos = ((new_value as f32 / self.max_value as f32) * self.length as f32).floor();
+        let new_pos = ((new_value as f32 / self.max_value as f32)
+            * self.length as f32)
+            .floor();
         self.value = value;
         let pos = systems.gfx.get_pos(self.scroll);
         if self.is_vertical {
             self.pos.y = self.adjust_pos.y + (self.length as f32 - new_pos);
-            systems.gfx.set_pos(self.scroll, Vec3::new(self.base_pos.x + self.pos.x, self.base_pos.y + self.pos.y, pos.z));
+            systems.gfx.set_pos(
+                self.scroll,
+                Vec3::new(
+                    self.base_pos.x + self.pos.x,
+                    self.base_pos.y + self.pos.y,
+                    pos.z,
+                ),
+            );
         } else {
             self.pos.x = self.adjust_pos.x + new_pos;
-            systems.gfx.set_pos(self.scroll, Vec3::new(self.base_pos.x + self.pos.x, self.base_pos.y + self.pos.y, pos.z));
+            systems.gfx.set_pos(
+                self.scroll,
+                Vec3::new(
+                    self.base_pos.x + self.pos.x,
+                    self.base_pos.y + self.pos.y,
+                    pos.z,
+                ),
+            );
         }
     }
 
-    pub fn set_max_value(&mut self, systems: &mut DrawSetting, max_value: usize) {
+    pub fn set_max_value(
+        &mut self,
+        systems: &mut DrawSetting,
+        max_value: usize,
+    ) {
         if self.max_value == max_value {
             return;
         }
         self.max_value = max_value;
 
-        let scrollbar_size =
-            (self.bar_size - (self.min_bar_size * self.max_value as f32)).max(self.min_bar_size);
-        
+        let scrollbar_size = (self.bar_size
+            - (self.min_bar_size * self.max_value as f32))
+            .max(self.min_bar_size);
+
         (self.start_pos, self.end_pos) = if self.is_vertical {
-            (self.adjust_pos.y as usize + (self.bar_size as usize - scrollbar_size as usize),
-                self.adjust_pos.y as usize)
+            (
+                self.adjust_pos.y as usize
+                    + (self.bar_size as usize - scrollbar_size as usize),
+                self.adjust_pos.y as usize,
+            )
         } else {
-            (self.adjust_pos.x as usize,
-                self.adjust_pos.x as usize + (self.bar_size as usize - scrollbar_size as usize))
+            (
+                self.adjust_pos.x as usize,
+                self.adjust_pos.x as usize
+                    + (self.bar_size as usize - scrollbar_size as usize),
+            )
         };
-        self.length =  if self.is_vertical {
-            self.start_pos - self.end_pos 
+        self.length = if self.is_vertical {
+            self.start_pos - self.end_pos
         } else {
             self.end_pos - self.start_pos
         };
 
         (self.pos, self.size) = if self.is_vertical {
-            (Vec2::new(self.adjust_pos.x, self.start_pos as f32),
-                Vec2::new(self.size.x, scrollbar_size))
+            (
+                Vec2::new(self.adjust_pos.x, self.start_pos as f32),
+                Vec2::new(self.size.x, scrollbar_size),
+            )
         } else {
-            (Vec2::new(self.start_pos as f32, self.adjust_pos.y),
-                Vec2::new(scrollbar_size, self.size.y))
+            (
+                Vec2::new(self.start_pos as f32, self.adjust_pos.y),
+                Vec2::new(scrollbar_size, self.size.y),
+            )
         };
-        systems.gfx.set_pos(self.scroll, 
-            Vec3::new(self.base_pos.x + self.pos.x,
-                    self.base_pos.y + self.pos.y,
-                    self.z_pos.sub_f32(self.z_step.0, self.z_step.1)));
+        systems.gfx.set_pos(
+            self.scroll,
+            Vec3::new(
+                self.base_pos.x + self.pos.x,
+                self.base_pos.y + self.pos.y,
+                self.z_pos.sub_f32(self.z_step.0, self.z_step.1),
+            ),
+        );
         systems.gfx.set_size(self.scroll, self.size);
     }
 }

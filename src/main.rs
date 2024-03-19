@@ -1,4 +1,9 @@
-#![allow(dead_code, clippy::collapsible_match, unused_imports)]
+#![allow(
+    dead_code,
+    clippy::collapsible_match,
+    unused_imports,
+    clippy::too_many_arguments
+)]
 use backtrace::Backtrace;
 #[macro_use]
 extern crate derivative;
@@ -9,6 +14,7 @@ use camera::{
 };
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
+use hecs::World;
 use input::{Bindings, FrameTime, InputHandler, Key};
 use log::{error, info, warn, Level, LevelFilter, Metadata, Record};
 use serde::{Deserialize, Serialize};
@@ -20,51 +26,44 @@ use std::{
 };
 use wgpu::{Backends, Dx12Compiler, InstanceDescriptor, InstanceFlags};
 use winit::{
-    dpi::{
-        PhysicalSize,
-        PhysicalPosition,
-    },
-    event::*, 
-    event_loop::{ControlFlow, EventLoop}, 
-    keyboard::*, 
-    window::{
-        WindowBuilder, 
-        WindowButtons,
-    },
+    dpi::{PhysicalPosition, PhysicalSize},
+    event::*,
+    event_loop::{ControlFlow, EventLoop},
+    keyboard::*,
+    window::{WindowBuilder, WindowButtons},
 };
-use hecs::World;
 
-mod renderer;
-mod gfx_collection;
-mod resource;
-mod widget;
+mod alert;
+mod buffer;
+pub mod config;
 mod content;
-mod values;
-mod inputs;
-mod mainloop;
-mod logic;
+mod data_types;
 mod database;
+mod gfx_collection;
+mod inputs;
+mod logic;
+mod mainloop;
+mod renderer;
+mod resource;
 mod socket;
 mod time_ext;
-mod data_types;
-mod buffer;
-mod alert;
-pub mod config;
+mod values;
+mod widget;
 
-use renderer::*;
-use gfx_collection::*;
-use resource::*;
-use widget::*;
-use content::*;
-use values::*;
-use inputs::*;
-use mainloop::*;
-use logic::*;
-use database::*;
-use socket::*;
-use buffer::*;
 use alert::*;
+use buffer::*;
 pub use config::*;
+use content::*;
+use database::*;
+use gfx_collection::*;
+use inputs::*;
+use logic::*;
+use mainloop::*;
+use renderer::*;
+use resource::*;
+use socket::*;
+use values::*;
+use widget::*;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
 enum Action {
@@ -133,7 +132,10 @@ async fn main() -> Result<(), AscendingError> {
     let window = Arc::new(
         WindowBuilder::new()
             .with_title("Client")
-            .with_inner_size(PhysicalSize::new(SCREEN_WIDTH as u32, SCREEN_HEIGHT as u32))
+            .with_inner_size(PhysicalSize::new(
+                SCREEN_WIDTH as u32,
+                SCREEN_HEIGHT as u32,
+            ))
             .with_visible(false)
             .with_enabled_buttons({
                 let mut buttons = WindowButtons::all();
@@ -224,14 +226,22 @@ async fn main() -> Result<(), AscendingError> {
         map_fade: MapFade::new(),
         config,
     };
-    systems.fade.init_setup(&mut systems.renderer, &mut systems.gfx, &systems.size);
-    systems.map_fade.init_setup(&mut systems.renderer, &mut systems.gfx, &systems.size);
+    systems.fade.init_setup(
+        &mut systems.renderer,
+        &mut systems.gfx,
+        &systems.size,
+    );
+    systems.map_fade.init_setup(
+        &mut systems.renderer,
+        &mut systems.gfx,
+        &systems.size,
+    );
 
     // We establish the different renderers here to load their data up to use them.
     let text_renderer = TextRenderer::new(&systems.renderer).unwrap();
     let image_renderer = ImageRenderer::new(&systems.renderer).unwrap();
     let map_renderer = MapRenderer::new(&mut systems.renderer, 81).unwrap();
-    let ui_renderer = RectRenderer::new(&mut systems.renderer).unwrap();
+    let ui_renderer = RectRenderer::new(&systems.renderer).unwrap();
 
     let mut world = World::new();
     let mut buffertask = BufferTask::new();
@@ -265,11 +275,13 @@ async fn main() -> Result<(), AscendingError> {
 
     // create a Text rendering object.
     let txt_pos = Vec2::new(5.0, systems.size.height - 25.0);
-    let txt = create_label(&mut systems,
+    let txt = create_label(
+        &mut systems,
         Vec3::new(txt_pos.x, txt_pos.y, 0.0),
         Vec2::new(100.0, 20.0),
         Bounds::new(txt_pos.x, txt_pos.y, txt_pos.x + 100.0, txt_pos.y + 20.0),
-        Color::rgba(255, 255, 255, 255));
+        Color::rgba(255, 255, 255, 255),
+    );
     let text = systems.gfx.add_text(txt, 4);
 
     // Allow the window to be seen. hiding it then making visible speeds up
@@ -297,7 +309,6 @@ async fn main() -> Result<(), AscendingError> {
     let mut input_handler = InputHandler::new(bindings);
 
     let mut frame_time = FrameTime::new();
-    let mut socket_timer =  0.0f32;
     let mut time = 0.0f32;
     let mut fps = 0u32;
     let fps_label_color = Attrs::new().color(Color::rgba(200, 100, 100, 255));
@@ -315,76 +326,77 @@ async fn main() -> Result<(), AscendingError> {
                 ref event,
                 window_id,
                 ..
-            } if window_id == systems.renderer.window().id() => {
-                match event {
-                    WindowEvent::CloseRequested => {
-                        elwt.exit();
-                    }
-                    WindowEvent::KeyboardInput { event, .. } => {
-                        handle_key_input(
+            } if window_id == systems.renderer.window().id() => match event {
+                WindowEvent::CloseRequested => {
+                    elwt.exit();
+                }
+                WindowEvent::KeyboardInput { event, .. } => {
+                    handle_key_input(
+                        &mut world,
+                        &mut systems,
+                        &mut socket,
+                        &mut content,
+                        &mut alert,
+                        event,
+                    );
+                }
+                WindowEvent::CursorMoved { position, .. } => {
+                    mouse_pos = *position;
+
+                    if mouse_press {
+                        handle_mouse_input(
                             &mut world,
                             &mut systems,
                             &mut socket,
+                            MouseInputType::MouseLeftDownMove,
+                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                             &mut content,
                             &mut alert,
-                            event);
+                            &mut tooltip,
+                        );
+                    } else {
+                        handle_mouse_input(
+                            &mut world,
+                            &mut systems,
+                            &mut socket,
+                            MouseInputType::MouseMove,
+                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                            &mut content,
+                            &mut alert,
+                            &mut tooltip,
+                        );
                     }
-                    WindowEvent::CursorMoved { position, .. } => {
-                        mouse_pos = position.clone();
-
-                        if mouse_press {
-                            handle_mouse_input(&mut world,
-                                &mut systems, 
-                                &mut socket,
-                                MouseInputType::MouseLeftDownMove, 
-                                &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                                &mut content,
-                                &mut alert,
-                                &mut tooltip,
-                            );
-                        } else {
-                            handle_mouse_input(&mut world,
-                                &mut systems, 
-                                &mut socket,
-                                MouseInputType::MouseMove, 
-                                &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                                &mut content,
-                                &mut alert,
-                                &mut tooltip,
-                            );
-                        }
-                    }
-                    WindowEvent::MouseInput { state, .. } => {
-                        match state {
-                            ElementState::Pressed => {
-                                handle_mouse_input(&mut world,
-                                    &mut systems, 
-                                    &mut socket,
-                                    MouseInputType::MouseLeftDown, 
-                                    &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                                    &mut content,
-                                    &mut alert,
-                                    &mut tooltip,
-                                );
-                                mouse_press = true;
-                            }
-                            ElementState::Released => {
-                                handle_mouse_input(&mut world,
-                                    &mut systems, 
-                                    &mut socket,
-                                    MouseInputType::MouseRelease, 
-                                    &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                                    &mut content,
-                                    &mut alert,
-                                    &mut tooltip,
-                                );
-                                mouse_press = false;
-                            }
-                        }
-                    }
-                    _ => {}
                 }
-            }
+                WindowEvent::MouseInput { state, .. } => match state {
+                    ElementState::Pressed => {
+                        handle_mouse_input(
+                            &mut world,
+                            &mut systems,
+                            &mut socket,
+                            MouseInputType::MouseLeftDown,
+                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                            &mut content,
+                            &mut alert,
+                            &mut tooltip,
+                        );
+                        mouse_press = true;
+                    }
+                    ElementState::Released => {
+                        handle_mouse_input(
+                            &mut world,
+                            &mut systems,
+                            &mut socket,
+                            MouseInputType::MouseRelease,
+                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                            &mut content,
+                            &mut alert,
+                            &mut tooltip,
+                        );
+                        mouse_press = false;
+                    }
+                },
+                _ => {}
+            },
             Event::AboutToWait => {
                 systems.renderer.window().request_redraw();
             }
@@ -422,7 +434,15 @@ async fn main() -> Result<(), AscendingError> {
         let seconds = frame_time.seconds();
 
         // Game Loop
-        game_loop(&mut socket, &mut world, &mut systems, &mut content, &mut buffertask, seconds, &mut loop_timer);
+        game_loop(
+            &mut socket,
+            &mut world,
+            &mut systems,
+            &mut content,
+            &mut buffertask,
+            seconds,
+            &mut loop_timer,
+        );
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
             fade_end(&mut systems, &mut world, &mut content);
         }
@@ -435,7 +455,10 @@ async fn main() -> Result<(), AscendingError> {
         graphics.system.update(&systems.renderer, &frame_time);
 
         // update our systems data to the gpu. this is the Screen in the shaders.
-        graphics.system.update_screen(&systems.renderer, [new_size.width, new_size.height]);
+        graphics.system.update_screen(
+            &systems.renderer,
+            [new_size.width, new_size.height],
+        );
 
         // This adds the Image data to the Buffer for rendering.
         add_image_to_buffer(&mut systems, &mut graphics);
@@ -462,21 +485,34 @@ async fn main() -> Result<(), AscendingError> {
 
         // Submit our command queue. for it to upload all the changes that were made.
         // Also tells the system to begin running the commands on the GPU.
-        systems.renderer.queue().submit(std::iter::once(encoder.finish()));
+        systems
+            .renderer
+            .queue()
+            .submit(std::iter::once(encoder.finish()));
 
         if let Err(e) = poll_events(&mut socket) {
             println!("Poll event error: {:?}", e);
         }
-        process_packets(&mut socket, &router, &mut world, &mut systems, &mut content, &mut alert, seconds);
+        process_packets(
+            &mut socket,
+            &router,
+            &mut world,
+            &mut systems,
+            &mut content,
+            &mut alert,
+            seconds,
+        );
 
         buffertask.process_buffer(&mut systems, &mut content);
 
         if time < seconds {
-            systems.gfx.set_rich_text(&mut systems.renderer, text, 
+            systems.gfx.set_rich_text(
+                &mut systems.renderer,
+                text,
                 [
                     ("FPS: ", fps_label_color),
                     (&format!("{fps}"), fps_number_color),
-                ]
+                ],
             );
             fps = 0u32;
             time = seconds + 1.0;

@@ -1,7 +1,13 @@
-use hecs::World;
+use crate::{
+    add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*,
+    get_start_map_pos, is_map_connected, npc_finalized, set_npc_frame,
+    socket::error::*, unload_mapitems, unload_npc, update_camera, Alert,
+    Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X,
+    VITALS_MAX,
+};
 use bytey::ByteBuffer;
 use graphics::*;
-use crate::{add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, get_start_map_pos, is_map_connected, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX};
+use hecs::World;
 
 pub fn handle_ping(
     _socket: &mut Socket,
@@ -54,7 +60,7 @@ pub fn handle_fltalert(
 ) -> SocketResult<()> {
     let _flttype = data.read::<u8>()?;
     let _message = data.read::<String>()?;
-    
+
     Ok(())
 }
 
@@ -70,7 +76,12 @@ pub fn handle_loginok(
     let _hour = data.read::<u32>()?;
     let _min = data.read::<u32>()?;
 
-    systems.fade.init_fade(&mut systems.gfx, FadeType::In, FADE_SWITCH_TO_GAME, FadeData::None);
+    systems.fade.init_fade(
+        &mut systems.gfx,
+        FadeType::In,
+        FADE_SWITCH_TO_GAME,
+        FadeData::None,
+    );
     Ok(())
 }
 
@@ -83,7 +94,6 @@ pub fn handle_ingame(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -96,7 +106,6 @@ pub fn handle_updatemap(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -109,9 +118,8 @@ pub fn handle_mapitems(
     data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-
     let _item_entity = data.read::<Entity>()?;
-    
+
     Ok(())
 }
 
@@ -153,42 +161,65 @@ pub fn handle_playerdata(
         let pvpon = data.read::<bool>()?;
         let sprite = data.read::<u8>()?;
         let mut vitals = [0; VITALS_MAX];
-        vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
+        vitals.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
         let mut vitalmax = [0; VITALS_MAX];
-        vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
+        vitalmax.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
 
         if !world.contains(entity.0) {
-            let player = add_player(world, systems, pos, pos.map, Some(&entity));
+            let player =
+                add_player(world, systems, pos, pos.map, Some(&entity));
             content.game_content.players.insert(player);
         }
 
         {
-            world.get::<&mut EntityName>(entity.0).expect("Could not find EntityName").0
-                = username;
-            *world.get::<&mut UserAccess>(entity.0).expect("Could not find UserAccess")
-                = useraccess;
-            world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0
-                = dir;
-            *world.get::<&mut Equipment>(entity.0).expect("Could not find Equipment")
-                = equipment;
-            world.get::<&mut Hidden>(entity.0).expect("Could not find Hidden").0
-                = hidden;
-            world.get::<&mut Level>(entity.0).expect("Could not find Level").0
-                = level;
-            *world.get::<&mut DeathType>(entity.0).expect("Could not find DeathType")
-                = deathtype;
+            world
+                .get::<&mut EntityName>(entity.0)
+                .expect("Could not find EntityName")
+                .0 = username;
+            *world
+                .get::<&mut UserAccess>(entity.0)
+                .expect("Could not find UserAccess") = useraccess;
+            world
+                .get::<&mut Dir>(entity.0)
+                .expect("Could not find Dir")
+                .0 = dir;
+            *world
+                .get::<&mut Equipment>(entity.0)
+                .expect("Could not find Equipment") = equipment;
+            world
+                .get::<&mut Hidden>(entity.0)
+                .expect("Could not find Hidden")
+                .0 = hidden;
+            world
+                .get::<&mut Level>(entity.0)
+                .expect("Could not find Level")
+                .0 = level;
+            *world
+                .get::<&mut DeathType>(entity.0)
+                .expect("Could not find DeathType") = deathtype;
             if let Ok(mut physical) = world.get::<&mut Physical>(entity.0) {
                 physical.damage = pdamage;
                 physical.defense = pdefense;
             }
-            *world.get::<&mut Position>(entity.0).expect("Could not find Position")
-                = pos;
+            *world
+                .get::<&mut Position>(entity.0)
+                .expect("Could not find Position") = pos;
             if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity.0) {
                 pvp.pk = pk;
                 pvp.pvpon = pvpon;
             }
-            world.get::<&mut SpriteImage>(entity.0).expect("Could not find SpriteImage").0
-                = sprite;
+            world
+                .get::<&mut SpriteImage>(entity.0)
+                .expect("Could not find SpriteImage")
+                .0 = sprite;
             if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
                 vital.vital = vitals;
                 vital.vitalmax = vitalmax;
@@ -225,54 +256,77 @@ pub fn handle_playerspawn(
         let pvpon = data.read::<bool>()?;
         let sprite = data.read::<u8>()?;
         let mut vitals = [0; VITALS_MAX];
-        vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
+        vitals.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
         let mut vitalmax = [0; VITALS_MAX];
-        vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
+        vitalmax.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
 
         if let Some(myentity) = content.game_content.myentity {
-            if myentity != entity {
-                if !world.contains(entity.0) {
-                    let client_map = world.get_or_panic::<Position>(&myentity).map;
-                    let player = add_player(world, systems, pos, client_map, Some(&entity));
-                    content.game_content.players.insert(player);
+            if myentity != entity && !world.contains(entity.0) {
+                let client_map = world.get_or_panic::<Position>(&myentity).map;
+                let player =
+                    add_player(world, systems, pos, client_map, Some(&entity));
+                content.game_content.players.insert(player);
 
+                {
+                    world
+                        .get::<&mut EntityName>(entity.0)
+                        .expect("Could not find EntityName")
+                        .0 = username;
+                    *world
+                        .get::<&mut UserAccess>(entity.0)
+                        .expect("Could not find UserAccess") = useraccess;
+                    world
+                        .get::<&mut Dir>(entity.0)
+                        .expect("Could not find Dir")
+                        .0 = dir;
+                    *world
+                        .get::<&mut Equipment>(entity.0)
+                        .expect("Could not find Equipment") = equipment;
+                    world
+                        .get::<&mut Hidden>(entity.0)
+                        .expect("Could not find Hidden")
+                        .0 = hidden;
+                    world
+                        .get::<&mut Level>(entity.0)
+                        .expect("Could not find Level")
+                        .0 = level;
+                    *world
+                        .get::<&mut DeathType>(entity.0)
+                        .expect("Could not find DeathType") = deathtype;
+                    if let Ok(mut physical) =
+                        world.get::<&mut Physical>(entity.0)
                     {
-                        world.get::<&mut EntityName>(entity.0).expect("Could not find EntityName").0
-                            = username;
-                        *world.get::<&mut UserAccess>(entity.0).expect("Could not find UserAccess")
-                            = useraccess;
-                        world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0
-                            = dir;
-                        *world.get::<&mut Equipment>(entity.0).expect("Could not find Equipment")
-                            = equipment;
-                        world.get::<&mut Hidden>(entity.0).expect("Could not find Hidden").0
-                            = hidden;
-                        world.get::<&mut Level>(entity.0).expect("Could not find Level").0
-                            = level;
-                        *world.get::<&mut DeathType>(entity.0).expect("Could not find DeathType")
-                            = deathtype;
-                        if let Ok(mut physical) = world.get::<&mut Physical>(entity.0) {
-                            physical.damage = pdamage;
-                            physical.defense = pdefense;
-                        }
-                        *world.get::<&mut Position>(entity.0).expect("Could not find Position")
-                            = pos;
-                        if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity.0) {
-                            pvp.pk = pk;
-                            pvp.pvpon = pvpon;
-                        }
-                        world.get::<&mut SpriteImage>(entity.0).expect("Could not find SpriteIndex").0
-                            = sprite;
-                        if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
-                            vital.vital = vitals;
-                            vital.vitalmax = vitalmax;
-                        }
+                        physical.damage = pdamage;
+                        physical.defense = pdefense;
+                    }
+                    *world
+                        .get::<&mut Position>(entity.0)
+                        .expect("Could not find Position") = pos;
+                    if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity.0) {
+                        pvp.pk = pk;
+                        pvp.pvpon = pvpon;
+                    }
+                    world
+                        .get::<&mut SpriteImage>(entity.0)
+                        .expect("Could not find SpriteIndex")
+                        .0 = sprite;
+                    if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
+                        vital.vital = vitals;
+                        vital.vitalmax = vitalmax;
                     }
                 }
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -298,15 +352,15 @@ pub fn handle_playermove(
             if myentity != entity && world.contains(entity.0) {
                 let player_pos = world.get_or_panic::<Position>(&myentity);
                 if is_map_connected(player_pos.map, pos.map) {
-                    let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
+                    let mut movementbuffer = world
+                        .get::<&mut MovementBuffer>(entity.0)
+                        .expect("Could not find MovementBuffer");
                     let movement_data = MovementData { end_pos: pos, dir };
                     if movementbuffer.data.is_empty() {
                         movementbuffer.data.push_back(movement_data);
-                    } else {
-                        if let Some(data) =  movementbuffer.data.back() {
-                            if *data != movement_data {
-                                movementbuffer.data.push_back(movement_data);
-                            }
+                    } else if let Some(data) = movementbuffer.data.back() {
+                        if *data != movement_data {
+                            movementbuffer.data.push_back(movement_data);
                         }
                     }
                 } else {
@@ -315,7 +369,7 @@ pub fn handle_playermove(
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -336,10 +390,19 @@ pub fn handle_playerwarp(
         let pos = data.read::<Position>()?;
 
         if world.contains(entity.0) {
-            *world.get::<&mut Position>(entity.0).expect("Could not find Position") = pos;
-            world.get::<&mut Movement>(entity.0).expect("Could not find movement").is_moving = false;
-            world.get::<&mut PositionOffset>(entity.0).expect("Could not find PositionOffset").offset = Vec2::new(0.0, 0.0);
-            let frame = world.get_or_panic::<Dir>(&entity).0 * PLAYER_SPRITE_FRAME_X as u8;
+            *world
+                .get::<&mut Position>(entity.0)
+                .expect("Could not find Position") = pos;
+            world
+                .get::<&mut Movement>(entity.0)
+                .expect("Could not find movement")
+                .is_moving = false;
+            world
+                .get::<&mut PositionOffset>(entity.0)
+                .expect("Could not find PositionOffset")
+                .offset = Vec2::new(0.0, 0.0);
+            let frame = world.get_or_panic::<Dir>(&entity).0
+                * PLAYER_SPRITE_FRAME_X as u8;
             set_player_frame(world, systems, &entity, frame as usize);
         }
         if let Some(myentity) = content.game_content.myentity {
@@ -348,7 +411,7 @@ pub fn handle_playerwarp(
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -361,7 +424,6 @@ pub fn handle_playermapswap(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -374,7 +436,6 @@ pub fn handle_dataremovelist(
     data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-
     let remove_list = data.read::<Vec<Entity>>()?;
 
     remove_list.iter().for_each(|entity| {
@@ -392,8 +453,7 @@ pub fn handle_dataremovelist(
             _ => {}
         }
     });
-    
-    
+
     Ok(())
 }
 
@@ -406,7 +466,6 @@ pub fn handle_dataremove(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -419,9 +478,8 @@ pub fn handle_playerdir(
     data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-
     let _dir = data.read::<u8>()?;
-    
+
     Ok(())
 }
 
@@ -434,7 +492,6 @@ pub fn handle_playervitals(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -447,7 +504,6 @@ pub fn handle_playerinv(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -460,7 +516,6 @@ pub fn handle_playerinvslot(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -473,7 +528,6 @@ pub fn handle_keyinput(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -490,10 +544,10 @@ pub fn handle_playerattack(
 
     if let Some(myentity) = content.game_content.myentity {
         if myentity != entity {
-            let world_entity_type = world.get_or_default::<WorldEntityType>(&entity);
-            match world_entity_type {
-                WorldEntityType::Player => init_player_attack(world, systems, &entity, seconds),
-                _ => {}
+            let world_entity_type =
+                world.get_or_default::<WorldEntityType>(&entity);
+            if let WorldEntityType::Player = world_entity_type {
+                init_player_attack(world, systems, &entity, seconds)
             }
         }
     }
@@ -510,7 +564,6 @@ pub fn handle_playerequipment(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -523,7 +576,6 @@ pub fn handle_playeraction(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -536,7 +588,6 @@ pub fn handle_playerlevel(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -549,7 +600,6 @@ pub fn handle_playermoney(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -562,7 +612,6 @@ pub fn handle_playerstun(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -575,7 +624,6 @@ pub fn handle_playervariables(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -588,7 +636,6 @@ pub fn handle_playervariable(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -601,7 +648,6 @@ pub fn handle_playerdeath(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -614,7 +660,6 @@ pub fn handle_npcdeath(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -627,7 +672,6 @@ pub fn handle_playerpvp(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -640,7 +684,6 @@ pub fn handle_playerpk(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -653,7 +696,6 @@ pub fn handle_playeremail(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -681,9 +723,17 @@ pub fn handle_npcdata(
         let pos = data.read::<Position>()?;
         let sprite = data.read::<u16>()?;
         let mut vitals = [0; VITALS_MAX];
-        vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
+        vitals.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
         let mut vitalmax = [0; VITALS_MAX];
-        vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
+        vitalmax.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
 
         if let Some(myentity) = content.game_content.myentity {
             let move_map_pos = world.get_or_panic::<PlayerMoveMap>(&myentity);
@@ -694,30 +744,46 @@ pub fn handle_npcdata(
                 } else {
                     world.get_or_panic::<Position>(&myentity).map
                 };
-                let npc = add_npc(world, systems, pos, client_map, Some(&entity));
+                let npc =
+                    add_npc(world, systems, pos, client_map, Some(&entity));
                 content.game_content.npcs.insert(npc);
 
                 {
-                    world.get::<&mut Dir>(entity.0).expect("Could not find Dir").0
-                        = dir;
-                    world.get::<&mut Hidden>(entity.0).expect("Could not find Hidden").0
-                        = hidden;
-                    world.get::<&mut Level>(entity.0).expect("Could not find Level").0
-                        = level;
-                    *world.get::<&mut DeathType>(entity.0).expect("Could not find DeathType")
-                        = deathtype;
-                    *world.get::<&mut NpcMode>(entity.0).expect("Could not find NpcMode")
-                        = mode;
-                    world.get::<&mut NpcIndex>(entity.0).expect("Could not find NpcIndex").0
-                        = num;
-                    if let Ok(mut physical) = world.get::<&mut Physical>(entity.0) {
+                    world
+                        .get::<&mut Dir>(entity.0)
+                        .expect("Could not find Dir")
+                        .0 = dir;
+                    world
+                        .get::<&mut Hidden>(entity.0)
+                        .expect("Could not find Hidden")
+                        .0 = hidden;
+                    world
+                        .get::<&mut Level>(entity.0)
+                        .expect("Could not find Level")
+                        .0 = level;
+                    *world
+                        .get::<&mut DeathType>(entity.0)
+                        .expect("Could not find DeathType") = deathtype;
+                    *world
+                        .get::<&mut NpcMode>(entity.0)
+                        .expect("Could not find NpcMode") = mode;
+                    world
+                        .get::<&mut NpcIndex>(entity.0)
+                        .expect("Could not find NpcIndex")
+                        .0 = num;
+                    if let Ok(mut physical) =
+                        world.get::<&mut Physical>(entity.0)
+                    {
                         physical.damage = pdamage;
                         physical.defense = pdefense;
                     }
-                    *world.get::<&mut Position>(entity.0).expect("Could not find Position")
-                        = pos;
-                    world.get::<&mut SpriteImage>(entity.0).expect("Could not find SpriteIndex").0
-                        = sprite as u8;
+                    *world
+                        .get::<&mut Position>(entity.0)
+                        .expect("Could not find Position") = pos;
+                    world
+                        .get::<&mut SpriteImage>(entity.0)
+                        .expect("Could not find SpriteIndex")
+                        .0 = sprite as u8;
                     if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
                         vital.vital = vitals;
                         vital.vitalmax = vitalmax;
@@ -752,15 +818,15 @@ pub fn handle_npcmove(
             if let Some(myentity) = content.game_content.myentity {
                 let player_pos = world.get_or_panic::<Position>(&myentity);
                 if is_map_connected(player_pos.map, pos.map) {
-                    let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
+                    let mut movementbuffer = world
+                        .get::<&mut MovementBuffer>(entity.0)
+                        .expect("Could not find MovementBuffer");
                     let movement_data = MovementData { end_pos: pos, dir };
                     if movementbuffer.data.is_empty() {
                         movementbuffer.data.push_back(movement_data);
-                    } else {
-                        if let Some(data) =  movementbuffer.data.back() {
-                            if *data != movement_data {
-                                movementbuffer.data.push_back(movement_data);
-                            }
+                    } else if let Some(data) = movementbuffer.data.back() {
+                        if *data != movement_data {
+                            movementbuffer.data.push_back(movement_data);
                         }
                     }
                 } else {
@@ -789,14 +855,23 @@ pub fn handle_npcwarp(
         let pos = data.read::<Position>()?;
 
         if world.contains(entity.0) {
-            *world.get::<&mut Position>(entity.0).expect("Could not find Position") = pos;
-            world.get::<&mut Movement>(entity.0).expect("Could not find movement").is_moving = false;
-            world.get::<&mut PositionOffset>(entity.0).expect("Could not find PositionOffset").offset = Vec2::new(0.0, 0.0);
-            let frame = world.get_or_panic::<Dir>(&entity).0 * NPC_SPRITE_FRAME_X as u8;
+            *world
+                .get::<&mut Position>(entity.0)
+                .expect("Could not find Position") = pos;
+            world
+                .get::<&mut Movement>(entity.0)
+                .expect("Could not find movement")
+                .is_moving = false;
+            world
+                .get::<&mut PositionOffset>(entity.0)
+                .expect("Could not find PositionOffset")
+                .offset = Vec2::new(0.0, 0.0);
+            let frame =
+                world.get_or_panic::<Dir>(&entity).0 * NPC_SPRITE_FRAME_X as u8;
             set_npc_frame(world, systems, &entity, frame as usize);
         }
     }
-    
+
     Ok(())
 }
 
@@ -809,7 +884,6 @@ pub fn handle_npcdir(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -822,7 +896,6 @@ pub fn handle_npcvital(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -835,7 +908,6 @@ pub fn handle_npcattack(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -848,7 +920,6 @@ pub fn handle_npcstun(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -861,7 +932,6 @@ pub fn handle_chatmsg(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -874,7 +944,6 @@ pub fn handle_sound(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -887,7 +956,6 @@ pub fn handle_target(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -900,7 +968,6 @@ pub fn handle_synccheck(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }
 
@@ -919,7 +986,8 @@ pub fn handle_entityunload(
         let entity = data.read::<Entity>()?;
 
         if world.contains(entity.0) {
-            let world_entity_type = world.get_or_default::<WorldEntityType>(&entity);
+            let world_entity_type =
+                world.get_or_default::<WorldEntityType>(&entity);
             match world_entity_type {
                 WorldEntityType::Player => {
                     unload_player(world, systems, &entity);
@@ -934,7 +1002,7 @@ pub fn handle_entityunload(
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -947,6 +1015,5 @@ pub fn handle_loadstatus(
     _data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
-    
     Ok(())
 }

@@ -1,11 +1,7 @@
-use graphics::*;
 use cosmic_text::{Attrs, Metrics};
+use graphics::*;
 
-use crate::{
-    widget::*,
-    DrawSetting,
-    logic::*,
-};
+use crate::{logic::*, widget::*, DrawSetting};
 
 #[derive(Clone)]
 pub enum CheckboxChangeType {
@@ -94,6 +90,7 @@ pub struct Checkbox {
 }
 
 impl Checkbox {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         systems: &mut DrawSetting,
         box_type: CheckboxType,
@@ -126,7 +123,8 @@ impl Checkbox {
                 systems.gfx.add_rect(rect, render_layer)
             }
             CheckboxType::Image(data) => {
-                let mut img = Image::new(Some(data.res), &mut systems.renderer, 0);
+                let mut img =
+                    Image::new(Some(data.res), &mut systems.renderer, 0);
                 img.pos = Vec3::new(pos.x, pos.y, z_order);
                 img.hw = box_size;
                 img.uv = Vec4::new(0.0, 0.0, box_size.x, box_size.y);
@@ -138,10 +136,14 @@ impl Checkbox {
         let check_image = match checktype {
             CheckType::SetRect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
-                rect.set_position(Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, z_order.sub_f32(z_step.0, z_step.1)))
-                    .set_size(data.size)
-                    .set_color(data.rect_color)
-                    .set_radius(data.border_radius);
+                rect.set_position(Vec3::new(
+                    pos.x + data.pos.x,
+                    pos.y + data.pos.y,
+                    z_order.sub_f32(z_step.0, z_step.1),
+                ))
+                .set_size(data.size)
+                .set_color(data.rect_color)
+                .set_radius(data.border_radius);
                 if data.got_border {
                     rect.set_border_width(1.0)
                         .set_border_color(data.border_color);
@@ -149,10 +151,16 @@ impl Checkbox {
                 systems.gfx.add_rect(rect, render_layer)
             }
             CheckType::SetImage(data) => {
-                let mut img = Image::new(Some(data.res), &mut systems.renderer, 0);
-                img.pos = Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, z_order.sub_f32(z_step.0, z_step.1));
+                let mut img =
+                    Image::new(Some(data.res), &mut systems.renderer, 0);
+                img.pos = Vec3::new(
+                    pos.x + data.pos.x,
+                    pos.y + data.pos.y,
+                    z_order.sub_f32(z_step.0, z_step.1),
+                );
                 img.hw = data.size;
-                img.uv = Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
+                img.uv =
+                    Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
                 systems.gfx.add_image(img, render_layer)
             }
         };
@@ -161,14 +169,27 @@ impl Checkbox {
         let mut adjust_x = 0.0;
         let text_type = if let Some(data) = text_data {
             let data_copy = data.clone();
-            let tpos = Vec3::new(pos.x + box_size.x + data.offset_pos.x, pos.y + data.offset_pos.y, z_order);
-            let txt = create_label(systems, 
+            let tpos = Vec3::new(
+                pos.x + box_size.x + data.offset_pos.x,
+                pos.y + data.offset_pos.y,
+                z_order,
+            );
+            let txt = create_label(
+                systems,
                 tpos,
-                data.label_size, 
-                Bounds::new(tpos.x, tpos.y, tpos.x + data.label_size.x, tpos.y + data.label_size.y),
-                data.color);
+                data.label_size,
+                Bounds::new(
+                    tpos.x,
+                    tpos.y,
+                    tpos.x + data.label_size.x,
+                    tpos.y + data.label_size.y,
+                ),
+                data.color,
+            );
             let txt_index = systems.gfx.add_text(txt, data.render_layer);
-            systems.gfx.set_text(&mut systems.renderer, txt_index, &data.text);
+            systems
+                .gfx
+                .set_text(&mut systems.renderer, txt_index, &data.text);
             systems.gfx.set_visible(txt_index, visible);
             adjust_x = data.offset_pos.x + data.label_size.x;
             Some((txt_index, data_copy))
@@ -223,21 +244,34 @@ impl Checkbox {
     pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
         self.z_order = z_order;
         let pos = systems.gfx.get_pos(self.image);
-        systems.gfx.set_pos(self.image, Vec3::new(pos.x, pos.y, self.z_order));
+        systems
+            .gfx
+            .set_pos(self.image, Vec3::new(pos.x, pos.y, self.z_order));
         let pos = systems.gfx.get_pos(self.check_image);
-        systems.gfx.set_pos(self.check_image, Vec3::new(pos.x, pos.y, self.z_order.sub_f32(self.z_step.0, self.z_step.1)));
+        systems.gfx.set_pos(
+            self.check_image,
+            Vec3::new(
+                pos.x,
+                pos.y,
+                self.z_order.sub_f32(self.z_step.0, self.z_step.1),
+            ),
+        );
         if let Some(data) = &mut self.text_type {
             let pos = systems.gfx.get_pos(data.0);
-            systems.gfx.set_pos(data.0, Vec3::new(pos.x, pos.y, self.z_order));
+            systems
+                .gfx
+                .set_pos(data.0, Vec3::new(pos.x, pos.y, self.z_order));
         }
     }
 
     pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
         self.base_pos = new_pos;
 
-        let pos = Vec3::new(self.base_pos.x + self.adjust_pos.x, 
+        let pos = Vec3::new(
+            self.base_pos.x + self.adjust_pos.x,
             self.base_pos.y + self.adjust_pos.y,
-            self.z_order);
+            self.z_order,
+        );
         systems.gfx.set_pos(self.image, pos);
 
         let contenttype = self.check_type.clone();
@@ -245,18 +279,32 @@ impl Checkbox {
             CheckType::SetRect(data) => data.pos,
             CheckType::SetImage(data) => data.pos,
         };
-        let pos = Vec3::new(self.base_pos.x + self.adjust_pos.x + extra_pos.x, 
+        let pos = Vec3::new(
+            self.base_pos.x + self.adjust_pos.x + extra_pos.x,
             self.base_pos.y + self.adjust_pos.y + extra_pos.y,
-            self.z_order);
+            self.z_order,
+        );
         systems.gfx.set_pos(self.check_image, pos);
 
         if let Some(data) = &mut self.text_type {
-            let pos = Vec3::new(self.base_pos.x + self.adjust_pos.x + self.box_size.x + data.1.offset_pos.x, 
+            let pos = Vec3::new(
+                self.base_pos.x
+                    + self.adjust_pos.x
+                    + self.box_size.x
+                    + data.1.offset_pos.x,
                 self.base_pos.y + self.adjust_pos.y + data.1.offset_pos.y,
-                self.z_order);
+                self.z_order,
+            );
             systems.gfx.set_pos(data.0, pos);
-            systems.gfx.set_bound(data.0,
-                Bounds::new(pos.x, pos.y, pos.x + data.1.label_size.x, pos.y + data.1.label_size.y),);
+            systems.gfx.set_bound(
+                data.0,
+                Bounds::new(
+                    pos.x,
+                    pos.y,
+                    pos.x + data.1.label_size.x,
+                    pos.y + data.1.label_size.y,
+                ),
+            );
         }
     }
 
@@ -283,15 +331,13 @@ impl Checkbox {
             self.value = !self.value;
             systems.gfx.set_visible(self.check_image, self.value);
         }
-        
+
         if self.in_click {
             self.apply_click(systems);
+        } else if self.in_hover {
+            self.apply_hover(systems);
         } else {
-            if self.in_hover {
-                self.apply_hover(systems);
-            } else {
-                self.apply_normal(systems);
-            }
+            self.apply_normal(systems);
         }
     }
 
@@ -299,27 +345,34 @@ impl Checkbox {
         let buttontype = self.box_type.clone();
         match buttontype {
             CheckboxType::Rect(data) => {
-                match data.click_change {
-                    CheckboxChangeType::ColorChange(color) => { systems.gfx.set_color(self.image, color); }
-                    _ => {}
+                if let CheckboxChangeType::ColorChange(color) =
+                    data.click_change
+                {
+                    systems.gfx.set_color(self.image, color);
                 }
             }
             CheckboxType::Image(data) => {
-                match data.click_change {
-                    CheckboxChangeType::ImageFrame(frame) => {
-                        systems.gfx.set_uv(self.image, 
-                            Vec4::new(0.0, self.box_size.y * frame as f32, self.box_size.x, self.box_size.y));
-                    }
-                    _ => {}
+                if let CheckboxChangeType::ImageFrame(frame) = data.click_change
+                {
+                    systems.gfx.set_uv(
+                        self.image,
+                        Vec4::new(
+                            0.0,
+                            self.box_size.y * frame as f32,
+                            self.box_size.x,
+                            self.box_size.y,
+                        ),
+                    );
                 }
             }
         }
 
         if let Some(data) = &mut self.text_type {
             let contenttype = data.1.clone();
-            match contenttype.click_change {
-                CheckboxChangeType::ColorChange(color) => { systems.gfx.set_color(data.0, color); }
-                _ => {}
+            if let CheckboxChangeType::ColorChange(color) =
+                contenttype.click_change
+            {
+                systems.gfx.set_color(data.0, color);
             }
         }
     }
@@ -328,27 +381,34 @@ impl Checkbox {
         let buttontype = self.box_type.clone();
         match buttontype {
             CheckboxType::Rect(data) => {
-                match data.hover_change {
-                    CheckboxChangeType::ColorChange(color) => { systems.gfx.set_color(self.image, color); }
-                    _ => {}
+                if let CheckboxChangeType::ColorChange(color) =
+                    data.hover_change
+                {
+                    systems.gfx.set_color(self.image, color);
                 }
             }
             CheckboxType::Image(data) => {
-                match data.hover_change {
-                    CheckboxChangeType::ImageFrame(frame) => {
-                        systems.gfx.set_uv(self.image, 
-                            Vec4::new(0.0, self.box_size.y * frame as f32, self.box_size.x, self.box_size.y));
-                    }
-                    _ => {}
+                if let CheckboxChangeType::ImageFrame(frame) = data.hover_change
+                {
+                    systems.gfx.set_uv(
+                        self.image,
+                        Vec4::new(
+                            0.0,
+                            self.box_size.y * frame as f32,
+                            self.box_size.x,
+                            self.box_size.y,
+                        ),
+                    );
                 }
             }
         }
 
         if let Some(data) = &mut self.text_type {
             let contenttype = data.1.clone();
-            match contenttype.hover_change {
-                CheckboxChangeType::ColorChange(color) => { systems.gfx.set_color(data.0, color); }
-                _ => {}
+            if let CheckboxChangeType::ColorChange(color) =
+                contenttype.hover_change
+            {
+                systems.gfx.set_color(data.0, color);
             }
         }
     }
@@ -360,8 +420,10 @@ impl Checkbox {
                 systems.gfx.set_color(self.image, data.rect_color);
             }
             CheckboxType::Image(_) => {
-                systems.gfx.set_uv(self.image, 
-                    Vec4::new(0.0, 0.0, self.box_size.x, self.box_size.y));
+                systems.gfx.set_uv(
+                    self.image,
+                    Vec4::new(0.0, 0.0, self.box_size.x, self.box_size.y),
+                );
             }
         }
 

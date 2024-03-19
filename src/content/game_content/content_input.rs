@@ -1,13 +1,15 @@
 use graphics::*;
-use winit::{
-    event::*,
-    keyboard::*,
-};
 use hecs::World;
+use winit::{event::*, keyboard::*};
 
-use crate::{content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType, Tooltip};
+use crate::{
+    content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType,
+    Tooltip,
+};
 
-use super::{KEY_ATTACK, KEY_MOVEDOWN, KEY_MOVELEFT, KEY_MOVERIGHT, KEY_MOVEUP};
+use super::{
+    KEY_ATTACK, KEY_MOVEDOWN, KEY_MOVELEFT, KEY_MOVERIGHT, KEY_MOVEUP,
+};
 
 impl GameContent {
     pub fn mouse_input(
@@ -25,7 +27,13 @@ impl GameContent {
             return;
         }
 
-        Interface::mouse_input(&mut content.game_content.interface, world, systems, input_type, screen_pos);
+        Interface::mouse_input(
+            &mut content.game_content.interface,
+            world,
+            systems,
+            input_type,
+            screen_pos,
+        );
     }
 
     pub fn key_input(
@@ -40,31 +48,39 @@ impl GameContent {
 
         match event.physical_key {
             PhysicalKey::Code(KeyCode::ArrowUp) => {
-                content.game_content.keyinput[KEY_MOVEUP] = event.state.is_pressed();
+                content.game_content.keyinput[KEY_MOVEUP] =
+                    event.state.is_pressed();
             }
             PhysicalKey::Code(KeyCode::ArrowDown) => {
-                content.game_content.keyinput[KEY_MOVEDOWN] = event.state.is_pressed();
+                content.game_content.keyinput[KEY_MOVEDOWN] =
+                    event.state.is_pressed();
             }
             PhysicalKey::Code(KeyCode::ArrowLeft) => {
-                content.game_content.keyinput[KEY_MOVELEFT] = event.state.is_pressed();
+                content.game_content.keyinput[KEY_MOVELEFT] =
+                    event.state.is_pressed();
             }
             PhysicalKey::Code(KeyCode::ArrowRight) => {
-                content.game_content.keyinput[KEY_MOVERIGHT] = event.state.is_pressed();
+                content.game_content.keyinput[KEY_MOVERIGHT] =
+                    event.state.is_pressed();
             }
             PhysicalKey::Code(KeyCode::Space) => {
-                content.game_content.keyinput[KEY_ATTACK] = event.state.is_pressed();
+                content.game_content.keyinput[KEY_ATTACK] =
+                    event.state.is_pressed();
             }
             _ => {}
         }
 
         if event.state.is_pressed() {
+            #[allow(clippy::single_match)]
             match event.physical_key {
                 PhysicalKey::Code(KeyCode::F1) => {
                     if let Some(entity) = content.game_content.myentity {
                         let pos = world.get_or_panic::<Position>(&entity);
-                        let _ = send_admincommand(socket, AdminCommand::SpawnNpc(0, pos));
+                        let _ = send_admincommand(
+                            socket,
+                            AdminCommand::SpawnNpc(0, pos),
+                        );
                     }
-                    return;
                 }
                 _ => {}
             }
