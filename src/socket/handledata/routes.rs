@@ -1,9 +1,5 @@
 use crate::{
-    add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*,
-    get_start_map_pos, is_map_connected, npc_finalized, set_npc_frame,
-    socket::error::*, unload_mapitems, unload_npc, update_camera, Alert,
-    Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X,
-    VITALS_MAX,
+    add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, get_start_map_pos, is_map_connected, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -267,6 +263,7 @@ pub fn handle_playerspawn(
                 .read::<[i32; VITALS_MAX]>()
                 .expect("Could not read data"),
         );
+        let did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
             if myentity != entity && !world.contains(entity.0) {
@@ -322,6 +319,10 @@ pub fn handle_playerspawn(
                         vital.vital = vitals;
                         vital.vitalmax = vitalmax;
                     }
+                }
+
+                if did_spawn && content.game_content.finalized {
+                    player_finalized(world, systems, &entity);
                 }
             }
         }
@@ -734,16 +735,11 @@ pub fn handle_npcdata(
                 .read::<[i32; VITALS_MAX]>()
                 .expect("Could not read data"),
         );
+        let did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
-            let move_map_pos = world.get_or_panic::<PlayerMoveMap>(&myentity);
-
             if !world.contains(entity.0) {
-                let client_map = if let Some(map_pos) = move_map_pos.0 {
-                    map_pos
-                } else {
-                    world.get_or_panic::<Position>(&myentity).map
-                };
+                let client_map = world.get_or_panic::<Position>(&myentity).map;
                 let npc =
                     add_npc(world, systems, pos, client_map, Some(&entity));
                 content.game_content.npcs.insert(npc);
@@ -788,6 +784,10 @@ pub fn handle_npcdata(
                         vital.vital = vitals;
                         vital.vitalmax = vitalmax;
                     }
+                }
+
+                if did_spawn && content.game_content.finalized {
+                    npc_finalized(world, systems, &entity);
                 }
             }
         }

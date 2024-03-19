@@ -226,9 +226,6 @@ pub enum UserAccess {
     Admin,
 }
 
-#[derive(Debug, Copy, Clone, Default)]
-pub struct PlayerMoveMap(pub Option<MapPosition>);
-
 #[derive(
     Copy,
     Clone,

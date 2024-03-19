@@ -228,7 +228,7 @@ pub fn fade_end(
                 Position::default()
             };
             content.game_content.init_map(systems, pos.map);
-            content.game_content.finalized_data(world, systems);
+            content.game_content.init_finalized_data(world, systems);
 
             systems.fade.init_fade(
                 &mut systems.gfx,

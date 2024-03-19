@@ -4,9 +4,8 @@ use hecs::World;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    game_content::Camera, get_start_map_pos, DrawSetting, Entity, EntityType,
-    Finalized, GameContent, MapPosition, Position, PositionOffset, SpriteImage,
-    SpriteIndex, WorldEntityType, WorldExtras, ORDER_MAP_ITEM, TILE_SIZE,
+    game_content::{*, Camera, entity::*}, get_start_map_pos, DrawSetting,
+    values::*,
 };
 
 #[derive(
@@ -81,7 +80,17 @@ impl MapItem {
         systems: &mut DrawSetting,
         entity: &Entity,
     ) {
+        if !world.contains(entity.0) {
+            return;
+        }
         let sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+        Self::finalized_data(systems, sprite);
+    }
+
+    pub fn finalized_data(
+        systems: &mut DrawSetting,
+        sprite: usize,
+    ) {
         systems.gfx.set_visible(sprite, true);
     }
 }

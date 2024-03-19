@@ -53,14 +53,14 @@ pub fn add_player(
         .set_border_width(1.0)
         .set_border_color(Color::rgba(10, 10, 10, 255));
     let bg_index = systems.gfx.add_rect(bg_image, 0);
-    systems.gfx.set_visible(bg_index, true);
+    systems.gfx.set_visible(bg_index, false);
     let mut bar_image = Rect::new(&mut systems.renderer, 0);
     bar_image
         .set_size(Vec2::new(18.0, 4.0))
         .set_position(Vec3::new(1.0, 1.0, ORDER_HPBAR))
         .set_color(Color::rgba(180, 30, 30, 255));
     let bar_index = systems.gfx.add_rect(bar_image, 0);
-    systems.gfx.set_visible(bar_index, true);
+    systems.gfx.set_visible(bar_index, false);
 
     let hpbar = HPBar {
         visible: false,
@@ -94,7 +94,6 @@ pub fn add_player(
         MovementBuffer::default(),
         hpbar,
         Finalized::default(),
-        PlayerMoveMap::default(),
     );
 
     if let Some(data) = entity {
@@ -115,12 +114,23 @@ pub fn player_finalized(
     systems: &mut DrawSetting,
     entity: &Entity,
 ) {
-    world
-        .get::<&mut Finalized>(entity.0)
-        .expect("Could not find Finalized")
-        .0 = true;
+    if !world.contains(entity.0) {
+        return;
+    }
     let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
-    systems.gfx.set_visible(player_sprite, true);
+    let hpbar = world.get_or_panic::<HPBar>(entity);
+    player_finalized_data(systems, player_sprite, &hpbar);
+}
+
+pub fn player_finalized_data(
+    systems: &mut DrawSetting,
+    sprite: usize,
+    hpbar: &HPBar,
+) {
+    systems.gfx.set_visible(sprite, true);
+
+    systems.gfx.set_visible(hpbar.bg_index, hpbar.visible);
+    systems.gfx.set_visible(hpbar.bar_index, hpbar.visible);
 }
 
 pub fn unload_player(
@@ -183,7 +193,6 @@ pub fn move_player(
         }
     }
 
-    let mut did_map_move = false;
     if let Some(end_pos) = end {
         world
             .get::<&mut EndMovement>(entity.0)
@@ -215,7 +224,6 @@ pub fn move_player(
             end_move.y = new_pos[dir_index].1;
             end_move.map.x += adj[dir_index].0;
             end_move.map.y += adj[dir_index].1;
-            did_map_move = true;
         }
 
         world
@@ -228,13 +236,6 @@ pub fn move_player(
 
     if let Some(p) = content.myentity {
         if &p == entity {
-            if did_map_move {
-                let end_pos = world.get_or_panic::<EndMovement>(entity);
-                world
-                    .get::<&mut PlayerMoveMap>(entity.0)
-                    .expect("Could not find PlayerMoveMap")
-                    .0 = Some(end_pos.0.map);
-            }
             let pos = world.get_or_panic::<Position>(entity);
             let _ = send_move(socket, dir_u8, pos);
         }
@@ -305,16 +306,13 @@ pub fn end_player_move(
             .get::<&mut PositionOffset>(entity.0)
             .expect("Could not find Position")
             .offset = Vec2::new(0.0, 0.0);
-        world
-            .get::<&mut PlayerMoveMap>(entity.0)
-            .expect("Could not find PlayerMoveMap")
-            .0 = None;
     }
 
     if let Some(p) = &content.myentity {
         if p == entity && move_map {
             let dir = world.get_or_panic::<Movement>(entity).move_direction;
-            GameContent::move_map(content, world, systems, dir, buffer);
+            content.move_map(world, systems, dir, buffer);
+            finalize_entity(world, systems);
         }
     }
 

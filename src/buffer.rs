@@ -1,7 +1,7 @@
 use indexmap::IndexMap;
 use std::collections::VecDeque;
 
-use crate::{database::map::*, Content, DrawSetting, MapAttributes};
+use crate::{database::map::*, Content, DrawSetting, HPBar, MapAttributes};
 
 pub struct StoredData {
     pub map_data: IndexMap<String, MapData>,
