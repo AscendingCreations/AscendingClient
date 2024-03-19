@@ -13,6 +13,9 @@ pub enum MovementType {
     Manual(u8, Option<Position>),
 }
 
+#[derive(Copy, Clone, Debug, Default)]
+pub struct Finalized(pub bool);
+
 #[derive(Copy, Clone, Debug, Serialize, Deserialize, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
 pub struct MapPosition {
     pub x: i32,
@@ -168,6 +171,9 @@ pub enum UserAccess {
     Monitor,
     Admin,
 }
+
+#[derive(Debug, Copy, Clone, Default)]
+pub struct PlayerMoveMap(pub Option<MapPosition>);
 
 #[derive(Copy, Clone, Debug, Serialize_repr, Deserialize_repr, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite)]
 #[repr(u8)]

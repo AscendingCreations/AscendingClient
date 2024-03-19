@@ -74,6 +74,7 @@ pub fn add_npc(
         Physical::default(),
         Level::default(),
         hpbar,
+        Finalized::default(),
     );
 
     if let Some(data) = entity {
@@ -94,6 +95,7 @@ pub fn npc_finalized(
     systems: &mut DrawSetting,
     entity: &Entity,
 ) {
+    world.get::<&mut Finalized>(entity.0).expect("Could not find Finalized").0 = true;
     let npc_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
     systems.gfx.set_visible(npc_sprite, true);
 }
@@ -105,6 +107,9 @@ pub fn unload_npc(
 ) {
     let npc_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
     systems.gfx.remove_gfx(npc_sprite);
+    let hpbar = world.get_or_panic::<HPBar>(entity);
+    systems.gfx.remove_gfx(hpbar.bar_index);
+    systems.gfx.remove_gfx(hpbar.bg_index);
     let _ = world.despawn(entity.0);
 }
 

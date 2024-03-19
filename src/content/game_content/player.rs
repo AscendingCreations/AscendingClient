@@ -77,6 +77,8 @@ pub fn add_player(
         SpriteImage::default(),
         MovementBuffer::default(),
         hpbar,
+        Finalized::default(),
+        PlayerMoveMap::default(),
     );
 
     if let Some(data) = entity {
@@ -97,6 +99,7 @@ pub fn player_finalized(
     systems: &mut DrawSetting,
     entity: &Entity,
 ) {
+    world.get::<&mut Finalized>(entity.0).expect("Could not find Finalized").0 = true;
     let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
     systems.gfx.set_visible(player_sprite, true);
 }
@@ -108,6 +111,9 @@ pub fn unload_player(
 ) {
     let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
     systems.gfx.remove_gfx(player_sprite);
+    let hpbar = world.get_or_panic::<HPBar>(entity);
+    systems.gfx.remove_gfx(hpbar.bar_index);
+    systems.gfx.remove_gfx(hpbar.bg_index);
     let _ = world.despawn(entity.0);
 }
 
@@ -158,43 +164,40 @@ pub fn move_player(
         }
     }
 
+    let mut did_map_move = false;
     if let Some(end_pos) = end {
         world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = end_pos.clone();
     } else {
-        let mut pos = world.get_or_panic::<Position>(entity);
-        pos.x += match dir {
-            Direction::Left => -1,
-            Direction::Right => 1,
-            _ => 0,
-        };
-        pos.y += match dir {
-            Direction::Up => 1,
-            Direction::Down => -1,
-            _ => 0,
+        let pos = world.get_or_panic::<Position>(entity);
+
+        let adj = [(0, -1), (1, 0), (0, 1), (-1, 0)];
+        let dir_index = enum_to_dir(dir) as usize;
+        let mut end_move = Position {
+            x: pos.x + adj[dir_index].0,
+            y: pos.y + adj[dir_index].1,
+            map: pos.map,
         };
 
-        if pos.x < 0 {
-            pos.x = 31;
-            pos.map.x -= 1;
-        } else if pos.x >= 32 {
-            pos.x = 0;
-            pos.map.x += 1;
-        }
-        if pos.y < 0 {
-            pos.y = 31;
-            pos.map.y -= 1;
-        } else if pos.y >= 32 {
-            pos.y = 0;
-            pos.map.y += 1;
+        if end_move.x < 0 || end_move.x >= 32 || end_move.y < 0 || end_move.y >= 32 {
+            let new_pos = [(end_move.x, 31), (0, end_move.y), (end_move.x, 0), (31, end_move.y)];
+            end_move.x = new_pos[dir_index].0;
+            end_move.y = new_pos[dir_index].1;
+            end_move.map.x += adj[dir_index].0;
+            end_move.map.y += adj[dir_index].1;
+            did_map_move = true;
         }
 
-        world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = pos.clone();
+        world.get::<&mut EndMovement>(entity.0).expect("Could not find EndMovement").0 = end_move.clone();
     }
 
     let dir_u8 = enum_to_dir(dir);
 
     if let Some(p) = content.myentity {
         if &p == entity {
+            if did_map_move {
+                let end_pos = world.get_or_panic::<EndMovement>(entity);
+                world.get::<&mut PlayerMoveMap>(entity.0).expect("Could not find PlayerMoveMap").0 = Some(end_pos.0.map);
+            }
             let pos = world.get_or_panic::<Position>(entity);
             let _ = send_move(socket, dir_u8, pos);
         }
@@ -251,6 +254,7 @@ pub fn end_player_move(
             }
         }
         world.get::<&mut PositionOffset>(entity.0).expect("Could not find Position").offset = Vec2::new(0.0, 0.0);
+        world.get::<&mut PlayerMoveMap>(entity.0).expect("Could not find PlayerMoveMap").0 = None;
     }
 
     if let Some(p) = &content.myentity {

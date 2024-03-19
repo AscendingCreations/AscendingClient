@@ -206,3 +206,11 @@ pub fn get_start_map_pos(from: MapPosition, to: MapPosition) -> Option<Vec2> {
     };
     result
 }
+
+pub fn is_map_connected(from: MapPosition, to: MapPosition) -> bool {
+    if from.group != to.group {
+        return false;
+    }
+    to.x >= from.x - 1 && to.x <= from.x + 1 &&
+        to.y >= from.y - 1 && to.y <= from.y + 1
+}

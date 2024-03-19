@@ -316,23 +316,39 @@ pub fn update_camera(world: &mut World, content: &mut GameContent, systems: &mut
 
     content.map.move_pos(systems, content.camera.pos);
     
-    for (_, (worldentitytype, sprite, pos, pos_offset, hp_bar)) in 
-        world.query_mut::<(&WorldEntityType, &SpriteIndex, &Position, &PositionOffset, Option<&HPBar>)>()
+    for (entity, (worldentitytype, sprite, pos, pos_offset, hp_bar, finalized)) in 
+        world.query_mut::<(
+            &WorldEntityType, &SpriteIndex, 
+            &Position, &PositionOffset, 
+            Option<&HPBar>, &mut Finalized)>()
             .into_iter()
     {
         match worldentitytype {
             WorldEntityType::Player => {
                 if let Some(hpbar) = hp_bar {
                     update_player_position(systems, &content, sprite.0, pos, pos_offset, hpbar);
+                    if !finalized.0 {
+                        finalized.0 = true;
+                        systems.gfx.set_visible(sprite.0, true);
+                    }
                 }
             }
             WorldEntityType::Npc => {
                 if let Some(hpbar) = hp_bar {
                     update_npc_position(systems, &content, sprite.0, pos, pos_offset, hpbar);
+                    if !finalized.0 {
+                        finalized.0 = true;
+                        systems.gfx.set_visible(sprite.0, true);
+                    }
                 }
             }
-            WorldEntityType::MapItem =>
-                update_mapitem_position(systems, &content, sprite.0, pos, pos_offset),
+            WorldEntityType::MapItem => {
+                update_mapitem_position(systems, &content, sprite.0, pos, pos_offset);
+                if !finalized.0 {
+                    finalized.0 = true;
+                    systems.gfx.set_visible(sprite.0, true);
+                }
+            }
             _ => {}
         }
     }

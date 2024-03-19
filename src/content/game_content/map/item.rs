@@ -3,7 +3,7 @@ use bytey::{ByteBufferRead, ByteBufferWrite};
 use hecs::World;
 use serde::{Deserialize, Serialize};
 
-use crate::{game_content::Camera, get_start_map_pos, DrawSetting, Entity, EntityType, GameContent, MapPosition, Position, PositionOffset, SpriteImage, SpriteIndex, WorldEntityType, WorldExtras, ORDER_MAP_ITEM, TILE_SIZE};
+use crate::{game_content::Camera, get_start_map_pos, DrawSetting, Entity, EntityType, Finalized, GameContent, MapPosition, Position, PositionOffset, SpriteImage, SpriteIndex, WorldEntityType, WorldExtras, ORDER_MAP_ITEM, TILE_SIZE};
 
 #[derive(
     Debug,
@@ -55,6 +55,7 @@ impl MapItem {
             SpriteIndex(index),
             SpriteImage(sprite as u8),
             PositionOffset::default(),
+            Finalized::default(),
         ));
         let _ = world.insert_one(entity, EntityType::MapItem(Entity(entity)));
         Entity(entity)

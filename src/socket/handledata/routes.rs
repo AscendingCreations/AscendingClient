@@ -1,7 +1,7 @@
 use hecs::World;
 use bytey::ByteBuffer;
 use graphics::*;
-use crate::{add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, get_start_map_pos, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX};
+use crate::{add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, get_start_map_pos, is_map_connected, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX};
 
 pub fn handle_ping(
     _socket: &mut Socket,
@@ -268,10 +268,6 @@ pub fn handle_playerspawn(
                             vital.vitalmax = vitalmax;
                         }
                     }
-
-                    if content.game_content.finalized {
-                        player_finalized(world, systems, &player);
-                    }
                 }
             }
         }
@@ -300,16 +296,21 @@ pub fn handle_playermove(
 
         if let Some(myentity) = content.game_content.myentity {
             if myentity != entity && world.contains(entity.0) {
-                let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
-                let movement_data = MovementData { end_pos: pos, dir };
-                if movementbuffer.data.is_empty() {
-                    movementbuffer.data.push_back(movement_data);
-                } else {
-                    if let Some(data) =  movementbuffer.data.back() {
-                        if *data != movement_data {
-                            movementbuffer.data.push_back(movement_data);
+                let player_pos = world.get_or_panic::<Position>(&myentity);
+                if is_map_connected(player_pos.map, pos.map) {
+                    let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
+                    let movement_data = MovementData { end_pos: pos, dir };
+                    if movementbuffer.data.is_empty() {
+                        movementbuffer.data.push_back(movement_data);
+                    } else {
+                        if let Some(data) =  movementbuffer.data.back() {
+                            if *data != movement_data {
+                                movementbuffer.data.push_back(movement_data);
+                            }
                         }
                     }
+                } else {
+                    unload_player(world, systems, &entity);
                 }
             }
         }
@@ -377,7 +378,7 @@ pub fn handle_dataremovelist(
     let remove_list = data.read::<Vec<Entity>>()?;
 
     remove_list.iter().for_each(|entity| {
-        let world_entity_type = world.get_or_panic::<WorldEntityType>(entity);
+        let world_entity_type = world.get_or_default::<WorldEntityType>(entity);
         match world_entity_type {
             WorldEntityType::Player => {
                 unload_player(world, systems, entity);
@@ -489,7 +490,7 @@ pub fn handle_playerattack(
 
     if let Some(myentity) = content.game_content.myentity {
         if myentity != entity {
-            let world_entity_type = world.get_or_panic::<WorldEntityType>(&entity);
+            let world_entity_type = world.get_or_default::<WorldEntityType>(&entity);
             match world_entity_type {
                 WorldEntityType::Player => init_player_attack(world, systems, &entity, seconds),
                 _ => {}
@@ -685,8 +686,14 @@ pub fn handle_npcdata(
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>().expect("Could not read data"));
 
         if let Some(myentity) = content.game_content.myentity {
+            let move_map_pos = world.get_or_panic::<PlayerMoveMap>(&myentity);
+
             if !world.contains(entity.0) {
-                let client_map = world.get_or_panic::<Position>(&myentity).map;
+                let client_map = if let Some(map_pos) = move_map_pos.0 {
+                    map_pos
+                } else {
+                    world.get_or_panic::<Position>(&myentity).map
+                };
                 let npc = add_npc(world, systems, pos, client_map, Some(&entity));
                 content.game_content.npcs.insert(npc);
 
@@ -716,10 +723,6 @@ pub fn handle_npcdata(
                         vital.vitalmax = vitalmax;
                     }
                 }
-
-                if content.game_content.finalized {
-                    npc_finalized(world, systems, &npc);
-                }
             }
         }
     }
@@ -730,8 +733,8 @@ pub fn handle_npcdata(
 pub fn handle_npcmove(
     _socket: &mut Socket,
     world: &mut World,
-    _systems: &mut DrawSetting,
-    _content: &mut Content,
+    systems: &mut DrawSetting,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
@@ -746,15 +749,22 @@ pub fn handle_npcmove(
         let dir = data.read::<u8>()?;
 
         if world.contains(entity.0) {
-            let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
-            let movement_data = MovementData { end_pos: pos, dir };
-            if movementbuffer.data.is_empty() {
-                movementbuffer.data.push_back(movement_data);
-            } else {
-                if let Some(data) =  movementbuffer.data.back() {
-                    if *data != movement_data {
+            if let Some(myentity) = content.game_content.myentity {
+                let player_pos = world.get_or_panic::<Position>(&myentity);
+                if is_map_connected(player_pos.map, pos.map) {
+                    let mut movementbuffer = world.get::<&mut MovementBuffer>(entity.0).expect("Could not find MovementBuffer");
+                    let movement_data = MovementData { end_pos: pos, dir };
+                    if movementbuffer.data.is_empty() {
                         movementbuffer.data.push_back(movement_data);
+                    } else {
+                        if let Some(data) =  movementbuffer.data.back() {
+                            if *data != movement_data {
+                                movementbuffer.data.push_back(movement_data);
+                            }
+                        }
                     }
+                } else {
+                    unload_npc(world, systems, &entity);
                 }
             }
         }
@@ -909,7 +919,7 @@ pub fn handle_entityunload(
         let entity = data.read::<Entity>()?;
 
         if world.contains(entity.0) {
-            let world_entity_type = world.get_or_panic::<WorldEntityType>(&entity);
+            let world_entity_type = world.get_or_default::<WorldEntityType>(&entity);
             match world_entity_type {
                 WorldEntityType::Player => {
                     unload_player(world, systems, &entity);
