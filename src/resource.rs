@@ -1,4 +1,4 @@
-use std::fs;
+use std::fs::{self, DirEntry};
 use std::path::Path;
 
 use graphics::*;
@@ -30,6 +30,16 @@ impl TextureAllocation {
         atlases: &mut [AtlasSet],
         renderer: &GpuRenderer,
     ) -> Result<Self, AscendingError> {
+        let is_file = |path: &DirEntry| {
+            if let Ok(meta) = path.metadata() {
+                if meta.is_file() {
+                    return true;
+                }
+            }
+
+            false
+        };
+
         // This is how we load a image into a atlas/Texture. It returns the location of the image
         // within the texture. its x, y, w, h.  Texture loads the file. group_uploads sends it to the Texture
         // renderer is used to upload it to the GPU when done.
@@ -56,6 +66,10 @@ impl TextureAllocation {
 
         if let Ok(mut paths) = fs::read_dir("./images/tiles/") {
             while let Some(path) = paths.next().and_then(|p| p.ok()) {
+                if !is_file(&path) {
+                    continue;
+                }
+
                 tilesheet.push(TilesheetData {
                     name: path.path().display().to_string(),
                     tile: Texture::from_file(path.path())?
@@ -73,6 +87,10 @@ impl TextureAllocation {
 
         if let Ok(mut paths) = fs::read_dir("./images/items/") {
             while let Some(path) = paths.next().and_then(|p| p.ok()) {
+                if !is_file(&path) {
+                    continue;
+                }
+
                 items.push(TextureData {
                     name: path.path().display().to_string(),
                     allocation: Texture::from_file(path.path())?
@@ -86,6 +104,10 @@ impl TextureAllocation {
 
         if let Ok(mut paths) = fs::read_dir("./images/player/") {
             while let Some(path) = paths.next().and_then(|p| p.ok()) {
+                if !is_file(&path) {
+                    continue;
+                }
+
                 players.push(TextureData {
                     name: path.path().display().to_string(),
                     allocation: Texture::from_file(path.path())?
