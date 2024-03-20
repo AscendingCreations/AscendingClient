@@ -8,6 +8,7 @@ use crate::{
     Alert, Direction, DrawSetting, Tooltip,
 };
 
+#[derive(Clone)]
 #[allow(clippy::enum_variant_names)]
 pub enum MouseInputType {
     MouseLeftDown,

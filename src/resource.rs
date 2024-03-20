@@ -21,6 +21,7 @@ pub struct TextureAllocation {
     pub horizontal_arrow: TextureData,
     pub vertical_arrow: TextureData,
     pub button_icon: TextureData,
+    pub target: TextureData,
     pub tilesheet: Vec<TilesheetData>,
     pub items: Vec<TextureData>,
     pub players: Vec<TextureData>,
@@ -40,6 +41,7 @@ impl TextureAllocation {
             ("horizontal_arrow.png", "images/gui/horizontal_arrow.png"),
             ("vertical_arrow.png", "images/gui/vertical_arrow.png"),
             ("button_icon.png", "images/gui/button_icon.png"),
+            ("target.png", "images/misc/target.png"),
         ] {
             textures.push(TextureData {
                 name: name.to_string(),
@@ -88,6 +90,7 @@ impl TextureAllocation {
             horizontal_arrow: textures.remove(0),
             vertical_arrow: textures.remove(0),
             button_icon: textures.remove(0),
+            target: textures.remove(0),
             tilesheet,
             items,
             players,

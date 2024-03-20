@@ -23,17 +23,31 @@ impl GameContent {
         screen_pos: Vec2,
     ) {
         if alert.visible {
-            alert.alert_mouse_input(systems, input_type, screen_pos);
+            alert.alert_mouse_input(systems, input_type.clone(), screen_pos);
             return;
         }
 
-        Interface::mouse_input(
+        if Interface::mouse_input(
             &mut content.game_content.interface,
             world,
             systems,
-            input_type,
+            input_type.clone(),
             screen_pos,
-        );
+        ) {
+            return;
+        }
+
+        match input_type {
+            MouseInputType::MouseLeftDown => {
+                let target_entity = find_entity(world, systems, &mut content.game_content, screen_pos);
+                if let Some(entity) = target_entity {
+                    content.game_content.target.set_target(systems, &entity);
+                } else {
+                    content.game_content.target.clear_target(systems);
+                }
+            }
+            _ => {}
+        }
     }
 
     pub fn key_input(

@@ -104,7 +104,8 @@ impl Interface {
         systems: &mut DrawSetting,
         input_type: MouseInputType,
         screen_pos: Vec2,
-    ) {
+    ) -> bool {
+        let mut result = false;
         match input_type {
             MouseInputType::MouseMove => {
                 Interface::hover_buttons(interface, systems, screen_pos);
@@ -134,12 +135,14 @@ impl Interface {
                 if let Some(index) = button_index {
                     interface.did_button_click = true;
                     trigger_button(interface, systems, index);
+                    result = true;
                 }
 
                 if interface.drag_window.is_none() {
                     let window = find_window(interface, screen_pos);
-                    if let Some(result) = window {
-                        hold_interface(interface, systems, result, screen_pos);
+                    if let Some(result_window) = window {
+                        hold_interface(interface, systems, result_window, screen_pos);
+                        result = true;
                     }
                 }
 
@@ -150,12 +153,14 @@ impl Interface {
                             .setting
                             .sfx_scroll
                             .set_hold(systems, true, screen_pos);
+                        result = true;
                     }
                     if interface.setting.bgm_scroll.in_scroll(screen_pos) {
                         interface
                             .setting
                             .bgm_scroll
                             .set_hold(systems, true, screen_pos);
+                        result = true;
                     }
                 }
                 if interface.chatbox.scrollbar.in_scroll(screen_pos) {
@@ -163,6 +168,7 @@ impl Interface {
                         .chatbox
                         .scrollbar
                         .set_hold(systems, true, screen_pos);
+                    result = true;
                 }
 
                 let chatbox_button_index =
@@ -170,6 +176,7 @@ impl Interface {
                 if let Some(index) = chatbox_button_index {
                     interface.chatbox.did_button_click = true;
                     trigger_chatbox_button(interface, systems, index);
+                    result = true;
                 }
 
                 interface.click_textbox(systems, screen_pos);
@@ -190,6 +197,7 @@ impl Interface {
                             interface.chatbox.move_window(systems, screen_pos)
                         }
                     }
+                    result = true;
                 } else {
                     if interface.setting.visible {
                         interface
@@ -200,12 +208,21 @@ impl Interface {
                             .setting
                             .bgm_scroll
                             .set_move_scroll(systems, screen_pos);
+
+                        if interface.setting.sfx_scroll.in_hold || 
+                            interface.setting.bgm_scroll.in_hold {
+                            result = true;
+                        }
                     }
                     interface
                         .chatbox
                         .scrollbar
                         .set_move_scroll(systems, screen_pos);
                     interface.chatbox.set_chat_scrollbar(systems, false);
+
+                    if interface.chatbox.scrollbar.in_hold {
+                        result = true;
+                    }
                 }
             }
             MouseInputType::MouseRelease => {
@@ -240,6 +257,7 @@ impl Interface {
                 interface.chatbox.reset_buttons(systems);
             }
         }
+        result
     }
 
     pub fn key_input(

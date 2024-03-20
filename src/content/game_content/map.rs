@@ -135,6 +135,57 @@ impl MapContent {
     }
 }
 
+pub fn find_entity(
+    world: &mut World,
+    systems: &mut DrawSetting,
+    content: &mut GameContent,
+    screen_pos: Vec2,
+) -> Option<Entity> {
+    let center_pos = systems.gfx.get_pos(content.map.index[0].0);
+    let adjusted_pos = Vec2::new(screen_pos.x - center_pos.x, screen_pos.y - center_pos.y);
+    let tile_pos = Vec2::new((adjusted_pos.x / 20.0).floor(), (adjusted_pos.y / 20.0).floor());
+    let mut target_pos = Position {
+        x: tile_pos.x as i32,
+        y: tile_pos.y as i32,
+        map: content.map.map_pos,
+    };
+
+    if target_pos.x >= 32 {
+        target_pos.x -= 32;
+        target_pos.map.x += 1;
+    }
+    if target_pos.y >= 32 {
+        target_pos.y -= 32;
+        target_pos.map.y += 1;
+    }
+    if target_pos.x < 0 {
+        target_pos.x = 32 + target_pos.x;
+        target_pos.map.x -= 1;
+    }
+    if target_pos.y < 0 {
+        target_pos.y = 32 + target_pos.y;
+        target_pos.map.y -= 1;
+    }
+
+    let target_entity = world
+        .query::<(&Position, &WorldEntityType)>()
+        .iter()
+        .find_map(|(entity, (pos, world_type))| {
+            if *pos == target_pos
+                && (*world_type == WorldEntityType::Npc
+                    || *world_type == WorldEntityType::Player)
+            {
+                if let Some(myentity) = content.myentity {
+                    if myentity.0 != entity {
+                        Some(Entity(entity))
+                    } else { None }
+                } else { None }
+            } else { None }
+        });
+    
+    target_entity
+}
+
 pub fn can_move(
     world: &mut World,
     systems: &mut DrawSetting,

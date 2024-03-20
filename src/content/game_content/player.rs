@@ -323,11 +323,12 @@ pub fn end_player_move(
 
 pub fn update_player_position(
     systems: &mut DrawSetting,
-    content: &GameContent,
+    content: &mut GameContent,
     sprite: usize,
     pos: &Position,
     pos_offset: &PositionOffset,
     hpbar: &HPBar,
+    is_target: bool,
 ) {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
         .unwrap_or_else(|| Vec2::new(0.0, 0.0));
@@ -336,12 +337,18 @@ pub fn update_player_position(
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset.offset
         - Vec2::new(10.0, 4.0);
-    if start_pos + texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
-        return;
-    }
 
     let pos =
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
+    
+    if is_target {
+        content.target.set_target_pos(systems, pos);
+    }
+
+    if pos == Vec2::new(cur_pos.x, cur_pos.y) {
+        return;
+    }
+
     systems
         .gfx
         .set_pos(sprite, Vec3::new(pos.x, pos.y, cur_pos.z));

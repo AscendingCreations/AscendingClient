@@ -19,12 +19,14 @@ pub mod entity;
 pub mod map;
 pub mod npc;
 pub mod player;
+pub mod target;
 
 use camera::*;
 pub use entity::*;
 pub use map::*;
 pub use npc::*;
 pub use player::*;
+pub use target::*;
 
 const KEY_ATTACK: usize = 0;
 const KEY_MOVEUP: usize = 1;
@@ -43,6 +45,7 @@ pub struct GameContent {
     keyinput: [bool; MAX_KEY],
     pub myentity: Option<Entity>,
     pub finalized: bool,
+    pub target: Target,
 }
 
 impl GameContent {
@@ -57,6 +60,7 @@ impl GameContent {
             keyinput: [false; MAX_KEY],
             finalized: false,
             myentity: None,
+            target: Target::new(systems),
         }
     }
 
@@ -66,6 +70,7 @@ impl GameContent {
         self.keyinput.iter_mut().for_each(|key| {
             *key = false;
         });
+        self.target.recreate(systems);
         self.finalized = false;
     }
 
@@ -85,6 +90,7 @@ impl GameContent {
         self.finalized = false;
         self.myentity = None;
         self.interface.unload(systems);
+        self.target.unload(systems);
         self.map.unload(systems);
     }
 
@@ -439,7 +445,7 @@ pub fn update_camera(
     content.map.move_pos(systems, content.camera.pos);
 
     for (
-        _entity,
+        entity,
         (worldentitytype, sprite, pos, pos_offset, hp_bar),
     ) in world
         .query_mut::<(
@@ -447,22 +453,53 @@ pub fn update_camera(
             &SpriteIndex,
             &Position,
             &PositionOffset,
-            Option<&HPBar>,
+            Option<&mut HPBar>,
         )>()
         .into_iter()
     {
+        let is_target = if let Some(target) = content.target.entity {
+            target.0 == entity
+        } else {
+            false
+        };
         match worldentitytype {
             WorldEntityType::Player => {
                 if let Some(hpbar) = hp_bar {
+                    if is_target {
+                        if !hpbar.visible {
+                            hpbar.visible = true;
+                            systems.gfx.set_visible(hpbar.bar_index, true);
+                            systems.gfx.set_visible(hpbar.bg_index, true);
+                        }
+                    } else {
+                        if hpbar.visible {
+                            hpbar.visible = false;
+                            systems.gfx.set_visible(hpbar.bar_index, false);
+                            systems.gfx.set_visible(hpbar.bg_index, false);
+                        }
+                    }
                     update_player_position(
-                        systems, content, sprite.0, pos, pos_offset, hpbar,
+                        systems, content, sprite.0, pos, pos_offset, hpbar, is_target
                     );
                 }
             }
             WorldEntityType::Npc => {
                 if let Some(hpbar) = hp_bar {
+                    if is_target {
+                        if !hpbar.visible {
+                            hpbar.visible = true;
+                            systems.gfx.set_visible(hpbar.bar_index, true);
+                            systems.gfx.set_visible(hpbar.bg_index, true);
+                        }
+                    } else {
+                        if hpbar.visible {
+                            hpbar.visible = false;
+                            systems.gfx.set_visible(hpbar.bar_index, false);
+                            systems.gfx.set_visible(hpbar.bg_index, false);
+                        }
+                    }
                     update_npc_position(
-                        systems, content, sprite.0, pos, pos_offset, hpbar,
+                        systems, content, sprite.0, pos, pos_offset, hpbar, is_target
                     );
                 }
             }
