@@ -92,6 +92,10 @@ pub const fn enum_to_dir(dir: Direction) -> u8 {
     }
 }
 
+pub fn get_percent(value: i32, max_value: i32, size: i32) -> i32 {
+    ((value as f32 / max_value as f32) * size as f32).floor() as i32
+}
+
 /*pub fn next_down(f: f32) -> f32 {
     // We must use strictly integer arithmetic to prevent denormals from
     // flushing to zero after an arithmetic operation on some platforms.

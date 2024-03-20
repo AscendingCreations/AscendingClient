@@ -29,6 +29,7 @@ enum ClientPacket {
     DeleteItem,
     Message,
     AdminCommand,
+    SetTarget,
 }
 
 pub fn send_register(
@@ -222,6 +223,20 @@ pub fn send_admincommand(
 
     buf.write(ClientPacket::AdminCommand)?;
     buf.write(command)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_settarget(
+    socket: &mut Socket,
+    entity: Option<Entity>,
+) -> SocketResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(12)?;
+
+    buf.write(ClientPacket::SetTarget)?;
+    buf.write(entity)?;
     buf.finish()?;
 
     socket.send(buf);

@@ -1,4 +1,4 @@
-use crate::{DrawSetting, Entity, ORDER_TARGET};
+use crate::{send_settarget, DrawSetting, Entity, Socket, ORDER_TARGET};
 use graphics::*;
 use hecs::World;
 
@@ -46,17 +46,19 @@ impl Target {
         systems.gfx.remove_gfx(self.img_index);
     }
 
-    pub fn set_target(&mut self, systems: &mut DrawSetting, target: &Entity) {
-        self.entity = Some(target.clone());
+    pub fn set_target(&mut self, socket: &mut Socket, systems: &mut DrawSetting, target: &Entity) {
+        self.entity = Some(*target);
         systems.gfx.set_visible(self.img_index, true);
+        let _ = send_settarget(socket, self.entity);
     }
 
-    pub fn clear_target(&mut self, systems: &mut DrawSetting) {
+    pub fn clear_target(&mut self, socket: &mut Socket, systems: &mut DrawSetting) {
         self.entity = None;
         systems.gfx.set_visible(self.img_index, false);
+        let _ = send_settarget(socket, self.entity);
     }
 
-    pub fn set_target_pos(&mut self, systems: &mut DrawSetting, pos: Vec2) {
+    pub fn set_target_pos(&mut self, socket: &mut Socket, systems: &mut DrawSetting, pos: Vec2) {
         let mut image_pos = systems.gfx.get_pos(self.img_index);
         let image_size = systems.gfx.get_size(self.img_index);
         image_pos.x = pos.x;
@@ -68,7 +70,7 @@ impl Target {
             image_pos.x > systems.size.width ||
             image_pos.y > systems.size.height
         {
-            self.clear_target(systems);
+            self.clear_target(socket, systems);
         }
     }
 }

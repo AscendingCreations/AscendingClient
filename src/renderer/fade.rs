@@ -3,7 +3,7 @@ use graphics::*;
 use hecs::World;
 use winit::dpi::PhysicalSize;
 
-use crate::{content::*, gfx_collection::*, values::*, DrawSetting};
+use crate::{content::*, gfx_collection::*, values::*, DrawSetting, Socket};
 
 #[derive(Default)]
 pub enum FadeData {
@@ -216,6 +216,7 @@ pub fn fade_end(
     systems: &mut DrawSetting,
     world: &mut World,
     content: &mut Content,
+    socket: &mut Socket,
 ) {
     #[allow(clippy::single_match)]
     match systems.fade.f_end_index {
@@ -228,7 +229,7 @@ pub fn fade_end(
                 Position::default()
             };
             content.game_content.init_map(systems, pos.map);
-            content.game_content.init_finalized_data(world, systems);
+            content.game_content.init_finalized_data(world, systems, socket);
 
             systems.fade.init_fade(
                 &mut systems.gfx,

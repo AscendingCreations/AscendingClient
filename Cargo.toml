@@ -41,24 +41,18 @@ regex = "1.10.3"
 derivative = "2.2.0"
 
 [dependencies.camera]
-git = "https://github.com/AscendingCreations/AscendingLibraries"
-#path = "../AscendingLibraries/camera"
-#rev = "f2324c1"
 package = "ascending_camera"
+#path = "./camera"
 version = "0.1.0"
 
 [dependencies.input]
-git = "https://github.com/AscendingCreations/AscendingLibraries"
-#path = "../AscendingLibraries/input"
-#rev = "f2324c1"
 package = "ascending_input"
+#path = "./input"
 version = "0.1.0"
 
 [dependencies.graphics]
-git = "https://github.com/AscendingCreations/AscendingLibraries"
-#path = "../AscendingLibraries/graphics"
-#rev = "f2324c1"
 package = "ascending_graphics"
+#path = "./graphics"
 version = "0.1.0"
 
 [profile.release]

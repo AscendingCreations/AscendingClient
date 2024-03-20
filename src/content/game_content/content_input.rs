@@ -16,7 +16,7 @@ impl GameContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut DrawSetting,
-        _socket: &mut Socket,
+        socket: &mut Socket,
         alert: &mut Alert,
         _tooltip: &mut Tooltip,
         input_type: MouseInputType,
@@ -41,9 +41,9 @@ impl GameContent {
             MouseInputType::MouseLeftDown => {
                 let target_entity = find_entity(world, systems, &mut content.game_content, screen_pos);
                 if let Some(entity) = target_entity {
-                    content.game_content.target.set_target(systems, &entity);
+                    content.game_content.target.set_target(socket, systems, &entity);
                 } else {
-                    content.game_content.target.clear_target(systems);
+                    content.game_content.target.clear_target(socket, systems);
                 }
             }
             _ => {}

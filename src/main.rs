@@ -444,7 +444,7 @@ async fn main() -> Result<(), AscendingError> {
             &mut loop_timer,
         );
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
-            fade_end(&mut systems, &mut world, &mut content);
+            fade_end(&mut systems, &mut world, &mut content, &mut socket);
         }
         if systems.map_fade.fade_logic(&mut systems.gfx, seconds) {
             map_fade_end(&mut systems, &mut world, &mut content);

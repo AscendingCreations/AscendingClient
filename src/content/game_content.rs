@@ -116,6 +116,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut DrawSetting,
+        socket: &mut Socket,
     ) {
         for entity in self.players.iter() {
             player_finalized(world, systems, entity);
@@ -126,7 +127,7 @@ impl GameContent {
         for entity in self.mapitems.iter() {
             MapItem::finalized(world, systems, entity);
         }
-        update_camera(world, self, systems);
+        update_camera(world, self, systems, socket);
         self.finalized = true;
     }
 
@@ -134,6 +135,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut DrawSetting,
+        socket: &mut Socket,
         dir: Direction,
         buffer: &mut BufferTask,
     ) {
@@ -194,7 +196,7 @@ impl GameContent {
         }
 
         self.map.sort_map();
-        update_camera(world, self, systems);
+        update_camera(world, self, systems, socket);
     }
 
     pub fn handle_key_input(
@@ -276,6 +278,12 @@ impl GameContent {
         seconds: f32,
     ) {
         if let Some(myentity) = self.myentity {
+            if world.get_or_panic::<Attacking>(&myentity).0
+                || world.get_or_panic::<Movement>(&myentity).is_moving
+            {
+                return;
+            }
+
             let pos = world.get_or_panic::<Position>(&myentity);
             let dir = world.get_or_panic::<Dir>(&myentity).0;
 
@@ -331,6 +339,10 @@ impl GameContent {
                         None
                     }
                 });
+            
+            if let Some(got_target) = target_entity {
+                self.target.set_target(socket, systems, &got_target);
+            }
 
             let _ = send_attack(socket, dir, target_entity);
             init_player_attack(world, systems, &myentity, seconds);
@@ -361,7 +373,7 @@ pub fn update_player(
             }
         }
 
-        process_player_movement(world, systems, entity, content, buffer);
+        process_player_movement(world, systems, socket, entity, content, buffer);
         process_player_attack(world, systems, entity, seconds)
     }
 }
@@ -430,6 +442,7 @@ pub fn update_camera(
     world: &mut World,
     content: &mut GameContent,
     systems: &mut DrawSetting,
+    socket: &mut Socket,
 ) {
     let player_pos = if let Some(entity) = content.myentity {
         let pos_offset = world.get_or_panic::<PositionOffset>(&entity);
@@ -479,7 +492,7 @@ pub fn update_camera(
                         }
                     }
                     update_player_position(
-                        systems, content, sprite.0, pos, pos_offset, hpbar, is_target
+                        systems, content, socket, sprite.0, pos, pos_offset, hpbar, is_target
                     );
                 }
             }
@@ -499,7 +512,7 @@ pub fn update_camera(
                         }
                     }
                     update_npc_position(
-                        systems, content, sprite.0, pos, pos_offset, hpbar, is_target
+                        systems, content, socket, sprite.0, pos, pos_offset, hpbar, is_target
                     );
                 }
             }

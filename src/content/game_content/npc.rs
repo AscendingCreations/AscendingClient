@@ -268,6 +268,7 @@ pub fn end_npc_move(
 pub fn update_npc_position(
     systems: &mut DrawSetting,
     content: &mut GameContent,
+    socket: &mut Socket,
     sprite: usize,
     pos: &Position,
     pos_offset: &PositionOffset,
@@ -286,7 +287,7 @@ pub fn update_npc_position(
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
 
     if is_target {
-        content.target.set_target_pos(systems, pos);
+        content.target.set_target_pos(socket, systems, pos);
     }
 
     if pos == Vec2::new(cur_pos.x, cur_pos.y) {

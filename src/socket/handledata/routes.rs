@@ -1,5 +1,5 @@
 use crate::{
-    add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, get_start_map_pos, is_map_connected, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX
+    add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, get_percent, get_start_map_pos, is_map_connected, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -375,7 +375,7 @@ pub fn handle_playermove(
 }
 
 pub fn handle_playerwarp(
-    _socket: &mut Socket,
+    socket: &mut Socket,
     world: &mut World,
     systems: &mut DrawSetting,
     content: &mut Content,
@@ -408,7 +408,7 @@ pub fn handle_playerwarp(
         }
         if let Some(myentity) = content.game_content.myentity {
             if myentity == entity {
-                update_camera(world, &mut content.game_content, systems);
+                update_camera(world, &mut content.game_content, systems, socket);
             }
         }
     }
@@ -486,13 +486,38 @@ pub fn handle_playerdir(
 
 pub fn handle_playervitals(
     _socket: &mut Socket,
-    _world: &mut World,
+    world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
+    let count = data.read::<u32>()?;
+
+    for _ in 0..count {
+        let entity = data.read::<Entity>()?;
+        let mut vitals = [0; VITALS_MAX];
+        vitals.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
+        let mut vitalmax = [0; VITALS_MAX];
+        vitalmax.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
+        
+        if world.contains(entity.0) {
+            if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
+                vital.vital = vitals;
+                vital.vitalmax = vitalmax;
+            }
+        }
+    }
+
     Ok(())
 }
 
@@ -541,13 +566,13 @@ pub fn handle_playerattack(
     data: &mut ByteBuffer,
     seconds: f32,
 ) -> SocketResult<()> {
-    let entity = data.read::<Entity>()?;
+    let count = data.read::<u32>()?;
 
-    if let Some(myentity) = content.game_content.myentity {
-        if myentity != entity {
-            let world_entity_type =
-                world.get_or_default::<WorldEntityType>(&entity);
-            if let WorldEntityType::Player = world_entity_type {
+    for _ in 0..count {
+        let entity = data.read::<Entity>()?;
+
+        if let Some(myentity) = content.game_content.myentity {
+            if myentity != entity && world.contains(entity.0) {
                 init_player_attack(world, systems, &entity, seconds)
             }
         }
@@ -889,25 +914,65 @@ pub fn handle_npcdir(
 
 pub fn handle_npcvital(
     _socket: &mut Socket,
-    _world: &mut World,
-    _systems: &mut DrawSetting,
+    world: &mut World,
+    systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
+    let count = data.read::<u32>()?;
+
+    for _ in 0..count {
+        let entity = data.read::<Entity>()?;
+        let mut vitals = [0; VITALS_MAX];
+        vitals.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
+        let mut vitalmax = [0; VITALS_MAX];
+        vitalmax.copy_from_slice(
+            &data
+                .read::<[i32; VITALS_MAX]>()
+                .expect("Could not read data"),
+        );
+
+        if world.contains(entity.0) {
+            if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
+                vital.vital = vitals;
+                vital.vitalmax = vitalmax;
+            }
+
+            let bar_index = world.get_or_panic::<HPBar>(&entity).bar_index;
+            let mut size = systems.gfx.get_size(bar_index);
+            size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
+            systems.gfx.set_size(bar_index, size);
+        }
+    }
+
     Ok(())
 }
 
 pub fn handle_npcattack(
     _socket: &mut Socket,
-    _world: &mut World,
+    world: &mut World,
     _systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
 ) -> SocketResult<()> {
+    let count = data.read::<u32>()?;
+
+    for _ in 0..count {
+        let entity = data.read::<Entity>()?;
+
+        if world.contains(entity.0) {
+            //ToDo Npc Attack
+        }
+    }
+
     Ok(())
 }
 

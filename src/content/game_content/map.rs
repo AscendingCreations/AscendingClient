@@ -159,11 +159,11 @@ pub fn find_entity(
         target_pos.map.y += 1;
     }
     if target_pos.x < 0 {
-        target_pos.x = 32 + target_pos.x;
+        target_pos.x += 32;
         target_pos.map.x -= 1;
     }
     if target_pos.y < 0 {
-        target_pos.y = 32 + target_pos.y;
+        target_pos.y += 32;
         target_pos.map.y -= 1;
     }
 

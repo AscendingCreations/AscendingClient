@@ -275,6 +275,7 @@ pub fn end_player_move(
     world: &mut World,
     systems: &mut DrawSetting,
     content: &mut GameContent,
+    socket: &mut Socket,
     entity: &Entity,
     buffer: &mut BufferTask,
 ) {
@@ -311,7 +312,7 @@ pub fn end_player_move(
     if let Some(p) = &content.myentity {
         if p == entity && move_map {
             let dir = world.get_or_panic::<Movement>(entity).move_direction;
-            content.move_map(world, systems, dir, buffer);
+            content.move_map(world, systems, socket, dir, buffer);
             finalize_entity(world, systems);
         }
     }
@@ -324,6 +325,7 @@ pub fn end_player_move(
 pub fn update_player_position(
     systems: &mut DrawSetting,
     content: &mut GameContent,
+    socket: &mut Socket,
     sprite: usize,
     pos: &Position,
     pos_offset: &PositionOffset,
@@ -342,7 +344,7 @@ pub fn update_player_position(
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
     
     if is_target {
-        content.target.set_target_pos(systems, pos);
+        content.target.set_target_pos(socket, systems, pos);
     }
 
     if pos == Vec2::new(cur_pos.x, cur_pos.y) {
@@ -479,6 +481,7 @@ pub fn process_player_attack(
 pub fn process_player_movement(
     world: &mut World,
     systems: &mut DrawSetting,
+    socket: &mut Socket,
     entity: &Entity,
     content: &mut GameContent,
     buffer: &mut BufferTask,
@@ -515,6 +518,6 @@ pub fn process_player_movement(
                 .offset = offset;
         }
     } else {
-        end_player_move(world, systems, content, entity, buffer);
+        end_player_move(world, systems, content, socket, entity, buffer);
     }
 }
