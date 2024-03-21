@@ -1,4 +1,4 @@
-use crate::{fade::*, socket::*, Entity, Position};
+use crate::{fade::*, socket::*, BufferTask, Entity, Position};
 
 use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
 use serde::{Deserialize, Serialize};
@@ -12,6 +12,7 @@ type PacketFunction = fn(
     &mut Alert,
     &mut ByteBuffer,
     f32,
+    &mut BufferTask,
 ) -> SocketResult<()>;
 
 #[derive(

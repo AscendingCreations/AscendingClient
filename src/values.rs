@@ -28,7 +28,16 @@ pub enum EntityType {
 }
 
 #[derive(
-    Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    PartialEq,
+    Eq,
+    Serialize_repr,
+    Deserialize_repr,
+    ByteBufferRead,
+    ByteBufferWrite,
 )]
 #[repr(u8)]
 pub enum MessageChannel {

@@ -95,25 +95,3 @@ pub const fn enum_to_dir(dir: Direction) -> u8 {
 pub fn get_percent(value: i32, max_value: i32, size: i32) -> i32 {
     ((value as f32 / max_value as f32) * size as f32).floor() as i32
 }
-
-/*pub fn next_down(f: f32) -> f32 {
-    // We must use strictly integer arithmetic to prevent denormals from
-    // flushing to zero after an arithmetic operation on some platforms.
-    const NEG_TINY_BITS: u32 = 0x8000_0001; // Smallest (in magnitude) negative f32.
-    const CLEAR_SIGN_MASK: u32 = 0x7fff_ffff;
-
-    let bits = f.to_bits();
-    if f.is_nan() || bits == f32::NEG_INFINITY.to_bits() {
-        return f;
-    }
-
-    let abs = bits & CLEAR_SIGN_MASK;
-    let next_bits = if abs == 0 {
-        NEG_TINY_BITS
-    } else if bits == abs {
-        bits - 1
-    } else {
-        bits + 1
-    };
-    f32::from_bits(next_bits)
-}*/

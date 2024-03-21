@@ -21,7 +21,7 @@ pub use error::*;
 pub use handledata::*;
 pub use sends::*;
 
-use crate::{config::*, Alert, Content, DrawSetting};
+use crate::{config::*, Alert, BufferTask, Content, DrawSetting};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ClientState {
@@ -370,6 +370,7 @@ pub fn process_packets(
     content: &mut Content,
     alert: &mut Alert,
     seconds: f32,
+    buffertask: &mut BufferTask,
 ) {
     let mut count: usize = 0;
     let mut length: u64;
@@ -402,6 +403,7 @@ pub fn process_packets(
                 alert,
                 &mut buffer,
                 seconds,
+                buffertask,
             )
             .is_err()
             {

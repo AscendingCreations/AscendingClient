@@ -9,13 +9,13 @@ use crate::{
 };
 use hecs::World;
 
-mod chatbox;
+pub mod chatbox;
 mod inventory;
 mod profile;
 mod screen;
 mod setting;
 
-use chatbox::*;
+pub use chatbox::*;
 use inventory::*;
 use profile::*;
 use screen::*;
@@ -40,7 +40,7 @@ pub struct Interface {
     inventory: Inventory,
     profile: Profile,
     setting: Setting,
-    chatbox: Chatbox,
+    pub chatbox: Chatbox,
     window_order: Vec<(Window, usize)>,
     drag_window: Option<Window>,
     selected_textbox: SelectedTextbox,
@@ -141,7 +141,12 @@ impl Interface {
                 if interface.drag_window.is_none() {
                     let window = find_window(interface, screen_pos);
                     if let Some(result_window) = window {
-                        hold_interface(interface, systems, result_window, screen_pos);
+                        hold_interface(
+                            interface,
+                            systems,
+                            result_window,
+                            screen_pos,
+                        );
                         result = true;
                     }
                 }
@@ -209,8 +214,9 @@ impl Interface {
                             .bgm_scroll
                             .set_move_scroll(systems, screen_pos);
 
-                        if interface.setting.sfx_scroll.in_hold || 
-                            interface.setting.bgm_scroll.in_hold {
+                        if interface.setting.sfx_scroll.in_hold
+                            || interface.setting.bgm_scroll.in_hold
+                        {
                             result = true;
                         }
                     }
@@ -423,6 +429,7 @@ fn trigger_chatbox_button(
         2 => {
             // Send
             let msg = interface.chatbox.textbox.text.clone();
+
             interface.chatbox.add_chat(
                 systems,
                 (msg, COLOR_WHITE),

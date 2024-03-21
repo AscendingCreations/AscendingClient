@@ -273,6 +273,9 @@ impl Chatbox {
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
+        self.chat.iter().for_each(|chat| {
+            systems.gfx.remove_gfx(chat.text);
+        });
         self.scrollbar.unload(systems);
     }
 

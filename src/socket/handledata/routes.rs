@@ -1,5 +1,15 @@
 use crate::{
-    add_npc, content::game_content::player::*, dir_to_enum, entity::*, fade::*, get_percent, get_start_map_pos, is_map_connected, npc_finalized, set_npc_frame, socket::error::*, unload_mapitems, unload_npc, update_camera, Alert, Content, DrawSetting, EntityType, Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX
+    add_npc,
+    content::game_content::{interface::chatbox::*, player::*},
+    dir_to_enum,
+    entity::*,
+    fade::*,
+    get_percent, get_start_map_pos, is_map_connected, npc_finalized,
+    set_npc_frame,
+    socket::error::*,
+    unload_mapitems, unload_npc, update_camera, Alert, BufferTask, ChatTask,
+    Content, DrawSetting, EntityType, MessageChannel, Position, Socket,
+    NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -13,6 +23,7 @@ pub fn handle_ping(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -25,6 +36,7 @@ pub fn handle_status(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -37,6 +49,7 @@ pub fn handle_alertmsg(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let message = data.read::<String>()?;
     let close = data.read::<u8>()?;
@@ -53,6 +66,7 @@ pub fn handle_fltalert(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let _flttype = data.read::<u8>()?;
     let _message = data.read::<String>()?;
@@ -68,6 +82,7 @@ pub fn handle_loginok(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let _hour = data.read::<u32>()?;
     let _min = data.read::<u32>()?;
@@ -89,6 +104,7 @@ pub fn handle_ingame(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -101,6 +117,7 @@ pub fn handle_updatemap(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -113,6 +130,7 @@ pub fn handle_mapitems(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let _item_entity = data.read::<Entity>()?;
 
@@ -127,6 +145,7 @@ pub fn handle_myindex(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let entity = data.read::<Entity>()?;
     content.game_content.myentity = Some(entity);
@@ -141,6 +160,7 @@ pub fn handle_playerdata(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     if let Some(entity) = content.game_content.myentity {
         let username = data.read::<String>()?;
@@ -233,6 +253,7 @@ pub fn handle_playerspawn(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -339,6 +360,7 @@ pub fn handle_playermove(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -382,6 +404,7 @@ pub fn handle_playerwarp(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -408,7 +431,12 @@ pub fn handle_playerwarp(
         }
         if let Some(myentity) = content.game_content.myentity {
             if myentity == entity {
-                update_camera(world, &mut content.game_content, systems, socket);
+                update_camera(
+                    world,
+                    &mut content.game_content,
+                    systems,
+                    socket,
+                );
             }
         }
     }
@@ -424,6 +452,7 @@ pub fn handle_playermapswap(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -436,6 +465,7 @@ pub fn handle_dataremovelist(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let remove_list = data.read::<Vec<Entity>>()?;
 
@@ -466,6 +496,7 @@ pub fn handle_dataremove(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -478,6 +509,7 @@ pub fn handle_playerdir(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let _dir = data.read::<u8>()?;
 
@@ -487,11 +519,12 @@ pub fn handle_playerdir(
 pub fn handle_playervitals(
     _socket: &mut Socket,
     world: &mut World,
-    _systems: &mut DrawSetting,
-    _content: &mut Content,
+    systems: &mut DrawSetting,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -509,11 +542,26 @@ pub fn handle_playervitals(
                 .read::<[i32; VITALS_MAX]>()
                 .expect("Could not read data"),
         );
-        
+
         if world.contains(entity.0) {
             if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
                 vital.vital = vitals;
                 vital.vitalmax = vitalmax;
+            }
+
+            let hpbar = world.get_or_panic::<HPBar>(&entity);
+            let mut size = systems.gfx.get_size(hpbar.bar_index);
+            size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
+            systems.gfx.set_size(hpbar.bar_index, size);
+            if let Some(myentity) = content.game_content.myentity {
+                if entity == myentity {
+                    systems
+                        .gfx
+                        .set_visible(hpbar.bar_index, vitals[0] != vitalmax[0]);
+                    systems
+                        .gfx
+                        .set_visible(hpbar.bg_index, vitals[0] != vitalmax[0]);
+                }
             }
         }
     }
@@ -529,6 +577,7 @@ pub fn handle_playerinv(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -541,6 +590,7 @@ pub fn handle_playerinvslot(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -553,6 +603,7 @@ pub fn handle_keyinput(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -565,6 +616,7 @@ pub fn handle_playerattack(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -589,6 +641,7 @@ pub fn handle_playerequipment(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -601,6 +654,7 @@ pub fn handle_playeraction(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -613,6 +667,7 @@ pub fn handle_playerlevel(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -625,6 +680,7 @@ pub fn handle_playermoney(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -637,6 +693,7 @@ pub fn handle_playerstun(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -649,6 +706,7 @@ pub fn handle_playervariables(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -661,6 +719,7 @@ pub fn handle_playervariable(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -673,6 +732,7 @@ pub fn handle_playerdeath(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -685,6 +745,7 @@ pub fn handle_npcdeath(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -697,6 +758,7 @@ pub fn handle_playerpvp(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -709,6 +771,7 @@ pub fn handle_playerpk(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -721,6 +784,7 @@ pub fn handle_playeremail(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -733,6 +797,7 @@ pub fn handle_npcdata(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -829,6 +894,7 @@ pub fn handle_npcmove(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -872,6 +938,7 @@ pub fn handle_npcwarp(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -902,13 +969,31 @@ pub fn handle_npcwarp(
 
 pub fn handle_npcdir(
     _socket: &mut Socket,
-    _world: &mut World,
-    _systems: &mut DrawSetting,
+    world: &mut World,
+    systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
+    let count = data.read::<u32>()?;
+
+    for _ in 0..count {
+        let entity = data.read::<Entity>()?;
+        let dir = data.read::<u8>()?;
+
+        if world.contains(entity.0) {
+            world
+                .get::<&mut Dir>(entity.0)
+                .expect("Could not find Dir")
+                .0 = dir;
+            let frame =
+                world.get_or_panic::<Dir>(&entity).0 * NPC_SPRITE_FRAME_X as u8;
+            set_npc_frame(world, systems, &entity, frame as usize);
+        }
+    }
+
     Ok(())
 }
 
@@ -920,6 +1005,7 @@ pub fn handle_npcvital(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -962,6 +1048,7 @@ pub fn handle_npcattack(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -984,6 +1071,7 @@ pub fn handle_npcstun(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -994,9 +1082,29 @@ pub fn handle_chatmsg(
     _systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
+    buffer: &mut BufferTask,
 ) -> SocketResult<()> {
+    let count = data.read::<u32>()?;
+
+    for _ in 0..count {
+        let _channel = data.read::<MessageChannel>()?;
+        let head_string = data.read::<String>()?;
+        let msg_string = data.read::<String>()?;
+        let _useraccess = data.read::<Option<UserAccess>>()?;
+
+        let header = if !head_string.is_empty() {
+            Some((head_string, COLOR_GREEN))
+        } else {
+            None
+        };
+
+        buffer
+            .chatbuffer
+            .add_task(ChatTask::new((msg_string, COLOR_WHITE), header));
+    }
+
     Ok(())
 }
 
@@ -1008,6 +1116,7 @@ pub fn handle_sound(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -1020,6 +1129,7 @@ pub fn handle_target(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
@@ -1032,18 +1142,20 @@ pub fn handle_synccheck(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }
 
 pub fn handle_entityunload(
-    _socket: &mut Socket,
+    socket: &mut Socket,
     world: &mut World,
     systems: &mut DrawSetting,
-    _content: &mut Content,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let count = data.read::<u32>()?;
 
@@ -1051,6 +1163,12 @@ pub fn handle_entityunload(
         let entity = data.read::<Entity>()?;
 
         if world.contains(entity.0) {
+            if let Some(target_entity) = content.game_content.target.entity {
+                if target_entity == entity {
+                    content.game_content.target.clear_target(socket, systems);
+                }
+            }
+
             let world_entity_type =
                 world.get_or_default::<WorldEntityType>(&entity);
             match world_entity_type {
@@ -1079,6 +1197,7 @@ pub fn handle_loadstatus(
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
+    _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     Ok(())
 }

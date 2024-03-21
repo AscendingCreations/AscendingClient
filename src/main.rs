@@ -501,6 +501,7 @@ async fn main() -> Result<(), AscendingError> {
             &mut content,
             &mut alert,
             seconds,
+            &mut buffertask,
         );
 
         buffertask.process_buffer(&mut systems, &mut content);

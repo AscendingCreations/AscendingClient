@@ -41,7 +41,7 @@ pub struct GameContent {
     mapitems: IndexSet<Entity>,
     pub map: MapContent,
     camera: Camera,
-    interface: Interface,
+    pub interface: Interface,
     keyinput: [bool; MAX_KEY],
     pub myentity: Option<Entity>,
     pub finalized: bool,
@@ -339,7 +339,7 @@ impl GameContent {
                         None
                     }
                 });
-            
+
             if let Some(got_target) = target_entity {
                 self.target.set_target(socket, systems, &got_target);
             }
@@ -373,7 +373,9 @@ pub fn update_player(
             }
         }
 
-        process_player_movement(world, systems, socket, entity, content, buffer);
+        process_player_movement(
+            world, systems, socket, entity, content, buffer,
+        );
         process_player_attack(world, systems, entity, seconds)
     }
 }
@@ -397,14 +399,8 @@ pub fn update_npc(
     }
 }
 
-pub fn finalize_entity(
-    world: &mut World,
-    systems: &mut DrawSetting,
-) {
-    for (
-        _entity,
-        (worldentitytype, sprite, finalized, hpbar),
-    ) in world
+pub fn finalize_entity(world: &mut World, systems: &mut DrawSetting) {
+    for (_entity, (worldentitytype, sprite, finalized, hpbar)) in world
         .query_mut::<(
             &WorldEntityType,
             &SpriteIndex,
@@ -412,9 +408,7 @@ pub fn finalize_entity(
             Option<&HPBar>,
         )>()
         .into_iter()
-        .filter(|(_, (_, _, finalized, _))| {
-            !finalized.0
-        })
+        .filter(|(_, (_, _, finalized, _))| !finalized.0)
     {
         match worldentitytype {
             WorldEntityType::Player => {
@@ -457,10 +451,7 @@ pub fn update_camera(
 
     content.map.move_pos(systems, content.camera.pos);
 
-    for (
-        entity,
-        (worldentitytype, sprite, pos, pos_offset, hp_bar),
-    ) in world
+    for (entity, (worldentitytype, sprite, pos, pos_offset, hp_bar)) in world
         .query_mut::<(
             &WorldEntityType,
             &SpriteIndex,
@@ -492,7 +483,8 @@ pub fn update_camera(
                         }
                     }
                     update_player_position(
-                        systems, content, socket, sprite.0, pos, pos_offset, hpbar, is_target
+                        systems, content, socket, sprite.0, pos, pos_offset,
+                        hpbar, is_target,
                     );
                 }
             }
@@ -512,7 +504,8 @@ pub fn update_camera(
                         }
                     }
                     update_npc_position(
-                        systems, content, socket, sprite.0, pos, pos_offset, hpbar, is_target
+                        systems, content, socket, sprite.0, pos, pos_offset,
+                        hpbar, is_target,
                     );
                 }
             }

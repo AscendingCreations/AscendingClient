@@ -1,4 +1,4 @@
-use crate::{fade::*, socket::*, Entity, Position};
+use crate::{fade::*, socket::*, BufferTask, Entity, Position};
 
 #[allow(clippy::too_many_arguments)]
 pub fn handle_data(
@@ -10,6 +10,7 @@ pub fn handle_data(
     alert: &mut Alert,
     data: &mut ByteBuffer,
     seconds: f32,
+    buffer: &mut BufferTask,
 ) -> SocketResult<()> {
     let id: ServerPackets = data.read()?;
 
@@ -20,7 +21,9 @@ pub fn handle_data(
         None => return Err(AscendingSocketError::InvalidPacket),
     };
 
-    match fun(socket, world, systems, content, alert, data, seconds) {
+    match fun(
+        socket, world, systems, content, alert, data, seconds, buffer,
+    ) {
         Ok(_) => Ok(()),
         Err(e) => {
             println!("Error {}", e);
