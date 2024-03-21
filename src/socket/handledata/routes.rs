@@ -409,9 +409,10 @@ pub fn handle_playerwarp(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        println!("Player Warp~~~~~~");
         let entity = data.read::<Entity>()?;
         let pos = data.read::<Position>()?;
+
+        let old_pos = world.get_or_panic::<Position>(&entity);
 
         if world.contains(entity.0) {
             *world
@@ -425,12 +426,16 @@ pub fn handle_playerwarp(
                 .get::<&mut PositionOffset>(entity.0)
                 .expect("Could not find PositionOffset")
                 .offset = Vec2::new(0.0, 0.0);
+
             let frame = world.get_or_panic::<Dir>(&entity).0
                 * PLAYER_SPRITE_FRAME_X as u8;
             set_player_frame(world, systems, &entity, frame as usize);
         }
         if let Some(myentity) = content.game_content.myentity {
             if myentity == entity {
+                if old_pos.map != pos.map {
+                    content.game_content.init_map(systems, pos.map);
+                }
                 update_camera(
                     world,
                     &mut content.game_content,
