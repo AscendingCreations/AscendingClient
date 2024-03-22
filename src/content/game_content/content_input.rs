@@ -9,6 +9,7 @@ use crate::{
 
 use super::{
     KEY_ATTACK, KEY_MOVEDOWN, KEY_MOVELEFT, KEY_MOVERIGHT, KEY_MOVEUP,
+    KEY_PICKUP,
 };
 
 impl GameContent {
@@ -82,8 +83,12 @@ impl GameContent {
                 content.game_content.keyinput[KEY_MOVERIGHT] =
                     event.state.is_pressed();
             }
-            PhysicalKey::Code(KeyCode::Space) => {
+            PhysicalKey::Code(KeyCode::ControlLeft) => {
                 content.game_content.keyinput[KEY_ATTACK] =
+                    event.state.is_pressed();
+            }
+            PhysicalKey::Code(KeyCode::Space) => {
+                content.game_content.keyinput[KEY_PICKUP] =
                     event.state.is_pressed();
             }
             _ => {}

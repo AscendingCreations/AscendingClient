@@ -8,8 +8,8 @@ use crate::{
     set_npc_frame,
     socket::error::*,
     unload_mapitems, unload_npc, update_camera, Alert, BufferTask, ChatTask,
-    Content, DrawSetting, EntityType, MapItem, MessageChannel, Position,
-    Socket, NPC_SPRITE_FRAME_X, VITALS_MAX,
+    Content, DrawSetting, EntityType, FtlType, MapItem, MessageChannel,
+    Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -68,7 +68,7 @@ pub fn handle_fltalert(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
-    let _flttype = data.read::<u8>()?;
+    let _flttype = data.read::<FtlType>()?;
     let _message = data.read::<String>()?;
 
     Ok(())
@@ -621,10 +621,13 @@ pub fn handle_playerinvslot(
     _systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
+    let _id = data.read::<usize>()?;
+    let _item = data.read::<Item>()?;
+
     Ok(())
 }
 
@@ -711,10 +714,12 @@ pub fn handle_playermoney(
     _systems: &mut DrawSetting,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
+    let _vals = data.read::<u64>()?;
+
     Ok(())
 }
 

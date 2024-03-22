@@ -161,7 +161,7 @@ pub fn send_switchinvslot(
 }
 
 pub fn send_pickup(socket: &mut Socket) -> SocketResult<()> {
-    let mut buf = ByteBuffer::new_packet_with(128)?;
+    let mut buf = ByteBuffer::new_packet_with(4)?;
 
     buf.write(ClientPacket::PickUp)?;
     buf.finish()?;

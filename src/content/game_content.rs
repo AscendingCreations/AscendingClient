@@ -9,8 +9,8 @@ pub use content_input::*;
 pub use interface::*;
 
 use crate::{
-    buffer::*, content::*, database::*, logic::*, send_attack, values::*,
-    Direction, DrawSetting, Socket,
+    buffer::*, content::*, database::*, logic::*, send_attack, send_pickup,
+    values::*, Direction, DrawSetting, Socket,
 };
 use hecs::World;
 
@@ -33,7 +33,8 @@ const KEY_MOVEUP: usize = 1;
 const KEY_MOVELEFT: usize = 2;
 const KEY_MOVEDOWN: usize = 3;
 const KEY_MOVERIGHT: usize = 4;
-const MAX_KEY: usize = 5;
+const KEY_PICKUP: usize = 5;
+const MAX_KEY: usize = 6;
 
 pub struct GameContent {
     pub players: IndexSet<Entity>,
@@ -46,6 +47,7 @@ pub struct GameContent {
     pub myentity: Option<Entity>,
     pub finalized: bool,
     pub target: Target,
+    pub pick_up_timer: f32,
 }
 
 impl GameContent {
@@ -61,6 +63,7 @@ impl GameContent {
             finalized: false,
             myentity: None,
             target: Target::new(systems),
+            pick_up_timer: 0.0,
         }
     }
 
@@ -233,6 +236,12 @@ impl GameContent {
                         socket,
                         &Direction::Right,
                     ),
+                    KEY_PICKUP => {
+                        if self.pick_up_timer < seconds {
+                            let _ = send_pickup(socket);
+                            self.pick_up_timer = seconds + 1.0;
+                        }
+                    }
                     _ => {}
                 }
             }

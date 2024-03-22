@@ -74,6 +74,27 @@ pub enum VitalTypes {
     Count,
 }
 
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Serialize_repr,
+    Deserialize_repr,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
+#[repr(u8)]
+pub enum FtlType {
+    Message,
+    Error,
+    Item,
+    Quest,
+    Level,
+    Money,
+}
+
 pub const VITALS_MAX: usize = VitalTypes::Count as usize;
 pub const MAX_EQPT: usize = 5;
 
