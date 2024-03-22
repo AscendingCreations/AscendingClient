@@ -4,8 +4,8 @@ use graphics::*;
 use winit::{event::*, keyboard::*};
 
 use crate::{
-    interface::chatbox::*, is_within_area, widget::*, DrawSetting, GameContent,
-    MouseInputType,
+    interface::chatbox::*, is_within_area, send_message, widget::*,
+    DrawSetting, GameContent, MouseInputType, Socket,
 };
 use hecs::World;
 
@@ -102,6 +102,7 @@ impl Interface {
         interface: &mut Interface,
         _world: &mut World,
         systems: &mut DrawSetting,
+        socket: &mut Socket,
         input_type: MouseInputType,
         screen_pos: Vec2,
     ) -> bool {
@@ -180,7 +181,7 @@ impl Interface {
                     interface.chatbox.click_buttons(systems, screen_pos);
                 if let Some(index) = chatbox_button_index {
                     interface.chatbox.did_button_click = true;
-                    trigger_chatbox_button(interface, systems, index);
+                    trigger_chatbox_button(interface, systems, socket, index);
                     result = true;
                 }
 
@@ -393,6 +394,7 @@ fn trigger_button(
 fn trigger_chatbox_button(
     interface: &mut Interface,
     systems: &mut DrawSetting,
+    socket: &mut Socket,
     index: usize,
 ) {
     match index {
@@ -429,13 +431,12 @@ fn trigger_chatbox_button(
         2 => {
             // Send
             let msg = interface.chatbox.textbox.text.clone();
-
-            interface.chatbox.add_chat(
-                systems,
-                (msg, COLOR_WHITE),
-                Some(("[Sherwin]: ".to_string(), COLOR_RED)),
+            let _ = send_message(
+                socket,
+                crate::MessageChannel::Global,
+                msg,
+                String::new(),
             );
-            interface.chatbox.textbox.set_text(systems, String::new());
         }
         _ => {}
     }

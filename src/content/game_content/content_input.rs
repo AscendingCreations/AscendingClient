@@ -32,6 +32,7 @@ impl GameContent {
             &mut content.game_content.interface,
             world,
             systems,
+            socket,
             input_type.clone(),
             screen_pos,
         ) {
