@@ -14,6 +14,7 @@ pub enum MapAttribute {
     Blocked,
     Warp(i32, i32, u64, u32, u32),
     Sign(String),
+    ItemSpawn(u32, u16, u64),
     Count,
 }
 

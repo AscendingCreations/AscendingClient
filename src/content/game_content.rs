@@ -38,7 +38,7 @@ const MAX_KEY: usize = 5;
 pub struct GameContent {
     pub players: IndexSet<Entity>,
     pub npcs: IndexSet<Entity>,
-    mapitems: IndexSet<Entity>,
+    pub mapitems: IndexSet<Entity>,
     pub map: MapContent,
     camera: Camera,
     pub interface: Interface,
@@ -247,7 +247,8 @@ impl GameContent {
         cur_map: MapPosition,
         sprite: usize,
     ) {
-        let entity = MapItem::create(world, systems, sprite, pos, cur_map);
+        let entity =
+            MapItem::create(world, systems, sprite, pos, cur_map, None);
         self.mapitems.insert(entity);
     }
 
@@ -475,12 +476,10 @@ pub fn update_camera(
                             systems.gfx.set_visible(hpbar.bar_index, true);
                             systems.gfx.set_visible(hpbar.bg_index, true);
                         }
-                    } else {
-                        if hpbar.visible {
-                            hpbar.visible = false;
-                            systems.gfx.set_visible(hpbar.bar_index, false);
-                            systems.gfx.set_visible(hpbar.bg_index, false);
-                        }
+                    } else if hpbar.visible {
+                        hpbar.visible = false;
+                        systems.gfx.set_visible(hpbar.bar_index, false);
+                        systems.gfx.set_visible(hpbar.bg_index, false);
                     }
                     update_player_position(
                         systems, content, socket, sprite.0, pos, pos_offset,
@@ -496,12 +495,10 @@ pub fn update_camera(
                             systems.gfx.set_visible(hpbar.bar_index, true);
                             systems.gfx.set_visible(hpbar.bg_index, true);
                         }
-                    } else {
-                        if hpbar.visible {
-                            hpbar.visible = false;
-                            systems.gfx.set_visible(hpbar.bar_index, false);
-                            systems.gfx.set_visible(hpbar.bg_index, false);
-                        }
+                    } else if hpbar.visible {
+                        hpbar.visible = false;
+                        systems.gfx.set_visible(hpbar.bar_index, false);
+                        systems.gfx.set_visible(hpbar.bg_index, false);
                     }
                     update_npc_position(
                         systems, content, socket, sprite.0, pos, pos_offset,

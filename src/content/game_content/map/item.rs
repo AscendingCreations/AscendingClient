@@ -4,8 +4,10 @@ use hecs::World;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    game_content::{*, Camera, entity::*}, get_start_map_pos, DrawSetting,
+    game_content::{entity::*, Camera, *},
+    get_start_map_pos,
     values::*,
+    DrawSetting,
 };
 
 #[derive(
@@ -42,6 +44,7 @@ impl MapItem {
         sprite: usize,
         pos: Position,
         cur_map: MapPosition,
+        entity: Option<&Entity>,
     ) -> Entity {
         let start_pos = get_start_map_pos(cur_map, pos.map)
             .unwrap_or_else(|| Vec2::new(0.0, 0.0));
@@ -63,16 +66,26 @@ impl MapItem {
         let index = systems.gfx.add_image(image, 0);
         systems.gfx.set_visible(index, false);
 
-        let entity = world.spawn((
+        let component1 = (
             pos,
             WorldEntityType::MapItem,
             SpriteIndex(index),
             SpriteImage(sprite as u8),
             PositionOffset::default(),
             Finalized::default(),
-        ));
-        let _ = world.insert_one(entity, EntityType::MapItem(Entity(entity)));
-        Entity(entity)
+        );
+
+        if let Some(data) = entity {
+            world.spawn_at(data.0, component1);
+            let _ =
+                world.insert_one(data.0, EntityType::MapItem(Entity(data.0)));
+            Entity(data.0)
+        } else {
+            let entity = world.spawn(component1);
+            let _ =
+                world.insert_one(entity, EntityType::MapItem(Entity(entity)));
+            Entity(entity)
+        }
     }
 
     pub fn finalized(
@@ -87,10 +100,7 @@ impl MapItem {
         Self::finalized_data(systems, sprite);
     }
 
-    pub fn finalized_data(
-        systems: &mut DrawSetting,
-        sprite: usize,
-    ) {
+    pub fn finalized_data(systems: &mut DrawSetting, sprite: usize) {
         systems.gfx.set_visible(sprite, true);
     }
 }

@@ -37,16 +37,21 @@ impl GameContent {
             return;
         }
 
-        match input_type {
-            MouseInputType::MouseLeftDown => {
-                let target_entity = find_entity(world, systems, &mut content.game_content, screen_pos);
-                if let Some(entity) = target_entity {
-                    content.game_content.target.set_target(socket, systems, &entity);
-                } else {
-                    content.game_content.target.clear_target(socket, systems);
-                }
+        if let MouseInputType::MouseLeftDown = input_type {
+            let target_entity = find_entity(
+                world,
+                systems,
+                &mut content.game_content,
+                screen_pos,
+            );
+            if let Some(entity) = target_entity {
+                content
+                    .game_content
+                    .target
+                    .set_target(socket, systems, &entity);
+            } else {
+                content.game_content.target.clear_target(socket, systems);
             }
-            _ => {}
         }
     }
 

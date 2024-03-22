@@ -8,8 +8,8 @@ use crate::{
     set_npc_frame,
     socket::error::*,
     unload_mapitems, unload_npc, update_camera, Alert, BufferTask, ChatTask,
-    Content, DrawSetting, EntityType, MessageChannel, Position, Socket,
-    NPC_SPRITE_FRAME_X, VITALS_MAX,
+    Content, DrawSetting, EntityType, MapItem, MessageChannel, Position,
+    Socket, NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -124,15 +124,43 @@ pub fn handle_updatemap(
 
 pub fn handle_mapitems(
     _socket: &mut Socket,
-    _world: &mut World,
-    _systems: &mut DrawSetting,
-    _content: &mut Content,
+    world: &mut World,
+    systems: &mut DrawSetting,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
-    let _item_entity = data.read::<Entity>()?;
+    let count = data.read::<u32>()?;
+
+    for _ in 0..count {
+        let entity = data.read::<Entity>()?;
+        let pos = data.read::<Position>()?;
+        let _item = data.read::<Item>()?;
+        let _owner = data.read::<Option<Entity>>()?;
+        let did_spawn = data.read::<bool>()?;
+
+        if let Some(myentity) = content.game_content.myentity {
+            if !world.contains(entity.0) {
+                let client_map = world.get_or_panic::<Position>(&myentity).map;
+                let mapitem = MapItem::create(
+                    world,
+                    systems,
+                    0,
+                    pos,
+                    client_map,
+                    Some(&entity),
+                );
+
+                content.game_content.mapitems.insert(mapitem);
+
+                if did_spawn && content.game_content.finalized {
+                    MapItem::finalized(world, systems, &entity);
+                }
+            }
+        }
+    }
 
     Ok(())
 }
