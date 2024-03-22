@@ -8,13 +8,29 @@ use std::path::Path;
 
 use crate::{DrawSetting, MapPosition};
 
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub struct WarpData {
+    pub map_x: i32,
+    pub map_y: i32,
+    pub map_group: u64,
+    pub tile_x: u32,
+    pub tile_y: u32,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub struct ItemSpawnData {
+    pub index: u32,
+    pub amount: u16,
+    pub timer: u64,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum MapAttribute {
     Walkable,
     Blocked,
-    Warp(i32, i32, u64, u32, u32),
+    Warp(WarpData),
     Sign(String),
-    ItemSpawn(u32, u16, u64),
+    ItemSpawn(ItemSpawnData),
     Count,
 }
 
