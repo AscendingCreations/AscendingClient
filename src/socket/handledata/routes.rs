@@ -137,18 +137,24 @@ pub fn handle_mapitems(
     for _ in 0..count {
         let entity = data.read::<Entity>()?;
         let pos = data.read::<Position>()?;
-        let _item = data.read::<Item>()?;
+        let item = data.read::<Item>()?;
         let _owner = data.read::<Option<Entity>>()?;
         let did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
                 let client_map = world.get_or_panic::<Position>(&myentity).map;
-                // ToDo: Load sprite from item data base on Item Num
+                let sprite = if let Some(itemdata) =
+                    systems.base.item.get(item.num as usize)
+                {
+                    itemdata.sprite as usize
+                } else {
+                    0
+                };
                 let mapitem = MapItem::create(
                     world,
                     systems,
-                    0,
+                    sprite,
                     pos,
                     client_map,
                     Some(&entity),

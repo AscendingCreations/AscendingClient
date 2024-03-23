@@ -11,6 +11,7 @@ pub struct Profile {
     pub pos: Vec2,
     pub size: Vec2,
     pub z_order: f32,
+    order_index: usize,
     in_hold: bool,
     hold_pos: Vec2,
     header_pos: Vec2,
@@ -81,6 +82,7 @@ impl Profile {
             pos,
             size: w_size,
             z_order: 0.0,
+            order_index: 0,
             in_hold: false,
             hold_pos: Vec2::new(0.0, 0.0),
             header_pos,
@@ -137,11 +139,17 @@ impl Profile {
         self.in_hold = false;
     }
 
-    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
+    pub fn set_z_order(
+        &mut self,
+        systems: &mut SystemHolder,
+        z_order: f32,
+        order_index: usize,
+    ) {
         if self.z_order == z_order {
             return;
         }
         self.z_order = z_order;
+        self.order_index = order_index;
 
         let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
         let detail_1 = detail_origin.sub_f32(0.001, 3);

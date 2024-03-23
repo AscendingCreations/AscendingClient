@@ -1,5 +1,6 @@
 use bytey::{ByteBufferRead, ByteBufferWrite};
 use serde::{Deserialize, Serialize};
+use serde_repr::*;
 
 #[derive(
     Copy,
@@ -8,8 +9,8 @@ use serde::{Deserialize, Serialize};
     PartialEq,
     Eq,
     Default,
-    Deserialize,
-    Serialize,
+    Serialize_repr,
+    Deserialize_repr,
     ByteBufferRead,
     ByteBufferWrite,
 )]

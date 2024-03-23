@@ -140,7 +140,7 @@ impl Interface {
                 }
 
                 if interface.drag_window.is_none() {
-                    let window = find_window(interface, screen_pos);
+                    let window = find_window(interface, screen_pos, None);
                     if let Some(result_window) = window {
                         hold_interface(
                             interface,
@@ -188,6 +188,31 @@ impl Interface {
                 interface.click_textbox(systems, screen_pos);
             }
             MouseInputType::MouseLeftDownMove => {
+                if let Some(slot) = interface.inventory.hold_slot {
+                    interface
+                        .inventory
+                        .move_inv_slot(systems, slot, screen_pos);
+
+                    let window = find_window(interface, screen_pos, None);
+                    if let Some(result_window) = window {
+                        match result_window {
+                            Window::Profile
+                            | Window::Setting
+                            | Window::Inventory => {
+                                hold_interface(
+                                    interface,
+                                    systems,
+                                    result_window,
+                                    screen_pos,
+                                );
+                            }
+                            _ => {}
+                        }
+                    }
+
+                    return true;
+                }
+
                 if let Some(window) = &interface.drag_window {
                     match window {
                         Window::Inventory => {
@@ -233,6 +258,14 @@ impl Interface {
                 }
             }
             MouseInputType::MouseRelease => {
+                if let Some(slot) = interface.inventory.hold_slot {
+                    release_inv_slot(
+                        interface, socket, systems, slot, screen_pos,
+                    );
+                    interface.inventory.hold_slot = None;
+                    return true;
+                }
+
                 interface.reset_buttons(systems);
 
                 if let Some(window) = &interface.drag_window {
@@ -443,29 +476,50 @@ fn trigger_chatbox_button(
     }
 }
 
-fn find_window(interface: &mut Interface, screen_pos: Vec2) -> Option<Window> {
+fn can_find_window(window: Window, exception: Option<Window>) -> bool {
+    if let Some(x_window) = exception {
+        if window == x_window {
+            return false;
+        }
+    }
+    true
+}
+
+fn find_window(
+    interface: &mut Interface,
+    screen_pos: Vec2,
+    exception: Option<Window>,
+) -> Option<Window> {
     let mut max_z_order: f32 = 0.0;
     let mut selected_window = None;
 
-    if interface.inventory.in_window(screen_pos) {
+    if interface.inventory.in_window(screen_pos)
+        && can_find_window(Window::Inventory, exception)
+    {
         max_z_order = interface.inventory.z_order;
         selected_window = Some(Window::Inventory);
     }
-    if interface.profile.in_window(screen_pos) {
+    if interface.profile.in_window(screen_pos)
+        && can_find_window(Window::Profile, exception)
+    {
         let z_order = interface.profile.z_order;
         if z_order > max_z_order {
             max_z_order = z_order;
             selected_window = Some(Window::Profile);
         }
     }
-    if interface.setting.in_window(screen_pos) {
+    if interface.setting.in_window(screen_pos)
+        && can_find_window(Window::Setting, exception)
+    {
         let z_order = interface.setting.z_order;
         if z_order > max_z_order {
             max_z_order = z_order;
             selected_window = Some(Window::Setting);
         }
     }
-    if interface.chatbox.in_window(screen_pos) {
+    if interface.chatbox.in_window(screen_pos)
+        && can_find_window(Window::Chatbox, exception)
+    {
         let z_order = interface.chatbox.z_order;
         if z_order > max_z_order {
             //max_z_order = z_order;
@@ -542,10 +596,16 @@ fn hold_interface(
     interface_set_to_first(interface, systems, window);
     match window {
         Window::Inventory => {
-            if !interface.inventory.can_hold(screen_pos) {
+            if interface.inventory.can_hold(screen_pos) {
+                interface.inventory.hold_window(screen_pos);
+            } else if let Some(slot) =
+                interface.inventory.find_inv_slot(screen_pos, false)
+            {
+                interface.inventory.hold_inv_slot(slot, screen_pos);
+                return;
+            } else {
                 return;
             }
-            interface.inventory.hold_window(screen_pos);
         }
         Window::Profile => {
             if !interface.profile.can_hold(screen_pos) {
@@ -619,11 +679,17 @@ fn adjust_window_zorder(interface: &mut Interface, systems: &mut SystemHolder) {
     for wndw in interface.window_order.iter() {
         match wndw.0 {
             Window::Inventory => {
-                interface.inventory.set_z_order(systems, order)
+                interface.inventory.set_z_order(systems, order, wndw.1)
             }
-            Window::Profile => interface.profile.set_z_order(systems, order),
-            Window::Setting => interface.setting.set_z_order(systems, order),
-            Window::Chatbox => interface.chatbox.set_z_order(systems, order),
+            Window::Profile => {
+                interface.profile.set_z_order(systems, order, wndw.1)
+            }
+            Window::Setting => {
+                interface.setting.set_z_order(systems, order, wndw.1)
+            }
+            Window::Chatbox => {
+                interface.chatbox.set_z_order(systems, order, wndw.1)
+            }
         }
         order -= 0.01;
     }

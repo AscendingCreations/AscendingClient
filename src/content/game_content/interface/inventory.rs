@@ -1,7 +1,8 @@
 use graphics::*;
 
 use crate::{
-    is_within_area, logic::*, values::*, widget::*, Item, SystemHolder,
+    is_within_area, logic::*, socket::sends::*, values::*, widget::*,
+    Interface, Item, Socket, SystemHolder,
 };
 
 const MAX_INV_SLOT: usize = 30;
@@ -27,6 +28,7 @@ pub struct Inventory {
     pub pos: Vec2,
     pub size: Vec2,
     pub z_order: f32,
+    order_index: usize,
     in_hold: bool,
     hold_pos: Vec2,
     header_pos: Vec2,
@@ -34,6 +36,9 @@ pub struct Inventory {
 
     min_bound: Vec2,
     max_bound: Vec2,
+
+    pub hold_slot: Option<usize>,
+    pub hold_adjust_pos: Vec2,
 }
 
 impl Inventory {
@@ -111,6 +116,7 @@ impl Inventory {
             pos,
             size: w_size,
             z_order: 0.0,
+            order_index: 0,
             in_hold: false,
             hold_pos: Vec2::new(0.0, 0.0),
             header_pos,
@@ -121,6 +127,9 @@ impl Inventory {
                 systems.size.height - w_size.y - 1.0,
             ),
             max_bound: Vec2::new(1.0, 1.0),
+
+            hold_slot: None,
+            hold_adjust_pos: Vec2::new(0.0, 0.0),
         }
     }
 
@@ -163,6 +172,53 @@ impl Inventory {
                 }
             }
         });
+        self.hold_slot = None;
+    }
+
+    pub fn hold_inv_slot(&mut self, slot: usize, screen_pos: Vec2) {
+        if self.hold_slot.is_some() {
+            return;
+        }
+
+        self.hold_slot = Some(slot);
+
+        let frame_pos = Vec2::new(
+            slot as f32 % MAX_INV_X,
+            (slot as f32 / MAX_INV_X).floor(),
+        );
+        let slot_pos = Vec2::new(
+            self.pos.x + 16.0 + (37.0 * frame_pos.x),
+            self.pos.y + 195.0 - (37.0 * frame_pos.y),
+        );
+
+        self.hold_adjust_pos = screen_pos - slot_pos;
+    }
+
+    pub fn move_inv_slot(
+        &mut self,
+        systems: &mut SystemHolder,
+        slot: usize,
+        screen_pos: Vec2,
+    ) {
+        if slot >= MAX_INV_SLOT || !self.item_slot[slot].got_data {
+            return;
+        }
+
+        systems.gfx.set_pos(
+            self.item_slot[slot].image,
+            Vec3::new(
+                screen_pos.x - self.hold_adjust_pos.x,
+                screen_pos.y - self.hold_adjust_pos.x,
+                ORDER_HOLD_ITEM,
+            ),
+        );
+
+        if self.item_slot[slot].got_count {
+            systems.gfx.set_visible(self.item_slot[slot].count, false);
+            systems
+                .gfx
+                .set_visible(self.item_slot[slot].count_bg, false);
+        }
     }
 
     pub fn update_inv_slot(
@@ -183,6 +239,10 @@ impl Inventory {
             }
         }
 
+        if data.val == 0 {
+            return;
+        }
+
         let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
         let item_zpos = detail_origin.sub_f32(0.002, 3);
         let textbg_zpos = detail_origin.sub_f32(0.003, 3);
@@ -194,7 +254,7 @@ impl Inventory {
         );
         let slot_pos = Vec2::new(
             self.pos.x + 10.0 + (37.0 * frame_pos.x),
-            self.pos.y + 10.0 + (37.0 * frame_pos.y),
+            self.pos.y + 195.0 - (37.0 * frame_pos.y),
         );
 
         let sprite =
@@ -264,6 +324,41 @@ impl Inventory {
         is_within_area(screen_pos, self.header_pos, self.header_size)
     }
 
+    pub fn find_inv_slot(
+        &mut self,
+        screen_pos: Vec2,
+        check_empty: bool,
+    ) -> Option<usize> {
+        for slot in 0..MAX_INV_SLOT {
+            let can_proceed = if self.item_slot[slot].got_data {
+                true
+            } else if check_empty {
+                true
+            } else {
+                false
+            };
+            if can_proceed {
+                let frame_pos = Vec2::new(
+                    slot as f32 % MAX_INV_X,
+                    (slot as f32 / MAX_INV_X).floor(),
+                );
+                let slot_pos = Vec2::new(
+                    self.pos.x + 10.0 + (37.0 * frame_pos.x),
+                    self.pos.y + 195.0 - (37.0 * frame_pos.y),
+                );
+
+                if screen_pos.x >= slot_pos.x
+                    && screen_pos.x <= slot_pos.x + 32.0
+                    && screen_pos.y >= slot_pos.y
+                    && screen_pos.y <= slot_pos.y + 32.0
+                {
+                    return Some(slot);
+                }
+            }
+        }
+        None
+    }
+
     pub fn in_window(&mut self, screen_pos: Vec2) -> bool {
         if !self.visible {
             return false;
@@ -283,11 +378,17 @@ impl Inventory {
         self.in_hold = false;
     }
 
-    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
+    pub fn set_z_order(
+        &mut self,
+        systems: &mut SystemHolder,
+        z_order: f32,
+        order_index: usize,
+    ) {
         if self.z_order == z_order {
             return;
         }
         self.z_order = z_order;
+        self.order_index = order_index;
 
         let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
         let detail_1 = detail_origin.sub_f32(0.001, 3);
@@ -313,21 +414,25 @@ impl Inventory {
             pos.z = detail_1;
             systems.gfx.set_pos(self.slot[i], pos);
 
-            if self.item_slot[i].got_data {
+            let can_proceed = if let Some(hold_slot) = self.hold_slot {
+                hold_slot != i
+            } else {
+                true
+            };
+            if self.item_slot[i].got_data && can_proceed {
                 let mut pos = systems.gfx.get_pos(self.item_slot[i].image);
                 pos.z = detail_2;
                 systems.gfx.set_pos(self.item_slot[i].image, pos);
+            }
 
-                if self.item_slot[i].got_count {
-                    let mut pos =
-                        systems.gfx.get_pos(self.item_slot[i].count_bg);
-                    pos.z = detail_3;
-                    systems.gfx.set_pos(self.item_slot[i].count_bg, pos);
+            if self.item_slot[i].got_count {
+                let mut pos = systems.gfx.get_pos(self.item_slot[i].count_bg);
+                pos.z = detail_3;
+                systems.gfx.set_pos(self.item_slot[i].count_bg, pos);
 
-                    let mut pos = systems.gfx.get_pos(self.item_slot[i].count);
-                    pos.z = detail_4;
-                    systems.gfx.set_pos(self.item_slot[i].count, pos);
-                }
+                let mut pos = systems.gfx.get_pos(self.item_slot[i].count);
+                pos.z = detail_4;
+                systems.gfx.set_pos(self.item_slot[i].count, pos);
             }
         }
     }
@@ -377,7 +482,7 @@ impl Inventory {
                 Vec2::new(i as f32 % MAX_INV_X, (i as f32 / MAX_INV_X).floor());
             let slot_pos = Vec2::new(
                 self.pos.x + 10.0 + (37.0 * frame_pos.x),
-                self.pos.y + 10.0 + (37.0 * frame_pos.y),
+                self.pos.y + 195.0 - (37.0 * frame_pos.y),
             );
 
             let pos = systems.gfx.get_pos(self.slot[i]);
@@ -415,6 +520,54 @@ impl Inventory {
                         ),
                     );
                 }
+            }
+        }
+    }
+}
+
+pub fn release_inv_slot(
+    interface: &mut Interface,
+    socket: &mut Socket,
+    systems: &mut SystemHolder,
+    slot: usize,
+    screen_pos: Vec2,
+) {
+    if slot >= MAX_INV_SLOT || !interface.inventory.item_slot[slot].got_data {
+        return;
+    }
+
+    let detail_origin =
+        ORDER_GUI_WINDOW.sub_f32(interface.inventory.z_order, 3);
+    let z_pos = detail_origin.sub_f32(0.002, 3);
+
+    let frame_pos =
+        Vec2::new(slot as f32 % MAX_INV_X, (slot as f32 / MAX_INV_X).floor());
+    let slot_pos = Vec2::new(
+        interface.inventory.pos.x + 10.0 + (37.0 * frame_pos.x),
+        interface.inventory.pos.y + 195.0 - (37.0 * frame_pos.y),
+    );
+
+    systems.gfx.set_pos(
+        interface.inventory.item_slot[slot].image,
+        Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, z_pos),
+    );
+    if interface.inventory.item_slot[slot].got_count {
+        systems
+            .gfx
+            .set_visible(interface.inventory.item_slot[slot].count, true);
+        systems
+            .gfx
+            .set_visible(interface.inventory.item_slot[slot].count_bg, true);
+    }
+
+    if interface.inventory.in_window(screen_pos)
+        && interface.inventory.order_index == 0
+    {
+        let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
+        if let Some(new_slot) = find_slot {
+            if new_slot != slot {
+                let _ =
+                    send_switchinvslot(socket, slot as u16, new_slot as u16, 1);
             }
         }
     }
