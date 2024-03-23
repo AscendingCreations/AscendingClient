@@ -28,6 +28,7 @@ pub struct ItemSpawnData {
 pub enum MapAttribute {
     Walkable,
     Blocked,
+    NpcBlocked,
     Warp(WarpData),
     Sign(String),
     ItemSpawn(ItemSpawnData),

@@ -437,6 +437,7 @@ fn trigger_chatbox_button(
                 msg,
                 String::new(),
             );
+            interface.chatbox.textbox.set_text(systems, String::new());
         }
         _ => {}
     }
