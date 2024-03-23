@@ -4,12 +4,13 @@ use hecs::World;
 pub const NPC_SPRITE_FRAME_X: f32 = 6.0;
 
 use crate::{
-    game_content::entity::*, game_content::*, values::*, Direction, DrawSetting,
+    game_content::entity::*, game_content::*, values::*, Direction,
+    SystemHolder,
 };
 
 pub fn add_npc(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     pos: Position,
     cur_map: MapPosition,
     entity: Option<&Entity>,
@@ -98,7 +99,7 @@ pub fn add_npc(
 
 pub fn npc_finalized(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
 ) {
     if !world.contains(entity.0) {
@@ -110,7 +111,7 @@ pub fn npc_finalized(
 }
 
 pub fn npc_finalized_data(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     sprite: usize,
     hpbar: &HPBar,
 ) {
@@ -122,7 +123,7 @@ pub fn npc_finalized_data(
 
 pub fn unload_npc(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
 ) {
     let npc_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
@@ -135,7 +136,7 @@ pub fn unload_npc(
 
 pub fn move_npc(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
     move_type: MovementType,
 ) {
@@ -230,7 +231,7 @@ pub fn move_npc(
 
 pub fn end_npc_move(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
 ) {
     if !world.contains(entity.0) {
@@ -266,7 +267,7 @@ pub fn end_npc_move(
 }
 
 pub fn update_npc_position(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut GameContent,
     socket: &mut Socket,
     sprite: usize,
@@ -282,7 +283,7 @@ pub fn update_npc_position(
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset.offset
         - Vec2::new(10.0, 4.0);
-    
+
     let pos =
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
 
@@ -293,7 +294,7 @@ pub fn update_npc_position(
     if pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
-    
+
     systems
         .gfx
         .set_pos(sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
@@ -312,7 +313,7 @@ pub fn update_npc_position(
 
 pub fn set_npc_frame(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
     frame_index: usize,
 ) {
@@ -334,7 +335,7 @@ pub fn set_npc_frame(
 
 pub fn init_npc_attack(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
     seconds: f32,
 ) {
@@ -362,7 +363,7 @@ pub fn init_npc_attack(
 
 pub fn process_npc_attack(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
     seconds: f32,
 ) {
@@ -416,7 +417,7 @@ pub fn process_npc_attack(
 
 pub fn process_npc_movement(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
 ) {
     if !world.contains(entity.0) {

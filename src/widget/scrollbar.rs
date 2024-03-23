@@ -1,7 +1,7 @@
 use graphics::*;
 use guillotiere::euclid::num::Floor;
 
-use crate::{is_within_area, logic::*, DrawSetting};
+use crate::{is_within_area, logic::*, SystemHolder};
 
 pub struct ScrollbarBackground {
     pub color: Color,
@@ -54,7 +54,7 @@ pub struct Scrollbar {
 impl Scrollbar {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         base_pos: Vec2,
         adjust_pos: Vec2,
         bar_size: f32,
@@ -177,7 +177,7 @@ impl Scrollbar {
         }
     }
 
-    pub fn unload(&self, systems: &mut DrawSetting) {
+    pub fn unload(&self, systems: &mut SystemHolder) {
         if let Some(index) = self.bg {
             systems.gfx.remove_gfx(index);
         }
@@ -188,7 +188,7 @@ impl Scrollbar {
         is_within_area(screen_pos, self.base_pos + self.pos, self.size)
     }
 
-    pub fn set_hover(&mut self, systems: &mut DrawSetting, in_hover: bool) {
+    pub fn set_hover(&mut self, systems: &mut SystemHolder, in_hover: bool) {
         if self.in_hover == in_hover {
             return;
         }
@@ -205,7 +205,7 @@ impl Scrollbar {
 
     pub fn set_move_scroll(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) {
         if !self.in_hold {
@@ -242,7 +242,7 @@ impl Scrollbar {
 
     pub fn set_hold(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         in_hold: bool,
         screen_pos: Vec2,
     ) {
@@ -260,7 +260,7 @@ impl Scrollbar {
         }
     }
 
-    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+    pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         if self.visible == visible {
             return;
         }
@@ -271,7 +271,7 @@ impl Scrollbar {
         systems.gfx.set_visible(self.scroll, visible);
     }
 
-    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         self.z_pos = z_order;
         if let Some(index) = self.bg {
             let pos = systems.gfx.get_pos(index);
@@ -290,7 +290,7 @@ impl Scrollbar {
         );
     }
 
-    pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
+    pub fn set_pos(&mut self, systems: &mut SystemHolder, new_pos: Vec2) {
         self.base_pos = new_pos;
         if let Some(index) = self.bg {
             let pos = systems.gfx.get_pos(index);
@@ -310,7 +310,7 @@ impl Scrollbar {
         );
     }
 
-    pub fn set_value(&mut self, systems: &mut DrawSetting, value: usize) {
+    pub fn set_value(&mut self, systems: &mut SystemHolder, value: usize) {
         let new_value = if self.reverse_value {
             self.max_value.saturating_sub(value)
         } else {
@@ -349,7 +349,7 @@ impl Scrollbar {
 
     pub fn set_max_value(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         max_value: usize,
     ) {
         if self.max_value == max_value {

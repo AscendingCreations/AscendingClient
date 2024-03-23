@@ -1,7 +1,7 @@
-use crate::{values::*, widget::*, DrawSetting};
+use crate::{values::*, widget::*, SystemHolder};
 use graphics::*;
 
-pub fn create_menu_button(systems: &mut DrawSetting) -> [Button; 3] {
+pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
     let button_properties = ButtonRect {
         rect_color: Color::rgba(80, 80, 80, 255),
         got_border: true,

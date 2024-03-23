@@ -1,7 +1,7 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{is_within_area, logic::*, values::*, widget::*, DrawSetting};
+use crate::{is_within_area, logic::*, values::*, widget::*, SystemHolder};
 
 const MAX_CHAT_LINE: usize = 8;
 const VISIBLE_SIZE: f32 = 160.0;
@@ -46,7 +46,7 @@ pub struct Chatbox {
 }
 
 impl Chatbox {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         let w_pos = Vec3::new(10.0, 10.0, ORDER_GUI_WINDOW);
         let w_size = Vec2::new(350.0, 200.0);
 
@@ -265,7 +265,7 @@ impl Chatbox {
         }
     }
 
-    pub fn unload(&mut self, systems: &mut DrawSetting) {
+    pub fn unload(&mut self, systems: &mut SystemHolder) {
         systems.gfx.remove_gfx(self.window);
         systems.gfx.remove_gfx(self.textbox_bg);
         systems.gfx.remove_gfx(self.chatarea_bg);
@@ -318,7 +318,7 @@ impl Chatbox {
         self.in_hold = false;
     }
 
-    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         if self.z_order == z_order {
             return;
         }
@@ -355,7 +355,11 @@ impl Chatbox {
         }
     }
 
-    pub fn move_window(&mut self, systems: &mut DrawSetting, screen_pos: Vec2) {
+    pub fn move_window(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
         if !self.in_hold {
             return;
         }
@@ -411,7 +415,7 @@ impl Chatbox {
 
     pub fn hover_buttons(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) {
         for button in self.button.iter_mut() {
@@ -432,7 +436,7 @@ impl Chatbox {
 
     pub fn click_buttons(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) -> Option<usize> {
         let mut button_found = None;
@@ -452,7 +456,7 @@ impl Chatbox {
         button_found
     }
 
-    pub fn reset_buttons(&mut self, systems: &mut DrawSetting) {
+    pub fn reset_buttons(&mut self, systems: &mut SystemHolder) {
         if !self.did_button_click {
             return;
         }
@@ -465,7 +469,7 @@ impl Chatbox {
 
     pub fn set_chat_scrollbar(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         force: bool,
     ) {
         if self.scrollbar.value == self.chat_scroll_value {
@@ -495,7 +499,7 @@ impl Chatbox {
 
     pub fn add_chat(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         msg: (String, Color),
         header_msg: Option<(String, Color)>,
     ) {

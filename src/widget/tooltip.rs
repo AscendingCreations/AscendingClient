@@ -1,7 +1,7 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{create_label, values::*, DrawSetting};
+use crate::{create_label, values::*, SystemHolder};
 
 pub struct Tooltip {
     window: usize,
@@ -15,7 +15,7 @@ pub struct Tooltip {
 }
 
 impl Tooltip {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         let visible = false;
 
         let mut window_rect = Rect::new(&mut systems.renderer, 0);
@@ -57,7 +57,7 @@ impl Tooltip {
 
     pub fn init_tooltip(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
         msg: String,
     ) {
@@ -93,7 +93,7 @@ impl Tooltip {
         systems.gfx.set_size(self.window, w_size);
     }
 
-    pub fn hide_tooltip(&mut self, systems: &mut DrawSetting) {
+    pub fn hide_tooltip(&mut self, systems: &mut SystemHolder) {
         if !self.visible {
             return;
         }
@@ -102,7 +102,7 @@ impl Tooltip {
         systems.gfx.set_visible(self.text, self.visible);
     }
 
-    pub fn show_tooltip(&mut self, systems: &mut DrawSetting) {
+    pub fn show_tooltip(&mut self, systems: &mut SystemHolder) {
         if self.visible {
             return;
         }
@@ -113,7 +113,7 @@ impl Tooltip {
 
     pub fn check_tooltip(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) {
         if self.init_pos != screen_pos {
@@ -124,7 +124,7 @@ impl Tooltip {
 
     pub fn handle_tooltip_logic(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         seconds: f32,
     ) {
         if !self.init || self.visible {

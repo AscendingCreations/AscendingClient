@@ -1,7 +1,7 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{logic::*, widget::*, DrawSetting};
+use crate::{logic::*, widget::*, SystemHolder};
 
 #[derive(Clone)]
 pub enum ButtonChangeType {
@@ -83,7 +83,7 @@ pub struct Button {
 impl Button {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         button_type: ButtonType,
         content_type: ButtonContentType,
         base_pos: Vec2,
@@ -199,7 +199,7 @@ impl Button {
         }
     }
 
-    pub fn unload(&mut self, systems: &mut DrawSetting) {
+    pub fn unload(&mut self, systems: &mut SystemHolder) {
         if let Some(index) = self.index {
             systems.gfx.remove_gfx(index);
         }
@@ -208,7 +208,7 @@ impl Button {
         }
     }
 
-    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+    pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         if self.visible == visible {
             return;
         }
@@ -221,7 +221,7 @@ impl Button {
         }
     }
 
-    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         self.z_order = z_order;
         if let Some(index) = self.index {
             let pos = systems.gfx.get_pos(index);
@@ -242,7 +242,7 @@ impl Button {
         }
     }
 
-    pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
+    pub fn set_pos(&mut self, systems: &mut SystemHolder, new_pos: Vec2) {
         self.base_pos = new_pos;
         if let Some(index) = self.index {
             let pos = Vec3::new(
@@ -286,7 +286,7 @@ impl Button {
         }
     }
 
-    pub fn set_hover(&mut self, systems: &mut DrawSetting, state: bool) {
+    pub fn set_hover(&mut self, systems: &mut SystemHolder, state: bool) {
         if self.in_hover == state || !self.visible {
             return;
         }
@@ -300,7 +300,7 @@ impl Button {
         }
     }
 
-    pub fn set_click(&mut self, systems: &mut DrawSetting, state: bool) {
+    pub fn set_click(&mut self, systems: &mut SystemHolder, state: bool) {
         if self.in_click == state || !self.visible {
             return;
         }
@@ -315,7 +315,7 @@ impl Button {
         }
     }
 
-    fn apply_click(&mut self, systems: &mut DrawSetting) {
+    fn apply_click(&mut self, systems: &mut SystemHolder) {
         let pos = self.base_pos + self.adjust_pos;
         if let Some(index) = self.index {
             let buttontype = self.button_type.clone();
@@ -415,7 +415,7 @@ impl Button {
         }
     }
 
-    fn apply_hover(&mut self, systems: &mut DrawSetting) {
+    fn apply_hover(&mut self, systems: &mut SystemHolder) {
         let pos = self.base_pos + self.adjust_pos;
         if let Some(index) = self.index {
             let buttontype = self.button_type.clone();
@@ -515,7 +515,7 @@ impl Button {
         }
     }
 
-    fn apply_normal(&mut self, systems: &mut DrawSetting) {
+    fn apply_normal(&mut self, systems: &mut SystemHolder) {
         let pos = self.base_pos + self.adjust_pos;
         if let Some(index) = self.index {
             let buttontype = self.button_type.clone();

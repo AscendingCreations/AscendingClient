@@ -21,7 +21,7 @@ pub use error::*;
 pub use handledata::*;
 pub use sends::*;
 
-use crate::{config::*, Alert, BufferTask, Content, DrawSetting};
+use crate::{config::*, Alert, BufferTask, Content, SystemHolder};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ClientState {
@@ -366,7 +366,7 @@ pub fn process_packets(
     socket: &mut Socket,
     router: &PacketRouter,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     alert: &mut Alert,
     seconds: f32,

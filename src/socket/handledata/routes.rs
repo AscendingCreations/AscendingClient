@@ -8,8 +8,8 @@ use crate::{
     set_npc_frame,
     socket::error::*,
     unload_mapitems, unload_npc, update_camera, Alert, BufferTask, ChatTask,
-    Content, DrawSetting, EntityType, FtlType, MapItem, MessageChannel,
-    Position, Socket, NPC_SPRITE_FRAME_X, VITALS_MAX,
+    Content, EntityType, FtlType, MapItem, MessageChannel, Position, Socket,
+    SystemHolder, NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -18,7 +18,7 @@ use hecs::World;
 pub fn handle_ping(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -31,7 +31,7 @@ pub fn handle_ping(
 pub fn handle_status(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -44,7 +44,7 @@ pub fn handle_status(
 pub fn handle_alertmsg(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -61,7 +61,7 @@ pub fn handle_alertmsg(
 pub fn handle_fltalert(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -77,7 +77,7 @@ pub fn handle_fltalert(
 pub fn handle_loginok(
     _socket: &mut Socket,
     _world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -99,7 +99,7 @@ pub fn handle_loginok(
 pub fn handle_ingame(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -112,7 +112,7 @@ pub fn handle_ingame(
 pub fn handle_updatemap(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -125,7 +125,7 @@ pub fn handle_updatemap(
 pub fn handle_mapitems(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -144,6 +144,7 @@ pub fn handle_mapitems(
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
                 let client_map = world.get_or_panic::<Position>(&myentity).map;
+                // ToDo: Load sprite from item data base on Item Num
                 let mapitem = MapItem::create(
                     world,
                     systems,
@@ -168,7 +169,7 @@ pub fn handle_mapitems(
 pub fn handle_myindex(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -183,7 +184,7 @@ pub fn handle_myindex(
 pub fn handle_playerdata(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -276,7 +277,7 @@ pub fn handle_playerdata(
 pub fn handle_playerspawn(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -383,7 +384,7 @@ pub fn handle_playerspawn(
 pub fn handle_playermove(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -427,7 +428,7 @@ pub fn handle_playermove(
 pub fn handle_playerwarp(
     socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -470,6 +471,7 @@ pub fn handle_playerwarp(
                     systems,
                     socket,
                 );
+                content.game_content.target.clear_target(socket, systems);
             }
         }
     }
@@ -480,7 +482,7 @@ pub fn handle_playerwarp(
 pub fn handle_playermapswap(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -493,7 +495,7 @@ pub fn handle_playermapswap(
 pub fn handle_dataremovelist(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -524,7 +526,7 @@ pub fn handle_dataremovelist(
 pub fn handle_dataremove(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -537,7 +539,7 @@ pub fn handle_dataremove(
 pub fn handle_playerdir(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -552,7 +554,7 @@ pub fn handle_playerdir(
 pub fn handle_playervitals(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -605,28 +607,43 @@ pub fn handle_playervitals(
 pub fn handle_playerinv(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
-    _content: &mut Content,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
+    let items = data.read::<Vec<Item>>()?;
+    for (index, item) in items.iter().enumerate() {
+        content
+            .game_content
+            .interface
+            .inventory
+            .update_inv_slot(systems, index, item);
+    }
+
     Ok(())
 }
 
 pub fn handle_playerinvslot(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
-    _content: &mut Content,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
-    let _id = data.read::<usize>()?;
-    let _item = data.read::<Item>()?;
+    let index = data.read::<usize>()?;
+    let item = data.read::<Item>()?;
+
+    content
+        .game_content
+        .interface
+        .inventory
+        .update_inv_slot(systems, index, &item);
 
     Ok(())
 }
@@ -634,7 +651,7 @@ pub fn handle_playerinvslot(
 pub fn handle_keyinput(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -647,7 +664,7 @@ pub fn handle_keyinput(
 pub fn handle_playerattack(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -672,7 +689,7 @@ pub fn handle_playerattack(
 pub fn handle_playerequipment(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -685,7 +702,7 @@ pub fn handle_playerequipment(
 pub fn handle_playeraction(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -698,7 +715,7 @@ pub fn handle_playeraction(
 pub fn handle_playerlevel(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -711,7 +728,7 @@ pub fn handle_playerlevel(
 pub fn handle_playermoney(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -726,7 +743,7 @@ pub fn handle_playermoney(
 pub fn handle_playerstun(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -739,7 +756,7 @@ pub fn handle_playerstun(
 pub fn handle_playervariables(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -752,7 +769,7 @@ pub fn handle_playervariables(
 pub fn handle_playervariable(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -765,7 +782,7 @@ pub fn handle_playervariable(
 pub fn handle_playerdeath(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -778,7 +795,7 @@ pub fn handle_playerdeath(
 pub fn handle_npcdeath(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -791,7 +808,7 @@ pub fn handle_npcdeath(
 pub fn handle_playerpvp(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -804,7 +821,7 @@ pub fn handle_playerpvp(
 pub fn handle_playerpk(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -817,7 +834,7 @@ pub fn handle_playerpk(
 pub fn handle_playeremail(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -830,7 +847,7 @@ pub fn handle_playeremail(
 pub fn handle_npcdata(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -927,7 +944,7 @@ pub fn handle_npcdata(
 pub fn handle_npcmove(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -971,7 +988,7 @@ pub fn handle_npcmove(
 pub fn handle_npcwarp(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -1008,7 +1025,7 @@ pub fn handle_npcwarp(
 pub fn handle_npcdir(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -1038,7 +1055,7 @@ pub fn handle_npcdir(
 pub fn handle_npcvital(
     _socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -1081,7 +1098,7 @@ pub fn handle_npcvital(
 pub fn handle_npcattack(
     _socket: &mut Socket,
     world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -1104,7 +1121,7 @@ pub fn handle_npcattack(
 pub fn handle_npcstun(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -1117,7 +1134,7 @@ pub fn handle_npcstun(
 pub fn handle_chatmsg(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -1149,7 +1166,7 @@ pub fn handle_chatmsg(
 pub fn handle_sound(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -1162,7 +1179,7 @@ pub fn handle_sound(
 pub fn handle_target(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -1175,7 +1192,7 @@ pub fn handle_target(
 pub fn handle_synccheck(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
@@ -1188,7 +1205,7 @@ pub fn handle_synccheck(
 pub fn handle_entityunload(
     socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -1230,7 +1247,7 @@ pub fn handle_entityunload(
 pub fn handle_loadstatus(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,

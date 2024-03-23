@@ -1,4 +1,4 @@
-use crate::{database::*, Config, DrawSetting};
+use crate::{database::*, Config, SystemHolder};
 use hecs::World;
 
 pub mod game_content;
@@ -20,7 +20,7 @@ pub struct Content {
 }
 
 impl Content {
-    pub fn new(world: &mut World, systems: &mut DrawSetting) -> Self {
+    pub fn new(world: &mut World, systems: &mut SystemHolder) -> Self {
         let mut content = Content {
             content_type: ContentType::Menu,
             menu_content: MenuContent::new(systems),
@@ -38,7 +38,7 @@ impl Content {
     pub fn switch_content(
         &mut self,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         contenttype: ContentType,
     ) {
         if self.content_type == contenttype {

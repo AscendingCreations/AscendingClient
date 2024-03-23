@@ -7,7 +7,7 @@ use std::collections::HashMap;
 type PacketFunction = fn(
     &mut Socket,
     &mut World,
-    &mut DrawSetting,
+    &mut SystemHolder,
     &mut Content,
     &mut Alert,
     &mut ByteBuffer,

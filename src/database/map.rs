@@ -6,7 +6,7 @@ use std::fs::OpenOptions;
 use std::io::BufReader;
 use std::path::Path;
 
-use crate::{DrawSetting, MapPosition};
+use crate::{MapPosition, SystemHolder};
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct WarpData {
@@ -118,7 +118,7 @@ pub fn is_map_exist(x: i32, y: i32, group: u64) -> bool {
     Path::new(&name).exists()
 }
 
-pub fn clear_map(systems: &mut DrawSetting, map_index: usize) {
+pub fn clear_map(systems: &mut SystemHolder, map_index: usize) {
     (0..9).for_each(|layer| {
         (0..32).for_each(|x| {
             (0..32).for_each(|y| {
@@ -133,7 +133,7 @@ pub fn clear_map(systems: &mut DrawSetting, map_index: usize) {
 }
 
 pub fn load_map_data(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     mapdata: &MapData,
     map_index: usize,
 ) {

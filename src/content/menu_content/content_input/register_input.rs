@@ -5,13 +5,13 @@ use winit::{event::*, keyboard::*};
 
 use crate::{
     button, content::*, logic::*, socket::*, Alert, AlertType, ContentType,
-    DrawSetting, MouseInputType, Tooltip,
+    MouseInputType, SystemHolder, Tooltip,
 };
 
 pub fn register_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     alert: &mut Alert,
     tooltip: &mut Tooltip,
@@ -51,7 +51,7 @@ pub fn register_mouse_input(
 pub fn register_key_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     event: &KeyEvent,
 ) {
     if let Some(textbox_index) = menu_content.selected_textbox {
@@ -61,7 +61,7 @@ pub fn register_key_input(
 
 fn trigger_button(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     _alert: &mut Alert,
     index: usize,
@@ -174,7 +174,7 @@ fn trigger_button(
 
 fn trigger_checkbox(
     _menu_content: &mut MenuContent,
-    _systems: &mut DrawSetting,
+    _systems: &mut SystemHolder,
     _index: usize,
 ) {
     /*match index {

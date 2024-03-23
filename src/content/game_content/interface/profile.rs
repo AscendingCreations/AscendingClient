@@ -1,6 +1,6 @@
 use graphics::*;
 
-use crate::{is_within_area, logic::*, values::*, widget::*, DrawSetting};
+use crate::{is_within_area, logic::*, values::*, widget::*, SystemHolder};
 
 pub struct Profile {
     pub visible: bool,
@@ -21,7 +21,7 @@ pub struct Profile {
 }
 
 impl Profile {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         let w_size = Vec2::new(200.0, 267.0);
         let w_pos = Vec3::new(
             systems.size.width - w_size.x - 10.0,
@@ -94,13 +94,13 @@ impl Profile {
         }
     }
 
-    pub fn unload(&self, systems: &mut DrawSetting) {
+    pub fn unload(&self, systems: &mut SystemHolder) {
         systems.gfx.remove_gfx(self.bg);
         systems.gfx.remove_gfx(self.header);
         systems.gfx.remove_gfx(self.header_text);
     }
 
-    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+    pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         if self.visible == visible {
             return;
         }
@@ -137,7 +137,7 @@ impl Profile {
         self.in_hold = false;
     }
 
-    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         if self.z_order == z_order {
             return;
         }
@@ -161,7 +161,11 @@ impl Profile {
         systems.gfx.set_pos(self.header_text, pos);
     }
 
-    pub fn move_window(&mut self, systems: &mut DrawSetting, screen_pos: Vec2) {
+    pub fn move_window(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
         if !self.in_hold {
             return;
         }

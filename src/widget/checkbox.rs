@@ -1,7 +1,7 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{logic::*, widget::*, DrawSetting};
+use crate::{logic::*, widget::*, SystemHolder};
 
 #[derive(Clone)]
 pub enum CheckboxChangeType {
@@ -92,7 +92,7 @@ pub struct Checkbox {
 impl Checkbox {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         box_type: CheckboxType,
         check_type: CheckType,
         base_pos: Vec2,
@@ -217,7 +217,7 @@ impl Checkbox {
         }
     }
 
-    pub fn unload(&mut self, systems: &mut DrawSetting) {
+    pub fn unload(&mut self, systems: &mut SystemHolder) {
         systems.gfx.remove_gfx(self.image);
         systems.gfx.remove_gfx(self.check_image);
         if let Some(data) = &mut self.text_type {
@@ -225,7 +225,7 @@ impl Checkbox {
         }
     }
 
-    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+    pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         if self.visible == visible {
             return;
         }
@@ -241,7 +241,7 @@ impl Checkbox {
         }
     }
 
-    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         self.z_order = z_order;
         let pos = systems.gfx.get_pos(self.image);
         systems
@@ -264,7 +264,7 @@ impl Checkbox {
         }
     }
 
-    pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
+    pub fn set_pos(&mut self, systems: &mut SystemHolder, new_pos: Vec2) {
         self.base_pos = new_pos;
 
         let pos = Vec3::new(
@@ -308,7 +308,7 @@ impl Checkbox {
         }
     }
 
-    pub fn set_hover(&mut self, systems: &mut DrawSetting, state: bool) {
+    pub fn set_hover(&mut self, systems: &mut SystemHolder, state: bool) {
         if self.in_hover == state || !self.visible {
             return;
         }
@@ -322,7 +322,7 @@ impl Checkbox {
         }
     }
 
-    pub fn set_click(&mut self, systems: &mut DrawSetting, state: bool) {
+    pub fn set_click(&mut self, systems: &mut SystemHolder, state: bool) {
         if self.in_click == state || !self.visible {
             return;
         }
@@ -341,7 +341,7 @@ impl Checkbox {
         }
     }
 
-    fn apply_click(&mut self, systems: &mut DrawSetting) {
+    fn apply_click(&mut self, systems: &mut SystemHolder) {
         let buttontype = self.box_type.clone();
         match buttontype {
             CheckboxType::Rect(data) => {
@@ -377,7 +377,7 @@ impl Checkbox {
         }
     }
 
-    fn apply_hover(&mut self, systems: &mut DrawSetting) {
+    fn apply_hover(&mut self, systems: &mut SystemHolder) {
         let buttontype = self.box_type.clone();
         match buttontype {
             CheckboxType::Rect(data) => {
@@ -413,7 +413,7 @@ impl Checkbox {
         }
     }
 
-    fn apply_normal(&mut self, systems: &mut DrawSetting) {
+    fn apply_normal(&mut self, systems: &mut SystemHolder) {
         let buttontype = self.box_type.clone();
         match buttontype {
             CheckboxType::Rect(data) => {

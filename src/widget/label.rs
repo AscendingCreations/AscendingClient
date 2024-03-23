@@ -1,10 +1,10 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::DrawSetting;
+use crate::SystemHolder;
 
 pub fn create_label(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     pos: Vec3,
     label_size: Vec2,
     bounds: Bounds,
@@ -29,7 +29,7 @@ pub fn create_label(
     text
 }
 
-pub fn create_empty_label(systems: &mut DrawSetting) -> Text {
+pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
     let mut text = Text::new(
         &mut systems.renderer,
         Some(Metrics::new(16.0, 16.0).scale(systems.scale as f32)),

@@ -215,8 +215,10 @@ async fn main() -> Result<(), AscendingError> {
     // Load config
     let config = Config::read_config("settings.toml");
 
+    let database_holder = DatabaseHolder { item: get_item() };
+
     // Compile all rendering data in one type for quick access and passing
-    let mut systems = DrawSetting {
+    let mut systems = SystemHolder {
         gfx: GfxCollection::new(),
         renderer,
         size,
@@ -225,6 +227,7 @@ async fn main() -> Result<(), AscendingError> {
         fade: Fade::new(),
         map_fade: MapFade::new(),
         config,
+        base: database_holder,
     };
     systems.fade.init_setup(
         &mut systems.renderer,

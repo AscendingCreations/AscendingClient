@@ -1,4 +1,4 @@
-use crate::{send_settarget, DrawSetting, Entity, Socket, ORDER_TARGET};
+use crate::{send_settarget, Entity, Socket, SystemHolder, ORDER_TARGET};
 use graphics::*;
 use hecs::World;
 
@@ -8,7 +8,7 @@ pub struct Target {
 }
 
 impl Target {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         let mut image = Image::new(
             Some(systems.resource.target.allocation),
             &mut systems.renderer,
@@ -26,7 +26,7 @@ impl Target {
         }
     }
 
-    pub fn recreate(&mut self, systems: &mut DrawSetting) {
+    pub fn recreate(&mut self, systems: &mut SystemHolder) {
         let mut image = Image::new(
             Some(systems.resource.target.allocation),
             &mut systems.renderer,
@@ -42,14 +42,14 @@ impl Target {
         self.entity = None;
     }
 
-    pub fn unload(&self, systems: &mut DrawSetting) {
+    pub fn unload(&self, systems: &mut SystemHolder) {
         systems.gfx.remove_gfx(self.img_index);
     }
 
     pub fn set_target(
         &mut self,
         socket: &mut Socket,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         target: &Entity,
     ) {
         self.entity = Some(*target);
@@ -60,7 +60,7 @@ impl Target {
     pub fn clear_target(
         &mut self,
         socket: &mut Socket,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
     ) {
         self.entity = None;
         systems.gfx.set_visible(self.img_index, false);
@@ -70,7 +70,7 @@ impl Target {
     pub fn set_target_pos(
         &mut self,
         socket: &mut Socket,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         pos: Vec2,
     ) {
         let mut image_pos = systems.gfx.get_pos(self.img_index);

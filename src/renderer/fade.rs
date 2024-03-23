@@ -3,7 +3,7 @@ use graphics::*;
 use hecs::World;
 use winit::dpi::PhysicalSize;
 
-use crate::{content::*, gfx_collection::*, values::*, DrawSetting, Socket};
+use crate::{content::*, gfx_collection::*, values::*, Socket, SystemHolder};
 
 #[derive(Default)]
 pub enum FadeData {
@@ -213,7 +213,7 @@ impl MapFade {
 }
 
 pub fn fade_end(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     world: &mut World,
     content: &mut Content,
     socket: &mut Socket,
@@ -229,7 +229,9 @@ pub fn fade_end(
                 Position::default()
             };
             content.game_content.init_map(systems, pos.map);
-            content.game_content.init_finalized_data(world, systems, socket);
+            content
+                .game_content
+                .init_finalized_data(world, systems, socket);
 
             systems.fade.init_fade(
                 &mut systems.gfx,
@@ -243,7 +245,7 @@ pub fn fade_end(
 }
 
 pub fn map_fade_end(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     _world: &mut World,
     _content: &mut Content,
 ) {

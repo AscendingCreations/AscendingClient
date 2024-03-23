@@ -17,12 +17,12 @@ use crate::{
     game_content::{entity::*, *},
     send_move,
     values::*,
-    Direction, DrawSetting, Socket,
+    Direction, Socket, SystemHolder,
 };
 
 pub fn add_player(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     pos: Position,
     cur_map: MapPosition,
     entity: Option<&Entity>,
@@ -111,7 +111,7 @@ pub fn add_player(
 
 pub fn player_finalized(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
 ) {
     if !world.contains(entity.0) {
@@ -123,7 +123,7 @@ pub fn player_finalized(
 }
 
 pub fn player_finalized_data(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     sprite: usize,
     hpbar: &HPBar,
 ) {
@@ -135,7 +135,7 @@ pub fn player_finalized_data(
 
 pub fn unload_player(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
 ) {
     let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
@@ -148,7 +148,7 @@ pub fn unload_player(
 
 pub fn move_player(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     entity: &Entity,
     content: &mut GameContent,
@@ -273,7 +273,7 @@ pub fn move_player(
 
 pub fn end_player_move(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut GameContent,
     socket: &mut Socket,
     entity: &Entity,
@@ -323,7 +323,7 @@ pub fn end_player_move(
 }
 
 pub fn update_player_position(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut GameContent,
     socket: &mut Socket,
     sprite: usize,
@@ -342,7 +342,7 @@ pub fn update_player_position(
 
     let pos =
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
-    
+
     if is_target {
         content.target.set_target_pos(socket, systems, pos);
     }
@@ -369,7 +369,7 @@ pub fn update_player_position(
 
 pub fn set_player_frame(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
     frame_index: usize,
 ) {
@@ -391,7 +391,7 @@ pub fn set_player_frame(
 
 pub fn init_player_attack(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
     seconds: f32,
 ) {
@@ -426,7 +426,7 @@ pub fn init_player_attack(
 
 pub fn process_player_attack(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
     seconds: f32,
 ) {
@@ -480,7 +480,7 @@ pub fn process_player_attack(
 
 pub fn process_player_movement(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     entity: &Entity,
     content: &mut GameContent,

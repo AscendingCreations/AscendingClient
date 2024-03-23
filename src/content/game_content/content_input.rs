@@ -3,7 +3,7 @@ use hecs::World;
 use winit::{event::*, keyboard::*};
 
 use crate::{
-    content::*, socket::*, Alert, ContentType, DrawSetting, MouseInputType,
+    content::*, socket::*, Alert, ContentType, MouseInputType, SystemHolder,
     Tooltip,
 };
 
@@ -16,7 +16,7 @@ impl GameContent {
     pub fn mouse_input(
         content: &mut Content,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         socket: &mut Socket,
         alert: &mut Alert,
         _tooltip: &mut Tooltip,
@@ -60,7 +60,7 @@ impl GameContent {
     pub fn key_input(
         content: &mut Content,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         socket: &mut Socket,
         _alert: &mut Alert,
         event: &KeyEvent,

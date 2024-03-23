@@ -3,8 +3,8 @@ use hecs::World;
 
 use crate::{
     content::game_content::player::*, content::game_content::*,
-    database::map::*, entity::*, values::*, Direction, DrawSetting, EntityType,
-    MapAttribute, WorldExtras,
+    database::map::*, entity::*, values::*, Direction, EntityType,
+    MapAttribute, SystemHolder, WorldExtras,
 };
 
 pub mod item;
@@ -34,7 +34,7 @@ pub struct MapContent {
 }
 
 impl MapContent {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         let mut index = [(0, 0); 9];
 
         for (i, index) in index.iter_mut().enumerate() {
@@ -51,7 +51,7 @@ impl MapContent {
         }
     }
 
-    pub fn recreate(&mut self, systems: &mut DrawSetting) {
+    pub fn recreate(&mut self, systems: &mut SystemHolder) {
         for i in 0..9 {
             let mut mapdata = Map::new(&mut systems.renderer, TILE_SIZE as u32);
             mapdata.pos = get_mapindex_base_pos(i);
@@ -61,7 +61,7 @@ impl MapContent {
         self.map_pos = MapPosition::default();
     }
 
-    pub fn unload(&mut self, systems: &mut DrawSetting) {
+    pub fn unload(&mut self, systems: &mut SystemHolder) {
         self.index.iter().for_each(|(index, _)| {
             systems.gfx.remove_gfx(*index);
         });
@@ -73,7 +73,7 @@ impl MapContent {
         self.map_attribute.sort_by(|a, b| a.1.cmp(&b.1));
     }
 
-    pub fn move_pos(&mut self, systems: &mut DrawSetting, pos: Vec2) {
+    pub fn move_pos(&mut self, systems: &mut SystemHolder, pos: Vec2) {
         self.index
             .iter()
             .enumerate()
@@ -86,7 +86,7 @@ impl MapContent {
             });
     }
 
-    pub fn get_pos(&mut self, systems: &mut DrawSetting) -> Vec2 {
+    pub fn get_pos(&mut self, systems: &mut SystemHolder) -> Vec2 {
         let pos = systems.gfx.get_pos(self.index[0].0);
         Vec2::new(pos.x, pos.y)
     }
@@ -137,13 +137,17 @@ impl MapContent {
 
 pub fn find_entity(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut GameContent,
     screen_pos: Vec2,
 ) -> Option<Entity> {
     let center_pos = systems.gfx.get_pos(content.map.index[0].0);
-    let adjusted_pos = Vec2::new(screen_pos.x - center_pos.x, screen_pos.y - center_pos.y);
-    let tile_pos = Vec2::new((adjusted_pos.x / 20.0).floor(), (adjusted_pos.y / 20.0).floor());
+    let adjusted_pos =
+        Vec2::new(screen_pos.x - center_pos.x, screen_pos.y - center_pos.y);
+    let tile_pos = Vec2::new(
+        (adjusted_pos.x / 20.0).floor(),
+        (adjusted_pos.y / 20.0).floor(),
+    );
     let mut target_pos = Position {
         x: tile_pos.x as i32,
         y: tile_pos.y as i32,
@@ -178,17 +182,23 @@ pub fn find_entity(
                 if let Some(myentity) = content.myentity {
                     if myentity.0 != entity {
                         Some(Entity(entity))
-                    } else { None }
-                } else { None }
-            } else { None }
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
         });
-    
+
     target_entity
 }
 
 pub fn can_move(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
     content: &mut GameContent,
     direction: &Direction,

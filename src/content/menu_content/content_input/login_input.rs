@@ -4,13 +4,13 @@ use winit::{event::*, keyboard::*};
 
 use crate::{
     button, content::*, fade::*, logic::FloatFix, socket::*, Alert,
-    ContentType, DrawSetting, MouseInputType, Tooltip,
+    ContentType, MouseInputType, SystemHolder, Tooltip,
 };
 
 pub fn login_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     _alert: &mut Alert,
     tooltip: &mut Tooltip,
@@ -49,7 +49,7 @@ pub fn login_mouse_input(
 pub fn login_key_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     event: &KeyEvent,
 ) {
     if let Some(textbox_index) = menu_content.selected_textbox {
@@ -59,7 +59,7 @@ pub fn login_key_input(
 
 fn trigger_button(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     index: usize,
 ) {
@@ -86,7 +86,7 @@ fn trigger_button(
 
 fn trigger_checkbox(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     index: usize,
 ) {
     #[allow(clippy::single_match)]

@@ -3,7 +3,7 @@ use indexmap::IndexMap;
 use rustls::internal::msgs;
 use std::collections::VecDeque;
 
-use crate::{database::map::*, Content, DrawSetting, HPBar, MapAttributes};
+use crate::{database::map::*, Content, HPBar, MapAttributes, SystemHolder};
 
 pub struct StoredData {
     pub map_data: IndexMap<String, MapData>,
@@ -35,7 +35,7 @@ impl BufferTask {
 
     pub fn process_buffer(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         content: &mut Content,
     ) {
         self.chatbuffer.process_buffer(systems, content);
@@ -112,7 +112,7 @@ impl ChatBufferTask {
 
     pub fn process_buffer(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         content: &mut Content,
     ) {
         if self.task.is_empty() {

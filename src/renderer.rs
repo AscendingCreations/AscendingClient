@@ -5,9 +5,15 @@ pub mod fade;
 
 pub use fade::*;
 
-use crate::{game_content::*, gfx_collection::*, Config, TextureAllocation};
+use crate::{
+    game_content::*, gfx_collection::*, Config, ItemData, TextureAllocation,
+};
 
-pub struct DrawSetting {
+pub struct DatabaseHolder {
+    pub item: Vec<ItemData>,
+}
+
+pub struct SystemHolder {
     pub gfx: GfxCollection,
     pub renderer: GpuRenderer,
     pub size: PhysicalSize<f32>,
@@ -16,6 +22,7 @@ pub struct DrawSetting {
     pub fade: Fade,
     pub map_fade: MapFade,
     pub config: Config,
+    pub base: DatabaseHolder,
 }
 
 pub struct State<Controls>
@@ -119,7 +126,7 @@ where
 }
 
 pub fn add_image_to_buffer<Controls>(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     graphics: &mut State<Controls>,
 ) where
     Controls: camera::controls::Controls,

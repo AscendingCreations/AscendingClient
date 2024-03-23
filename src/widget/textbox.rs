@@ -7,7 +7,7 @@ const MAX_KEY: usize = 1;
 
 use winit::{event::*, keyboard::*};
 
-use crate::{logic::*, widget::*, DrawSetting};
+use crate::{logic::*, widget::*, SystemHolder};
 
 pub struct Textbox {
     visible: bool,
@@ -29,7 +29,7 @@ pub struct Textbox {
 impl Textbox {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         pos: Vec3,
         z_step: (f32, i32),
         size: Vec2,
@@ -75,7 +75,7 @@ impl Textbox {
         }
     }
 
-    pub fn set_select(&mut self, systems: &mut DrawSetting, is_select: bool) {
+    pub fn set_select(&mut self, systems: &mut SystemHolder, is_select: bool) {
         if self.is_selected == is_select || !self.visible {
             return;
         }
@@ -83,12 +83,12 @@ impl Textbox {
         systems.gfx.set_visible(self.bg, self.is_selected);
     }
 
-    pub fn unload(&mut self, systems: &mut DrawSetting) {
+    pub fn unload(&mut self, systems: &mut SystemHolder) {
         systems.gfx.remove_gfx(self.bg);
         systems.gfx.remove_gfx(self.text_index);
     }
 
-    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+    pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         if self.visible == visible {
             return;
         }
@@ -97,7 +97,7 @@ impl Textbox {
         systems.gfx.set_visible(self.text_index, visible);
     }
 
-    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         self.pos.z = z_order;
         systems.gfx.set_pos(self.bg, self.pos);
         systems.gfx.set_pos(
@@ -110,7 +110,7 @@ impl Textbox {
         );
     }
 
-    pub fn set_pos(&mut self, systems: &mut DrawSetting, new_pos: Vec2) {
+    pub fn set_pos(&mut self, systems: &mut SystemHolder, new_pos: Vec2) {
         self.pos.x = new_pos.x;
         self.pos.y = new_pos.y;
         systems.gfx.set_pos(self.bg, self.pos);
@@ -133,7 +133,7 @@ impl Textbox {
         );
     }
 
-    pub fn set_text(&mut self, systems: &mut DrawSetting, text: String) {
+    pub fn set_text(&mut self, systems: &mut SystemHolder, text: String) {
         self.text.clear();
         if !text.is_empty() {
             self.text.push_str(&text);
@@ -149,7 +149,7 @@ impl Textbox {
         self.adjust_text(systems);
     }
 
-    pub fn enter_text(&mut self, systems: &mut DrawSetting, event: &KeyEvent) {
+    pub fn enter_text(&mut self, systems: &mut SystemHolder, event: &KeyEvent) {
         if !self.visible {
             return;
         }
@@ -215,7 +215,7 @@ impl Textbox {
         }
     }
 
-    pub fn adjust_text(&mut self, systems: &mut DrawSetting) {
+    pub fn adjust_text(&mut self, systems: &mut SystemHolder) {
         let adjust_x =
             (systems.gfx.get_measure(self.text_index).x - self.size.x).max(0.0);
         if self.adjust_x == adjust_x {

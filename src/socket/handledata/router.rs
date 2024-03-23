@@ -5,7 +5,7 @@ pub fn handle_data(
     socket: &mut Socket,
     router: &PacketRouter,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     alert: &mut Alert,
     data: &mut ByteBuffer,

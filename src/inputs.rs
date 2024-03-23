@@ -5,7 +5,7 @@ use winit::{event::*, keyboard::*};
 use crate::{
     content::{menu_content::content_input::*, *},
     socket::*,
-    Alert, Direction, DrawSetting, Tooltip,
+    Alert, Direction, SystemHolder, Tooltip,
 };
 
 #[derive(Clone)]
@@ -20,7 +20,7 @@ pub enum MouseInputType {
 #[allow(clippy::too_many_arguments)]
 pub fn handle_mouse_input(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     input_type: MouseInputType,
     mouse_pos: &Vec2,
@@ -51,7 +51,7 @@ pub fn handle_mouse_input(
 
 pub fn handle_key_input(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     content: &mut Content,
     alert: &mut Alert,

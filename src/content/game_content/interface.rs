@@ -5,7 +5,7 @@ use winit::{event::*, keyboard::*};
 
 use crate::{
     interface::chatbox::*, is_within_area, send_message, widget::*,
-    DrawSetting, GameContent, MouseInputType, Socket,
+    GameContent, MouseInputType, Socket, SystemHolder,
 };
 use hecs::World;
 
@@ -37,7 +37,7 @@ pub enum SelectedTextbox {
 pub struct Interface {
     menu_button: [Button; 3],
     did_button_click: bool,
-    inventory: Inventory,
+    pub inventory: Inventory,
     profile: Profile,
     setting: Setting,
     pub chatbox: Chatbox,
@@ -47,7 +47,7 @@ pub struct Interface {
 }
 
 impl Interface {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         let menu_button = create_menu_button(systems);
 
         let mut interface = Interface {
@@ -75,7 +75,7 @@ impl Interface {
         self.window_order.sort_by(|a, b| a.1.cmp(&b.1));
     }
 
-    pub fn recreate(&mut self, systems: &mut DrawSetting) {
+    pub fn recreate(&mut self, systems: &mut SystemHolder) {
         self.menu_button = create_menu_button(systems);
         self.inventory = Inventory::new(systems);
         self.profile = Profile::new(systems);
@@ -87,7 +87,7 @@ impl Interface {
         self.selected_textbox = SelectedTextbox::None;
     }
 
-    pub fn unload(&mut self, systems: &mut DrawSetting) {
+    pub fn unload(&mut self, systems: &mut SystemHolder) {
         self.menu_button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
@@ -101,7 +101,7 @@ impl Interface {
     pub fn mouse_input(
         interface: &mut Interface,
         _world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         socket: &mut Socket,
         input_type: MouseInputType,
         screen_pos: Vec2,
@@ -270,7 +270,7 @@ impl Interface {
     pub fn key_input(
         game_content: &mut GameContent,
         _world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         event: &KeyEvent,
     ) {
         if let SelectedTextbox::Chatbox =
@@ -286,7 +286,7 @@ impl Interface {
 
     pub fn hover_buttons(
         interface: &mut Interface,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) {
         for button in interface.menu_button.iter_mut() {
@@ -307,7 +307,7 @@ impl Interface {
 
     pub fn click_buttons(
         interface: &mut Interface,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) -> Option<usize> {
         let mut button_found = None;
@@ -327,7 +327,7 @@ impl Interface {
         button_found
     }
 
-    pub fn reset_buttons(&mut self, systems: &mut DrawSetting) {
+    pub fn reset_buttons(&mut self, systems: &mut SystemHolder) {
         if !self.did_button_click {
             return;
         }
@@ -340,7 +340,7 @@ impl Interface {
 
     pub fn click_textbox(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) {
         if is_within_area(
@@ -362,7 +362,7 @@ impl Interface {
 
 fn trigger_button(
     interface: &mut Interface,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     index: usize,
 ) {
     match index {
@@ -393,7 +393,7 @@ fn trigger_button(
 
 fn trigger_chatbox_button(
     interface: &mut Interface,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     index: usize,
 ) {
@@ -477,7 +477,7 @@ fn find_window(interface: &mut Interface, screen_pos: Vec2) -> Option<Window> {
 
 fn open_interface(
     interface: &mut Interface,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     window: Window,
 ) {
     match window {
@@ -506,7 +506,7 @@ fn open_interface(
 
 fn close_interface(
     interface: &mut Interface,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     window: Window,
 ) {
     match window {
@@ -535,7 +535,7 @@ fn close_interface(
 
 fn hold_interface(
     interface: &mut Interface,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     window: Window,
     screen_pos: Vec2,
 ) {
@@ -571,7 +571,7 @@ fn hold_interface(
 
 fn interface_set_to_first(
     interface: &mut Interface,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     window: Window,
 ) {
     if let Some(index) = interface
@@ -593,7 +593,7 @@ fn interface_set_to_first(
 
 fn interface_set_to_last(
     interface: &mut Interface,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     window: Window,
 ) {
     let last_index = interface.window_order.len() - 1;
@@ -614,7 +614,7 @@ fn interface_set_to_last(
     adjust_window_zorder(interface, systems);
 }
 
-fn adjust_window_zorder(interface: &mut Interface, systems: &mut DrawSetting) {
+fn adjust_window_zorder(interface: &mut Interface, systems: &mut SystemHolder) {
     let mut order = 0.99;
     for wndw in interface.window_order.iter() {
         match wndw.0 {

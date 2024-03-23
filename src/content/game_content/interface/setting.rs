@@ -1,6 +1,6 @@
 use graphics::*;
 
-use crate::{is_within_area, logic::*, values::*, widget::*, DrawSetting};
+use crate::{is_within_area, logic::*, values::*, widget::*, SystemHolder};
 
 pub struct Setting {
     pub visible: bool,
@@ -23,7 +23,7 @@ pub struct Setting {
 }
 
 impl Setting {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         let w_size = Vec2::new(200.0, 267.0);
         let w_pos = Vec3::new(
             systems.size.width - w_size.x - 10.0,
@@ -162,7 +162,7 @@ impl Setting {
         }
     }
 
-    pub fn unload(&self, systems: &mut DrawSetting) {
+    pub fn unload(&self, systems: &mut SystemHolder) {
         systems.gfx.remove_gfx(self.bg);
         systems.gfx.remove_gfx(self.header);
         systems.gfx.remove_gfx(self.header_text);
@@ -170,7 +170,7 @@ impl Setting {
         self.bgm_scroll.unload(systems);
     }
 
-    pub fn set_visible(&mut self, systems: &mut DrawSetting, visible: bool) {
+    pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         if self.visible == visible {
             return;
         }
@@ -209,7 +209,7 @@ impl Setting {
         self.in_hold = false;
     }
 
-    pub fn set_z_order(&mut self, systems: &mut DrawSetting, z_order: f32) {
+    pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         if self.z_order == z_order {
             return;
         }
@@ -236,7 +236,11 @@ impl Setting {
         self.bgm_scroll.set_z_order(systems, detail_1);
     }
 
-    pub fn move_window(&mut self, systems: &mut DrawSetting, screen_pos: Vec2) {
+    pub fn move_window(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
         if !self.in_hold {
             return;
         }

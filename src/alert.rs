@@ -1,4 +1,4 @@
-use crate::{logic::*, values::*, widget::*, DrawSetting, MouseInputType};
+use crate::{logic::*, values::*, widget::*, MouseInputType, SystemHolder};
 use graphics::{cosmic_text::Attrs, *};
 
 pub enum AlertType {
@@ -31,7 +31,7 @@ impl Alert {
 
     pub fn show_alert(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         alert_type: AlertType,
         msg: String,
         header: String,
@@ -237,7 +237,7 @@ impl Alert {
         self.visible = true;
     }
 
-    pub fn hide_alert(&mut self, systems: &mut DrawSetting) {
+    pub fn hide_alert(&mut self, systems: &mut SystemHolder) {
         if !self.visible {
             return;
         }
@@ -255,7 +255,7 @@ impl Alert {
 
     pub fn hover_buttons(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) {
         for button in self.button.iter_mut() {
@@ -276,7 +276,7 @@ impl Alert {
 
     pub fn click_buttons(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) -> Option<usize> {
         let mut button_found = None;
@@ -296,7 +296,7 @@ impl Alert {
         button_found
     }
 
-    pub fn reset_buttons(&mut self, systems: &mut DrawSetting) {
+    pub fn reset_buttons(&mut self, systems: &mut SystemHolder) {
         if !self.did_button_click {
             return;
         }
@@ -309,7 +309,7 @@ impl Alert {
 
     pub fn alert_mouse_input(
         &mut self,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         input_type: MouseInputType,
         screen_pos: Vec2,
     ) {
@@ -334,7 +334,7 @@ impl Alert {
         }
     }
 
-    pub fn select_option(&mut self, systems: &mut DrawSetting, index: usize) {
+    pub fn select_option(&mut self, systems: &mut SystemHolder, index: usize) {
         match self.alert_type {
             AlertType::Inform =>
             {

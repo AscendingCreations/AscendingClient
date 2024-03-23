@@ -10,7 +10,7 @@ pub use interface::*;
 
 use crate::{
     buffer::*, content::*, database::*, logic::*, send_attack, send_pickup,
-    values::*, Direction, DrawSetting, Socket,
+    values::*, Direction, Socket, SystemHolder,
 };
 use hecs::World;
 
@@ -51,7 +51,7 @@ pub struct GameContent {
 }
 
 impl GameContent {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         GameContent {
             players: IndexSet::default(),
             npcs: IndexSet::default(),
@@ -67,7 +67,7 @@ impl GameContent {
         }
     }
 
-    pub fn show(&mut self, systems: &mut DrawSetting) {
+    pub fn show(&mut self, systems: &mut SystemHolder) {
         self.map.recreate(systems);
         self.interface.recreate(systems);
         self.keyinput.iter_mut().for_each(|key| {
@@ -77,7 +77,7 @@ impl GameContent {
         self.finalized = false;
     }
 
-    pub fn hide(&mut self, world: &mut World, systems: &mut DrawSetting) {
+    pub fn hide(&mut self, world: &mut World, systems: &mut SystemHolder) {
         for entity in self.players.iter() {
             unload_player(world, systems, entity);
         }
@@ -97,7 +97,7 @@ impl GameContent {
         self.map.unload(systems);
     }
 
-    pub fn init_map(&mut self, systems: &mut DrawSetting, map: MapPosition) {
+    pub fn init_map(&mut self, systems: &mut SystemHolder, map: MapPosition) {
         self.map.map_pos = map;
 
         self.map.map_attribute.clear();
@@ -118,7 +118,7 @@ impl GameContent {
     pub fn init_finalized_data(
         &mut self,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         socket: &mut Socket,
     ) {
         for entity in self.players.iter() {
@@ -137,7 +137,7 @@ impl GameContent {
     pub fn move_map(
         &mut self,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         socket: &mut Socket,
         dir: Direction,
         buffer: &mut BufferTask,
@@ -205,7 +205,7 @@ impl GameContent {
     pub fn handle_key_input(
         &mut self,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         socket: &mut Socket,
         seconds: f32,
     ) {
@@ -251,7 +251,7 @@ impl GameContent {
     pub fn spawn_item(
         &mut self,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         pos: Position,
         cur_map: MapPosition,
         sprite: usize,
@@ -264,7 +264,7 @@ impl GameContent {
     pub fn move_player(
         &mut self,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         socket: &mut Socket,
         dir: &Direction,
     ) {
@@ -283,7 +283,7 @@ impl GameContent {
     pub fn player_attack(
         &mut self,
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         socket: &mut Socket,
         seconds: f32,
     ) {
@@ -362,7 +362,7 @@ impl GameContent {
 
 pub fn update_player(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
     content: &mut GameContent,
     buffer: &mut BufferTask,
@@ -392,7 +392,7 @@ pub fn update_player(
 
 pub fn update_npc(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut GameContent,
     seconds: f32,
 ) {
@@ -409,7 +409,7 @@ pub fn update_npc(
     }
 }
 
-pub fn finalize_entity(world: &mut World, systems: &mut DrawSetting) {
+pub fn finalize_entity(world: &mut World, systems: &mut SystemHolder) {
     for (_entity, (worldentitytype, sprite, finalized, hpbar)) in world
         .query_mut::<(
             &WorldEntityType,
@@ -445,7 +445,7 @@ pub fn finalize_entity(world: &mut World, systems: &mut DrawSetting) {
 pub fn update_camera(
     world: &mut World,
     content: &mut GameContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     socket: &mut Socket,
 ) {
     let player_pos = if let Some(entity) = content.myentity {

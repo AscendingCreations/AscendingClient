@@ -1,6 +1,6 @@
 use hecs::World;
 
-use crate::{content::*, dir_to_enum, BufferTask, DrawSetting, Socket};
+use crate::{content::*, dir_to_enum, BufferTask, Socket, SystemHolder};
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct LoopTimer {
@@ -12,7 +12,7 @@ pub struct LoopTimer {
 pub fn game_loop(
     socket: &mut Socket,
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut Content,
     buffer: &mut BufferTask,
     seconds: f32,

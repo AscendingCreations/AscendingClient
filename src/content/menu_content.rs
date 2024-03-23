@@ -5,7 +5,7 @@ pub mod content_input;
 pub use content_input::*;
 
 use crate::{
-    content::*, is_within_area, values::*, widget::*, Config, DrawSetting,
+    content::*, is_within_area, values::*, widget::*, Config, SystemHolder,
     SCREEN_HEIGHT, SCREEN_WIDTH,
 };
 use hecs::World;
@@ -35,7 +35,7 @@ pub struct MenuContent {
 }
 
 impl MenuContent {
-    pub fn new(systems: &mut DrawSetting) -> Self {
+    pub fn new(systems: &mut SystemHolder) -> Self {
         let mut bg_image = Image::new(
             Some(systems.resource.menu_bg.allocation),
             &mut systems.renderer,
@@ -63,17 +63,17 @@ impl MenuContent {
         }
     }
 
-    pub fn show(&mut self, systems: &mut DrawSetting) {
+    pub fn show(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(self.bg, true);
         create_window(systems, self, WindowType::Login);
     }
 
-    pub fn hide(&mut self, systems: &mut DrawSetting) {
+    pub fn hide(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(self.bg, false);
         self.clear_window(systems)
     }
 
-    pub fn clear_window(&mut self, systems: &mut DrawSetting) {
+    pub fn clear_window(&mut self, systems: &mut SystemHolder) {
         self.window.iter().for_each(|gfx_index| {
             systems.gfx.remove_gfx(*gfx_index);
         });
@@ -109,7 +109,7 @@ impl MenuContent {
 
 pub fn hover_buttons(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     tooltip: &mut Tooltip,
     screen_pos: Vec2,
 ) {
@@ -135,7 +135,7 @@ pub fn hover_buttons(
 
 pub fn click_buttons(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     screen_pos: Vec2,
 ) -> Option<usize> {
     let mut button_found = None;
@@ -157,7 +157,7 @@ pub fn click_buttons(
 
 pub fn reset_buttons(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
 ) {
     if !menu_content.did_button_click {
         return;
@@ -171,7 +171,7 @@ pub fn reset_buttons(
 
 pub fn hover_checkbox(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     tooltip: &mut Tooltip,
     screen_pos: Vec2,
 ) {
@@ -200,7 +200,7 @@ pub fn hover_checkbox(
 
 pub fn click_checkbox(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     screen_pos: Vec2,
 ) -> Option<usize> {
     let mut checkbox_found = None;
@@ -225,7 +225,7 @@ pub fn click_checkbox(
 
 pub fn reset_checkbox(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
 ) {
     if !menu_content.did_checkbox_click {
         return;
@@ -239,7 +239,7 @@ pub fn reset_checkbox(
 
 pub fn click_textbox(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     screen_pos: Vec2,
 ) {
     let mut checkbox_found = None;
@@ -264,7 +264,7 @@ pub fn click_textbox(
 
 pub fn hover_textbox(
     menu_content: &mut MenuContent,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     tooltip: &mut Tooltip,
     screen_pos: Vec2,
 ) {
@@ -282,7 +282,7 @@ pub fn hover_textbox(
 }
 
 pub fn create_window(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &mut MenuContent,
     window_type: WindowType,
 ) {

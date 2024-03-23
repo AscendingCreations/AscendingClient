@@ -7,7 +7,7 @@ use crate::{
     game_content::{entity::*, Camera, *},
     get_start_map_pos,
     values::*,
-    DrawSetting,
+    SystemHolder,
 };
 
 #[derive(
@@ -40,7 +40,7 @@ pub struct MapItem {
 impl MapItem {
     pub fn create(
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         sprite: usize,
         pos: Position,
         cur_map: MapPosition,
@@ -90,7 +90,7 @@ impl MapItem {
 
     pub fn finalized(
         world: &mut World,
-        systems: &mut DrawSetting,
+        systems: &mut SystemHolder,
         entity: &Entity,
     ) {
         if !world.contains(entity.0) {
@@ -100,13 +100,13 @@ impl MapItem {
         Self::finalized_data(systems, sprite);
     }
 
-    pub fn finalized_data(systems: &mut DrawSetting, sprite: usize) {
+    pub fn finalized_data(systems: &mut SystemHolder, sprite: usize) {
         systems.gfx.set_visible(sprite, true);
     }
 }
 
 pub fn update_mapitem_position(
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     content: &GameContent,
     sprite: usize,
     pos: &Position,
@@ -133,7 +133,7 @@ pub fn update_mapitem_position(
 
 pub fn unload_mapitems(
     world: &mut World,
-    systems: &mut DrawSetting,
+    systems: &mut SystemHolder,
     entity: &Entity,
 ) {
     let item_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
