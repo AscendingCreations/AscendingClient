@@ -48,6 +48,8 @@ pub enum ServerPackets {
     PlayerVitals,
     PlayerInv,
     PlayerInvSlot,
+    PlayerStorage,
+    PlayerStorageSlot,
     KeyInput,
     PlayerAttack,
     PlayerEquipment,
@@ -159,6 +161,14 @@ impl PacketRouter {
             (
                 ServerPackets::PlayerInvSlot,
                 routes::handle_playerinvslot as PacketFunction,
+            ),
+            (
+                ServerPackets::PlayerStorage,
+                routes::handle_playerstorage as PacketFunction,
+            ),
+            (
+                ServerPackets::PlayerStorageSlot,
+                routes::handle_playerstorageslot as PacketFunction,
             ),
             (
                 ServerPackets::KeyInput,

@@ -27,6 +27,10 @@ enum ClientPacket {
     PickUp,
     DropItem,
     DeleteItem,
+    SwitchStorageSlot,
+    DeleteStorageItem,
+    DepositItem,
+    WithdrawItem,
     Message,
     AdminCommand,
     SetTarget,
@@ -191,6 +195,58 @@ pub fn send_deleteitem(socket: &mut Socket, slot: u16) -> SocketResult<()> {
 
     buf.write(ClientPacket::DeleteItem)?;
     buf.write(slot)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_switchstorageslot(
+    socket: &mut Socket,
+    oldslot: u16,
+    newslot: u16,
+    amount: u16,
+) -> SocketResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(128)?;
+
+    buf.write(ClientPacket::SwitchStorageSlot)?;
+    buf.write(oldslot)?;
+    buf.write(newslot)?;
+    buf.write(amount)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_deletestorageitem(
+    socket: &mut Socket,
+    slot: u16,
+) -> SocketResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(128)?;
+
+    buf.write(ClientPacket::DeleteStorageItem)?;
+    buf.write(slot)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_deposititem(socket: &mut Socket) -> SocketResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(128)?;
+
+    buf.write(ClientPacket::DepositItem)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_withdrawitem(socket: &mut Socket) -> SocketResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(128)?;
+
+    buf.write(ClientPacket::WithdrawItem)?;
     buf.finish()?;
 
     socket.send(buf);

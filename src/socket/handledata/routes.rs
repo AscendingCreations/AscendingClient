@@ -654,6 +654,37 @@ pub fn handle_playerinvslot(
     Ok(())
 }
 
+pub fn handle_playerstorage(
+    _socket: &mut Socket,
+    _world: &mut World,
+    _systems: &mut SystemHolder,
+    _content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> SocketResult<()> {
+    let _items = data.read::<Vec<Item>>()?;
+
+    Ok(())
+}
+
+pub fn handle_playerstorageslot(
+    _socket: &mut Socket,
+    _world: &mut World,
+    _systems: &mut SystemHolder,
+    _content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> SocketResult<()> {
+    let _index = data.read::<usize>()?;
+    let _item = data.read::<Item>()?;
+
+    Ok(())
+}
+
 pub fn handle_keyinput(
     _socket: &mut Socket,
     _world: &mut World,

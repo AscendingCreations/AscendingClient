@@ -14,12 +14,14 @@ mod inventory;
 mod profile;
 mod screen;
 mod setting;
+mod storage;
 
 pub use chatbox::*;
 use inventory::*;
 use profile::*;
 use screen::*;
 use setting::*;
+use storage::*;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Window {
@@ -27,6 +29,7 @@ pub enum Window {
     Profile,
     Setting,
     Chatbox,
+    Storage,
 }
 
 pub enum SelectedTextbox {
@@ -38,6 +41,7 @@ pub struct Interface {
     menu_button: [Button; 3],
     did_button_click: bool,
     pub inventory: Inventory,
+    pub storage: Storage,
     profile: Profile,
     setting: Setting,
     pub chatbox: Chatbox,
@@ -54,6 +58,7 @@ impl Interface {
             menu_button,
             did_button_click: false,
             inventory: Inventory::new(systems),
+            storage: Storage::new(systems),
             profile: Profile::new(systems),
             setting: Setting::new(systems),
             chatbox: Chatbox::new(systems),
@@ -72,6 +77,7 @@ impl Interface {
         self.window_order.push((Window::Inventory, 1));
         self.window_order.push((Window::Profile, 2));
         self.window_order.push((Window::Setting, 3));
+        self.window_order.push((Window::Storage, 4));
         self.window_order.sort_by(|a, b| a.1.cmp(&b.1));
     }
 
@@ -81,6 +87,7 @@ impl Interface {
         self.profile = Profile::new(systems);
         self.setting = Setting::new(systems);
         self.chatbox = Chatbox::new(systems);
+        self.storage = Storage::new(systems);
         self.add_window_order();
         self.did_button_click = false;
         self.drag_window = None;
@@ -95,6 +102,7 @@ impl Interface {
         self.profile.unload(systems);
         self.setting.unload(systems);
         self.chatbox.unload(systems);
+        self.storage.unload(systems);
         self.window_order.clear();
     }
 
@@ -227,6 +235,9 @@ impl Interface {
                         Window::Chatbox => {
                             interface.chatbox.move_window(systems, screen_pos)
                         }
+                        Window::Storage => {
+                            interface.storage.move_window(systems, screen_pos)
+                        }
                     }
                     result = true;
                 } else {
@@ -276,6 +287,7 @@ impl Interface {
                         Window::Profile => interface.profile.release_window(),
                         Window::Setting => interface.setting.release_window(),
                         Window::Chatbox => interface.chatbox.release_window(),
+                        Window::Storage => interface.storage.release_window(),
                     }
                 }
                 interface.drag_window = None;
@@ -414,10 +426,10 @@ fn trigger_button(
             }
         }
         2 => {
-            if interface.setting.visible {
-                close_interface(interface, systems, Window::Setting);
+            if interface.storage.visible {
+                close_interface(interface, systems, Window::Storage);
             } else {
-                open_interface(interface, systems, Window::Setting);
+                open_interface(interface, systems, Window::Storage);
             }
         }
         _ => {}
@@ -522,8 +534,17 @@ fn find_window(
     {
         let z_order = interface.chatbox.z_order;
         if z_order > max_z_order {
-            //max_z_order = z_order;
+            max_z_order = z_order;
             selected_window = Some(Window::Chatbox);
+        }
+    }
+    if interface.storage.in_window(screen_pos)
+        && can_find_window(Window::Storage, exception)
+    {
+        let z_order = interface.storage.z_order;
+        if z_order > max_z_order {
+            //max_z_order = z_order;
+            selected_window = Some(Window::Storage);
         }
     }
     selected_window
@@ -553,6 +574,12 @@ fn open_interface(
             }
             interface.setting.set_visible(systems, true);
         }
+        Window::Storage => {
+            if interface.storage.visible {
+                return;
+            }
+            interface.storage.set_visible(systems, true);
+        }
         _ => {}
     }
     interface_set_to_first(interface, systems, window);
@@ -581,6 +608,12 @@ fn close_interface(
                 return;
             }
             interface.setting.set_visible(systems, false);
+        }
+        Window::Storage => {
+            if !interface.storage.visible {
+                return;
+            }
+            interface.storage.set_visible(systems, false);
         }
         _ => {}
     }
@@ -624,6 +657,18 @@ fn hold_interface(
                 return;
             }
             interface.chatbox.hold_window(screen_pos);
+        }
+        Window::Storage => {
+            if interface.storage.can_hold(screen_pos) {
+                interface.storage.hold_window(screen_pos);
+            } else if let Some(slot) =
+                interface.storage.find_storage_slot(screen_pos, false)
+            {
+                interface.storage.hold_storage_slot(slot, screen_pos);
+                return;
+            } else {
+                return;
+            }
         }
     }
     interface.drag_window = Some(window);
@@ -689,6 +734,9 @@ fn adjust_window_zorder(interface: &mut Interface, systems: &mut SystemHolder) {
             }
             Window::Chatbox => {
                 interface.chatbox.set_z_order(systems, order, wndw.1)
+            }
+            Window::Storage => {
+                interface.storage.set_z_order(systems, order, wndw.1)
             }
         }
         order -= 0.01;

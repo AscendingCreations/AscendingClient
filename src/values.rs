@@ -96,6 +96,8 @@ pub enum FtlType {
 }
 
 pub const VITALS_MAX: usize = VitalTypes::Count as usize;
+pub const MAX_INV: usize = 30;
+pub const MAX_STORAGE: usize = 70;
 pub const MAX_EQPT: usize = 5;
 
 pub const ORDER_MENU_BG: f32 = 10.9;
