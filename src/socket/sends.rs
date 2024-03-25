@@ -233,20 +233,36 @@ pub fn send_deletestorageitem(
     Ok(())
 }
 
-pub fn send_deposititem(socket: &mut Socket) -> SocketResult<()> {
+pub fn send_deposititem(
+    socket: &mut Socket,
+    inv_slot: u16,
+    bank_slot: u16,
+    amount: u16,
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::DepositItem)?;
+    buf.write(inv_slot)?;
+    buf.write(bank_slot)?;
+    buf.write(amount)?;
     buf.finish()?;
 
     socket.send(buf);
     Ok(())
 }
 
-pub fn send_withdrawitem(socket: &mut Socket) -> SocketResult<()> {
+pub fn send_withdrawitem(
+    socket: &mut Socket,
+    inv_slot: u16,
+    bank_slot: u16,
+    amount: u16,
+) -> SocketResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::WithdrawItem)?;
+    buf.write(inv_slot)?;
+    buf.write(bank_slot)?;
+    buf.write(amount)?;
     buf.finish()?;
 
     socket.send(buf);

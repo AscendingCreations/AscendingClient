@@ -155,6 +155,7 @@ impl Interface {
                             systems,
                             result_window,
                             screen_pos,
+                            true,
                         );
                         result = true;
                     }
@@ -204,14 +205,36 @@ impl Interface {
                     let window = find_window(interface, screen_pos, None);
                     if let Some(result_window) = window {
                         match result_window {
-                            Window::Profile
-                            | Window::Setting
-                            | Window::Inventory => {
+                            Window::Storage | Window::Inventory => {
                                 hold_interface(
                                     interface,
                                     systems,
                                     result_window,
                                     screen_pos,
+                                    false,
+                                );
+                            }
+                            _ => {}
+                        }
+                    }
+
+                    return true;
+                }
+                if let Some(slot) = interface.storage.hold_slot {
+                    interface
+                        .storage
+                        .move_storage_slot(systems, slot, screen_pos);
+
+                    let window = find_window(interface, screen_pos, None);
+                    if let Some(result_window) = window {
+                        match result_window {
+                            Window::Storage | Window::Inventory => {
+                                hold_interface(
+                                    interface,
+                                    systems,
+                                    result_window,
+                                    screen_pos,
+                                    false,
                                 );
                             }
                             _ => {}
@@ -274,6 +297,13 @@ impl Interface {
                         interface, socket, systems, slot, screen_pos,
                     );
                     interface.inventory.hold_slot = None;
+                    return true;
+                }
+                if let Some(slot) = interface.storage.hold_slot {
+                    release_storage_slot(
+                        interface, socket, systems, slot, screen_pos,
+                    );
+                    interface.storage.hold_slot = None;
                     return true;
                 }
 
@@ -550,7 +580,7 @@ fn find_window(
     selected_window
 }
 
-fn open_interface(
+pub fn open_interface(
     interface: &mut Interface,
     systems: &mut SystemHolder,
     window: Window,
@@ -625,6 +655,7 @@ fn hold_interface(
     systems: &mut SystemHolder,
     window: Window,
     screen_pos: Vec2,
+    check_content: bool,
 ) {
     interface_set_to_first(interface, systems, window);
     match window {
@@ -634,7 +665,10 @@ fn hold_interface(
             } else if let Some(slot) =
                 interface.inventory.find_inv_slot(screen_pos, false)
             {
-                interface.inventory.hold_inv_slot(slot, screen_pos);
+                if check_content {
+                    interface.inventory.hold_inv_slot(slot, screen_pos);
+                }
+
                 return;
             } else {
                 return;
@@ -664,7 +698,9 @@ fn hold_interface(
             } else if let Some(slot) =
                 interface.storage.find_storage_slot(screen_pos, false)
             {
-                interface.storage.hold_storage_slot(slot, screen_pos);
+                if check_content {
+                    interface.storage.hold_storage_slot(slot, screen_pos);
+                }
                 return;
             } else {
                 return;

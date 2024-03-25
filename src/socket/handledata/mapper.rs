@@ -77,6 +77,7 @@ pub enum ServerPackets {
     SyncCheck,
     EntityUnload,
     LoadStatus,
+    OpenStorage,
     ServerPacketCount,
 }
 
@@ -274,6 +275,10 @@ impl PacketRouter {
             (
                 ServerPackets::LoadStatus,
                 routes::handle_loadstatus as PacketFunction,
+            ),
+            (
+                ServerPackets::OpenStorage,
+                routes::handle_openstorage as PacketFunction,
             ),
         ]))
     }

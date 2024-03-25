@@ -5,11 +5,11 @@ use crate::{
     entity::*,
     fade::*,
     get_percent, get_start_map_pos, is_map_connected, npc_finalized,
-    set_npc_frame,
+    open_interface, set_npc_frame,
     socket::error::*,
     unload_mapitems, unload_npc, update_camera, Alert, BufferTask, ChatTask,
     Content, EntityType, FtlType, MapItem, MessageChannel, Position, Socket,
-    SystemHolder, NPC_SPRITE_FRAME_X, VITALS_MAX,
+    SystemHolder, Window, NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -657,14 +657,22 @@ pub fn handle_playerinvslot(
 pub fn handle_playerstorage(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
-    let _items = data.read::<Vec<Item>>()?;
+    let items = data.read::<Vec<Item>>()?;
+
+    for (index, item) in items.iter().enumerate() {
+        content
+            .game_content
+            .interface
+            .storage
+            .update_storage_slot(systems, index, item);
+    }
 
     Ok(())
 }
@@ -672,15 +680,21 @@ pub fn handle_playerstorage(
 pub fn handle_playerstorageslot(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
-    let _index = data.read::<usize>()?;
-    let _item = data.read::<Item>()?;
+    let index = data.read::<usize>()?;
+    let item = data.read::<Item>()?;
+
+    content
+        .game_content
+        .interface
+        .storage
+        .update_storage_slot(systems, index, &item);
 
     Ok(())
 }
@@ -1291,5 +1305,25 @@ pub fn handle_loadstatus(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> SocketResult<()> {
+    Ok(())
+}
+
+pub fn handle_openstorage(
+    _socket: &mut Socket,
+    _world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> SocketResult<()> {
+    let _ = data.read::<u32>()?;
+
+    open_interface(
+        &mut content.game_content.interface,
+        systems,
+        Window::Storage,
+    );
     Ok(())
 }

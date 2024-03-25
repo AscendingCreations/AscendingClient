@@ -9,11 +9,13 @@ const MAX_INV_X: f32 = 5.0;
 
 #[derive(Clone, Copy, Default)]
 struct ItemSlot {
+    need_update: bool,
     got_data: bool,
     got_count: bool,
     image: usize,
     count_bg: usize,
     count: usize,
+    item_index: u16,
     count_data: u16,
 }
 
@@ -28,7 +30,7 @@ pub struct Inventory {
     pub pos: Vec2,
     pub size: Vec2,
     pub z_order: f32,
-    order_index: usize,
+    pub order_index: usize,
     in_hold: bool,
     hold_pos: Vec2,
     header_pos: Vec2,
@@ -176,7 +178,7 @@ impl Inventory {
     }
 
     pub fn hold_inv_slot(&mut self, slot: usize, screen_pos: Vec2) {
-        if self.hold_slot.is_some() {
+        if self.hold_slot.is_some() || self.item_slot[slot].need_update {
             return;
         }
 
@@ -231,7 +233,14 @@ impl Inventory {
             return;
         }
 
+        self.item_slot[slot].need_update = false;
+
         if self.item_slot[slot].got_data {
+            if self.item_slot[slot].item_index == data.num as u16
+                && self.item_slot[slot].count_data == data.val
+            {
+                return;
+            }
             systems.gfx.remove_gfx(self.item_slot[slot].image);
             if self.item_slot[slot].got_count {
                 systems.gfx.remove_gfx(self.item_slot[slot].count_bg);
@@ -239,6 +248,8 @@ impl Inventory {
             }
             self.item_slot[slot].got_data = false;
             self.item_slot[slot].got_count = false;
+            self.item_slot[slot].item_index = 0;
+            self.item_slot[slot].count_data = 0;
         }
 
         if data.val == 0 {
@@ -278,6 +289,7 @@ impl Inventory {
         systems.gfx.set_visible(image_index, self.visible);
 
         self.item_slot[slot].image = image_index;
+        self.item_slot[slot].item_index = data.num as u16;
         self.item_slot[slot].count_data = data.val;
 
         if data.val > 1 {
@@ -377,6 +389,7 @@ impl Inventory {
 
     pub fn release_window(&mut self) {
         self.in_hold = false;
+        self.hold_pos = Vec2::new(0.0, 0.0);
     }
 
     pub fn set_z_order(
@@ -533,7 +546,71 @@ pub fn release_inv_slot(
     slot: usize,
     screen_pos: Vec2,
 ) {
-    if slot >= MAX_INV || !interface.inventory.item_slot[slot].got_data {
+    if slot >= MAX_INV
+        || !interface.inventory.item_slot[slot].got_data
+        || interface.inventory.item_slot[slot].need_update
+    {
+        return;
+    }
+
+    if interface.inventory.in_window(screen_pos)
+        && interface.inventory.order_index == 0
+    {
+        let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
+        if let Some(new_slot) = find_slot {
+            if new_slot != slot {
+                let _ = send_switchinvslot(
+                    socket,
+                    slot as u16,
+                    new_slot as u16,
+                    interface.inventory.item_slot[slot].count_data,
+                );
+
+                interface.inventory.update_inv_slot(
+                    systems,
+                    slot,
+                    &Item {
+                        num: interface.inventory.item_slot[new_slot].item_index
+                            as u32,
+                        val: interface.inventory.item_slot[new_slot].count_data,
+                        ..Default::default()
+                    },
+                );
+                interface.inventory.update_inv_slot(
+                    systems,
+                    slot,
+                    &Item {
+                        num: interface.inventory.item_slot[slot].item_index
+                            as u32,
+                        val: interface.inventory.item_slot[slot].count_data,
+                        ..Default::default()
+                    },
+                );
+
+                interface.inventory.item_slot[slot].need_update = true;
+                interface.inventory.item_slot[new_slot].need_update = true;
+                return;
+            }
+        }
+    } else if interface.storage.in_window(screen_pos)
+        && interface.storage.order_index == 0
+    {
+        let find_slot = interface.storage.find_storage_slot(screen_pos, true);
+        if let Some(bank_slot) = find_slot {
+            let _ = send_deposititem(
+                socket,
+                slot as u16,
+                bank_slot as u16,
+                interface.inventory.item_slot[slot].count_data,
+            );
+            return;
+        }
+    } else {
+        let _ = send_dropitem(
+            socket,
+            slot as u16,
+            interface.inventory.item_slot[slot].count_data,
+        );
         return;
     }
 
@@ -559,23 +636,5 @@ pub fn release_inv_slot(
         systems
             .gfx
             .set_visible(interface.inventory.item_slot[slot].count_bg, true);
-    }
-
-    if interface.inventory.in_window(screen_pos)
-        && interface.inventory.order_index == 0
-    {
-        let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
-        if let Some(new_slot) = find_slot {
-            if new_slot != slot {
-                let _ =
-                    send_switchinvslot(socket, slot as u16, new_slot as u16, 1);
-            }
-        }
-    } else {
-        let _ = send_dropitem(
-            socket,
-            slot as u16,
-            interface.inventory.item_slot[slot].count_data,
-        );
     }
 }

@@ -9,11 +9,13 @@ const MAX_STORAGE_X: f32 = 10.0;
 
 #[derive(Clone, Copy, Default)]
 struct ItemSlot {
+    need_update: bool,
     got_data: bool,
     got_count: bool,
     image: usize,
     count_bg: usize,
     count: usize,
+    item_index: u16,
     count_data: u16,
 }
 
@@ -28,7 +30,7 @@ pub struct Storage {
     pub pos: Vec2,
     pub size: Vec2,
     pub z_order: f32,
-    order_index: usize,
+    pub order_index: usize,
     in_hold: bool,
     hold_pos: Vec2,
     header_pos: Vec2,
@@ -178,7 +180,7 @@ impl Storage {
     }
 
     pub fn hold_storage_slot(&mut self, slot: usize, screen_pos: Vec2) {
-        if self.hold_slot.is_some() {
+        if self.hold_slot.is_some() || self.item_slot[slot].need_update {
             return;
         }
 
@@ -190,7 +192,7 @@ impl Storage {
         );
         let slot_pos = Vec2::new(
             self.pos.x + 16.0 + (37.0 * frame_pos.x),
-            self.pos.y + 195.0 - (37.0 * frame_pos.y),
+            self.pos.y + 232.0 - (37.0 * frame_pos.y),
         );
 
         self.hold_adjust_pos = screen_pos - slot_pos;
@@ -233,7 +235,14 @@ impl Storage {
             return;
         }
 
+        self.item_slot[slot].need_update = false;
+
         if self.item_slot[slot].got_data {
+            if self.item_slot[slot].item_index == data.num as u16
+                && self.item_slot[slot].count_data == data.val
+            {
+                return;
+            }
             systems.gfx.remove_gfx(self.item_slot[slot].image);
             if self.item_slot[slot].got_count {
                 systems.gfx.remove_gfx(self.item_slot[slot].count_bg);
@@ -241,6 +250,8 @@ impl Storage {
             }
             self.item_slot[slot].got_data = false;
             self.item_slot[slot].got_count = false;
+            self.item_slot[slot].item_index = 0;
+            self.item_slot[slot].count_data = 0;
         }
 
         if data.val == 0 {
@@ -258,7 +269,7 @@ impl Storage {
         );
         let slot_pos = Vec2::new(
             self.pos.x + 10.0 + (37.0 * frame_pos.x),
-            self.pos.y + 195.0 - (37.0 * frame_pos.y),
+            self.pos.y + 232.0 - (37.0 * frame_pos.y),
         );
 
         let sprite =
@@ -280,6 +291,7 @@ impl Storage {
         systems.gfx.set_visible(image_index, self.visible);
 
         self.item_slot[slot].image = image_index;
+        self.item_slot[slot].item_index = data.num as u16;
         self.item_slot[slot].count_data = data.val;
 
         if data.val > 1 {
@@ -347,7 +359,7 @@ impl Storage {
                 );
                 let slot_pos = Vec2::new(
                     self.pos.x + 10.0 + (37.0 * frame_pos.x),
-                    self.pos.y + 195.0 - (37.0 * frame_pos.y),
+                    self.pos.y + 232.0 - (37.0 * frame_pos.y),
                 );
 
                 if screen_pos.x >= slot_pos.x
@@ -379,6 +391,7 @@ impl Storage {
 
     pub fn release_window(&mut self) {
         self.in_hold = false;
+        self.hold_pos = Vec2::new(0.0, 0.0);
     }
 
     pub fn set_z_order(
@@ -527,5 +540,99 @@ impl Storage {
                 }
             }
         }
+    }
+}
+
+pub fn release_storage_slot(
+    interface: &mut Interface,
+    socket: &mut Socket,
+    systems: &mut SystemHolder,
+    slot: usize,
+    screen_pos: Vec2,
+) {
+    if slot >= MAX_STORAGE
+        || !interface.storage.item_slot[slot].got_data
+        || interface.storage.item_slot[slot].need_update
+    {
+        return;
+    }
+
+    if interface.storage.in_window(screen_pos)
+        && interface.storage.order_index == 0
+    {
+        let find_slot = interface.storage.find_storage_slot(screen_pos, true);
+        if let Some(new_slot) = find_slot {
+            if new_slot != slot {
+                let _ = send_switchstorageslot(
+                    socket,
+                    slot as u16,
+                    new_slot as u16,
+                    interface.storage.item_slot[slot].count_data,
+                );
+
+                interface.storage.update_storage_slot(
+                    systems,
+                    slot,
+                    &Item {
+                        num: interface.storage.item_slot[new_slot].item_index
+                            as u32,
+                        val: interface.storage.item_slot[new_slot].count_data,
+                        ..Default::default()
+                    },
+                );
+                interface.inventory.update_inv_slot(
+                    systems,
+                    slot,
+                    &Item {
+                        num: interface.storage.item_slot[slot].item_index
+                            as u32,
+                        val: interface.storage.item_slot[slot].count_data,
+                        ..Default::default()
+                    },
+                );
+
+                interface.storage.item_slot[slot].need_update = true;
+                interface.storage.item_slot[new_slot].need_update = true;
+                return;
+            }
+        }
+    } else if interface.inventory.in_window(screen_pos)
+        && interface.inventory.order_index == 0
+    {
+        let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
+        if let Some(inv_slot) = find_slot {
+            let _ = send_withdrawitem(
+                socket,
+                inv_slot as u16,
+                slot as u16,
+                interface.storage.item_slot[slot].count_data,
+            );
+            return;
+        }
+    }
+
+    let detail_origin = ORDER_GUI_WINDOW.sub_f32(interface.storage.z_order, 3);
+    let z_pos = detail_origin.sub_f32(0.002, 3);
+
+    let frame_pos = Vec2::new(
+        slot as f32 % MAX_STORAGE_X,
+        (slot as f32 / MAX_STORAGE_X).floor(),
+    );
+    let slot_pos = Vec2::new(
+        interface.storage.pos.x + 10.0 + (37.0 * frame_pos.x),
+        interface.storage.pos.y + 232.0 - (37.0 * frame_pos.y),
+    );
+
+    systems.gfx.set_pos(
+        interface.storage.item_slot[slot].image,
+        Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, z_pos),
+    );
+    if interface.storage.item_slot[slot].got_count {
+        systems
+            .gfx
+            .set_visible(interface.storage.item_slot[slot].count, true);
+        systems
+            .gfx
+            .set_visible(interface.storage.item_slot[slot].count_bg, true);
     }
 }

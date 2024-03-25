@@ -14,8 +14,6 @@ pub fn handle_data(
 ) -> SocketResult<()> {
     let id: ServerPackets = data.read()?;
 
-    //println!("Receiving Packet ID {:?}", id);
-
     let fun = match router.0.get(&id) {
         Some(fun) => fun,
         None => return Err(AscendingSocketError::InvalidPacket),

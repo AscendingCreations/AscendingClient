@@ -20,6 +20,7 @@ use crate::{
     Eq,
     ByteBufferWrite,
     ByteBufferRead,
+    Default,
 )]
 pub struct Item {
     pub num: u32,
