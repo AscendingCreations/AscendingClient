@@ -15,6 +15,7 @@ pub struct ItemSlot {
     image: usize,
     count_bg: usize,
     count: usize,
+    count_data: u16,
 }
 
 pub struct Inventory {
@@ -237,6 +238,8 @@ impl Inventory {
                 systems.gfx.remove_gfx(self.item_slot[slot].count_bg);
                 systems.gfx.remove_gfx(self.item_slot[slot].count);
             }
+            self.item_slot[slot].got_data = false;
+            self.item_slot[slot].got_count = false;
         }
 
         if data.val == 0 {
@@ -276,6 +279,7 @@ impl Inventory {
         systems.gfx.set_visible(image_index, self.visible);
 
         self.item_slot[slot].image = image_index;
+        self.item_slot[slot].count_data = data.val;
 
         if data.val > 1 {
             let mut text_bg = Rect::new(&mut systems.renderer, 0);
@@ -332,10 +336,8 @@ impl Inventory {
         for slot in 0..MAX_INV_SLOT {
             let can_proceed = if self.item_slot[slot].got_data {
                 true
-            } else if check_empty {
-                true
             } else {
-                false
+                check_empty
             };
             if can_proceed {
                 let frame_pos = Vec2::new(
@@ -570,5 +572,11 @@ pub fn release_inv_slot(
                     send_switchinvslot(socket, slot as u16, new_slot as u16, 1);
             }
         }
+    } else {
+        let _ = send_dropitem(
+            socket,
+            slot as u16,
+            interface.inventory.item_slot[slot].count_data,
+        );
     }
 }
