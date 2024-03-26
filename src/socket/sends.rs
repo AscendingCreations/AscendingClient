@@ -33,6 +33,8 @@ enum ClientPacket {
     CloseStorage,
     CloseShop,
     CloseTrade,
+    BuyItem,
+    SellItem,
 }
 
 pub fn send_register(
@@ -338,6 +340,33 @@ pub fn send_closetrade(socket: &mut Socket) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(4)?;
 
     buf.write(ClientPacket::CloseTrade)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_buyitem(socket: &mut Socket, slot: u16) -> ClientResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(6)?;
+
+    buf.write(ClientPacket::BuyItem)?;
+    buf.write(slot)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_sellitem(
+    socket: &mut Socket,
+    slot: u16,
+    amount: u16,
+) -> ClientResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(6)?;
+
+    buf.write(ClientPacket::SellItem)?;
+    buf.write(slot)?;
+    buf.write(amount)?;
     buf.finish()?;
 
     socket.send(buf);

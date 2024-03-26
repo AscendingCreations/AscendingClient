@@ -80,6 +80,35 @@ pub enum VitalTypes {
     Debug,
     PartialEq,
     Eq,
+    Deserialize,
+    Serialize,
+    Default,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
+pub enum IsUsingType {
+    #[default]
+    None,
+    Bank,
+    Fishing(i64),
+    Crafting(i64),
+    Trading(i64),
+    Store(i64),
+    Other(i64),
+}
+
+impl IsUsingType {
+    pub fn inuse(self) -> bool {
+        !matches!(self, IsUsingType::None)
+    }
+}
+
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
     Serialize_repr,
     Deserialize_repr,
     ByteBufferRead,

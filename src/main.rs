@@ -213,7 +213,7 @@ async fn main() -> ClientResult<()> {
     // and another for emojicons.
     let text_atlas = TextAtlas::new(&mut renderer).unwrap();
 
-    let audio = Audio::new(1.0)?;
+    let audio = Audio::new(0.15)?;
 
     // Load textures image
     let resource = TextureAllocation::new(&mut atlases, &renderer).unwrap();

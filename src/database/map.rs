@@ -32,6 +32,7 @@ pub enum MapAttribute {
     Sign(String),
     ItemSpawn(ItemSpawnData),
     Storage,
+    Shop(u16),
     Count,
 }
 

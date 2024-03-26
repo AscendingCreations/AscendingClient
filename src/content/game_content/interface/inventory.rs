@@ -720,6 +720,14 @@ pub fn release_inv_slot(
             );
             return;
         }
+    } else if interface.shop.in_window(screen_pos)
+        && interface.shop.order_index == 0
+    {
+        let _ = send_sellitem(
+            socket,
+            slot as u16,
+            interface.inventory.item_slot[slot].count_data,
+        );
     } else {
         let _ = send_dropitem(
             socket,

@@ -23,6 +23,7 @@ pub struct TextureAllocation {
     pub button_icon: TextureData,
     pub target: TextureData,
     pub window_button_icon: TextureData,
+    pub shop_currency_icon: TextureData,
     pub tilesheet: Vec<TilesheetData>,
     pub items: Vec<TextureData>,
     pub players: Vec<TextureData>,
@@ -46,6 +47,10 @@ impl TextureAllocation {
             (
                 "window_button_icon.png",
                 "images/gui/window_button_icon.png",
+            ),
+            (
+                "shop_currency_icon.png",
+                "images/gui/shop_currency_icon.png",
             ),
         ] {
             textures.push(TextureData {
@@ -97,6 +102,7 @@ impl TextureAllocation {
             button_icon: textures.remove(0),
             target: textures.remove(0),
             window_button_icon: textures.remove(0),
+            shop_currency_icon: textures.remove(0),
             tilesheet,
             items,
             players,

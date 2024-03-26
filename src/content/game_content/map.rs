@@ -229,10 +229,16 @@ pub fn can_move(
         }
         _ => {}
     }
+    if content.is_using_type.inuse() {
+        return false;
+    }
     let attribute = content
         .map
         .get_attribute(Vec2::new(pos.x as f32, pos.y as f32), direction);
-    !matches!(attribute, MapAttribute::Blocked | MapAttribute::Storage)
+    !matches!(
+        attribute,
+        MapAttribute::Blocked | MapAttribute::Storage | MapAttribute::Shop(_)
+    )
 }
 
 pub fn get_world_pos(tile_pos: Vec2) -> Vec2 {

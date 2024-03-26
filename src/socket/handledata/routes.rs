@@ -7,8 +7,8 @@ use crate::{
     get_percent, get_start_map_pos, is_map_connected, npc_finalized,
     open_interface, set_npc_frame, unload_mapitems, unload_npc, update_camera,
     Alert, BufferTask, ChatTask, ClientResult, Content, EntityType, FtlType,
-    MapItem, MessageChannel, Position, Socket, SystemHolder, Window,
-    NPC_SPRITE_FRAME_X, VITALS_MAX,
+    IsUsingType, MapItem, MessageChannel, Position, Socket, SystemHolder,
+    Window, NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -1324,5 +1324,49 @@ pub fn handle_openstorage(
         systems,
         Window::Storage,
     );
+
+    content.game_content.is_using_type = IsUsingType::Bank;
+
+    Ok(())
+}
+
+pub fn handle_openshop(
+    _socket: &mut Socket,
+    _world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> ClientResult<()> {
+    let shop_index = data.read::<u16>()?;
+
+    open_interface(&mut content.game_content.interface, systems, Window::Shop);
+    content
+        .game_content
+        .interface
+        .shop
+        .set_shop(systems, shop_index as usize);
+
+    content.game_content.is_using_type = IsUsingType::Store(shop_index as i64);
+
+    Ok(())
+}
+
+pub fn handle_clearisusingtype(
+    _socket: &mut Socket,
+    _world: &mut World,
+    _systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> ClientResult<()> {
+    let _ = data.read::<u16>()?;
+
+    content.game_content.is_using_type = IsUsingType::None;
+
     Ok(())
 }

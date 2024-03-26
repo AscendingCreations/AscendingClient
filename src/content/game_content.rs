@@ -48,6 +48,7 @@ pub struct GameContent {
     pub finalized: bool,
     pub target: Target,
     pub pick_up_timer: f32,
+    pub is_using_type: IsUsingType,
 }
 
 impl GameContent {
@@ -64,6 +65,7 @@ impl GameContent {
             myentity: None,
             target: Target::new(systems),
             pick_up_timer: 0.0,
+            is_using_type: IsUsingType::None,
         }
     }
 

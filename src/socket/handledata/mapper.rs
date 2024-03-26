@@ -78,6 +78,8 @@ pub enum ServerPackets {
     EntityUnload,
     LoadStatus,
     OpenStorage,
+    OpenShop,
+    ClearIsUsingType,
     ServerPacketCount,
 }
 
@@ -279,6 +281,14 @@ impl PacketRouter {
             (
                 ServerPackets::OpenStorage,
                 routes::handle_openstorage as PacketFunction,
+            ),
+            (
+                ServerPackets::OpenShop,
+                routes::handle_openshop as PacketFunction,
+            ),
+            (
+                ServerPackets::ClearIsUsingType,
+                routes::handle_clearisusingtype as PacketFunction,
             ),
         ]))
     }
