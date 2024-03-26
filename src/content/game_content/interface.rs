@@ -4,8 +4,8 @@ use graphics::*;
 use winit::{event::*, keyboard::*};
 
 use crate::{
-    interface::chatbox::*, is_within_area, send_message, widget::*,
-    GameContent, MouseInputType, Socket, SystemHolder,
+    interface::chatbox::*, is_within_area, send_closestorage, send_message,
+    widget::*, GameContent, MouseInputType, Socket, SystemHolder,
 };
 use hecs::World;
 
@@ -118,6 +118,11 @@ impl Interface {
         match input_type {
             MouseInputType::MouseMove => {
                 Interface::hover_buttons(interface, systems, screen_pos);
+                interface.chatbox.hover_buttons(systems, screen_pos);
+                interface.profile.hover_buttons(systems, screen_pos);
+                interface.inventory.hover_buttons(systems, screen_pos);
+                interface.setting.hover_buttons(systems, screen_pos);
+                interface.storage.hover_buttons(systems, screen_pos);
 
                 if interface.setting.visible {
                     if interface.setting.sfx_scroll.in_scroll(screen_pos) {
@@ -136,9 +141,12 @@ impl Interface {
                 } else {
                     interface.chatbox.scrollbar.set_hover(systems, false);
                 }
-                interface.chatbox.hover_buttons(systems, screen_pos);
             }
             MouseInputType::MouseLeftDown => {
+                result = Interface::click_window_buttons(
+                    interface, systems, socket, screen_pos,
+                );
+
                 let button_index =
                     Interface::click_buttons(interface, systems, screen_pos);
                 if let Some(index) = button_index {
@@ -193,7 +201,6 @@ impl Interface {
                     trigger_chatbox_button(interface, systems, socket, index);
                     result = true;
                 }
-
                 interface.click_textbox(systems, screen_pos);
             }
             MouseInputType::MouseLeftDownMove => {
@@ -337,6 +344,10 @@ impl Interface {
                     .scrollbar
                     .set_hold(systems, false, screen_pos);
                 interface.chatbox.reset_buttons(systems);
+                interface.profile.reset_buttons(systems);
+                interface.setting.reset_buttons(systems);
+                interface.inventory.reset_buttons(systems);
+                interface.storage.reset_buttons(systems);
             }
         }
         result
@@ -378,6 +389,56 @@ impl Interface {
                 button.set_hover(systems, false);
             }
         }
+    }
+
+    pub fn click_window_buttons(
+        interface: &mut Interface,
+        systems: &mut SystemHolder,
+        socket: &mut Socket,
+        screen_pos: Vec2,
+    ) -> bool {
+        if let Some(index) =
+            interface.profile.click_buttons(systems, screen_pos)
+        {
+            if index == 0 {
+                close_interface(interface, systems, Window::Profile);
+            }
+            interface.profile.did_button_click = true;
+            return true;
+        }
+
+        if let Some(index) =
+            interface.setting.click_buttons(systems, screen_pos)
+        {
+            if index == 0 {
+                close_interface(interface, systems, Window::Setting);
+            }
+            interface.setting.did_button_click = true;
+            return true;
+        }
+
+        if let Some(index) =
+            interface.inventory.click_buttons(systems, screen_pos)
+        {
+            if index == 0 {
+                close_interface(interface, systems, Window::Inventory);
+            }
+            interface.inventory.did_button_click = true;
+            return true;
+        }
+
+        if let Some(index) =
+            interface.storage.click_buttons(systems, screen_pos)
+        {
+            if index == 0 {
+                close_interface(interface, systems, Window::Storage);
+            }
+            interface.storage.did_button_click = true;
+            let _ = send_closestorage(socket);
+            return true;
+        }
+
+        false
     }
 
     pub fn click_buttons(
@@ -456,10 +517,10 @@ fn trigger_button(
             }
         }
         2 => {
-            if interface.storage.visible {
-                close_interface(interface, systems, Window::Storage);
+            if interface.setting.visible {
+                close_interface(interface, systems, Window::Setting);
             } else {
-                open_interface(interface, systems, Window::Storage);
+                open_interface(interface, systems, Window::Setting);
             }
         }
         _ => {}

@@ -26,6 +26,7 @@ pub struct Inventory {
     header_text: usize,
     slot: [usize; MAX_INV],
     item_slot: [ItemSlot; MAX_INV],
+    button: Vec<Button>,
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -35,6 +36,7 @@ pub struct Inventory {
     hold_pos: Vec2,
     header_pos: Vec2,
     header_size: Vec2,
+    pub did_button_click: bool,
 
     min_bound: Vec2,
     max_bound: Vec2,
@@ -107,6 +109,40 @@ impl Inventory {
             systems.gfx.set_visible(*slot, false);
         }
 
+        let mut button = Vec::with_capacity(1);
+        let close_button = Button::new(
+            systems,
+            ButtonType::Rect(ButtonRect {
+                rect_color: Color::rgba(70, 70, 70, 255),
+                got_border: false,
+                border_color: Color::rgba(0, 0, 0, 255),
+                border_radius: 0.0,
+                hover_change: ButtonChangeType::ColorChange(Color::rgba(
+                    50, 50, 50, 255,
+                )),
+                click_change: ButtonChangeType::ColorChange(Color::rgba(
+                    150, 150, 150, 255,
+                )),
+            }),
+            ButtonContentType::Image(ButtonContentImg {
+                res: systems.resource.window_button_icon.allocation,
+                pos: Vec2::new(0.0, 0.0),
+                uv: Vec2::new(0.0, 0.0),
+                size: Vec2::new(20.0, 20.0),
+                hover_change: ButtonChangeType::None,
+                click_change: ButtonChangeType::None,
+            }),
+            Vec2::new(w_pos.x, w_pos.y),
+            Vec2::new(header_size.x - 25.0, 242.0),
+            detail_2,
+            (0.0001, 4),
+            Vec2::new(20.0, 20.0),
+            0,
+            false,
+            None,
+        );
+        button.push(close_button);
+
         Inventory {
             visible: false,
             bg,
@@ -114,6 +150,7 @@ impl Inventory {
             header_text,
             slot,
             item_slot: [ItemSlot::default(); MAX_INV],
+            button,
 
             pos,
             size: w_size,
@@ -123,6 +160,7 @@ impl Inventory {
             hold_pos: Vec2::new(0.0, 0.0),
             header_pos,
             header_size,
+            did_button_click: false,
 
             min_bound: Vec2::new(
                 systems.size.width - w_size.x - 1.0,
@@ -135,7 +173,7 @@ impl Inventory {
         }
     }
 
-    pub fn unload(&self, systems: &mut SystemHolder) {
+    pub fn unload(&mut self, systems: &mut SystemHolder) {
         systems.gfx.remove_gfx(self.bg);
         systems.gfx.remove_gfx(self.header);
         systems.gfx.remove_gfx(self.header_text);
@@ -151,6 +189,10 @@ impl Inventory {
                 }
             }
         });
+        self.button.iter_mut().for_each(|button| {
+            button.unload(systems);
+        });
+        self.button.clear();
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
@@ -175,6 +217,9 @@ impl Inventory {
             }
         });
         self.hold_slot = None;
+        self.button.iter_mut().for_each(|button| {
+            button.set_visible(systems, visible);
+        })
     }
 
     pub fn hold_inv_slot(&mut self, slot: usize, screen_pos: Vec2) {
@@ -449,6 +494,10 @@ impl Inventory {
                 systems.gfx.set_pos(self.item_slot[i].count, pos);
             }
         }
+
+        self.button.iter_mut().for_each(|button| {
+            button.set_z_order(systems, detail_2);
+        });
     }
 
     pub fn move_window(
@@ -489,6 +538,10 @@ impl Inventory {
             ),
         );
         systems.gfx.center_text(self.header_text);
+
+        self.button.iter_mut().for_each(|button| {
+            button.set_pos(systems, self.pos);
+        });
 
         let item_text_size = Vec2::new(32.0, 16.0);
         for i in 0..MAX_INV {
@@ -536,6 +589,68 @@ impl Inventory {
                 }
             }
         }
+    }
+
+    pub fn hover_buttons(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        if !self.visible {
+            return;
+        }
+
+        for button in self.button.iter_mut() {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(
+                    button.base_pos.x + button.adjust_pos.x,
+                    button.base_pos.y + button.adjust_pos.y,
+                ),
+                button.size,
+            ) {
+                button.set_hover(systems, true);
+            } else {
+                button.set_hover(systems, false);
+            }
+        }
+    }
+
+    pub fn click_buttons(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) -> Option<usize> {
+        if !self.visible {
+            return None;
+        }
+
+        let mut button_found = None;
+        for (index, button) in self.button.iter_mut().enumerate() {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(
+                    button.base_pos.x + button.adjust_pos.x,
+                    button.base_pos.y + button.adjust_pos.y,
+                ),
+                button.size,
+            ) {
+                button.set_click(systems, true);
+                button_found = Some(index)
+            }
+        }
+        button_found
+    }
+
+    pub fn reset_buttons(&mut self, systems: &mut SystemHolder) {
+        if !self.did_button_click || !self.visible {
+            return;
+        }
+        self.did_button_click = false;
+
+        self.button.iter_mut().for_each(|button| {
+            button.set_click(systems, false);
+        });
     }
 }
 

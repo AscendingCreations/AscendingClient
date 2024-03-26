@@ -34,11 +34,13 @@ use winit::{
 };
 
 mod alert;
+mod audio;
 mod buffer;
 pub mod config;
 mod content;
 mod data_types;
 mod database;
+mod error;
 mod gfx_collection;
 mod inputs;
 mod logic;
@@ -51,10 +53,12 @@ mod values;
 mod widget;
 
 use alert::*;
+use audio::*;
 use buffer::*;
 pub use config::*;
 use content::*;
 use database::*;
+pub use error::*;
 use gfx_collection::*;
 use inputs::*;
 use logic::*;
@@ -112,7 +116,7 @@ impl log::Log for MyLogger {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), AscendingError> {
+async fn main() -> ClientResult<()> {
     // Create logger to output to a File
     log::set_logger(&MY_LOGGER).unwrap();
     // Set the Max level we accept logging to the file for.
@@ -209,8 +213,10 @@ async fn main() -> Result<(), AscendingError> {
     // and another for emojicons.
     let text_atlas = TextAtlas::new(&mut renderer).unwrap();
 
+    let audio = Audio::new(1.0)?;
+
     // Load textures image
-    let resource = TextureAllocation::new(&mut atlases, &renderer)?;
+    let resource = TextureAllocation::new(&mut atlases, &renderer).unwrap();
 
     // Load config
     let config = Config::read_config("settings.toml");
@@ -228,6 +234,7 @@ async fn main() -> Result<(), AscendingError> {
         map_fade: MapFade::new(),
         config,
         base: database_holder,
+        audio,
     };
     systems.fade.init_setup(
         &mut systems.renderer,
@@ -320,6 +327,9 @@ async fn main() -> Result<(), AscendingError> {
 
     let mut mouse_pos: PhysicalPosition<f64> = PhysicalPosition::new(0.0, 0.0);
     let mut mouse_press: bool = false;
+
+    // TEMP
+    systems.audio.set_music("./audio/caves.ogg")?;
 
     #[allow(deprecated)]
     event_loop.run(move |event, elwt| {
@@ -521,6 +531,8 @@ async fn main() -> Result<(), AscendingError> {
             fps = 0u32;
             time = seconds + 1.0;
         }
+
+        systems.audio.update_effects();
 
         fps += 1;
 

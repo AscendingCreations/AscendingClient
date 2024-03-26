@@ -1,8 +1,4 @@
-use crate::{
-    socket::{error, *},
-    values::*,
-    Entity, Position,
-};
+use crate::{socket::*, values::*, Entity, Position};
 use bytey::ByteBuffer;
 
 #[derive(Clone, Debug, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
@@ -34,6 +30,9 @@ enum ClientPacket {
     Message,
     AdminCommand,
     SetTarget,
+    CloseStorage,
+    CloseShop,
+    CloseTrade,
 }
 
 pub fn send_register(
@@ -42,7 +41,7 @@ pub fn send_register(
     password: String,
     email: String,
     sprite: u8,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Register)?;
@@ -61,7 +60,7 @@ pub fn send_login(
     username: String,
     password: String,
     app_version: (u16, u16, u16),
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(778)?;
 
     buf.write(ClientPacket::Login)?;
@@ -80,7 +79,7 @@ pub fn send_move(
     socket: &mut Socket,
     dir: u8,
     pos: Position,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(25)?;
 
     buf.write(ClientPacket::Move)?;
@@ -92,7 +91,7 @@ pub fn send_move(
     Ok(())
 }
 
-pub fn send_dir(socket: &mut Socket, dir: u8) -> SocketResult<()> {
+pub fn send_dir(socket: &mut Socket, dir: u8) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Dir)?;
@@ -107,7 +106,7 @@ pub fn send_attack(
     socket: &mut Socket,
     dir: u8,
     entity: Option<Entity>,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(13)?;
 
     buf.write(ClientPacket::Attack)?;
@@ -123,7 +122,7 @@ pub fn send_useitem(
     socket: &mut Socket,
     slot: u16,
     targettype: u8,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::UseItem)?;
@@ -135,7 +134,7 @@ pub fn send_useitem(
     Ok(())
 }
 
-pub fn send_unequip(socket: &mut Socket, slot: u16) -> SocketResult<()> {
+pub fn send_unequip(socket: &mut Socket, slot: u16) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Unequip)?;
@@ -151,7 +150,7 @@ pub fn send_switchinvslot(
     oldslot: u16,
     newslot: u16,
     amount: u16,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::SwitchInvSlot)?;
@@ -164,7 +163,7 @@ pub fn send_switchinvslot(
     Ok(())
 }
 
-pub fn send_pickup(socket: &mut Socket) -> SocketResult<()> {
+pub fn send_pickup(socket: &mut Socket) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(4)?;
 
     buf.write(ClientPacket::PickUp)?;
@@ -178,7 +177,7 @@ pub fn send_dropitem(
     socket: &mut Socket,
     slot: u16,
     amount: u16,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::DropItem)?;
@@ -190,7 +189,7 @@ pub fn send_dropitem(
     Ok(())
 }
 
-pub fn send_deleteitem(socket: &mut Socket, slot: u16) -> SocketResult<()> {
+pub fn send_deleteitem(socket: &mut Socket, slot: u16) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::DeleteItem)?;
@@ -206,7 +205,7 @@ pub fn send_switchstorageslot(
     oldslot: u16,
     newslot: u16,
     amount: u16,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::SwitchStorageSlot)?;
@@ -222,7 +221,7 @@ pub fn send_switchstorageslot(
 pub fn send_deletestorageitem(
     socket: &mut Socket,
     slot: u16,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::DeleteStorageItem)?;
@@ -238,7 +237,7 @@ pub fn send_deposititem(
     inv_slot: u16,
     bank_slot: u16,
     amount: u16,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::DepositItem)?;
@@ -256,7 +255,7 @@ pub fn send_withdrawitem(
     inv_slot: u16,
     bank_slot: u16,
     amount: u16,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::WithdrawItem)?;
@@ -274,7 +273,7 @@ pub fn send_message(
     channel: MessageChannel,
     msg: String,
     name: String,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::Message)?;
@@ -290,7 +289,7 @@ pub fn send_message(
 pub fn send_admincommand(
     socket: &mut Socket,
     command: AdminCommand,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(262)?;
 
     buf.write(ClientPacket::AdminCommand)?;
@@ -304,11 +303,41 @@ pub fn send_admincommand(
 pub fn send_settarget(
     socket: &mut Socket,
     entity: Option<Entity>,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let mut buf = ByteBuffer::new_packet_with(12)?;
 
     buf.write(ClientPacket::SetTarget)?;
     buf.write(entity)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_closestorage(socket: &mut Socket) -> ClientResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(4)?;
+
+    buf.write(ClientPacket::CloseStorage)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_closeshop(socket: &mut Socket) -> ClientResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(4)?;
+
+    buf.write(ClientPacket::CloseShop)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_closetrade(socket: &mut Socket) -> ClientResult<()> {
+    let mut buf = ByteBuffer::new_packet_with(4)?;
+
+    buf.write(ClientPacket::CloseTrade)?;
     buf.finish()?;
 
     socket.send(buf);

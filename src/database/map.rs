@@ -1,5 +1,4 @@
 use graphics::*;
-use graphics::{AscendingError, OtherError};
 use serde::{Deserialize, Serialize};
 use serde_repr::*;
 use std::fs::OpenOptions;

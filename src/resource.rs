@@ -4,7 +4,7 @@ use std::path::Path;
 
 use graphics::*;
 
-use crate::TILE_SIZE;
+use crate::{ClientError, TILE_SIZE};
 
 pub struct TextureData {
     pub name: String,
@@ -22,6 +22,7 @@ pub struct TextureAllocation {
     pub vertical_arrow: TextureData,
     pub button_icon: TextureData,
     pub target: TextureData,
+    pub window_button_icon: TextureData,
     pub tilesheet: Vec<TilesheetData>,
     pub items: Vec<TextureData>,
     pub players: Vec<TextureData>,
@@ -31,7 +32,7 @@ impl TextureAllocation {
     pub fn new(
         atlases: &mut [AtlasSet],
         renderer: &GpuRenderer,
-    ) -> Result<Self, AscendingError> {
+    ) -> Result<Self, GraphicsError> {
         // This is how we load a image into a atlas/Texture. It returns the location of the image
         // within the texture. its x, y, w, h.  Texture loads the file. group_uploads sends it to the Texture
         // renderer is used to upload it to the GPU when done.
@@ -42,6 +43,10 @@ impl TextureAllocation {
             ("vertical_arrow.png", "images/gui/vertical_arrow.png"),
             ("button_icon.png", "images/gui/button_icon.png"),
             ("target.png", "images/misc/target.png"),
+            (
+                "window_button_icon.png",
+                "images/gui/window_button_icon.png",
+            ),
         ] {
             textures.push(TextureData {
                 name: name.to_string(),
@@ -91,6 +96,7 @@ impl TextureAllocation {
             vertical_arrow: textures.remove(0),
             button_icon: textures.remove(0),
             target: textures.remove(0),
+            window_button_icon: textures.remove(0),
             tilesheet,
             items,
             players,

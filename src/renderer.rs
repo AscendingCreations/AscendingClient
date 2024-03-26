@@ -6,7 +6,8 @@ pub mod fade;
 pub use fade::*;
 
 use crate::{
-    game_content::*, gfx_collection::*, Config, ItemData, TextureAllocation,
+    game_content::*, gfx_collection::*, Audio, Config, ItemData,
+    TextureAllocation,
 };
 
 pub struct DatabaseHolder {
@@ -23,6 +24,7 @@ pub struct SystemHolder {
     pub map_fade: MapFade,
     pub config: Config,
     pub base: DatabaseHolder,
+    pub audio: Audio,
 }
 
 pub struct State<Controls>

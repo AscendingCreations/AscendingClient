@@ -9,6 +9,7 @@ pub struct Setting {
     header_text: usize,
     pub sfx_scroll: Scrollbar,
     pub bgm_scroll: Scrollbar,
+    button: Vec<Button>,
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -18,6 +19,7 @@ pub struct Setting {
     hold_pos: Vec2,
     header_pos: Vec2,
     header_size: Vec2,
+    pub did_button_click: bool,
 
     min_bound: Vec2,
     max_bound: Vec2,
@@ -139,6 +141,40 @@ impl Setting {
             None,
         );
 
+        let mut button = Vec::with_capacity(1);
+        let close_button = Button::new(
+            systems,
+            ButtonType::Rect(ButtonRect {
+                rect_color: Color::rgba(70, 70, 70, 255),
+                got_border: false,
+                border_color: Color::rgba(0, 0, 0, 255),
+                border_radius: 0.0,
+                hover_change: ButtonChangeType::ColorChange(Color::rgba(
+                    50, 50, 50, 255,
+                )),
+                click_change: ButtonChangeType::ColorChange(Color::rgba(
+                    150, 150, 150, 255,
+                )),
+            }),
+            ButtonContentType::Image(ButtonContentImg {
+                res: systems.resource.window_button_icon.allocation,
+                pos: Vec2::new(0.0, 0.0),
+                uv: Vec2::new(0.0, 0.0),
+                size: Vec2::new(20.0, 20.0),
+                hover_change: ButtonChangeType::None,
+                click_change: ButtonChangeType::None,
+            }),
+            Vec2::new(w_pos.x, w_pos.y),
+            Vec2::new(header_size.x - 25.0, 242.0),
+            detail_2,
+            (0.0001, 4),
+            Vec2::new(20.0, 20.0),
+            0,
+            false,
+            None,
+        );
+        button.push(close_button);
+
         Setting {
             visible: false,
             bg,
@@ -146,6 +182,7 @@ impl Setting {
             header_text,
             sfx_scroll,
             bgm_scroll,
+            button,
 
             pos,
             size: w_size,
@@ -155,6 +192,7 @@ impl Setting {
             hold_pos: Vec2::new(0.0, 0.0),
             header_pos,
             header_size,
+            did_button_click: false,
 
             min_bound: Vec2::new(
                 systems.size.width - w_size.x - 1.0,
@@ -164,12 +202,16 @@ impl Setting {
         }
     }
 
-    pub fn unload(&self, systems: &mut SystemHolder) {
+    pub fn unload(&mut self, systems: &mut SystemHolder) {
         systems.gfx.remove_gfx(self.bg);
         systems.gfx.remove_gfx(self.header);
         systems.gfx.remove_gfx(self.header_text);
         self.sfx_scroll.unload(systems);
         self.bgm_scroll.unload(systems);
+        self.button.iter_mut().for_each(|button| {
+            button.unload(systems);
+        });
+        self.button.clear();
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
@@ -183,6 +225,9 @@ impl Setting {
         systems.gfx.set_visible(self.header_text, visible);
         self.sfx_scroll.set_visible(systems, visible);
         self.bgm_scroll.set_visible(systems, visible);
+        self.button.iter_mut().for_each(|button| {
+            button.set_visible(systems, visible);
+        })
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
@@ -242,6 +287,10 @@ impl Setting {
 
         self.sfx_scroll.set_z_order(systems, detail_1);
         self.bgm_scroll.set_z_order(systems, detail_1);
+
+        self.button.iter_mut().for_each(|button| {
+            button.set_z_order(systems, detail_2);
+        });
     }
 
     pub fn move_window(
@@ -282,7 +331,74 @@ impl Setting {
             ),
         );
         systems.gfx.center_text(self.header_text);
+
+        self.button.iter_mut().for_each(|button| {
+            button.set_pos(systems, self.pos);
+        });
+
         self.sfx_scroll.set_pos(systems, self.pos);
         self.bgm_scroll.set_pos(systems, self.pos);
+    }
+
+    pub fn hover_buttons(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        if !self.visible {
+            return;
+        }
+
+        for button in self.button.iter_mut() {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(
+                    button.base_pos.x + button.adjust_pos.x,
+                    button.base_pos.y + button.adjust_pos.y,
+                ),
+                button.size,
+            ) {
+                button.set_hover(systems, true);
+            } else {
+                button.set_hover(systems, false);
+            }
+        }
+    }
+
+    pub fn click_buttons(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) -> Option<usize> {
+        if !self.visible {
+            return None;
+        }
+
+        let mut button_found = None;
+        for (index, button) in self.button.iter_mut().enumerate() {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(
+                    button.base_pos.x + button.adjust_pos.x,
+                    button.base_pos.y + button.adjust_pos.y,
+                ),
+                button.size,
+            ) {
+                button.set_click(systems, true);
+                button_found = Some(index)
+            }
+        }
+        button_found
+    }
+
+    pub fn reset_buttons(&mut self, systems: &mut SystemHolder) {
+        if !self.did_button_click || !self.visible {
+            return;
+        }
+        self.did_button_click = false;
+
+        self.button.iter_mut().for_each(|button| {
+            button.set_click(systems, false);
+        });
     }
 }

@@ -11,12 +11,12 @@ pub fn handle_data(
     data: &mut ByteBuffer,
     seconds: f32,
     buffer: &mut BufferTask,
-) -> SocketResult<()> {
+) -> ClientResult<()> {
     let id: ServerPackets = data.read()?;
 
     let fun = match router.0.get(&id) {
         Some(fun) => fun,
-        None => return Err(AscendingSocketError::InvalidPacket),
+        None => return Err(ClientError::InvalidPacket),
     };
 
     match fun(

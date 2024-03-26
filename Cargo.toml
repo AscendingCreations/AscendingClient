@@ -17,20 +17,32 @@ guillotiere = "0.6.2"
 log = { version = "0.4.20", default-features = false }
 backtrace = "0.3.69"
 futures = "0.3.28"
-chrono = { version = "0.4.30", disable-defaults = true, features = ["clock", "serde", "std"] }
+chrono = { version = "0.4.30", disable-defaults = true, features = [
+    "clock",
+    "serde",
+    "std",
+] }
 ubits = "0.3.1"
-hecs = {version="0.10.4", features = ["column-serialize", "row-serialize", "macros"] }
+hecs = { version = "0.10.4", features = [
+    "column-serialize",
+    "row-serialize",
+    "macros",
+] }
 glam = { version = "0.24.1", features = ["bytemuck", "mint"] }
 serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.82"
 indexmap = "2.1.0"
+rodio = "0.17.3"
 slab = "0.4.9"
 arboard = "3.3.1"
 mio = { version = "0.8.10", features = ["os-poll", "net"] }
-bytey = {version = "0.3.0", git = "https://github.com/Stefanowhb/bytey.git"}
+bytey = { version = "0.3.0", git = "https://github.com/Stefanowhb/bytey.git" }
 pki-types = { package = "rustls-pki-types", version = "1", features = ["std"] }
-rcgen = { version = "0.12", features = ["pem", "ring"], default-features = false }
-rustls = { version = "0.22.2", features = ["logging"]}
+rcgen = { version = "0.12", features = [
+    "pem",
+    "ring",
+], default-features = false }
+rustls = { version = "0.22.2", features = ["logging"] }
 toml = "0.8.10"
 rustls-pemfile = "2"
 webpki-roots = "0.26"
@@ -53,7 +65,7 @@ version = "0.1.0"
 [dependencies.graphics]
 package = "ascending_graphics"
 #path = "./graphics"
-version = "0.1.0"
+version = "0.2.0"
 
 [profile.release]
 opt-level = 2
