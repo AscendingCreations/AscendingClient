@@ -19,6 +19,7 @@ pub mod entity;
 pub mod map;
 pub mod npc;
 pub mod player;
+pub mod player_data;
 pub mod target;
 
 use camera::*;
@@ -26,6 +27,7 @@ pub use entity::*;
 pub use map::*;
 pub use npc::*;
 pub use player::*;
+pub use player_data::*;
 pub use target::*;
 
 const KEY_ATTACK: usize = 0;
@@ -45,6 +47,7 @@ pub struct GameContent {
     pub interface: Interface,
     keyinput: [bool; MAX_KEY],
     pub myentity: Option<Entity>,
+    pub player_data: PlayerData,
     pub finalized: bool,
     pub target: Target,
     pub pick_up_timer: f32,
@@ -63,6 +66,7 @@ impl GameContent {
             keyinput: [false; MAX_KEY],
             finalized: false,
             myentity: None,
+            player_data: PlayerData::new(),
             target: Target::new(systems),
             pick_up_timer: 0.0,
             is_using_type: IsUsingType::None,
@@ -97,6 +101,7 @@ impl GameContent {
         self.interface.unload(systems);
         self.target.unload(systems);
         self.map.unload(systems);
+        self.player_data.unload();
     }
 
     pub fn init_map(&mut self, systems: &mut SystemHolder, map: MapPosition) {
@@ -133,6 +138,22 @@ impl GameContent {
             MapItem::finalized(world, systems, entity);
         }
         update_camera(world, self, systems, socket);
+
+        self.player_data.inventory.iter().enumerate().for_each(
+            |(index, item)| {
+                self.interface
+                    .inventory
+                    .update_inv_slot(systems, index, item);
+            },
+        );
+        self.player_data.storage.iter().enumerate().for_each(
+            |(index, item)| {
+                self.interface
+                    .storage
+                    .update_storage_slot(systems, index, item);
+            },
+        );
+
         self.finalized = true;
     }
 

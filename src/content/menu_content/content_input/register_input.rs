@@ -4,8 +4,8 @@ use regex::Regex;
 use winit::{event::*, keyboard::*};
 
 use crate::{
-    button, content::*, logic::*, socket::*, Alert, AlertType, ContentType,
-    MouseInputType, SystemHolder, Tooltip,
+    button, content::*, logic::*, socket::*, Alert, AlertIndex, AlertType,
+    ContentType, MouseInputType, SystemHolder, Tooltip,
 };
 
 pub fn register_mouse_input(
@@ -55,7 +55,7 @@ pub fn register_key_input(
     event: &KeyEvent,
 ) {
     if let Some(textbox_index) = menu_content.selected_textbox {
-        menu_content.textbox[textbox_index].enter_text(systems, event);
+        menu_content.textbox[textbox_index].enter_text(systems, event, false);
     }
 }
 

@@ -19,12 +19,18 @@ impl GameContent {
         systems: &mut SystemHolder,
         socket: &mut Socket,
         alert: &mut Alert,
-        _tooltip: &mut Tooltip,
+        tooltip: &mut Tooltip,
         input_type: MouseInputType,
         screen_pos: Vec2,
     ) {
         if alert.visible {
-            alert.alert_mouse_input(systems, input_type.clone(), screen_pos);
+            alert.alert_mouse_input(
+                systems,
+                socket,
+                input_type.clone(),
+                tooltip,
+                screen_pos,
+            );
             return;
         }
 
@@ -33,6 +39,7 @@ impl GameContent {
             world,
             systems,
             socket,
+            alert,
             input_type.clone(),
             screen_pos,
         ) {
@@ -62,9 +69,14 @@ impl GameContent {
         world: &mut World,
         systems: &mut SystemHolder,
         socket: &mut Socket,
-        _alert: &mut Alert,
+        alert: &mut Alert,
         event: &KeyEvent,
     ) {
+        if alert.visible {
+            alert.alert_key_input(systems, event);
+            return;
+        }
+
         Interface::key_input(&mut content.game_content, world, systems, event);
 
         match event.physical_key {

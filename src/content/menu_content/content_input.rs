@@ -25,7 +25,9 @@ impl MenuContent {
         screen_pos: Vec2,
     ) {
         if alert.visible {
-            alert.alert_mouse_input(systems, input_type, screen_pos);
+            alert.alert_mouse_input(
+                systems, socket, input_type, tooltip, screen_pos,
+            );
             return;
         }
 
@@ -63,9 +65,14 @@ impl MenuContent {
         world: &mut World,
         systems: &mut SystemHolder,
         _socket: &mut Socket,
-        _alert: &mut Alert,
+        alert: &mut Alert,
         event: &KeyEvent,
     ) {
+        if alert.visible {
+            alert.alert_key_input(systems, event);
+            return;
+        }
+
         match content.menu_content.cur_window {
             WindowType::Register => {
                 register_key_input(

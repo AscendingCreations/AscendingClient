@@ -1,8 +1,8 @@
 use graphics::*;
 
 use crate::{
-    is_within_area, logic::*, socket::sends::*, values::*, widget::*,
-    Interface, Item, Socket, SystemHolder,
+    is_within_area, logic::*, socket::sends::*, values::*, widget::*, Alert,
+    AlertIndex, AlertType, Interface, Item, Socket, SystemHolder,
 };
 
 const MAX_INV_X: f32 = 5.0;
@@ -371,9 +371,9 @@ impl Inventory {
 
             self.item_slot[slot].count = text_index;
             self.item_slot[slot].count_bg = text_bg_index;
+            self.item_slot[slot].got_count = true;
         }
 
-        self.item_slot[slot].got_count = data.val > 1;
         self.item_slot[slot].got_data = true;
     }
 
@@ -658,6 +658,7 @@ pub fn release_inv_slot(
     interface: &mut Interface,
     socket: &mut Socket,
     systems: &mut SystemHolder,
+    alert: &mut Alert,
     slot: usize,
     screen_pos: Vec2,
 ) {
@@ -693,7 +694,7 @@ pub fn release_inv_slot(
                 );
                 interface.inventory.update_inv_slot(
                     systems,
-                    slot,
+                    new_slot,
                     &Item {
                         num: interface.inventory.item_slot[slot].item_index
                             as u32,
@@ -712,21 +713,55 @@ pub fn release_inv_slot(
     {
         let find_slot = interface.storage.find_storage_slot(screen_pos, true);
         if let Some(bank_slot) = find_slot {
-            let _ = send_deposititem(
-                socket,
-                slot as u16,
-                bank_slot as u16,
-                interface.inventory.item_slot[slot].count_data,
-            );
-            return;
+            if interface.inventory.item_slot[slot].count_data > 1 {
+                alert.show_alert(
+                    systems,
+                    AlertType::Input,
+                    String::new(),
+                    "Enter the amount to Deposit".into(),
+                    250,
+                    AlertIndex::Deposit(slot as u16, bank_slot as u16),
+                    true,
+                );
+            } else {
+                let _ = send_deposititem(
+                    socket,
+                    slot as u16,
+                    bank_slot as u16,
+                    interface.inventory.item_slot[slot].count_data,
+                );
+                return;
+            }
         }
     } else if interface.shop.in_window(screen_pos)
         && interface.shop.order_index == 0
     {
-        let _ = send_sellitem(
-            socket,
-            slot as u16,
-            interface.inventory.item_slot[slot].count_data,
+        if interface.inventory.item_slot[slot].count_data > 1 {
+            alert.show_alert(
+                systems,
+                AlertType::Input,
+                String::new(),
+                "Enter the amount to Sell".into(),
+                250,
+                AlertIndex::Sell(slot as u16),
+                true,
+            );
+        } else {
+            let _ = send_sellitem(
+                socket,
+                slot as u16,
+                interface.inventory.item_slot[slot].count_data,
+            );
+        }
+    } else if interface.inventory.item_slot[slot].count_data > 1 {
+        alert.show_alert(
+            systems,
+            AlertType::Input,
+            String::new(),
+            "Enter the amount to Drop".into(),
+            250,
+            AlertIndex::Drop(slot as u16),
+            true,
         );
     } else {
         let _ = send_dropitem(
@@ -734,7 +769,6 @@ pub fn release_inv_slot(
             slot as u16,
             interface.inventory.item_slot[slot].count_data,
         );
-        return;
     }
 
     let detail_origin =

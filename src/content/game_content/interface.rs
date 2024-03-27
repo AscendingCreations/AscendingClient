@@ -5,8 +5,8 @@ use winit::{event::*, keyboard::*};
 
 use crate::{
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
-    send_closestorage, send_message, widget::*, GameContent, MouseInputType,
-    Socket, SystemHolder,
+    send_closestorage, send_message, widget::*, Alert, GameContent,
+    MouseInputType, Socket, SystemHolder,
 };
 use hecs::World;
 
@@ -120,6 +120,7 @@ impl Interface {
         _world: &mut World,
         systems: &mut SystemHolder,
         socket: &mut Socket,
+        alert: &mut Alert,
         input_type: MouseInputType,
         screen_pos: Vec2,
     ) -> bool {
@@ -345,14 +346,14 @@ impl Interface {
             MouseInputType::MouseRelease => {
                 if let Some(slot) = interface.inventory.hold_slot {
                     release_inv_slot(
-                        interface, socket, systems, slot, screen_pos,
+                        interface, socket, systems, alert, slot, screen_pos,
                     );
                     interface.inventory.hold_slot = None;
                     return true;
                 }
                 if let Some(slot) = interface.storage.hold_slot {
                     release_storage_slot(
-                        interface, socket, systems, slot, screen_pos,
+                        interface, socket, systems, alert, slot, screen_pos,
                     );
                     interface.storage.hold_slot = None;
                     return true;
@@ -418,7 +419,7 @@ impl Interface {
                 .interface
                 .chatbox
                 .textbox
-                .enter_text(systems, event);
+                .enter_text(systems, event, false);
         }
     }
 

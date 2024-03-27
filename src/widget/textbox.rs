@@ -149,7 +149,12 @@ impl Textbox {
         self.adjust_text(systems);
     }
 
-    pub fn enter_text(&mut self, systems: &mut SystemHolder, event: &KeyEvent) {
+    pub fn enter_text(
+        &mut self,
+        systems: &mut SystemHolder,
+        event: &KeyEvent,
+        numeric_only: bool,
+    ) {
         if !self.visible {
             return;
         }
@@ -168,15 +173,17 @@ impl Textbox {
 
         let mut did_edit = false;
         if self.special_key_hold[KEY_CTRL] {
-            match event.physical_key {
-                PhysicalKey::Code(KeyCode::KeyC) => {
-                    set_clipboard_text(self.text.clone());
+            if !numeric_only {
+                match event.physical_key {
+                    PhysicalKey::Code(KeyCode::KeyC) => {
+                        set_clipboard_text(self.text.clone());
+                    }
+                    PhysicalKey::Code(KeyCode::KeyV) => {
+                        self.text.push_str(&get_clipboard_text());
+                        did_edit = true;
+                    }
+                    _ => {}
                 }
-                PhysicalKey::Code(KeyCode::KeyV) => {
-                    self.text.push_str(&get_clipboard_text());
-                    did_edit = true;
-                }
-                _ => {}
             }
         } else {
             match event.physical_key {
@@ -194,7 +201,14 @@ impl Textbox {
                     }
                     if is_text(event) {
                         if let Some(char) = event.logical_key.to_text() {
-                            self.text.push_str(char);
+                            let can_proceed = if numeric_only {
+                                is_numeric(char)
+                            } else {
+                                true
+                            };
+                            if can_proceed {
+                                self.text.push_str(char);
+                            }
                         }
                         did_edit = true;
                     }
@@ -283,6 +297,10 @@ pub fn is_text(event: &KeyEvent) -> bool {
                 | KeyCode::Space,
         )
     )
+}
+
+pub fn is_numeric(char: &str) -> bool {
+    char.trim().parse::<i64>().is_ok()
 }
 
 pub fn get_clipboard_text() -> String {

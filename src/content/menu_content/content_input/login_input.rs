@@ -53,7 +53,7 @@ pub fn login_key_input(
     event: &KeyEvent,
 ) {
     if let Some(textbox_index) = menu_content.selected_textbox {
-        menu_content.textbox[textbox_index].enter_text(systems, event);
+        menu_content.textbox[textbox_index].enter_text(systems, event, false);
     }
 }
 

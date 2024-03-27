@@ -1,9 +1,31 @@
-use crate::{logic::*, values::*, widget::*, MouseInputType, SystemHolder};
+use crate::{
+    logic::*, send_deposititem, send_dropitem, send_sellitem,
+    send_withdrawitem, socket, values::*, widget::*, MouseInputType, Socket,
+    SystemHolder,
+};
 use graphics::{cosmic_text::Attrs, *};
+use winit::event::KeyEvent;
 
+#[derive(PartialEq, Eq)]
 pub enum AlertType {
     Inform,
     Confirm,
+    Input,
+}
+
+pub enum AlertIndex {
+    None,
+    Drop(u16),
+    Sell(u16),
+    Deposit(u16, u16),
+    Withdraw(u16, u16),
+}
+
+pub struct AlertTextbox {
+    bg: usize,
+    textbox: Textbox,
+    selected: bool,
+    numeric_only: bool,
 }
 
 pub struct Alert {
@@ -11,9 +33,10 @@ pub struct Alert {
     text: Vec<usize>,
     button: Vec<Button>,
     alert_type: AlertType,
+    input_box: Option<AlertTextbox>,
     pub visible: bool,
     did_button_click: bool,
-    alert_custom_index: usize,
+    custom_index: AlertIndex,
 }
 
 impl Alert {
@@ -22,10 +45,11 @@ impl Alert {
             window: Vec::new(),
             button: Vec::new(),
             alert_type: AlertType::Inform,
+            input_box: None,
             text: Vec::new(),
             visible: false,
             did_button_click: false,
-            alert_custom_index: 0,
+            custom_index: AlertIndex::None,
         }
     }
 
@@ -36,7 +60,8 @@ impl Alert {
         msg: String,
         header: String,
         max_text_width: usize,
-        custom_index: Option<usize>,
+        custom_index: AlertIndex,
+        numeric_only: bool,
     ) {
         if self.visible {
             self.window.iter().for_each(|gfx_index| {
@@ -48,19 +73,22 @@ impl Alert {
             self.button.iter_mut().for_each(|button| {
                 button.unload(systems);
             });
+            if let Some(textbox) = &mut self.input_box {
+                systems.gfx.remove_gfx(textbox.bg);
+                textbox.textbox.unload(systems);
+            }
         }
 
         self.window.clear();
         self.text.clear();
         self.button.clear();
-
-        if let Some(index) = custom_index {
-            self.alert_custom_index = index
-        }
+        self.input_box = None;
+        self.custom_index = custom_index;
 
         let limit_width = match alert_type {
             AlertType::Inform => 80.0,
             AlertType::Confirm => 150.0,
+            AlertType::Input => 170.0,
         };
 
         let mut text = create_empty_label(systems);
@@ -96,32 +124,40 @@ impl Alert {
             ORDER_ALERT,
         );
 
-        let pos = Vec2::new(
-            w_pos.x + ((w_size.x - text_size.x) * 0.5).floor(),
-            w_pos.y + 43.0,
-        );
-        text.set_position(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
-            .set_bounds(Some(Bounds::new(
-                pos.x,
-                pos.y,
-                pos.x + text_size.x,
-                pos.y + text_size.y + 10.0,
-            )));
-        text.size = Vec2::new(text_size.x, text_size.y + 10.0);
-        text.changed = true;
-
-        let pos = Vec2::new(w_pos.x + 10.0, w_pos.y + w_size.y - 25.0);
+        let (pos, bounds) = if alert_type == AlertType::Input {
+            let s_pos = Vec2::new(w_pos.x, w_pos.y + w_size.y - 30.0);
+            (
+                s_pos,
+                Bounds::new(
+                    s_pos.x,
+                    s_pos.y,
+                    s_pos.x + w_size.x,
+                    s_pos.y + 20.0,
+                ),
+            )
+        } else {
+            let s_pos = Vec2::new(w_pos.x + 10.0, w_pos.y + w_size.y - 25.0);
+            (
+                s_pos,
+                Bounds::new(
+                    s_pos.x,
+                    s_pos.y,
+                    s_pos.x + header_text_size.x,
+                    s_pos.y + 20.0,
+                ),
+            )
+        };
         header_text
             .set_position(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
-            .set_bounds(Some(Bounds::new(
-                pos.x,
-                pos.y,
-                pos.x + header_text_size.x,
-                pos.y + 20.0,
-            )));
+            .set_bounds(Some(bounds));
         header_text.size =
             Vec2::new(header_text_size.x, header_text_size.y + 4.0);
         header_text.changed = true;
+        let header_text_index = systems.gfx.add_text(header_text, 5);
+        if alert_type == AlertType::Input {
+            systems.gfx.center_text(header_text_index);
+        }
+        self.text.push(header_text_index);
 
         let mut bg = Rect::new(&mut systems.renderer, 0);
         bg.set_position(Vec3::new(0.0, 0.0, ORDER_ALERT_BG))
@@ -136,21 +172,36 @@ impl Alert {
             .set_border_color(Color::rgba(40, 40, 40, 255))
             .set_color(Color::rgba(160, 160, 160, 255));
 
-        let mut header = Rect::new(&mut systems.renderer, 0);
-        header
-            .set_position(Vec3::new(
-                w_pos.x,
-                w_pos.y + w_size.y - 30.0,
-                ORDER_ALERT_HEADER,
-            ))
-            .set_size(Vec2::new(w_size.x, 30.0))
-            .set_color(Color::rgba(100, 100, 100, 255));
-
         self.window.push(systems.gfx.add_rect(bg, 3));
         self.window.push(systems.gfx.add_rect(window, 4));
-        self.window.push(systems.gfx.add_rect(header, 4));
-        self.text.push(systems.gfx.add_text(text, 5));
-        self.text.push(systems.gfx.add_text(header_text, 5));
+
+        if alert_type != AlertType::Input {
+            let pos = Vec2::new(
+                w_pos.x + ((w_size.x - text_size.x) * 0.5).floor(),
+                w_pos.y + 43.0,
+            );
+            text.set_position(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
+                .set_bounds(Some(Bounds::new(
+                    pos.x,
+                    pos.y,
+                    pos.x + text_size.x,
+                    pos.y + text_size.y + 10.0,
+                )));
+            text.size = Vec2::new(text_size.x, text_size.y + 10.0);
+            text.changed = true;
+            self.text.push(systems.gfx.add_text(text, 5));
+
+            let mut header = Rect::new(&mut systems.renderer, 0);
+            header
+                .set_position(Vec3::new(
+                    w_pos.x,
+                    w_pos.y + w_size.y - 30.0,
+                    ORDER_ALERT_HEADER,
+                ))
+                .set_size(Vec2::new(w_size.x, 30.0))
+                .set_color(Color::rgba(100, 100, 100, 255));
+            self.window.push(systems.gfx.add_rect(header, 4));
+        }
 
         let button_detail = ButtonRect {
             rect_color: Color::rgba(70, 70, 70, 255),
@@ -232,7 +283,92 @@ impl Alert {
                     None,
                 ));
             }
+            AlertType::Input => {
+                let textbox_pos = Vec2::new(
+                    w_pos.x + ((w_size.x - 100.0) * 0.5).floor(),
+                    w_pos.y + 50.0,
+                );
+
+                let mut textbox_bg = Rect::new(&mut systems.renderer, 0);
+                textbox_bg
+                    .set_size(Vec2::new(104.0, 24.0))
+                    .set_color(Color::rgba(120, 120, 120, 255))
+                    .set_border_width(1.0)
+                    .set_border_color(Color::rgba(40, 40, 40, 255))
+                    .set_position(Vec3::new(
+                        textbox_pos.x,
+                        textbox_pos.y,
+                        ORDER_ALERT_TEXTBOX_BG,
+                    ));
+                let textbox = Textbox::new(
+                    systems,
+                    Vec3::new(
+                        textbox_pos.x + 2.0,
+                        textbox_pos.y + 2.0,
+                        ORDER_ALERT_TEXTBOX,
+                    ),
+                    (0.001, 3),
+                    Vec2::new(100.0, 20.0),
+                    Color::rgba(200, 200, 200, 255),
+                    5,
+                    10,
+                    Color::rgba(80, 80, 80, 255),
+                    false,
+                    true,
+                    None,
+                );
+                self.input_box = Some(AlertTextbox {
+                    bg: systems.gfx.add_rect(textbox_bg, 4),
+                    textbox,
+                    selected: false,
+                    numeric_only,
+                });
+
+                let pos = Vec2::new(((w_size.x - 150.0) * 0.5).floor(), 10.0);
+                self.button.push(Button::new(
+                    systems,
+                    ButtonType::Rect(button_detail.clone()),
+                    ButtonContentType::Text(ButtonContentText {
+                        text: "Confirm".into(),
+                        pos: Vec2::new(0.0, 5.0),
+                        color: Color::rgba(255, 255, 255, 255),
+                        render_layer: 5,
+                        hover_change: ButtonChangeType::None,
+                        click_change: ButtonChangeType::None,
+                    }),
+                    Vec2::new(w_pos.x, w_pos.y),
+                    pos,
+                    ORDER_ALERT_BUTTON,
+                    (0.01, 2),
+                    Vec2::new(70.0, 30.0),
+                    4,
+                    true,
+                    None,
+                ));
+                self.button.push(Button::new(
+                    systems,
+                    ButtonType::Rect(button_detail.clone()),
+                    ButtonContentType::Text(ButtonContentText {
+                        text: "Cancel".into(),
+                        pos: Vec2::new(0.0, 5.0),
+                        color: Color::rgba(255, 255, 255, 255),
+                        render_layer: 5,
+                        hover_change: ButtonChangeType::None,
+                        click_change: ButtonChangeType::None,
+                    }),
+                    Vec2::new(w_pos.x, w_pos.y),
+                    pos + Vec2::new(80.0, 0.0),
+                    ORDER_ALERT_BUTTON,
+                    (0.01, 2),
+                    Vec2::new(70.0, 30.0),
+                    4,
+                    true,
+                    None,
+                ));
+            }
         }
+
+        self.alert_type = alert_type;
 
         self.visible = true;
     }
@@ -251,6 +387,11 @@ impl Alert {
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
+        if let Some(textbox) = &mut self.input_box {
+            systems.gfx.remove_gfx(textbox.bg);
+            textbox.textbox.unload(systems);
+        }
+        self.input_box = None;
     }
 
     pub fn hover_buttons(
@@ -310,7 +451,9 @@ impl Alert {
     pub fn alert_mouse_input(
         &mut self,
         systems: &mut SystemHolder,
+        socket: &mut Socket,
         input_type: MouseInputType,
+        tooltip: &mut Tooltip,
         screen_pos: Vec2,
     ) {
         if !self.visible {
@@ -319,13 +462,15 @@ impl Alert {
         match input_type {
             MouseInputType::MouseMove => {
                 self.hover_buttons(systems, screen_pos);
+                self.hover_textbox(systems, tooltip, screen_pos);
             }
             MouseInputType::MouseLeftDown => {
                 let button_index = self.click_buttons(systems, screen_pos);
                 if let Some(index) = button_index {
                     self.did_button_click = true;
-                    self.select_option(systems, index);
+                    self.select_option(systems, socket, index);
                 }
+                self.click_textbox(systems, screen_pos);
             }
             MouseInputType::MouseRelease => {
                 self.reset_buttons(systems);
@@ -334,26 +479,133 @@ impl Alert {
         }
     }
 
-    pub fn select_option(&mut self, systems: &mut SystemHolder, index: usize) {
+    pub fn alert_key_input(
+        &mut self,
+        systems: &mut SystemHolder,
+        event: &KeyEvent,
+    ) {
+        if let Some(textbox) = &mut self.input_box {
+            if textbox.selected {
+                textbox.textbox.enter_text(
+                    systems,
+                    event,
+                    textbox.numeric_only,
+                );
+            }
+        }
+    }
+
+    pub fn select_option(
+        &mut self,
+        systems: &mut SystemHolder,
+        socket: &mut Socket,
+        index: usize,
+    ) {
         match self.alert_type {
             AlertType::Inform =>
             {
                 #[allow(clippy::match_single_binding)]
-                match self.alert_custom_index {
+                match self.custom_index {
                     _ => self.hide_alert(systems),
                 }
             }
             AlertType::Confirm => {
                 match index {
                     #[allow(clippy::match_single_binding)]
-                    0 => match self.alert_custom_index {
+                    0 => match self.custom_index {
                         _ => self.hide_alert(systems),
                     }, // Yes
                     #[allow(clippy::match_single_binding)]
-                    _ => match self.alert_custom_index {
+                    _ => match self.custom_index {
                         _ => self.hide_alert(systems),
                     }, // No
                 }
+            }
+            AlertType::Input => {
+                if let Some(textbox) = &self.input_box {
+                    let input_text = textbox.textbox.text.clone();
+                    match index {
+                        #[allow(clippy::match_single_binding)]
+                        0 => match self.custom_index {
+                            AlertIndex::Drop(slot) => {
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
+                                let _ = send_dropitem(socket, slot, amount);
+                                self.hide_alert(systems);
+                            }
+                            AlertIndex::Sell(slot) => {
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
+                                let _ = send_sellitem(socket, slot, amount);
+                                self.hide_alert(systems);
+                            }
+                            AlertIndex::Deposit(inv_slot, bank_slot) => {
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
+                                let _ = send_deposititem(
+                                    socket, inv_slot, bank_slot, amount,
+                                );
+                                self.hide_alert(systems);
+                            }
+                            AlertIndex::Withdraw(inv_slot, bank_slot) => {
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
+                                let _ = send_withdrawitem(
+                                    socket, inv_slot, bank_slot, amount,
+                                );
+                                self.hide_alert(systems);
+                            }
+                            _ => self.hide_alert(systems),
+                        }, // Yes
+                        #[allow(clippy::match_single_binding)]
+                        _ => match self.custom_index {
+                            _ => self.hide_alert(systems),
+                        }, // No
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn hover_textbox(
+        &mut self,
+        systems: &mut SystemHolder,
+        tooltip: &mut Tooltip,
+        screen_pos: Vec2,
+    ) {
+        if let Some(textbox) = &mut self.input_box {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(textbox.textbox.pos.x, textbox.textbox.pos.y),
+                Vec2::new(textbox.textbox.size.x, textbox.textbox.size.y),
+            ) {
+                if let Some(msg) = &textbox.textbox.tooltip {
+                    tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                }
+            }
+        }
+    }
+
+    pub fn click_textbox(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        if let Some(textbox) = &mut self.input_box {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(textbox.textbox.pos.x, textbox.textbox.pos.y),
+                textbox.textbox.size,
+            ) {
+                textbox.textbox.set_select(systems, true);
+                textbox.selected = true;
+            } else {
+                textbox.textbox.set_select(systems, false);
+                textbox.selected = false;
             }
         }
     }

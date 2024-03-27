@@ -620,13 +620,17 @@ pub fn handle_playerinv(
     _buffer: &mut BufferTask,
 ) -> ClientResult<()> {
     let items = data.read::<Vec<Item>>()?;
-    for (index, item) in items.iter().enumerate() {
-        content
-            .game_content
-            .interface
-            .inventory
-            .update_inv_slot(systems, index, item);
+
+    if content.game_content.finalized {
+        for (index, item) in items.iter().enumerate() {
+            content
+                .game_content
+                .interface
+                .inventory
+                .update_inv_slot(systems, index, item);
+        }
     }
+    content.game_content.player_data.inventory = items;
 
     Ok(())
 }
@@ -665,13 +669,16 @@ pub fn handle_playerstorage(
 ) -> ClientResult<()> {
     let items = data.read::<Vec<Item>>()?;
 
-    for (index, item) in items.iter().enumerate() {
-        content
-            .game_content
-            .interface
-            .storage
-            .update_storage_slot(systems, index, item);
+    if content.game_content.finalized {
+        for (index, item) in items.iter().enumerate() {
+            content
+                .game_content
+                .interface
+                .storage
+                .update_storage_slot(systems, index, item);
+        }
     }
+    content.game_content.player_data.storage = items;
 
     Ok(())
 }

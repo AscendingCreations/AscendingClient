@@ -1,8 +1,8 @@
 use graphics::*;
 
 use crate::{
-    is_within_area, logic::*, socket::sends::*, values::*, widget::*,
-    Interface, Item, Socket, SystemHolder,
+    is_within_area, logic::*, socket::sends::*, values::*, widget::*, Alert,
+    AlertIndex, AlertType, Interface, Item, Socket, SystemHolder,
 };
 
 const MAX_STORAGE_X: f32 = 10.0;
@@ -373,9 +373,9 @@ impl Storage {
 
             self.item_slot[slot].count = text_index;
             self.item_slot[slot].count_bg = text_bg_index;
+            self.item_slot[slot].got_count = true;
         }
 
-        self.item_slot[slot].got_count = data.val > 1;
         self.item_slot[slot].got_data = true;
     }
 
@@ -662,6 +662,7 @@ pub fn release_storage_slot(
     interface: &mut Interface,
     socket: &mut Socket,
     systems: &mut SystemHolder,
+    alert: &mut Alert,
     slot: usize,
     screen_pos: Vec2,
 ) {
@@ -697,7 +698,7 @@ pub fn release_storage_slot(
                 );
                 interface.inventory.update_inv_slot(
                     systems,
-                    slot,
+                    new_slot,
                     &Item {
                         num: interface.storage.item_slot[slot].item_index
                             as u32,
@@ -716,13 +717,25 @@ pub fn release_storage_slot(
     {
         let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
         if let Some(inv_slot) = find_slot {
-            let _ = send_withdrawitem(
-                socket,
-                inv_slot as u16,
-                slot as u16,
-                interface.storage.item_slot[slot].count_data,
-            );
-            return;
+            if interface.storage.item_slot[slot].count_data > 1 {
+                alert.show_alert(
+                    systems,
+                    AlertType::Input,
+                    String::new(),
+                    "Enter the amount to Withdraw".into(),
+                    250,
+                    AlertIndex::Withdraw(inv_slot as u16, slot as u16),
+                    true,
+                );
+            } else {
+                let _ = send_withdrawitem(
+                    socket,
+                    inv_slot as u16,
+                    slot as u16,
+                    interface.storage.item_slot[slot].count_data,
+                );
+                return;
+            }
         }
     }
 
