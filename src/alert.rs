@@ -1,7 +1,7 @@
 use crate::{
-    logic::*, send_deposititem, send_dropitem, send_sellitem,
-    send_withdrawitem, socket, values::*, widget::*, MouseInputType, Socket,
-    SystemHolder,
+    logic::*, send_addtradeitem, send_deposititem, send_dropitem,
+    send_sellitem, send_withdrawitem, socket, values::*, widget::*,
+    MouseInputType, Socket, SystemHolder,
 };
 use graphics::{cosmic_text::Attrs, *};
 use winit::event::KeyEvent;
@@ -17,6 +17,7 @@ pub enum AlertIndex {
     None,
     Drop(u16),
     Sell(u16),
+    Trade(u16),
     Deposit(u16, u16),
     Withdraw(u16, u16),
 }
@@ -539,6 +540,13 @@ impl Alert {
                                     .parse::<u16>()
                                     .unwrap_or_default();
                                 let _ = send_sellitem(socket, slot, amount);
+                                self.hide_alert(systems);
+                            }
+                            AlertIndex::Trade(slot) => {
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
+                                let _ = send_addtradeitem(socket, slot, amount);
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Deposit(inv_slot, bank_slot) => {

@@ -212,6 +212,10 @@ impl Button {
         if self.visible == visible {
             return;
         }
+        if !visible {
+            self.set_click(systems, false);
+            self.set_hover(systems, false);
+        }
         self.visible = visible;
         if let Some(index) = self.index {
             systems.gfx.set_visible(index, visible);
@@ -312,6 +316,18 @@ impl Button {
             self.apply_hover(systems);
         } else {
             self.apply_normal(systems);
+        }
+    }
+
+    pub fn change_text(&mut self, systems: &mut SystemHolder, msg: String) {
+        if let Some(content_data) = self.content {
+            if let ButtonContentType::Text(data) = &mut self.content_type {
+                data.text = msg.clone();
+                systems
+                    .gfx
+                    .set_text(&mut systems.renderer, content_data, &msg);
+                systems.gfx.center_text(content_data);
+            }
         }
     }
 

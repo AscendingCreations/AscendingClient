@@ -92,7 +92,7 @@ pub enum IsUsingType {
     Bank,
     Fishing(i64),
     Crafting(i64),
-    Trading(i64),
+    Trading(Entity),
     Store(i64),
     Other(i64),
 }
@@ -126,6 +126,7 @@ pub enum FtlType {
 
 pub const VITALS_MAX: usize = VitalTypes::Count as usize;
 pub const MAX_INV: usize = 30;
+pub const MAX_TRADE_SLOT: usize = 30;
 pub const MAX_STORAGE: usize = 70;
 pub const MAX_EQPT: usize = 5;
 

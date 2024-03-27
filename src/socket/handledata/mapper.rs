@@ -80,6 +80,8 @@ pub enum ServerPackets {
     OpenStorage,
     OpenShop,
     ClearIsUsingType,
+    UpdateTradeItem,
+    UpdateTradeMoney,
     ServerPacketCount,
 }
 
@@ -289,6 +291,14 @@ impl PacketRouter {
             (
                 ServerPackets::ClearIsUsingType,
                 routes::handle_clearisusingtype as PacketFunction,
+            ),
+            (
+                ServerPackets::UpdateTradeItem,
+                routes::handle_updatetradeitem as PacketFunction,
+            ),
+            (
+                ServerPackets::UpdateTradeMoney,
+                routes::handle_updatetrademoney as PacketFunction,
             ),
         ]))
     }

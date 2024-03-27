@@ -671,6 +671,7 @@ pub fn release_inv_slot(
 
     if interface.inventory.in_window(screen_pos)
         && interface.inventory.order_index == 0
+        && !interface.trade.visible
     {
         let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
         if let Some(new_slot) = find_slot {
@@ -748,6 +749,26 @@ pub fn release_inv_slot(
             );
         } else {
             let _ = send_sellitem(
+                socket,
+                slot as u16,
+                interface.inventory.item_slot[slot].count_data,
+            );
+        }
+    } else if interface.trade.in_window(screen_pos)
+        && interface.trade.order_index == 0
+    {
+        if interface.inventory.item_slot[slot].count_data > 1 {
+            alert.show_alert(
+                systems,
+                AlertType::Input,
+                String::new(),
+                "Enter the amount to Trade".into(),
+                250,
+                AlertIndex::Trade(slot as u16),
+                true,
+            );
+        } else {
+            let _ = send_addtradeitem(
                 socket,
                 slot as u16,
                 interface.inventory.item_slot[slot].count_data,

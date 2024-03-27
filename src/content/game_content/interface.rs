@@ -5,8 +5,8 @@ use winit::{event::*, keyboard::*};
 
 use crate::{
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
-    send_closestorage, send_message, widget::*, Alert, GameContent,
-    MouseInputType, Socket, SystemHolder,
+    send_closestorage, send_closetrade, send_message, widget::*, Alert,
+    GameContent, MouseInputType, Socket, SystemHolder,
 };
 use hecs::World;
 
@@ -17,6 +17,7 @@ mod screen;
 mod setting;
 mod shop;
 mod storage;
+mod trade;
 
 pub use chatbox::*;
 use inventory::*;
@@ -25,6 +26,7 @@ use screen::*;
 use setting::*;
 use shop::*;
 use storage::*;
+use trade::*;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Window {
@@ -34,11 +36,13 @@ pub enum Window {
     Chatbox,
     Storage,
     Shop,
+    Trade,
 }
 
 pub enum SelectedTextbox {
     None,
     Chatbox,
+    Trade,
 }
 
 pub struct Interface {
@@ -47,6 +51,7 @@ pub struct Interface {
     pub inventory: Inventory,
     pub storage: Storage,
     pub shop: Shop,
+    pub trade: Trade,
     profile: Profile,
     setting: Setting,
     pub chatbox: Chatbox,
@@ -65,6 +70,7 @@ impl Interface {
             inventory: Inventory::new(systems),
             storage: Storage::new(systems),
             shop: Shop::new(systems),
+            trade: Trade::new(systems),
             profile: Profile::new(systems),
             setting: Setting::new(systems),
             chatbox: Chatbox::new(systems),
@@ -85,6 +91,7 @@ impl Interface {
         self.window_order.push((Window::Setting, 3));
         self.window_order.push((Window::Storage, 4));
         self.window_order.push((Window::Shop, 5));
+        self.window_order.push((Window::Trade, 6));
         self.window_order.sort_by(|a, b| a.1.cmp(&b.1));
     }
 
@@ -96,6 +103,7 @@ impl Interface {
         self.chatbox = Chatbox::new(systems);
         self.storage = Storage::new(systems);
         self.shop = Shop::new(systems);
+        self.trade = Trade::new(systems);
         self.add_window_order();
         self.did_button_click = false;
         self.drag_window = None;
@@ -112,6 +120,7 @@ impl Interface {
         self.chatbox.unload(systems);
         self.storage.unload(systems);
         self.shop.unload(systems);
+        self.trade.unload(systems);
         self.window_order.clear();
     }
 
@@ -134,6 +143,7 @@ impl Interface {
                 interface.setting.hover_buttons(systems, screen_pos);
                 interface.storage.hover_buttons(systems, screen_pos);
                 interface.shop.hover_buttons(systems, screen_pos);
+                interface.trade.hover_buttons(systems, screen_pos);
 
                 if interface.setting.visible {
                     if interface.setting.sfx_scroll.in_scroll(screen_pos) {
@@ -301,6 +311,9 @@ impl Interface {
                         Window::Shop => {
                             interface.shop.move_window(systems, screen_pos)
                         }
+                        Window::Trade => {
+                            interface.trade.move_window(systems, screen_pos)
+                        }
                     }
                     result = true;
                 } else {
@@ -371,6 +384,7 @@ impl Interface {
                         Window::Chatbox => interface.chatbox.release_window(),
                         Window::Storage => interface.storage.release_window(),
                         Window::Shop => interface.shop.release_window(),
+                        Window::Trade => interface.trade.release_window(),
                     }
                 }
                 interface.drag_window = None;
@@ -401,6 +415,7 @@ impl Interface {
                 interface.inventory.reset_buttons(systems);
                 interface.storage.reset_buttons(systems);
                 interface.shop.reset_buttons(systems);
+                interface.trade.reset_buttons(systems);
             }
         }
         result
@@ -412,14 +427,22 @@ impl Interface {
         systems: &mut SystemHolder,
         event: &KeyEvent,
     ) {
-        if let SelectedTextbox::Chatbox =
-            game_content.interface.selected_textbox
-        {
-            game_content
-                .interface
-                .chatbox
-                .textbox
-                .enter_text(systems, event, false);
+        match game_content.interface.selected_textbox {
+            SelectedTextbox::Chatbox => {
+                game_content
+                    .interface
+                    .chatbox
+                    .textbox
+                    .enter_text(systems, event, false);
+            }
+            SelectedTextbox::Trade => {
+                game_content
+                    .interface
+                    .trade
+                    .money_input
+                    .enter_text(systems, event, true);
+            }
+            _ => {}
         }
     }
 
@@ -535,7 +558,23 @@ impl Interface {
                 _ => {}
             }
             interface.shop.did_button_click = true;
+            return true;
+        }
 
+        if let Some(index) = interface.trade.click_buttons(systems, screen_pos)
+        {
+            match index {
+                0 | 2 => {
+                    close_interface(interface, systems, Window::Trade);
+                    let _ = send_closetrade(socket);
+                }
+                1 => {
+                    interface.trade.button[index]
+                        .change_text(systems, "Confirm".into());
+                }
+                _ => {}
+            }
+            interface.trade.did_button_click = true;
             return true;
         }
 
@@ -590,8 +629,29 @@ impl Interface {
             return;
         }
 
-        if let SelectedTextbox::Chatbox = self.selected_textbox {
-            self.chatbox.textbox.set_select(systems, false)
+        if self.trade.visible
+            & is_within_area(
+                screen_pos,
+                Vec2::new(
+                    self.trade.money_input.pos.x,
+                    self.trade.money_input.pos.y,
+                ),
+                self.trade.money_input.size,
+            )
+        {
+            self.trade.money_input.set_select(systems, true);
+            self.selected_textbox = SelectedTextbox::Trade;
+            return;
+        }
+
+        match self.selected_textbox {
+            SelectedTextbox::Chatbox => {
+                self.chatbox.textbox.set_select(systems, false)
+            }
+            SelectedTextbox::Trade => {
+                self.trade.money_input.set_select(systems, false)
+            }
+            _ => {}
         }
         self.selected_textbox = SelectedTextbox::None;
     }
@@ -618,10 +678,10 @@ fn trigger_button(
             }
         }
         2 => {
-            if interface.shop.visible {
-                close_interface(interface, systems, Window::Shop);
+            if interface.trade.visible {
+                close_interface(interface, systems, Window::Trade);
             } else {
-                open_interface(interface, systems, Window::Shop);
+                open_interface(interface, systems, Window::Trade);
             }
         }
         _ => {}
@@ -744,8 +804,17 @@ fn find_window(
     {
         let z_order = interface.shop.z_order;
         if z_order > max_z_order {
-            //max_z_order = z_order;
+            max_z_order = z_order;
             selected_window = Some(Window::Shop);
+        }
+    }
+    if interface.trade.in_window(screen_pos)
+        && can_find_window(Window::Trade, exception)
+    {
+        let z_order = interface.trade.z_order;
+        if z_order > max_z_order {
+            //max_z_order = z_order;
+            selected_window = Some(Window::Trade);
         }
     }
     selected_window
@@ -787,6 +856,12 @@ pub fn open_interface(
             }
             interface.shop.set_visible(systems, true);
         }
+        Window::Trade => {
+            if interface.trade.visible {
+                return;
+            }
+            interface.trade.set_visible(systems, true);
+        }
         _ => {}
     }
     interface_set_to_first(interface, systems, window);
@@ -827,6 +902,12 @@ fn close_interface(
                 return;
             }
             interface.shop.set_visible(systems, false);
+        }
+        Window::Trade => {
+            if !interface.trade.visible {
+                return;
+            }
+            interface.trade.set_visible(systems, false);
         }
         _ => {}
     }
@@ -894,6 +975,12 @@ fn hold_interface(
                 return;
             }
             interface.shop.hold_window(screen_pos);
+        }
+        Window::Trade => {
+            if !interface.trade.can_hold(screen_pos) {
+                return;
+            }
+            interface.trade.hold_window(screen_pos);
         }
     }
     interface.drag_window = Some(window);
@@ -964,6 +1051,9 @@ fn adjust_window_zorder(interface: &mut Interface, systems: &mut SystemHolder) {
                 interface.storage.set_z_order(systems, order, wndw.1)
             }
             Window::Shop => interface.shop.set_z_order(systems, order, wndw.1),
+            Window::Trade => {
+                interface.trade.set_z_order(systems, order, wndw.1)
+            }
         }
         order -= 0.01;
     }

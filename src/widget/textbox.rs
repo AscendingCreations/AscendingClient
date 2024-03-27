@@ -93,7 +93,9 @@ impl Textbox {
             return;
         }
         self.visible = visible;
-        systems.gfx.set_visible(self.bg, visible);
+        systems
+            .gfx
+            .set_visible(self.bg, self.is_selected && visible);
         systems.gfx.set_visible(self.text_index, visible);
     }
 
