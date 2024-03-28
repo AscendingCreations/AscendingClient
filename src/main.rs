@@ -116,7 +116,7 @@ impl log::Log for MyLogger {
 }
 
 #[tokio::main]
-async fn main() -> ClientResult<()> {
+async fn main() -> Result<()> {
     // Create logger to output to a File
     log::set_logger(&MY_LOGGER).unwrap();
     // Set the Max level we accept logging to the file for.

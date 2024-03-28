@@ -20,8 +20,7 @@ pub use handledata::*;
 pub use sends::*;
 
 use crate::{
-    config::*, Alert, BufferTask, ClientError, ClientResult, Content,
-    SystemHolder,
+    config::*, Alert, BufferTask, ClientError, Content, Result, SystemHolder,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -109,7 +108,7 @@ impl Socket {
         self.reregister().unwrap();
     }
 
-    fn process(&mut self, event: &mio::event::Event) -> ClientResult<()> {
+    fn process(&mut self, event: &mio::event::Event) -> Result<()> {
         self.client.poll_state.set(SocketPollState::Read);
 
         if event.is_readable() {
@@ -200,7 +199,7 @@ impl Socket {
         }
     }
 
-    pub fn register(&mut self) -> ClientResult<()> {
+    pub fn register(&mut self) -> Result<()> {
         if let Some(interest) = self.event_set() {
             self.poll.registry().register(
                 &mut self.client.socket,
@@ -211,7 +210,7 @@ impl Socket {
         Ok(())
     }
 
-    fn reregister(&mut self) -> ClientResult<()> {
+    fn reregister(&mut self) -> Result<()> {
         if let Some(interest) = self.event_set() {
             self.poll.registry().reregister(
                 &mut self.client.socket,
@@ -292,7 +291,7 @@ impl ByteBufferExt for ByteBuffer {
     }
 }
 
-fn connect(host: &str, port: u16) -> ClientResult<TcpStream> {
+fn connect(host: &str, port: u16) -> Result<TcpStream> {
     let addrs = (host, port).to_socket_addrs()?;
 
     for addr in addrs {
@@ -316,7 +315,7 @@ impl Client {
         port: u16,
         token: mio::Token,
         config: Arc<rustls::ClientConfig>,
-    ) -> ClientResult<Client> {
+    ) -> Result<Client> {
         let socket = connect(host, port)?;
 
         let servername = ServerName::try_from(host)
@@ -333,7 +332,7 @@ impl Client {
     }
 }
 
-pub fn poll_events(socket: &mut Socket) -> ClientResult<bool> {
+pub fn poll_events(socket: &mut Socket) -> Result<bool> {
     let mut events = Events::with_capacity(32);
     socket.poll.poll(&mut events, Some(Duration::new(0, 0)))?;
 

@@ -13,7 +13,7 @@ type PacketFunction = fn(
     &mut ByteBuffer,
     f32,
     &mut BufferTask,
-) -> ClientResult<()>;
+) -> Result<()>;
 
 #[derive(
     Copy,

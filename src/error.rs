@@ -1,7 +1,7 @@
 use graphics::*;
 use thiserror::Error;
 
-pub type ClientResult<T> = std::result::Result<T, ClientError>;
+pub type Result<T> = std::result::Result<T, ClientError>;
 
 #[derive(Error, Debug)]
 pub enum ClientError {
@@ -67,4 +67,8 @@ pub enum ClientError {
     Rustls(#[from] rustls::Error),
     #[error(transparent)]
     TomlDe(#[from] toml::de::Error),
+    #[error(transparent)]
+    HecsComponent(#[from] hecs::ComponentError),
+    #[error(transparent)]
+    HecNoEntity(#[from] hecs::NoSuchEntity),
 }

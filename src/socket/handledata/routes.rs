@@ -6,9 +6,9 @@ use crate::{
     fade::*,
     get_percent, get_start_map_pos, is_map_connected, npc_finalized,
     open_interface, set_npc_frame, unload_mapitems, unload_npc, update_camera,
-    Alert, BufferTask, ChatTask, ClientResult, Content, EntityType, FtlType,
-    IsUsingType, MapItem, MessageChannel, Position, Socket, SystemHolder,
-    Window, NPC_SPRITE_FRAME_X, VITALS_MAX,
+    Alert, BufferTask, ChatTask, Content, EntityType, FtlType, IsUsingType,
+    MapItem, MessageChannel, Position, Result, Socket, SystemHolder, Window,
+    NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -23,7 +23,7 @@ pub fn handle_ping(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -36,7 +36,7 @@ pub fn handle_status(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -49,7 +49,7 @@ pub fn handle_alertmsg(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let message = data.read::<String>()?;
     let close = data.read::<u8>()?;
 
@@ -66,7 +66,7 @@ pub fn handle_fltalert(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let _flttype = data.read::<FtlType>()?;
     let _message = data.read::<String>()?;
 
@@ -82,7 +82,7 @@ pub fn handle_loginok(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let _hour = data.read::<u32>()?;
     let _min = data.read::<u32>()?;
 
@@ -104,7 +104,7 @@ pub fn handle_ingame(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -117,7 +117,7 @@ pub fn handle_updatemap(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -130,7 +130,7 @@ pub fn handle_mapitems(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -180,7 +180,7 @@ pub fn handle_myindex(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let entity = data.read::<Entity>()?;
     content.game_content.myentity = Some(entity);
     Ok(())
@@ -195,7 +195,7 @@ pub fn handle_playerdata(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     if let Some(entity) = content.game_content.myentity {
         let username = data.read::<String>()?;
         let useraccess = data.read::<UserAccess>()?;
@@ -288,7 +288,7 @@ pub fn handle_playerspawn(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -395,7 +395,7 @@ pub fn handle_playermove(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -439,7 +439,7 @@ pub fn handle_playerwarp(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -493,7 +493,7 @@ pub fn handle_playermapswap(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -506,7 +506,7 @@ pub fn handle_dataremovelist(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let remove_list = data.read::<Vec<Entity>>()?;
 
     remove_list.iter().for_each(|entity| {
@@ -537,7 +537,7 @@ pub fn handle_dataremove(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -550,7 +550,7 @@ pub fn handle_playerdir(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let _dir = data.read::<u8>()?;
 
     Ok(())
@@ -565,7 +565,7 @@ pub fn handle_playervitals(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -618,7 +618,7 @@ pub fn handle_playerinv(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let items = data.read::<Vec<Item>>()?;
 
     if content.game_content.finalized {
@@ -644,7 +644,7 @@ pub fn handle_playerinvslot(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let index = data.read::<usize>()?;
     let item = data.read::<Item>()?;
 
@@ -666,7 +666,7 @@ pub fn handle_playerstorage(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let items = data.read::<Vec<Item>>()?;
 
     if content.game_content.finalized {
@@ -692,7 +692,7 @@ pub fn handle_playerstorageslot(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let index = data.read::<usize>()?;
     let item = data.read::<Item>()?;
 
@@ -714,7 +714,7 @@ pub fn handle_keyinput(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -727,7 +727,7 @@ pub fn handle_playerattack(
     data: &mut ByteBuffer,
     seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -752,7 +752,7 @@ pub fn handle_playerequipment(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -765,7 +765,7 @@ pub fn handle_playeraction(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -778,7 +778,7 @@ pub fn handle_playerlevel(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -791,7 +791,7 @@ pub fn handle_playermoney(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let _vals = data.read::<u64>()?;
 
     Ok(())
@@ -806,7 +806,7 @@ pub fn handle_playerstun(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -819,7 +819,7 @@ pub fn handle_playervariables(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -832,7 +832,7 @@ pub fn handle_playervariable(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -845,7 +845,7 @@ pub fn handle_playerdeath(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -858,7 +858,7 @@ pub fn handle_npcdeath(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -871,7 +871,7 @@ pub fn handle_playerpvp(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -884,7 +884,7 @@ pub fn handle_playerpk(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -897,7 +897,7 @@ pub fn handle_playeremail(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -910,7 +910,7 @@ pub fn handle_npcdata(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -1007,7 +1007,7 @@ pub fn handle_npcmove(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -1051,7 +1051,7 @@ pub fn handle_npcwarp(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -1088,7 +1088,7 @@ pub fn handle_npcdir(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -1118,7 +1118,7 @@ pub fn handle_npcvital(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -1161,7 +1161,7 @@ pub fn handle_npcattack(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -1184,7 +1184,7 @@ pub fn handle_npcstun(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -1197,7 +1197,7 @@ pub fn handle_chatmsg(
     data: &mut ByteBuffer,
     _seconds: f32,
     buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -1229,7 +1229,7 @@ pub fn handle_sound(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -1242,7 +1242,7 @@ pub fn handle_target(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -1255,7 +1255,7 @@ pub fn handle_synccheck(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -1268,7 +1268,7 @@ pub fn handle_entityunload(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
@@ -1310,7 +1310,7 @@ pub fn handle_loadstatus(
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     Ok(())
 }
 
@@ -1323,7 +1323,7 @@ pub fn handle_openstorage(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let _ = data.read::<u32>()?;
 
     open_interface(
@@ -1346,7 +1346,7 @@ pub fn handle_openshop(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let shop_index = data.read::<u16>()?;
 
     open_interface(&mut content.game_content.interface, systems, Window::Shop);
@@ -1370,7 +1370,7 @@ pub fn handle_clearisusingtype(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let _ = data.read::<u16>()?;
 
     content.game_content.is_using_type = IsUsingType::None;
@@ -1387,7 +1387,7 @@ pub fn handle_updatetradeitem(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let _same_entity = data.read::<bool>()?;
     let _item = data.read::<Item>()?;
     let _amount = data.read::<u16>()?;
@@ -1404,7 +1404,7 @@ pub fn handle_updatetrademoney(
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let _ = data.read::<u16>()?;
 
     Ok(())

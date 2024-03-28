@@ -6,7 +6,7 @@ use std::io::BufReader;
 use std::path::Path;
 use std::time::{Duration, Instant};
 
-use crate::ClientResult;
+use crate::Result;
 
 pub struct Audio {
     stream_handle: OutputStreamHandle,
@@ -16,7 +16,7 @@ pub struct Audio {
 }
 
 impl Audio {
-    pub fn new(volume: f32) -> ClientResult<Self> {
+    pub fn new(volume: f32) -> Result<Self> {
         let (stream, stream_handle) = OutputStream::try_default()?;
         let music = Sink::try_new(&stream_handle)?;
         music.set_volume(volume);
@@ -28,7 +28,7 @@ impl Audio {
         })
     }
 
-    pub fn set_music(&mut self, source: impl AsRef<Path>) -> ClientResult<()> {
+    pub fn set_music(&mut self, source: impl AsRef<Path>) -> Result<()> {
         self.music.clear();
 
         let file = BufReader::new(File::open(source)?);
@@ -47,7 +47,7 @@ impl Audio {
         &mut self,
         source: impl AsRef<Path>,
         volume: f32,
-    ) -> ClientResult<()> {
+    ) -> Result<()> {
         let sink = Sink::try_new(&self.stream_handle)?;
         let file = BufReader::new(File::open(source)?);
         let source = Decoder::new(file)?;

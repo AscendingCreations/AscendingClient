@@ -11,7 +11,7 @@ pub fn handle_data(
     data: &mut ByteBuffer,
     seconds: f32,
     buffer: &mut BufferTask,
-) -> ClientResult<()> {
+) -> Result<()> {
     let id: ServerPackets = data.read()?;
 
     let fun = match router.0.get(&id) {

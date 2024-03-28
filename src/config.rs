@@ -8,7 +8,7 @@ use rustls::{
 use serde::{Deserialize, Serialize};
 use std::{fs, io::BufReader, sync::Arc};
 
-use crate::ClientResult;
+use crate::Result;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Config {
@@ -69,9 +69,7 @@ fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
     );
 }
 
-pub fn build_tls_config(
-    certs_path: &str,
-) -> ClientResult<Arc<rustls::ClientConfig>> {
+pub fn build_tls_config(certs_path: &str) -> Result<Arc<rustls::ClientConfig>> {
     let mut root_store = RootCertStore::empty();
     let certs = load_certs(certs_path);
 
