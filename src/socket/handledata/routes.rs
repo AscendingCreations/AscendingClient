@@ -1382,15 +1382,15 @@ pub fn handle_updatetradeitem(
     _socket: &mut Socket,
     _world: &mut World,
     _systems: &mut SystemHolder,
-    content: &mut Content,
+    _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> ClientResult<()> {
-    let same_entity = data.read::<bool>()?;
-    let item = data.read::<Item>()?;
-    let amount = data.read::<u16>()?;
+    let _same_entity = data.read::<bool>()?;
+    let _item = data.read::<Item>()?;
+    let _amount = data.read::<u16>()?;
 
     Ok(())
 }
@@ -1399,7 +1399,7 @@ pub fn handle_updatetrademoney(
     _socket: &mut Socket,
     _world: &mut World,
     _systems: &mut SystemHolder,
-    content: &mut Content,
+    _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,

@@ -322,10 +322,10 @@ impl Button {
     pub fn change_text(&mut self, systems: &mut SystemHolder, msg: String) {
         if let Some(content_data) = self.content {
             if let ButtonContentType::Text(data) = &mut self.content_type {
-                data.text = msg.clone();
                 systems
                     .gfx
                     .set_text(&mut systems.renderer, content_data, &msg);
+                data.text = msg;
                 systems.gfx.center_text(content_data);
             }
         }
