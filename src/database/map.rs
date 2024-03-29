@@ -1,6 +1,5 @@
 use graphics::*;
 use serde::{Deserialize, Serialize};
-use serde_repr::*;
 use std::fs::OpenOptions;
 use std::io::BufReader;
 use std::path::Path;
@@ -37,9 +36,8 @@ pub enum MapAttribute {
 }
 
 #[derive(
-    Copy, Clone, Serialize_repr, Deserialize_repr, PartialEq, Eq, Default, Debug,
+    Copy, Clone, Deserialize, Serialize, PartialEq, Eq, Default, Debug,
 )]
-#[repr(u8)]
 pub enum Weather {
     #[default]
     None,

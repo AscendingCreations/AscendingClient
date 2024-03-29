@@ -1,7 +1,5 @@
-use graphics::*;
-use guillotiere::euclid::num::Floor;
-
 use crate::{is_within_area, logic::*, SystemHolder};
+use graphics::*;
 
 pub struct ScrollbarBackground {
     pub color: Color,

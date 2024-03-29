@@ -11,7 +11,6 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use bytey::{ByteBufferRead, ByteBufferWrite};
-use serde_repr::*;
 
 pub mod handledata;
 pub mod sends;

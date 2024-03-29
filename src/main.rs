@@ -5,9 +5,6 @@
     clippy::too_many_arguments
 )]
 use backtrace::Backtrace;
-#[macro_use]
-extern crate derivative;
-
 use camera::{
     controls::{Controls, FlatControls, FlatSettings},
     Projection,

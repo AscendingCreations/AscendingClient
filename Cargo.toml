@@ -1,41 +1,34 @@
 [package]
 name = "client"
 version = "0.1.0"
-authors = ["S.J.R. van Schaik", "Andrew Wheeler <genusistimelord@gmail.com>"]
+authors = ["S.J.R. van Schaik", "Andrew Wheeler <genusistimelord@outlook.com"]
 license = "MIT OR Apache-2.0"
 edition = "2021"
-resolver = "2"
 
 [dependencies]
-bytemuck = { version = "1.14.0", features = ["derive"] }
-mint = "0.5.9"
 thiserror = "1.0.56"
-winit = { version = "0.29.10", features = ["serde", "rwh_05"] }
+winit = { version = "0.29.15", features = ["serde", "rwh_05"] }
 image = "0.24.7"
-tokio = { version = "1.32.0", features = ["full"] }
-guillotiere = "0.6.2"
-log = { version = "0.4.20", default-features = false }
-backtrace = "0.3.69"
-futures = "0.3.28"
+tokio = { version = "1.37.0", features = ["full"] }
+log = { version = "0.4.21", default-features = false }
+backtrace = "0.3.71"
 chrono = { version = "0.4.30", disable-defaults = true, features = [
     "clock",
     "serde",
     "std",
 ] }
-ubits = "0.3.1"
 hecs = { version = "0.10.4", features = [
     "column-serialize",
     "row-serialize",
     "macros",
 ] }
-glam = { version = "0.24.1", features = ["bytemuck", "mint"] }
-serde = { version = "1.0.188", features = ["derive"] }
-serde_json = "1.0.82"
-indexmap = "2.1.0"
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.115"
+indexmap = "2.2.6"
 rodio = "0.17.3"
 slab = "0.4.9"
 arboard = "3.3.1"
-mio = { version = "0.8.10", features = ["os-poll", "net"] }
+mio = { version = "0.8.11", features = ["os-poll", "net"] }
 bytey = { version = "0.3.0", git = "https://github.com/Stefanowhb/bytey.git" }
 pki-types = { package = "rustls-pki-types", version = "1", features = ["std"] }
 rcgen = { version = "0.12", features = [
@@ -47,10 +40,8 @@ toml = "0.8.10"
 rustls-pemfile = "2"
 webpki-roots = "0.26"
 webpki = "0.22.4"
-serde_repr = "0.1.18"
-phf = { version = "0.11.2", features = ["macros"] }
 regex = "1.10.3"
-derivative = "2.2.0"
+educe = { version = "0.5.11", default-features = false, features = ["Debug", "PartialEq", "Default"]}
 
 [dependencies.camera]
 package = "ascending_camera"
@@ -67,6 +58,26 @@ package = "ascending_graphics"
 #path = "./graphics"
 version = "0.2.0"
 
-[profile.release]
-opt-level = 2
+[profile.dev]
+opt-level = 0
 debug = true
+debug-assertions = true
+overflow-checks = true
+strip = "none"
+lto = false
+incremental = true
+panic = 'unwind'
+codegen-units = 256
+rpath = false
+
+[profile.release]
+opt-level = 3
+debug = false
+strip = "none"
+debug-assertions = false
+overflow-checks = true
+lto = true
+panic = 'unwind'
+incremental = true
+codegen-units = 256
+rpath = false

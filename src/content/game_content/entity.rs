@@ -1,13 +1,12 @@
+use crate::{values::*, ClientError, Direction, Result};
 use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use core::any::type_name;
+use educe::Educe;
 use graphics::*;
 use hecs::{EntityRef, MissingComponent, World};
 use log::{error, warn};
 use serde::{Deserialize, Serialize};
-use serde_repr::*;
 use std::collections::VecDeque;
-
-use crate::{values::*, ClientError, Direction, Result};
 
 pub enum MovementType {
     MovementBuffer,
@@ -98,24 +97,17 @@ pub struct Physical {
 }
 
 #[derive(
-    Derivative,
-    Debug,
-    Copy,
-    Clone,
-    PartialEq,
-    Eq,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Educe, Debug, Copy, Clone, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
 )]
-#[derivative(Default)]
+#[educe(Default)]
 pub struct Vitals {
-    #[derivative(Default(value = "[25, 2, 100]"))]
+    #[educe(Default = [25, 2, 100])]
     pub vital: [i32; VITALS_MAX],
-    #[derivative(Default(value = "[25, 2, 100]"))]
+    #[educe(Default = [25, 2, 100])]
     pub vitalmax: [i32; VITALS_MAX],
-    #[derivative(Default(value = "[0; VITALS_MAX]"))]
+    #[educe(Default = [0; VITALS_MAX])]
     pub vitalbuffs: [i32; VITALS_MAX],
-    #[derivative(Default(value = "[0; VITALS_MAX]"))]
+    #[educe(Default = [0; VITALS_MAX])]
     pub regens: [u32; VITALS_MAX],
 }
 
@@ -155,15 +147,15 @@ pub struct EntityName(pub String);
     Deserialize,
     PartialEq,
     Eq,
-    Derivative,
+    Educe,
     ByteBufferWrite,
     ByteBufferRead,
 )]
-#[derivative(Default)]
+#[educe(Default)]
 pub struct Item {
     pub num: u32,
     pub val: u16,
-    #[derivative(Default(value = "1"))]
+    #[educe(Default = 1)]
     pub level: u8,
     pub data: [i16; 5],
 }
@@ -173,17 +165,15 @@ pub struct Item {
     Eq,
     Clone,
     Debug,
-    Derivative,
+    Educe,
     Deserialize,
     Serialize,
     ByteBufferRead,
     ByteBufferWrite,
 )]
-#[derivative(Default)]
+#[educe(Default)]
 pub struct Equipment {
-    #[derivative(Default(
-        value = "(0..MAX_EQPT).map(|_| Item::default()).collect()"
-    ))]
+    #[educe(Default = (0..MAX_EQPT).map(|_| Item::default()).collect())]
     pub items: Vec<Item>,
 }
 
@@ -204,12 +194,11 @@ pub enum WorldEntityType {
     PartialEq,
     Eq,
     Default,
-    Serialize_repr,
-    Deserialize_repr,
+    Serialize,
+    Deserialize,
     ByteBufferRead,
     ByteBufferWrite,
 )]
-#[repr(u8)]
 pub enum DeathType {
     #[default]
     Alive,
@@ -231,15 +220,14 @@ pub enum UserAccess {
     Copy,
     Clone,
     Debug,
-    Serialize_repr,
-    Deserialize_repr,
+    Serialize,
+    Deserialize,
     PartialEq,
     Eq,
     Default,
     ByteBufferRead,
     ByteBufferWrite,
 )]
-#[repr(u8)]
 pub enum NpcMode {
     None,
     #[default]

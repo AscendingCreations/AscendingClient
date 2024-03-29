@@ -1,6 +1,5 @@
 use bytey::{ByteBufferRead, ByteBufferWrite};
 use serde::{Deserialize, Serialize};
-use serde_repr::*;
 
 #[derive(
     Copy,
@@ -9,12 +8,11 @@ use serde_repr::*;
     PartialEq,
     Eq,
     Default,
-    Serialize_repr,
-    Deserialize_repr,
+    Deserialize,
+    Serialize,
     ByteBufferRead,
     ByteBufferWrite,
 )]
-#[repr(u8)]
 pub enum ItemTypes {
     #[default]
     None,

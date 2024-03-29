@@ -1,7 +1,6 @@
 use crate::game_content::entity::*;
 use bytey::{ByteBufferRead, ByteBufferWrite};
 use serde::{Deserialize, Serialize};
-use serde_repr::*;
 
 pub const TILE_SIZE: usize = 20;
 pub const SCREEN_WIDTH: usize = 800;
@@ -34,12 +33,11 @@ pub enum EntityType {
     Default,
     PartialEq,
     Eq,
-    Serialize_repr,
-    Deserialize_repr,
+    Deserialize,
+    Serialize,
     ByteBufferRead,
     ByteBufferWrite,
 )]
-#[repr(u8)]
 pub enum MessageChannel {
     #[default]
     Map,
@@ -59,13 +57,12 @@ pub enum MessageChannel {
     Debug,
     PartialEq,
     Eq,
-    Serialize_repr,
-    Deserialize_repr,
+    Deserialize,
+    Serialize,
     Default,
     ByteBufferRead,
     ByteBufferWrite,
 )]
-#[repr(u8)]
 pub enum VitalTypes {
     Hp,
     Mp,
@@ -109,12 +106,11 @@ impl IsUsingType {
     Debug,
     PartialEq,
     Eq,
-    Serialize_repr,
-    Deserialize_repr,
+    Deserialize,
+    Serialize,
     ByteBufferRead,
     ByteBufferWrite,
 )]
-#[repr(u8)]
 pub enum FtlType {
     Message,
     Error,
