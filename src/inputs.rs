@@ -27,7 +27,7 @@ pub fn handle_mouse_input(
     content: &mut Content,
     alert: &mut Alert,
     tooltip: &mut Tooltip,
-) {
+) -> Result<()> {
     // We convert the mouse position to render position as the y pos increase upward
     let screen_pos = Vec2::new(mouse_pos.x, systems.size.height - mouse_pos.y);
 
@@ -38,15 +38,16 @@ pub fn handle_mouse_input(
             GameContent::mouse_input(
                 content, world, systems, socket, alert, tooltip, input_type,
                 screen_pos,
-            );
+            )?;
         }
         ContentType::Menu => {
             MenuContent::mouse_input(
                 content, world, systems, socket, alert, tooltip, input_type,
                 screen_pos,
-            );
+            )?;
         }
     }
+    Ok(())
 }
 
 pub fn handle_key_input(

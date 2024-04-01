@@ -2,7 +2,7 @@ use graphics::*;
 
 use crate::{
     is_within_area, logic::*, socket::sends::*, values::*, widget::*, Alert,
-    AlertIndex, AlertType, Interface, Item, Socket, SystemHolder,
+    AlertIndex, AlertType, Interface, Item, Result, Socket, SystemHolder,
 };
 
 const MAX_STORAGE_X: f32 = 10.0;
@@ -665,12 +665,12 @@ pub fn release_storage_slot(
     alert: &mut Alert,
     slot: usize,
     screen_pos: Vec2,
-) {
+) -> Result<()> {
     if slot >= MAX_STORAGE
         || !interface.storage.item_slot[slot].got_data
         || interface.storage.item_slot[slot].need_update
     {
-        return;
+        return Ok(());
     }
 
     if interface.storage.in_window(screen_pos)
@@ -679,12 +679,12 @@ pub fn release_storage_slot(
         let find_slot = interface.storage.find_storage_slot(screen_pos, true);
         if let Some(new_slot) = find_slot {
             if new_slot != slot {
-                let _ = send_switchstorageslot(
+                send_switchstorageslot(
                     socket,
                     slot as u16,
                     new_slot as u16,
                     interface.storage.item_slot[slot].count_data,
-                );
+                )?;
 
                 interface.storage.update_storage_slot(
                     systems,
@@ -709,7 +709,7 @@ pub fn release_storage_slot(
 
                 interface.storage.item_slot[slot].need_update = true;
                 interface.storage.item_slot[new_slot].need_update = true;
-                return;
+                return Ok(());
             }
         }
     } else if interface.inventory.in_window(screen_pos)
@@ -728,13 +728,12 @@ pub fn release_storage_slot(
                     true,
                 );
             } else {
-                let _ = send_withdrawitem(
+                return send_withdrawitem(
                     socket,
                     inv_slot as u16,
                     slot as u16,
                     interface.storage.item_slot[slot].count_data,
                 );
-                return;
             }
         }
     }
@@ -763,4 +762,5 @@ pub fn release_storage_slot(
             .gfx
             .set_visible(interface.storage.item_slot[slot].count_bg, true);
     }
+    Ok(())
 }

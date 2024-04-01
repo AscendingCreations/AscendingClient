@@ -22,16 +22,15 @@ impl GameContent {
         tooltip: &mut Tooltip,
         input_type: MouseInputType,
         screen_pos: Vec2,
-    ) {
+    ) -> Result<()> {
         if alert.visible {
-            alert.alert_mouse_input(
+            return alert.alert_mouse_input(
                 systems,
                 socket,
                 input_type.clone(),
                 tooltip,
                 screen_pos,
             );
-            return;
         }
 
         if Interface::mouse_input(
@@ -42,8 +41,8 @@ impl GameContent {
             alert,
             input_type.clone(),
             screen_pos,
-        ) {
-            return;
+        )? {
+            return Ok(());
         }
 
         if let MouseInputType::MouseLeftDown = input_type {
@@ -57,11 +56,13 @@ impl GameContent {
                 content
                     .game_content
                     .target
-                    .set_target(socket, systems, &entity);
+                    .set_target(socket, systems, &entity)?;
             } else {
-                content.game_content.target.clear_target(socket, systems);
+                content.game_content.target.clear_target(socket, systems)?;
             }
         }
+
+        Ok(())
     }
 
     pub fn key_input(
@@ -113,10 +114,10 @@ impl GameContent {
                 PhysicalKey::Code(KeyCode::F1) => {
                     if let Some(entity) = content.game_content.myentity {
                         let pos = world.get_or_err::<Position>(&entity)?;
-                        let _ = send_admincommand(
+                        send_admincommand(
                             socket,
                             AdminCommand::SpawnNpc(0, pos),
-                        );
+                        )?;
                     }
                 }
                 _ => {}

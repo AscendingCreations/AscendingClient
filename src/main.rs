@@ -364,7 +364,8 @@ async fn main() -> Result<()> {
                             &mut content,
                             &mut alert,
                             &mut tooltip,
-                        );
+                        )
+                        .unwrap();
                     } else {
                         handle_mouse_input(
                             &mut world,
@@ -375,7 +376,8 @@ async fn main() -> Result<()> {
                             &mut content,
                             &mut alert,
                             &mut tooltip,
-                        );
+                        )
+                        .unwrap();
                     }
                 }
                 WindowEvent::MouseInput { state, .. } => match state {
@@ -389,7 +391,8 @@ async fn main() -> Result<()> {
                             &mut content,
                             &mut alert,
                             &mut tooltip,
-                        );
+                        )
+                        .unwrap();
                         mouse_press = true;
                     }
                     ElementState::Released => {
@@ -402,7 +405,8 @@ async fn main() -> Result<()> {
                             &mut content,
                             &mut alert,
                             &mut tooltip,
-                        );
+                        )
+                        .unwrap();
                         mouse_press = false;
                     }
                 },
@@ -515,7 +519,8 @@ async fn main() -> Result<()> {
             &mut alert,
             seconds,
             &mut buffertask,
-        );
+        )
+        .unwrap();
 
         buffertask.process_buffer(&mut systems, &mut content);
 

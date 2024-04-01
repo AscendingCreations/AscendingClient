@@ -1,7 +1,7 @@
 use crate::{
     logic::*, send_addtradeitem, send_deposititem, send_dropitem,
     send_sellitem, send_withdrawitem, socket, values::*, widget::*,
-    MouseInputType, Socket, SystemHolder,
+    MouseInputType, Result, Socket, SystemHolder,
 };
 use graphics::{cosmic_text::Attrs, *};
 use winit::event::KeyEvent;
@@ -456,9 +456,9 @@ impl Alert {
         input_type: MouseInputType,
         tooltip: &mut Tooltip,
         screen_pos: Vec2,
-    ) {
+    ) -> Result<()> {
         if !self.visible {
-            return;
+            return Ok(());
         }
         match input_type {
             MouseInputType::MouseMove => {
@@ -469,7 +469,7 @@ impl Alert {
                 let button_index = self.click_buttons(systems, screen_pos);
                 if let Some(index) = button_index {
                     self.did_button_click = true;
-                    self.select_option(systems, socket, index);
+                    self.select_option(systems, socket, index)?;
                 }
                 self.click_textbox(systems, screen_pos);
             }
@@ -478,6 +478,7 @@ impl Alert {
             }
             _ => {}
         }
+        Ok(())
     }
 
     pub fn alert_key_input(
@@ -501,7 +502,7 @@ impl Alert {
         systems: &mut SystemHolder,
         socket: &mut Socket,
         index: usize,
-    ) {
+    ) -> Result<()> {
         match self.alert_type {
             AlertType::Inform =>
             {
@@ -532,39 +533,39 @@ impl Alert {
                                 let amount = input_text
                                     .parse::<u16>()
                                     .unwrap_or_default();
-                                let _ = send_dropitem(socket, slot, amount);
+                                send_dropitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Sell(slot) => {
                                 let amount = input_text
                                     .parse::<u16>()
                                     .unwrap_or_default();
-                                let _ = send_sellitem(socket, slot, amount);
+                                send_sellitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Trade(slot) => {
                                 let amount = input_text
                                     .parse::<u16>()
                                     .unwrap_or_default();
-                                let _ = send_addtradeitem(socket, slot, amount);
+                                send_addtradeitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Deposit(inv_slot, bank_slot) => {
                                 let amount = input_text
                                     .parse::<u16>()
                                     .unwrap_or_default();
-                                let _ = send_deposititem(
+                                send_deposititem(
                                     socket, inv_slot, bank_slot, amount,
-                                );
+                                )?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Withdraw(inv_slot, bank_slot) => {
                                 let amount = input_text
                                     .parse::<u16>()
                                     .unwrap_or_default();
-                                let _ = send_withdrawitem(
+                                send_withdrawitem(
                                     socket, inv_slot, bank_slot, amount,
-                                );
+                                )?;
                                 self.hide_alert(systems);
                             }
                             _ => self.hide_alert(systems),
@@ -577,6 +578,7 @@ impl Alert {
                 }
             }
         }
+        Ok(())
     }
 
     pub fn hover_textbox(

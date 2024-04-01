@@ -205,10 +205,7 @@ pub fn can_move(
 ) -> Result<bool> {
     let pos = world.get_or_err::<Position>(entity)?;
     {
-        world
-            .get::<&mut Dir>(entity.0)
-            .expect("Could not find Dir")
-            .0 = match direction {
+        world.get::<&mut Dir>(entity.0)?.0 = match direction {
             Direction::Up => 2,
             Direction::Down => 0,
             Direction::Left => 3,

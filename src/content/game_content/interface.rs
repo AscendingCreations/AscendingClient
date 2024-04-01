@@ -6,7 +6,7 @@ use winit::{event::*, keyboard::*};
 use crate::{
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
     send_closestorage, send_closetrade, send_message, widget::*, Alert,
-    GameContent, MouseInputType, Socket, SystemHolder,
+    GameContent, MouseInputType, Result, Socket, SystemHolder,
 };
 use hecs::World;
 
@@ -132,7 +132,7 @@ impl Interface {
         alert: &mut Alert,
         input_type: MouseInputType,
         screen_pos: Vec2,
-    ) -> bool {
+    ) -> Result<bool> {
         let mut result = false;
         match input_type {
             MouseInputType::MouseMove => {
@@ -173,7 +173,7 @@ impl Interface {
             MouseInputType::MouseLeftDown => {
                 result = Interface::click_window_buttons(
                     interface, systems, socket, screen_pos,
-                );
+                )?;
 
                 let button_index =
                     Interface::click_buttons(interface, systems, screen_pos);
@@ -236,7 +236,7 @@ impl Interface {
                     interface.chatbox.click_buttons(systems, screen_pos);
                 if let Some(index) = chatbox_button_index {
                     interface.chatbox.did_button_click = true;
-                    trigger_chatbox_button(interface, systems, socket, index);
+                    trigger_chatbox_button(interface, systems, socket, index)?;
                     result = true;
                 }
                 interface.click_textbox(systems, screen_pos);
@@ -265,7 +265,7 @@ impl Interface {
                         }
                     }
 
-                    return true;
+                    return Ok(true);
                 }
                 if let Some(slot) = interface.storage.hold_slot {
                     interface
@@ -288,7 +288,7 @@ impl Interface {
                         }
                     }
 
-                    return true;
+                    return Ok(true);
                 }
 
                 if let Some(window) = &interface.drag_window {
@@ -360,16 +360,16 @@ impl Interface {
                 if let Some(slot) = interface.inventory.hold_slot {
                     release_inv_slot(
                         interface, socket, systems, alert, slot, screen_pos,
-                    );
+                    )?;
                     interface.inventory.hold_slot = None;
-                    return true;
+                    return Ok(true);
                 }
                 if let Some(slot) = interface.storage.hold_slot {
                     release_storage_slot(
                         interface, socket, systems, alert, slot, screen_pos,
-                    );
+                    )?;
                     interface.storage.hold_slot = None;
-                    return true;
+                    return Ok(true);
                 }
 
                 interface.reset_buttons(systems);
@@ -418,7 +418,7 @@ impl Interface {
                 interface.trade.reset_buttons(systems);
             }
         }
-        result
+        Ok(result)
     }
 
     pub fn key_input(
@@ -472,7 +472,7 @@ impl Interface {
         systems: &mut SystemHolder,
         socket: &mut Socket,
         screen_pos: Vec2,
-    ) -> bool {
+    ) -> Result<bool> {
         if let Some(index) =
             interface.profile.click_buttons(systems, screen_pos)
         {
@@ -480,7 +480,7 @@ impl Interface {
                 close_interface(interface, systems, Window::Profile);
             }
             interface.profile.did_button_click = true;
-            return true;
+            return Ok(true);
         }
 
         if let Some(index) =
@@ -490,7 +490,7 @@ impl Interface {
                 close_interface(interface, systems, Window::Setting);
             }
             interface.setting.did_button_click = true;
-            return true;
+            return Ok(true);
         }
 
         if let Some(index) =
@@ -500,7 +500,7 @@ impl Interface {
                 close_interface(interface, systems, Window::Inventory);
             }
             interface.inventory.did_button_click = true;
-            return true;
+            return Ok(true);
         }
 
         if let Some(index) =
@@ -508,22 +508,22 @@ impl Interface {
         {
             if index == 0 {
                 close_interface(interface, systems, Window::Storage);
-                let _ = send_closestorage(socket);
+                send_closestorage(socket)?;
             }
             interface.storage.did_button_click = true;
-            return true;
+            return Ok(true);
         }
 
         if let Some(index) = interface.shop.click_buttons(systems, screen_pos) {
             match index {
                 0 => {
                     close_interface(interface, systems, Window::Shop);
-                    let _ = send_closeshop(socket);
+                    send_closeshop(socket)?;
                 } // Close
                 1 => {
                     // Scroll Up
                     if interface.shop.item_scroll.max_value == 0 {
-                        return true;
+                        return Ok(true);
                     }
                     let scrollbar_value =
                         interface.shop.item_scroll.value.saturating_sub(1);
@@ -536,7 +536,7 @@ impl Interface {
                 2 => {
                     // Scroll Down
                     if interface.shop.item_scroll.max_value == 0 {
-                        return true;
+                        return Ok(true);
                     }
                     let scrollbar_value = interface
                         .shop
@@ -553,12 +553,12 @@ impl Interface {
                 3..=7 => {
                     let button_index =
                         interface.shop.shop_start_pos + index.saturating_sub(3);
-                    let _ = send_buyitem(socket, button_index as u16);
+                    send_buyitem(socket, button_index as u16)?;
                 }
                 _ => {}
             }
             interface.shop.did_button_click = true;
-            return true;
+            return Ok(true);
         }
 
         if let Some(index) = interface.trade.click_buttons(systems, screen_pos)
@@ -566,7 +566,7 @@ impl Interface {
             match index {
                 0 | 2 => {
                     close_interface(interface, systems, Window::Trade);
-                    let _ = send_closetrade(socket);
+                    send_closetrade(socket)?;
                 }
                 1 => {
                     interface.trade.button[index]
@@ -575,10 +575,10 @@ impl Interface {
                 _ => {}
             }
             interface.trade.did_button_click = true;
-            return true;
+            return Ok(true);
         }
 
-        false
+        Ok(false)
     }
 
     pub fn click_buttons(
@@ -693,12 +693,12 @@ fn trigger_chatbox_button(
     systems: &mut SystemHolder,
     socket: &mut Socket,
     index: usize,
-) {
+) -> Result<()> {
     match index {
         0 => {
             // Scroll Up
             if interface.chatbox.scrollbar.max_value == 0 {
-                return;
+                return Ok(());
             }
             let scrollbar_value = interface
                 .chatbox
@@ -715,7 +715,7 @@ fn trigger_chatbox_button(
         1 => {
             // Scroll Down
             if interface.chatbox.scrollbar.max_value == 0 {
-                return;
+                return Ok(());
             }
             let scrollbar_value =
                 interface.chatbox.scrollbar.value.saturating_sub(1);
@@ -728,16 +728,17 @@ fn trigger_chatbox_button(
         2 => {
             // Send
             let msg = interface.chatbox.textbox.text.clone();
-            let _ = send_message(
+            send_message(
                 socket,
                 crate::MessageChannel::Global,
                 msg,
                 String::new(),
-            );
+            )?;
             interface.chatbox.textbox.set_text(systems, String::new());
         }
         _ => {}
     }
+    Ok(())
 }
 
 fn can_find_window(window: Window, exception: Option<Window>) -> bool {

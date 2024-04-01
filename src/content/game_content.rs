@@ -288,10 +288,11 @@ impl GameContent {
         pos: Position,
         cur_map: MapPosition,
         sprite: usize,
-    ) {
+    ) -> Result<()> {
         let entity =
-            MapItem::create(world, systems, sprite, pos, cur_map, None);
+            MapItem::create(world, systems, sprite, pos, cur_map, None)?;
         self.mapitems.insert(entity);
+        Ok(())
     }
 
     pub fn move_player(
@@ -385,10 +386,10 @@ impl GameContent {
                 });
 
             if let Some(got_target) = target_entity {
-                self.target.set_target(socket, systems, &got_target);
+                self.target.set_target(socket, systems, &got_target)?;
             }
 
-            let _ = send_attack(socket, dir, target_entity);
+            send_attack(socket, dir, target_entity)?;
             init_player_attack(world, systems, &myentity, seconds)?;
         }
 
@@ -531,7 +532,7 @@ pub fn update_camera(
                     update_player_position(
                         systems, content, socket, sprite.0, pos, pos_offset,
                         hpbar, is_target,
-                    );
+                    )?;
                 }
             }
             WorldEntityType::Npc => {
@@ -550,7 +551,7 @@ pub fn update_camera(
                     update_npc_position(
                         systems, content, socket, sprite.0, pos, pos_offset,
                         hpbar, is_target,
-                    );
+                    )?;
                 }
             }
             WorldEntityType::MapItem => {

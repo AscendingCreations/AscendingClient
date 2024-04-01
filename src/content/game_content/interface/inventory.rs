@@ -2,7 +2,7 @@ use graphics::*;
 
 use crate::{
     is_within_area, logic::*, socket::sends::*, values::*, widget::*, Alert,
-    AlertIndex, AlertType, Interface, Item, Socket, SystemHolder,
+    AlertIndex, AlertType, Interface, Item, Result, Socket, SystemHolder,
 };
 
 const MAX_INV_X: f32 = 5.0;
@@ -661,12 +661,12 @@ pub fn release_inv_slot(
     alert: &mut Alert,
     slot: usize,
     screen_pos: Vec2,
-) {
+) -> Result<()> {
     if slot >= MAX_INV
         || !interface.inventory.item_slot[slot].got_data
         || interface.inventory.item_slot[slot].need_update
     {
-        return;
+        return Ok(());
     }
 
     if interface.inventory.in_window(screen_pos)
@@ -676,12 +676,12 @@ pub fn release_inv_slot(
         let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
         if let Some(new_slot) = find_slot {
             if new_slot != slot {
-                let _ = send_switchinvslot(
+                send_switchinvslot(
                     socket,
                     slot as u16,
                     new_slot as u16,
                     interface.inventory.item_slot[slot].count_data,
-                );
+                )?;
 
                 interface.inventory.update_inv_slot(
                     systems,
@@ -706,7 +706,7 @@ pub fn release_inv_slot(
 
                 interface.inventory.item_slot[slot].need_update = true;
                 interface.inventory.item_slot[new_slot].need_update = true;
-                return;
+                return Ok(());
             }
         }
     } else if interface.storage.in_window(screen_pos)
@@ -725,13 +725,12 @@ pub fn release_inv_slot(
                     true,
                 );
             } else {
-                let _ = send_deposititem(
+                return send_deposititem(
                     socket,
                     slot as u16,
                     bank_slot as u16,
                     interface.inventory.item_slot[slot].count_data,
                 );
-                return;
             }
         }
     } else if interface.shop.in_window(screen_pos)
@@ -748,11 +747,11 @@ pub fn release_inv_slot(
                 true,
             );
         } else {
-            let _ = send_sellitem(
+            send_sellitem(
                 socket,
                 slot as u16,
                 interface.inventory.item_slot[slot].count_data,
-            );
+            )?;
         }
     } else if interface.trade.in_window(screen_pos)
         && interface.trade.order_index == 0
@@ -768,11 +767,11 @@ pub fn release_inv_slot(
                 true,
             );
         } else {
-            let _ = send_addtradeitem(
+            send_addtradeitem(
                 socket,
                 slot as u16,
                 interface.inventory.item_slot[slot].count_data,
-            );
+            )?;
         }
     } else if interface.inventory.item_slot[slot].count_data > 1 {
         alert.show_alert(
@@ -785,11 +784,11 @@ pub fn release_inv_slot(
             true,
         );
     } else {
-        let _ = send_dropitem(
+        send_dropitem(
             socket,
             slot as u16,
             interface.inventory.item_slot[slot].count_data,
-        );
+        )?;
     }
 
     let detail_origin =
@@ -815,4 +814,5 @@ pub fn release_inv_slot(
             .gfx
             .set_visible(interface.inventory.item_slot[slot].count_bg, true);
     }
+    Ok(())
 }

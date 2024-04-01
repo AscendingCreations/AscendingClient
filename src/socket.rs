@@ -111,7 +111,7 @@ impl Socket {
         self.client.poll_state.set(SocketPollState::Read);
 
         if event.is_readable() {
-            self.read();
+            self.read()?;
         }
 
         if event.is_writable() {
@@ -129,9 +129,9 @@ impl Socket {
         Ok(())
     }
 
-    fn read(&mut self) {
+    fn read(&mut self) -> Result<()> {
         let pos = self.buffer.cursor();
-        let _ = self.buffer.move_cursor_to_end();
+        self.buffer.move_cursor_to_end();
 
         loop {
             let mut buf: [u8; 2048] = [0; 2048];
@@ -144,18 +144,19 @@ impl Socket {
                 }
                 Ok(0) | Err(_) => {
                     self.client.state = ClientState::Closing;
-                    return;
+                    return Ok(());
                 }
                 Ok(n) => {
                     if self.buffer.write_slice(&buf[0..n]).is_err() {
                         self.client.state = ClientState::Closing;
-                        return;
+                        return Ok(());
                     }
                 }
             }
         }
 
-        let _ = self.buffer.move_cursor(pos);
+        self.buffer.move_cursor(pos)?;
+        Ok(())
     }
 
     pub fn write(&mut self) {
@@ -284,8 +285,8 @@ impl ByteBufferExt for ByteBuffer {
 
     #[inline]
     fn finish(&mut self) -> bytey::Result<&mut ByteBuffer> {
-        let _ = self.move_cursor(0)?;
-        let _ = self.write((self.length() - 8) as u64)?;
+        self.move_cursor(0)?;
+        self.write((self.length() - 8) as u64)?;
         self.move_cursor(0)
     }
 }
@@ -370,14 +371,14 @@ pub fn process_packets(
     alert: &mut Alert,
     seconds: f32,
     buffertask: &mut BufferTask,
-) {
+) -> Result<()> {
     let mut count: usize = 0;
     let mut length: u64;
 
     loop {
         length = match get_length(socket) {
             Some(n) => n,
-            None => return,
+            None => return Ok(()),
         };
 
         if length > 0
@@ -412,7 +413,7 @@ pub fn process_packets(
 
             count += 1
         } else {
-            let _ = socket.buffer.move_cursor(socket.buffer.cursor() - 8);
+            socket.buffer.move_cursor(socket.buffer.cursor() - 8)?;
             break;
         }
 
@@ -422,10 +423,11 @@ pub fn process_packets(
     }
 
     if socket.buffer.cursor() == socket.buffer.length() {
-        let _ = socket.buffer.truncate(0);
+        socket.buffer.truncate(0)?;
     }
 
     if socket.buffer.capacity() > 25000 {
-        let _ = socket.buffer.resize(4096);
+        socket.buffer.resize(4096)?;
     }
+    Ok(())
 }

@@ -23,12 +23,11 @@ impl MenuContent {
         tooltip: &mut Tooltip,
         input_type: MouseInputType,
         screen_pos: Vec2,
-    ) {
+    ) -> Result<()> {
         if alert.visible {
-            alert.alert_mouse_input(
+            return alert.alert_mouse_input(
                 systems, socket, input_type, tooltip, screen_pos,
             );
-            return;
         }
 
         match content.menu_content.cur_window {
@@ -58,6 +57,8 @@ impl MenuContent {
             }
             _ => {}
         }
+
+        Ok(())
     }
 
     pub fn key_input(

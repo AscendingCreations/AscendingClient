@@ -46,7 +46,7 @@ impl MapItem {
         pos: Position,
         cur_map: MapPosition,
         entity: Option<&Entity>,
-    ) -> Entity {
+    ) -> Result<Entity> {
         let start_pos = get_start_map_pos(cur_map, pos.map)
             .unwrap_or_else(|| Vec2::new(0.0, 0.0));
         println!("Pos {:?}", start_pos);
@@ -78,14 +78,12 @@ impl MapItem {
 
         if let Some(data) = entity {
             world.spawn_at(data.0, component1);
-            let _ =
-                world.insert_one(data.0, EntityType::MapItem(Entity(data.0)));
-            Entity(data.0)
+            world.insert_one(data.0, EntityType::MapItem(Entity(data.0)))?;
+            Ok(Entity(data.0))
         } else {
             let entity = world.spawn(component1);
-            let _ =
-                world.insert_one(entity, EntityType::MapItem(Entity(entity)));
-            Entity(entity)
+            world.insert_one(entity, EntityType::MapItem(Entity(entity)))?;
+            Ok(Entity(entity))
         }
     }
 
@@ -140,6 +138,6 @@ pub fn unload_mapitems(
 ) -> Result<()> {
     let item_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     systems.gfx.remove_gfx(item_sprite);
-    let _ = world.despawn(entity.0);
+    world.despawn(entity.0)?;
     Ok(())
 }
