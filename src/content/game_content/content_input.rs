@@ -112,13 +112,7 @@ impl GameContent {
             #[allow(clippy::single_match)]
             match event.physical_key {
                 PhysicalKey::Code(KeyCode::F1) => {
-                    if let Some(entity) = content.game_content.myentity {
-                        let pos = world.get_or_err::<Position>(&entity)?;
-                        send_admincommand(
-                            socket,
-                            AdminCommand::SpawnNpc(0, pos),
-                        )?;
-                    }
+                    send_command(socket, Command::Trade)?;
                 }
                 _ => {}
             }

@@ -871,7 +871,7 @@ pub fn open_interface(
     interface_set_to_first(interface, systems, window);
 }
 
-fn close_interface(
+pub fn close_interface(
     interface: &mut Interface,
     systems: &mut SystemHolder,
     window: Window,

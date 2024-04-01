@@ -2,10 +2,12 @@ use crate::{socket::*, values::*, Entity, Position};
 use bytey::ByteBuffer;
 
 #[derive(Clone, Debug, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]
-pub enum AdminCommand {
-    KickPlayer(String),
+pub enum Command {
+    KickPlayer,
+    KickPlayerByName(String),
     WarpTo(Position),
     SpawnNpc(i32, Position),
+    Trade,
 }
 
 #[derive(
@@ -28,7 +30,7 @@ enum ClientPacket {
     DepositItem,
     WithdrawItem,
     Message,
-    AdminCommand,
+    Command,
     SetTarget,
     CloseStorage,
     CloseShop,
@@ -104,7 +106,6 @@ pub fn send_dir(socket: &mut Socket, dir: u8) -> Result<()> {
     Ok(())
 }
 
-#[inline]
 pub fn send_attack(
     socket: &mut Socket,
     dir: u8,
@@ -121,7 +122,6 @@ pub fn send_attack(
     Ok(())
 }
 
-#[inline]
 pub fn send_useitem(
     socket: &mut Socket,
     slot: u16,
@@ -138,7 +138,6 @@ pub fn send_useitem(
     Ok(())
 }
 
-#[inline]
 pub fn send_unequip(socket: &mut Socket, slot: u16) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
@@ -150,7 +149,6 @@ pub fn send_unequip(socket: &mut Socket, slot: u16) -> Result<()> {
     Ok(())
 }
 
-#[inline]
 pub fn send_switchinvslot(
     socket: &mut Socket,
     oldslot: u16,
@@ -289,13 +287,10 @@ pub fn send_message(
     Ok(())
 }
 
-pub fn send_admincommand(
-    socket: &mut Socket,
-    command: AdminCommand,
-) -> Result<()> {
+pub fn send_command(socket: &mut Socket, command: Command) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(262)?;
 
-    buf.write(ClientPacket::AdminCommand)?;
+    buf.write(ClientPacket::Command)?;
     buf.write(command)?;
     buf.finish()?;
 

@@ -1,5 +1,5 @@
 use crate::{
-    add_npc,
+    add_npc, close_interface,
     content::game_content::{interface::chatbox::*, player::*},
     dir_to_enum,
     entity::*,
@@ -1241,7 +1241,7 @@ pub fn handle_openshop(
 pub fn handle_clearisusingtype(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut SystemHolder,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
@@ -1249,6 +1249,32 @@ pub fn handle_clearisusingtype(
     _buffer: &mut BufferTask,
 ) -> Result<()> {
     let _ = data.read::<u16>()?;
+
+    match content.game_content.is_using_type {
+        IsUsingType::Bank => close_interface(
+            &mut content.game_content.interface,
+            systems,
+            Window::Storage,
+        ),
+        IsUsingType::Store(_) => close_interface(
+            &mut content.game_content.interface,
+            systems,
+            Window::Shop,
+        ),
+        IsUsingType::Trading(_) => {
+            close_interface(
+                &mut content.game_content.interface,
+                systems,
+                Window::Trade,
+            );
+            content
+                .game_content
+                .interface
+                .trade
+                .clear_trade_items(systems);
+        }
+        _ => {}
+    }
 
     content.game_content.is_using_type = IsUsingType::None;
 
@@ -1267,10 +1293,7 @@ pub fn handle_updatetradeitem(
 ) -> Result<()> {
     let same_entity = data.read::<bool>()?;
     let trade_slot = data.read::<u16>()?;
-    let mut item = data.read::<Item>()?;
-    let amount = data.read::<u16>()?;
-
-    item.val = amount;
+    let item = data.read::<Item>()?;
 
     content.game_content.interface.trade.update_trade_slot(
         systems,
@@ -1293,6 +1316,30 @@ pub fn handle_updatetrademoney(
     _buffer: &mut BufferTask,
 ) -> Result<()> {
     let _ = data.read::<u16>()?;
+
+    Ok(())
+}
+
+pub fn handle_inittrade(
+    _socket: &mut Socket,
+    _world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    let target_entity = data.read::<Entity>()?;
+
+    content.game_content.is_using_type = IsUsingType::Trading(target_entity);
+
+    open_interface(&mut content.game_content.interface, systems, Window::Trade);
+    content
+        .game_content
+        .interface
+        .trade
+        .clear_trade_items(systems);
 
     Ok(())
 }

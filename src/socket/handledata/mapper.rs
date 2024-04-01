@@ -82,6 +82,7 @@ pub enum ServerPackets {
     ClearIsUsingType,
     UpdateTradeItem,
     UpdateTradeMoney,
+    InitTrade,
     ServerPacketCount,
 }
 
@@ -299,6 +300,10 @@ impl PacketRouter {
             (
                 ServerPackets::UpdateTradeMoney,
                 routes::handle_updatetrademoney as PacketFunction,
+            ),
+            (
+                ServerPackets::InitTrade,
+                routes::handle_inittrade as PacketFunction,
             ),
         ]))
     }

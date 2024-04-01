@@ -710,6 +710,27 @@ impl Trade {
         });
     }
 
+    pub fn clear_trade_items(&mut self, systems: &mut SystemHolder) {
+        for slot in 0..MAX_TRADE_SLOT * 2 {
+            let (item_slot, render_slot) = if slot >= MAX_TRADE_SLOT {
+                (&mut self.their_items, slot - MAX_TRADE_SLOT)
+            } else {
+                (&mut self.my_items, slot)
+            };
+            if item_slot[render_slot].got_data {
+                systems.gfx.remove_gfx(item_slot[render_slot].image);
+                if item_slot[render_slot].got_count {
+                    systems.gfx.remove_gfx(item_slot[render_slot].count_bg);
+                    systems.gfx.remove_gfx(item_slot[render_slot].count);
+                }
+                item_slot[render_slot].got_data = false;
+                item_slot[render_slot].got_count = false;
+                item_slot[render_slot].item_index = 0;
+                item_slot[render_slot].count_data = 0;
+            }
+        }
+    }
+
     pub fn update_trade_slot(
         &mut self,
         systems: &mut SystemHolder,
