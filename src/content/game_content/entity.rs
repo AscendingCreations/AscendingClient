@@ -7,6 +7,10 @@ use hecs::{EntityRef, MissingComponent, World};
 use log::{error, warn};
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
+use std::{
+    backtrace::Backtrace,
+    ops::{Deref, DerefMut},
+};
 
 pub enum MovementType {
     MovementBuffer,
@@ -402,11 +406,12 @@ impl WorldEntityExtras for EntityRef<'_> {
         match self.get::<&T>().map(|t| *t) {
             Some(t) => Ok(t),
             None => {
-                let e = ClientError::HecsComponent(
-                    hecs::ComponentError::MissingComponent(
+                let e = ClientError::HecsComponent {
+                    error: hecs::ComponentError::MissingComponent(
                         MissingComponent::new::<T>(),
                     ),
-                );
+                    backtrace: Box::new(Backtrace::capture()),
+                };
 
                 warn!("Component Err: {:?}", e);
                 Err(e)
@@ -421,11 +426,12 @@ impl WorldEntityExtras for EntityRef<'_> {
         match self.get::<&T>().map(|t| (*t).clone()) {
             Some(t) => Ok(t),
             None => {
-                let e = ClientError::HecsComponent(
-                    hecs::ComponentError::MissingComponent(
+                let e = ClientError::HecsComponent {
+                    error: hecs::ComponentError::MissingComponent(
                         MissingComponent::new::<T>(),
                     ),
-                );
+                    backtrace: Box::new(Backtrace::capture()),
+                };
 
                 warn!("Component Err: {:?}", e);
                 Err(e)
@@ -485,7 +491,10 @@ impl WorldExtras for World {
             Ok(t) => Ok(t),
             Err(e) => {
                 warn!("Component Err: {:?}", e);
-                Err(ClientError::HecsComponent(e))
+                Err(ClientError::HecsComponent {
+                    error: e,
+                    backtrace: Box::new(Backtrace::capture()),
+                })
             }
         }
     }
@@ -498,7 +507,10 @@ impl WorldExtras for World {
             Ok(t) => Ok(t),
             Err(e) => {
                 warn!("Component Err: {:?}", e);
-                Err(ClientError::HecsComponent(e))
+                Err(ClientError::HecsComponent {
+                    error: e,
+                    backtrace: Box::new(Backtrace::capture()),
+                })
             }
         }
     }

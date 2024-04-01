@@ -1,4 +1,5 @@
 use graphics::*;
+use std::backtrace::Backtrace;
 use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, ClientError>;
@@ -7,14 +8,34 @@ pub type Result<T> = std::result::Result<T, ClientError>;
 pub enum ClientError {
     #[error("Currently Unhandled data error")]
     Unhandled,
-    #[error(transparent)]
-    AddrParseError(#[from] std::net::AddrParseError),
-    #[error(transparent)]
-    Io(#[from] std::io::Error),
-    #[error(transparent)]
-    UnicodeError(#[from] std::str::Utf8Error),
-    #[error(transparent)]
-    ParseError(#[from] std::string::ParseError),
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    AddrParseError {
+        #[from]
+        error: std::net::AddrParseError,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    Io {
+        #[from]
+        error: std::io::Error,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    UnicodeError {
+        #[from]
+        error: std::str::Utf8Error,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    ParseError {
+        #[from]
+        error: std::string::ParseError,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
     #[error(transparent)]
     ParseNum(#[from] std::num::ParseIntError),
     #[error(transparent)]
@@ -61,14 +82,39 @@ pub enum ClientError {
     NoUsernameSet,
     #[error("No password was set")]
     NoPasswordSet,
-    #[error(transparent)]
-    ByteyError(#[from] bytey::ByteBufferError),
-    #[error(transparent)]
-    Rustls(#[from] rustls::Error),
-    #[error(transparent)]
-    TomlDe(#[from] toml::de::Error),
-    #[error(transparent)]
-    HecsComponent(#[from] hecs::ComponentError),
-    #[error(transparent)]
-    HecNoEntity(#[from] hecs::NoSuchEntity),
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    ByteyError {
+        #[from]
+        error: bytey::ByteBufferError,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    Rustls {
+        #[from]
+        error: rustls::Error,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    TomlDe {
+        #[from]
+        error: toml::de::Error,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    HecsComponent {
+        #[from]
+        error: hecs::ComponentError,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    HecNoEntity {
+        #[from]
+        error: hecs::NoSuchEntity,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
 }
