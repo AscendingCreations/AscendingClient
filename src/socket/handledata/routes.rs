@@ -1258,16 +1258,26 @@ pub fn handle_clearisusingtype(
 pub fn handle_updatetradeitem(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let _same_entity = data.read::<bool>()?;
-    let _item = data.read::<Item>()?;
-    let _amount = data.read::<u16>()?;
+    let same_entity = data.read::<bool>()?;
+    let trade_slot = data.read::<u16>()?;
+    let mut item = data.read::<Item>()?;
+    let amount = data.read::<u16>()?;
+
+    item.val = amount;
+
+    content.game_content.interface.trade.update_trade_slot(
+        systems,
+        trade_slot as usize,
+        &item,
+        same_entity,
+    );
 
     Ok(())
 }

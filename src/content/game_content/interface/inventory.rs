@@ -345,7 +345,7 @@ impl Inventory {
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
-            let text_bg_index = systems.gfx.add_rect(text_bg, 0);
+            let text_bg_index = systems.gfx.add_rect(text_bg, 1);
             systems.gfx.set_visible(text_bg_index, self.visible);
 
             let text_size = Vec2::new(32.0, 16.0);
@@ -361,7 +361,7 @@ impl Inventory {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let text_index = systems.gfx.add_text(text, 1);
+            let text_index = systems.gfx.add_text(text, 2);
             systems.gfx.set_text(
                 &mut systems.renderer,
                 text_index,
@@ -676,37 +676,53 @@ pub fn release_inv_slot(
         let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
         if let Some(new_slot) = find_slot {
             if new_slot != slot {
-                send_switchinvslot(
-                    socket,
-                    slot as u16,
-                    new_slot as u16,
-                    interface.inventory.item_slot[slot].count_data,
-                )?;
+                if interface.inventory.item_slot[slot].item_index
+                    == interface.inventory.item_slot[new_slot].item_index
+                {
+                    alert.show_alert(
+                        systems,
+                        AlertType::Input,
+                        String::new(),
+                        "Enter the amount to merge".into(),
+                        250,
+                        AlertIndex::MergeInv(slot as u16, new_slot as u16),
+                        true,
+                    );
+                } else {
+                    send_switchinvslot(
+                        socket,
+                        slot as u16,
+                        new_slot as u16,
+                        interface.inventory.item_slot[slot].count_data,
+                    )?;
 
-                interface.inventory.update_inv_slot(
-                    systems,
-                    slot,
-                    &Item {
-                        num: interface.inventory.item_slot[new_slot].item_index
-                            as u32,
-                        val: interface.inventory.item_slot[new_slot].count_data,
-                        ..Default::default()
-                    },
-                );
-                interface.inventory.update_inv_slot(
-                    systems,
-                    new_slot,
-                    &Item {
-                        num: interface.inventory.item_slot[slot].item_index
-                            as u32,
-                        val: interface.inventory.item_slot[slot].count_data,
-                        ..Default::default()
-                    },
-                );
+                    interface.inventory.update_inv_slot(
+                        systems,
+                        slot,
+                        &Item {
+                            num: interface.inventory.item_slot[new_slot]
+                                .item_index
+                                as u32,
+                            val: interface.inventory.item_slot[new_slot]
+                                .count_data,
+                            ..Default::default()
+                        },
+                    );
+                    interface.inventory.update_inv_slot(
+                        systems,
+                        new_slot,
+                        &Item {
+                            num: interface.inventory.item_slot[slot].item_index
+                                as u32,
+                            val: interface.inventory.item_slot[slot].count_data,
+                            ..Default::default()
+                        },
+                    );
 
-                interface.inventory.item_slot[slot].need_update = true;
-                interface.inventory.item_slot[new_slot].need_update = true;
-                return Ok(());
+                    interface.inventory.item_slot[slot].need_update = true;
+                    interface.inventory.item_slot[new_slot].need_update = true;
+                    return Ok(());
+                }
             }
         }
     } else if interface.storage.in_window(screen_pos)

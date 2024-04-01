@@ -206,7 +206,7 @@ impl Trade {
             box_rect
                 .set_position(Vec3::new(
                     w_pos.x + 10.0 + (37.0 * frame_pos.x),
-                    w_pos.y + 77.0 + (37.0 * frame_pos.y),
+                    w_pos.y + 262.0 - (37.0 * frame_pos.y),
                     detail_1,
                 ))
                 .set_size(Vec2::new(32.0, 32.0))
@@ -224,7 +224,7 @@ impl Trade {
             box_rect
                 .set_position(Vec3::new(
                     w_pos.x + 210.0 + (37.0 * frame_pos.x),
-                    w_pos.y + 77.0 + (37.0 * frame_pos.y),
+                    w_pos.y + 262.0 - (37.0 * frame_pos.y),
                     detail_1,
                 ))
                 .set_size(Vec2::new(32.0, 32.0))
@@ -430,6 +430,8 @@ impl Trade {
         let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
         let detail_1 = detail_origin.sub_f32(0.001, 3);
         let detail_2 = detail_origin.sub_f32(0.002, 3);
+        let detail_3 = detail_origin.sub_f32(0.003, 3);
+        let detail_4 = detail_origin.sub_f32(0.004, 3);
 
         let mut pos = systems.gfx.get_pos(self.bg);
         pos.z = detail_origin;
@@ -452,6 +454,29 @@ impl Trade {
             let mut pos = systems.gfx.get_pos(self.slot[i]);
             pos.z = detail_1;
             systems.gfx.set_pos(self.slot[i], pos);
+
+            let (item_slot, render_index) = if i >= MAX_TRADE_SLOT {
+                (&self.their_items, i - MAX_TRADE_SLOT)
+            } else {
+                (&self.my_items, i)
+            };
+            if item_slot[render_index].got_data {
+                let mut pos =
+                    systems.gfx.get_pos(item_slot[render_index].image);
+                pos.z = detail_2;
+                systems.gfx.set_pos(item_slot[render_index].image, pos);
+            }
+            if item_slot[render_index].got_count {
+                let mut pos =
+                    systems.gfx.get_pos(item_slot[render_index].count_bg);
+                pos.z = detail_3;
+                systems.gfx.set_pos(item_slot[render_index].count_bg, pos);
+
+                let mut pos =
+                    systems.gfx.get_pos(item_slot[render_index].count);
+                pos.z = detail_4;
+                systems.gfx.set_pos(item_slot[render_index].count, pos);
+            }
         }
 
         self.name_bg.iter().for_each(|image| {
@@ -516,38 +541,68 @@ impl Trade {
             button.set_pos(systems, self.pos);
         });
 
-        for i in 0..MAX_TRADE_SLOT {
-            let frame_pos = Vec2::new(
-                i as f32 % MAX_TRADE_X,
-                (i as f32 / MAX_TRADE_X).floor(),
-            );
-            let slot_pos = Vec2::new(
-                self.pos.x + 10.0 + (37.0 * frame_pos.x),
-                self.pos.y + 262.0 - (37.0 * frame_pos.y),
-            );
+        let item_text_size = Vec2::new(32.0, 16.0);
+        for i in 0..MAX_TRADE_SLOT * 2 {
+            let (item_slot, render_index) = if i >= MAX_TRADE_SLOT {
+                (&self.their_items, i - MAX_TRADE_SLOT)
+            } else {
+                (&self.my_items, i)
+            };
 
-            let pos = systems.gfx.get_pos(self.slot[i]);
-            systems.gfx.set_pos(
-                self.slot[i],
-                Vec3::new(slot_pos.x, slot_pos.y, pos.z),
-            );
-        }
-        for i in MAX_TRADE_SLOT..MAX_TRADE_SLOT * 2 {
-            let render_index = i - MAX_TRADE_SLOT;
             let frame_pos = Vec2::new(
                 render_index as f32 % MAX_TRADE_X,
                 (render_index as f32 / MAX_TRADE_X).floor(),
             );
-            let slot_pos = Vec2::new(
-                self.pos.x + 210.0 + (37.0 * frame_pos.x),
-                self.pos.y + 262.0 - (37.0 * frame_pos.y),
-            );
+            let slot_pos = if i >= MAX_TRADE_SLOT {
+                Vec2::new(
+                    self.pos.x + 210.0 + (37.0 * frame_pos.x),
+                    self.pos.y + 262.0 - (37.0 * frame_pos.y),
+                )
+            } else {
+                Vec2::new(
+                    self.pos.x + 10.0 + (37.0 * frame_pos.x),
+                    self.pos.y + 262.0 - (37.0 * frame_pos.y),
+                )
+            };
 
             let pos = systems.gfx.get_pos(self.slot[i]);
             systems.gfx.set_pos(
                 self.slot[i],
                 Vec3::new(slot_pos.x, slot_pos.y, pos.z),
             );
+
+            if item_slot[render_index].got_data {
+                let pos = systems.gfx.get_pos(item_slot[render_index].image);
+                systems.gfx.set_pos(
+                    item_slot[render_index].image,
+                    Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, pos.z),
+                );
+
+                if item_slot[render_index].got_count {
+                    let pos =
+                        systems.gfx.get_pos(item_slot[render_index].count_bg);
+                    systems.gfx.set_pos(
+                        item_slot[render_index].count_bg,
+                        Vec3::new(slot_pos.x, slot_pos.y, pos.z),
+                    );
+
+                    let pos =
+                        systems.gfx.get_pos(item_slot[render_index].count);
+                    systems.gfx.set_pos(
+                        item_slot[render_index].count,
+                        Vec3::new(slot_pos.x + 2.0, slot_pos.y + 2.0, pos.z),
+                    );
+                    systems.gfx.set_bound(
+                        item_slot[render_index].count,
+                        Bounds::new(
+                            slot_pos.x,
+                            slot_pos.y,
+                            slot_pos.x + item_text_size.x,
+                            slot_pos.y + item_text_size.y,
+                        ),
+                    );
+                }
+            }
         }
 
         let pos = systems.gfx.get_pos(self.name_bg[0]);
@@ -707,12 +762,12 @@ impl Trade {
         let slot_pos = if same_entity {
             Vec2::new(
                 self.pos.x + 10.0 + (37.0 * frame_pos.x),
-                self.pos.y + 77.0 - (37.0 * frame_pos.y),
+                self.pos.y + 262.0 - (37.0 * frame_pos.y),
             )
         } else {
             Vec2::new(
                 self.pos.x + 210.0 + (37.0 * frame_pos.x),
-                self.pos.y + 77.0 - (37.0 * frame_pos.y),
+                self.pos.y + 262.0 - (37.0 * frame_pos.y),
             )
         };
 
@@ -746,7 +801,7 @@ impl Trade {
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
-            let text_bg_index = systems.gfx.add_rect(text_bg, 0);
+            let text_bg_index = systems.gfx.add_rect(text_bg, 1);
             systems.gfx.set_visible(text_bg_index, self.visible);
 
             let text_size = Vec2::new(32.0, 16.0);
@@ -762,7 +817,7 @@ impl Trade {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let text_index = systems.gfx.add_text(text, 1);
+            let text_index = systems.gfx.add_text(text, 2);
             systems.gfx.set_text(
                 &mut systems.renderer,
                 text_index,

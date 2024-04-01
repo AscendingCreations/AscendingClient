@@ -252,7 +252,8 @@ impl Interface {
                         match result_window {
                             Window::Storage
                             | Window::Inventory
-                            | Window::Shop => {
+                            | Window::Shop
+                            | Window::Trade => {
                                 hold_interface(
                                     interface,
                                     systems,
@@ -275,7 +276,9 @@ impl Interface {
                     let window = find_window(interface, screen_pos, None);
                     if let Some(result_window) = window {
                         match result_window {
-                            Window::Storage | Window::Inventory => {
+                            Window::Storage
+                            | Window::Inventory
+                            | Window::Trade => {
                                 hold_interface(
                                     interface,
                                     systems,

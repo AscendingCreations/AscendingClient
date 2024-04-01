@@ -1,7 +1,8 @@
 use crate::{
     logic::*, send_addtradeitem, send_deposititem, send_dropitem,
-    send_sellitem, send_withdrawitem, socket, values::*, widget::*,
-    MouseInputType, Result, Socket, SystemHolder,
+    send_sellitem, send_switchinvslot, send_switchstorageslot,
+    send_withdrawitem, socket, values::*, widget::*, MouseInputType, Result,
+    Socket, SystemHolder,
 };
 use graphics::{cosmic_text::Attrs, *};
 use winit::event::KeyEvent;
@@ -18,6 +19,8 @@ pub enum AlertIndex {
     Drop(u16),
     Sell(u16),
     Trade(u16),
+    MergeInv(u16, u16),
+    MergeStorage(u16, u16),
     Deposit(u16, u16),
     Withdraw(u16, u16),
 }
@@ -548,6 +551,24 @@ impl Alert {
                                     .parse::<u16>()
                                     .unwrap_or_default();
                                 send_addtradeitem(socket, slot, amount)?;
+                                self.hide_alert(systems);
+                            }
+                            AlertIndex::MergeInv(inv_slot, new_slot) => {
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
+                                send_switchinvslot(
+                                    socket, inv_slot, new_slot, amount,
+                                )?;
+                                self.hide_alert(systems);
+                            }
+                            AlertIndex::MergeStorage(inv_slot, new_slot) => {
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
+                                send_switchstorageslot(
+                                    socket, inv_slot, new_slot, amount,
+                                )?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Deposit(inv_slot, bank_slot) => {
