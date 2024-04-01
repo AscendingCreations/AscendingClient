@@ -5,7 +5,7 @@ use winit::{event::*, keyboard::*};
 use crate::{
     content::{menu_content::content_input::*, *},
     socket::*,
-    Alert, Direction, SystemHolder, Tooltip,
+    Alert, Direction, Result, SystemHolder, Tooltip,
 };
 
 #[derive(Clone)]
@@ -56,12 +56,12 @@ pub fn handle_key_input(
     content: &mut Content,
     alert: &mut Alert,
     event: &KeyEvent,
-) {
+) -> Result<()> {
     match content.content_type {
         ContentType::Game => {
             GameContent::key_input(
                 content, world, systems, socket, alert, event,
-            );
+            )?;
         }
         ContentType::Menu => {
             MenuContent::key_input(
@@ -69,4 +69,5 @@ pub fn handle_key_input(
             );
         }
     }
+    Ok(())
 }

@@ -1,4 +1,4 @@
-use crate::{database::*, Config, SystemHolder};
+use crate::{database::*, Config, Result, SystemHolder};
 use hecs::World;
 
 pub mod game_content;
@@ -20,7 +20,7 @@ pub struct Content {
 }
 
 impl Content {
-    pub fn new(world: &mut World, systems: &mut SystemHolder) -> Self {
+    pub fn new(world: &mut World, systems: &mut SystemHolder) -> Result<Self> {
         let mut content = Content {
             content_type: ContentType::Menu,
             menu_content: MenuContent::new(systems),
@@ -28,11 +28,11 @@ impl Content {
         };
 
         content.menu_content.show(systems);
-        content.game_content.hide(world, systems);
+        content.game_content.hide(world, systems)?;
 
         println!("Gfx Count: {:?}", systems.gfx.count_collection());
 
-        content
+        Ok(content)
     }
 
     pub fn switch_content(
@@ -40,14 +40,14 @@ impl Content {
         world: &mut World,
         systems: &mut SystemHolder,
         contenttype: ContentType,
-    ) {
+    ) -> Result<()> {
         if self.content_type == contenttype {
-            return;
+            return Ok(());
         }
 
         match self.content_type {
             ContentType::Game => {
-                self.game_content.hide(world, systems);
+                self.game_content.hide(world, systems)?;
             }
             ContentType::Menu => {
                 self.menu_content.hide(systems);
@@ -65,5 +65,6 @@ impl Content {
         }
 
         println!("Gfx Count: {:?}", systems.gfx.count_collection());
+        Ok(())
     }
 }

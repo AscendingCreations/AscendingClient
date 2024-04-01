@@ -71,10 +71,10 @@ impl GameContent {
         socket: &mut Socket,
         alert: &mut Alert,
         event: &KeyEvent,
-    ) {
+    ) -> Result<()> {
         if alert.visible {
             alert.alert_key_input(systems, event);
-            return;
+            return Ok(());
         }
 
         Interface::key_input(&mut content.game_content, world, systems, event);
@@ -112,7 +112,7 @@ impl GameContent {
             match event.physical_key {
                 PhysicalKey::Code(KeyCode::F1) => {
                     if let Some(entity) = content.game_content.myentity {
-                        let pos = world.get_or_panic::<Position>(&entity);
+                        let pos = world.get_or_err::<Position>(&entity)?;
                         let _ = send_admincommand(
                             socket,
                             AdminCommand::SpawnNpc(0, pos),
@@ -122,5 +122,6 @@ impl GameContent {
                 _ => {}
             }
         }
+        Ok(())
     }
 }

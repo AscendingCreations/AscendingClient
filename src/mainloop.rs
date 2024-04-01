@@ -1,6 +1,8 @@
 use hecs::World;
 
-use crate::{content::*, dir_to_enum, BufferTask, Socket, SystemHolder};
+use crate::{
+    content::*, dir_to_enum, BufferTask, Result, Socket, SystemHolder,
+};
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct LoopTimer {
@@ -17,10 +19,10 @@ pub fn game_loop(
     buffer: &mut BufferTask,
     seconds: f32,
     loop_timer: &mut LoopTimer,
-) {
+) -> Result<()> {
     match content.content_type {
         ContentType::Game => {
-            update_camera(world, &mut content.game_content, systems, socket);
+            update_camera(world, &mut content.game_content, systems, socket)?;
 
             if seconds > loop_timer.player_tmr {
                 update_player(
@@ -30,22 +32,23 @@ pub fn game_loop(
                     &mut content.game_content,
                     buffer,
                     seconds,
-                );
+                )?;
                 loop_timer.player_tmr = seconds + 0.01;
             }
 
             if seconds > loop_timer.npc_tmr {
-                update_npc(world, systems, &mut content.game_content, seconds);
+                update_npc(world, systems, &mut content.game_content, seconds)?;
                 loop_timer.npc_tmr = seconds + 0.01;
             }
 
             if seconds > loop_timer.input_tmr {
                 content
                     .game_content
-                    .handle_key_input(world, systems, socket, seconds);
+                    .handle_key_input(world, systems, socket, seconds)?;
                 loop_timer.input_tmr = seconds + 0.032;
             }
         }
         ContentType::Menu => {}
     }
+    Ok(())
 }

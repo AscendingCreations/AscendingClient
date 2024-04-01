@@ -10,7 +10,7 @@ pub use interface::*;
 
 use crate::{
     buffer::*, content::*, database::*, logic::*, send_attack, send_pickup,
-    values::*, Direction, Socket, SystemHolder,
+    values::*, Direction, Result, Socket, SystemHolder,
 };
 use hecs::World;
 
@@ -83,15 +83,19 @@ impl GameContent {
         self.finalized = false;
     }
 
-    pub fn hide(&mut self, world: &mut World, systems: &mut SystemHolder) {
+    pub fn hide(
+        &mut self,
+        world: &mut World,
+        systems: &mut SystemHolder,
+    ) -> Result<()> {
         for entity in self.players.iter() {
-            unload_player(world, systems, entity);
+            unload_player(world, systems, entity)?;
         }
         for entity in self.npcs.iter() {
-            unload_npc(world, systems, entity);
+            unload_npc(world, systems, entity)?;
         }
         for entity in self.mapitems.iter() {
-            unload_mapitems(world, systems, entity);
+            unload_mapitems(world, systems, entity)?;
         }
         self.players.clear();
         self.npcs.clear();
@@ -102,6 +106,7 @@ impl GameContent {
         self.target.unload(systems);
         self.map.unload(systems);
         self.player_data.unload();
+        Ok(())
     }
 
     pub fn init_map(&mut self, systems: &mut SystemHolder, map: MapPosition) {
@@ -127,17 +132,17 @@ impl GameContent {
         world: &mut World,
         systems: &mut SystemHolder,
         socket: &mut Socket,
-    ) {
+    ) -> Result<()> {
         for entity in self.players.iter() {
-            player_finalized(world, systems, entity);
+            player_finalized(world, systems, entity)?;
         }
         for entity in self.npcs.iter() {
-            npc_finalized(world, systems, entity);
+            npc_finalized(world, systems, entity)?;
         }
         for entity in self.mapitems.iter() {
-            MapItem::finalized(world, systems, entity);
+            MapItem::finalized(world, systems, entity)?;
         }
-        update_camera(world, self, systems, socket);
+        update_camera(world, self, systems, socket)?;
 
         self.player_data.inventory.iter().enumerate().for_each(
             |(index, item)| {
@@ -155,6 +160,7 @@ impl GameContent {
         );
 
         self.finalized = true;
+        Ok(())
     }
 
     pub fn move_map(
@@ -164,7 +170,7 @@ impl GameContent {
         socket: &mut Socket,
         dir: Direction,
         buffer: &mut BufferTask,
-    ) {
+    ) -> Result<()> {
         match dir {
             Direction::Down => self.map.map_pos.y -= 1,
             Direction::Left => self.map.map_pos.x -= 1,
@@ -222,7 +228,7 @@ impl GameContent {
         }
 
         self.map.sort_map();
-        update_camera(world, self, systems, socket);
+        update_camera(world, self, systems, socket)
     }
 
     pub fn handle_key_input(
@@ -231,37 +237,40 @@ impl GameContent {
         systems: &mut SystemHolder,
         socket: &mut Socket,
         seconds: f32,
-    ) {
+    ) -> Result<()> {
         for i in 0..MAX_KEY {
             if self.keyinput[i] {
                 match i {
                     KEY_ATTACK => {
-                        self.player_attack(world, systems, socket, seconds)
+                        self.player_attack(world, systems, socket, seconds)?
                     }
                     KEY_MOVEDOWN => self.move_player(
                         world,
                         systems,
                         socket,
                         &Direction::Down,
-                    ),
+                    )?,
                     KEY_MOVELEFT => self.move_player(
                         world,
                         systems,
                         socket,
                         &Direction::Left,
-                    ),
-                    KEY_MOVEUP => {
-                        self.move_player(world, systems, socket, &Direction::Up)
-                    }
+                    )?,
+                    KEY_MOVEUP => self.move_player(
+                        world,
+                        systems,
+                        socket,
+                        &Direction::Up,
+                    )?,
                     KEY_MOVERIGHT => self.move_player(
                         world,
                         systems,
                         socket,
                         &Direction::Right,
-                    ),
+                    )?,
                     KEY_PICKUP => {
                         if self.pick_up_timer < seconds {
-                            let _ = send_pickup(socket);
+                            send_pickup(socket)?;
                             self.pick_up_timer = seconds + 1.0;
                         }
                     }
@@ -269,6 +278,7 @@ impl GameContent {
                 }
             }
         }
+        Ok(())
     }
 
     pub fn spawn_item(
@@ -290,7 +300,7 @@ impl GameContent {
         systems: &mut SystemHolder,
         socket: &mut Socket,
         dir: &Direction,
-    ) {
+    ) -> Result<()> {
         if let Some(myentity) = self.myentity {
             move_player(
                 world,
@@ -299,8 +309,9 @@ impl GameContent {
                 &myentity,
                 self,
                 MovementType::Manual(enum_to_dir(*dir), None),
-            );
+            )?;
         }
+        Ok(())
     }
 
     pub fn player_attack(
@@ -309,16 +320,16 @@ impl GameContent {
         systems: &mut SystemHolder,
         socket: &mut Socket,
         seconds: f32,
-    ) {
+    ) -> Result<()> {
         if let Some(myentity) = self.myentity {
-            if world.get_or_panic::<Attacking>(&myentity).0
-                || world.get_or_panic::<Movement>(&myentity).is_moving
+            if world.get_or_err::<Attacking>(&myentity)?.0
+                || world.get_or_err::<Movement>(&myentity)?.is_moving
             {
-                return;
+                return Ok(());
             }
 
-            let pos = world.get_or_panic::<Position>(&myentity);
-            let dir = world.get_or_panic::<Dir>(&myentity).0;
+            let pos = world.get_or_err::<Position>(&myentity)?;
+            let dir = world.get_or_err::<Dir>(&myentity)?.0;
 
             let target_pos = match dir_to_enum(dir) {
                 Direction::Down => {
@@ -378,8 +389,10 @@ impl GameContent {
             }
 
             let _ = send_attack(socket, dir, target_entity);
-            init_player_attack(world, systems, &myentity, seconds);
+            init_player_attack(world, systems, &myentity, seconds)?;
         }
+
+        Ok(())
     }
 }
 
@@ -390,7 +403,7 @@ pub fn update_player(
     content: &mut GameContent,
     buffer: &mut BufferTask,
     seconds: f32,
-) {
+) -> Result<()> {
     let players = content.players.clone();
     for entity in players.iter() {
         if let Some(myentity) = content.myentity {
@@ -402,15 +415,16 @@ pub fn update_player(
                     entity,
                     content,
                     MovementType::MovementBuffer,
-                );
+                )?;
             }
         }
 
         process_player_movement(
             world, systems, socket, entity, content, buffer,
-        );
-        process_player_attack(world, systems, entity, seconds)
+        )?;
+        process_player_attack(world, systems, entity, seconds)?
     }
+    Ok(())
 }
 
 pub fn update_npc(
@@ -418,18 +432,19 @@ pub fn update_npc(
     systems: &mut SystemHolder,
     content: &mut GameContent,
     seconds: f32,
-) {
+) -> Result<()> {
     let npcs = content.npcs.clone();
     for entity in npcs.iter() {
         if let Some(myentity) = content.myentity {
             if entity != &myentity {
-                move_npc(world, systems, entity, MovementType::MovementBuffer);
+                move_npc(world, systems, entity, MovementType::MovementBuffer)?;
             }
         }
 
-        process_npc_movement(world, systems, entity);
-        process_npc_attack(world, systems, entity, seconds)
+        process_npc_movement(world, systems, entity)?;
+        process_npc_attack(world, systems, entity, seconds)?;
     }
+    Ok(())
 }
 
 pub fn finalize_entity(world: &mut World, systems: &mut SystemHolder) {
@@ -470,10 +485,10 @@ pub fn update_camera(
     content: &mut GameContent,
     systems: &mut SystemHolder,
     socket: &mut Socket,
-) {
+) -> Result<()> {
     let player_pos = if let Some(entity) = content.myentity {
-        let pos_offset = world.get_or_panic::<PositionOffset>(&entity);
-        let pos = world.get_or_panic::<Position>(&entity);
+        let pos_offset = world.get_or_err::<PositionOffset>(&entity)?;
+        let pos = world.get_or_err::<Position>(&entity)?;
         (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
             + pos_offset.offset
     } else {
@@ -546,4 +561,5 @@ pub fn update_camera(
             _ => {}
         }
     }
+    Ok(())
 }

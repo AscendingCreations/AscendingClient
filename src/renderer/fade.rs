@@ -3,7 +3,9 @@ use graphics::*;
 use hecs::World;
 use winit::dpi::PhysicalSize;
 
-use crate::{content::*, gfx_collection::*, values::*, Socket, SystemHolder};
+use crate::{
+    content::*, gfx_collection::*, values::*, Result, Socket, SystemHolder,
+};
 
 #[derive(Default)]
 pub enum FadeData {
@@ -217,21 +219,21 @@ pub fn fade_end(
     world: &mut World,
     content: &mut Content,
     socket: &mut Socket,
-) {
+) -> Result<()> {
     #[allow(clippy::single_match)]
     match systems.fade.f_end_index {
         FADE_SWITCH_TO_GAME => {
-            content.switch_content(world, systems, ContentType::Game);
+            content.switch_content(world, systems, ContentType::Game)?;
 
             let pos = if let Some(entity) = content.game_content.myentity {
-                world.get_or_panic::<Position>(&entity)
+                world.get_or_err::<Position>(&entity)?
             } else {
                 Position::default()
             };
             content.game_content.init_map(systems, pos.map);
             content
                 .game_content
-                .init_finalized_data(world, systems, socket);
+                .init_finalized_data(world, systems, socket)?;
 
             systems.fade.init_fade(
                 &mut systems.gfx,
@@ -242,6 +244,7 @@ pub fn fade_end(
         }
         _ => {}
     }
+    Ok(())
 }
 
 pub fn map_fade_end(

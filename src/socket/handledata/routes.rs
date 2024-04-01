@@ -142,7 +142,7 @@ pub fn handle_mapitems(
 
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
-                let client_map = world.get_or_panic::<Position>(&myentity).map;
+                let client_map = world.get_or_err::<Position>(&myentity)?.map;
                 let sprite = if let Some(itemdata) =
                     systems.base.item.get(item.num as usize)
                 {
@@ -162,7 +162,7 @@ pub fn handle_mapitems(
                 content.game_content.mapitems.insert(mapitem);
 
                 if did_spawn && content.game_content.finalized {
-                    MapItem::finalized(world, systems, &entity);
+                    MapItem::finalized(world, systems, &entity)?;
                 }
             }
         }
@@ -322,7 +322,7 @@ pub fn handle_playerspawn(
 
         if let Some(myentity) = content.game_content.myentity {
             if myentity != entity && !world.contains(entity.0) {
-                let client_map = world.get_or_panic::<Position>(&myentity).map;
+                let client_map = world.get_or_err::<Position>(&myentity)?.map;
                 let player =
                     add_player(world, systems, pos, client_map, Some(&entity));
                 content.game_content.players.insert(player);
@@ -377,7 +377,7 @@ pub fn handle_playerspawn(
                 }
 
                 if did_spawn && content.game_content.finalized {
-                    player_finalized(world, systems, &entity);
+                    player_finalized(world, systems, &entity)?;
                 }
             }
         }
@@ -407,7 +407,7 @@ pub fn handle_playermove(
 
         if let Some(myentity) = content.game_content.myentity {
             if myentity != entity && world.contains(entity.0) {
-                let player_pos = world.get_or_panic::<Position>(&myentity);
+                let player_pos = world.get_or_err::<Position>(&myentity)?;
                 if is_map_connected(player_pos.map, pos.map) {
                     let mut movementbuffer = world
                         .get::<&mut MovementBuffer>(entity.0)
@@ -421,7 +421,7 @@ pub fn handle_playermove(
                         }
                     }
                 } else {
-                    unload_player(world, systems, &entity);
+                    unload_player(world, systems, &entity)?;
                 }
             }
         }
@@ -446,7 +446,7 @@ pub fn handle_playerwarp(
         let entity = data.read::<Entity>()?;
         let pos = data.read::<Position>()?;
 
-        let old_pos = world.get_or_panic::<Position>(&entity);
+        let old_pos = world.get_or_err::<Position>(&entity)?;
 
         if world.contains(entity.0) {
             *world
@@ -461,9 +461,9 @@ pub fn handle_playerwarp(
                 .expect("Could not find PositionOffset")
                 .offset = Vec2::new(0.0, 0.0);
 
-            let frame = world.get_or_panic::<Dir>(&entity).0
+            let frame = world.get_or_err::<Dir>(&entity)?.0
                 * PLAYER_SPRITE_FRAME_X as u8;
-            set_player_frame(world, systems, &entity, frame as usize);
+            set_player_frame(world, systems, &entity, frame as usize)?;
         }
         if let Some(myentity) = content.game_content.myentity {
             if myentity == entity {
@@ -475,7 +475,7 @@ pub fn handle_playerwarp(
                     &mut content.game_content,
                     systems,
                     socket,
-                );
+                )?;
                 content.game_content.target.clear_target(socket, systems);
             }
         }
@@ -509,21 +509,21 @@ pub fn handle_dataremovelist(
 ) -> Result<()> {
     let remove_list = data.read::<Vec<Entity>>()?;
 
-    remove_list.iter().for_each(|entity| {
+    for entity in remove_list.iter() {
         let world_entity_type = world.get_or_default::<WorldEntityType>(entity);
         match world_entity_type {
             WorldEntityType::Player => {
-                unload_player(world, systems, entity);
+                unload_player(world, systems, entity)?;
             }
             WorldEntityType::Npc => {
-                unload_npc(world, systems, entity);
+                unload_npc(world, systems, entity)?;
             }
             WorldEntityType::MapItem => {
-                unload_mapitems(world, systems, entity);
+                unload_mapitems(world, systems, entity)?;
             }
             _ => {}
         }
-    });
+    }
 
     Ok(())
 }
@@ -589,7 +589,7 @@ pub fn handle_playervitals(
                 vital.vitalmax = vitalmax;
             }
 
-            let hpbar = world.get_or_panic::<HPBar>(&entity);
+            let hpbar = world.get_or_err::<HPBar>(&entity)?;
             let mut size = systems.gfx.get_size(hpbar.bar_index);
             size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
             systems.gfx.set_size(hpbar.bar_index, size);
@@ -735,7 +735,7 @@ pub fn handle_playerattack(
 
         if let Some(myentity) = content.game_content.myentity {
             if myentity != entity && world.contains(entity.0) {
-                init_player_attack(world, systems, &entity, seconds)
+                init_player_attack(world, systems, &entity, seconds)?
             }
         }
     }
@@ -941,7 +941,7 @@ pub fn handle_npcdata(
 
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
-                let client_map = world.get_or_panic::<Position>(&myentity).map;
+                let client_map = world.get_or_err::<Position>(&myentity)?.map;
                 let npc =
                     add_npc(world, systems, pos, client_map, Some(&entity));
                 content.game_content.npcs.insert(npc);
@@ -989,7 +989,7 @@ pub fn handle_npcdata(
                 }
 
                 if did_spawn && content.game_content.finalized {
-                    npc_finalized(world, systems, &entity);
+                    npc_finalized(world, systems, &entity)?;
                 }
             }
         }
@@ -1019,7 +1019,7 @@ pub fn handle_npcmove(
 
         if world.contains(entity.0) {
             if let Some(myentity) = content.game_content.myentity {
-                let player_pos = world.get_or_panic::<Position>(&myentity);
+                let player_pos = world.get_or_err::<Position>(&myentity)?;
                 if is_map_connected(player_pos.map, pos.map) {
                     let mut movementbuffer = world
                         .get::<&mut MovementBuffer>(entity.0)
@@ -1033,7 +1033,7 @@ pub fn handle_npcmove(
                         }
                     }
                 } else {
-                    unload_npc(world, systems, &entity);
+                    unload_npc(world, systems, &entity)?;
                 }
             }
         }
@@ -1071,8 +1071,8 @@ pub fn handle_npcwarp(
                 .expect("Could not find PositionOffset")
                 .offset = Vec2::new(0.0, 0.0);
             let frame =
-                world.get_or_panic::<Dir>(&entity).0 * NPC_SPRITE_FRAME_X as u8;
-            set_npc_frame(world, systems, &entity, frame as usize);
+                world.get_or_err::<Dir>(&entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+            set_npc_frame(world, systems, &entity, frame as usize)?;
         }
     }
 
@@ -1101,8 +1101,8 @@ pub fn handle_npcdir(
                 .expect("Could not find Dir")
                 .0 = dir;
             let frame =
-                world.get_or_panic::<Dir>(&entity).0 * NPC_SPRITE_FRAME_X as u8;
-            set_npc_frame(world, systems, &entity, frame as usize);
+                world.get_or_err::<Dir>(&entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+            set_npc_frame(world, systems, &entity, frame as usize)?;
         }
     }
 
@@ -1142,7 +1142,7 @@ pub fn handle_npcvital(
                 vital.vitalmax = vitalmax;
             }
 
-            let bar_index = world.get_or_panic::<HPBar>(&entity).bar_index;
+            let bar_index = world.get_or_err::<HPBar>(&entity)?.bar_index;
             let mut size = systems.gfx.get_size(bar_index);
             size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
             systems.gfx.set_size(bar_index, size);
@@ -1285,13 +1285,13 @@ pub fn handle_entityunload(
                 world.get_or_default::<WorldEntityType>(&entity);
             match world_entity_type {
                 WorldEntityType::Player => {
-                    unload_player(world, systems, &entity);
+                    unload_player(world, systems, &entity)?;
                 }
                 WorldEntityType::Npc => {
-                    unload_npc(world, systems, &entity);
+                    unload_npc(world, systems, &entity)?;
                 }
                 WorldEntityType::MapItem => {
-                    unload_mapitems(world, systems, &entity);
+                    unload_mapitems(world, systems, &entity)?;
                 }
                 _ => {}
             }

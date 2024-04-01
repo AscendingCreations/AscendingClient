@@ -4,7 +4,7 @@ use hecs::World;
 pub const NPC_SPRITE_FRAME_X: f32 = 6.0;
 
 use crate::{
-    game_content::entity::*, game_content::*, values::*, Direction,
+    game_content::entity::*, game_content::*, values::*, Direction, Result,
     SystemHolder,
 };
 
@@ -101,13 +101,14 @@ pub fn npc_finalized(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: &Entity,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
-    let npc_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
-    let hpbar = world.get_or_panic::<HPBar>(entity);
+    let npc_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
+    let hpbar = world.get_or_err::<HPBar>(entity)?;
     npc_finalized_data(systems, npc_sprite, &hpbar);
+    Ok(())
 }
 
 pub fn npc_finalized_data(
@@ -125,13 +126,14 @@ pub fn unload_npc(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: &Entity,
-) {
-    let npc_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+) -> Result<()> {
+    let npc_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     systems.gfx.remove_gfx(npc_sprite);
-    let hpbar = world.get_or_panic::<HPBar>(entity);
+    let hpbar = world.get_or_err::<HPBar>(entity)?;
     systems.gfx.remove_gfx(hpbar.bar_index);
     systems.gfx.remove_gfx(hpbar.bg_index);
     let _ = world.despawn(entity.0);
+    Ok(())
 }
 
 pub fn move_npc(
@@ -139,9 +141,9 @@ pub fn move_npc(
     systems: &mut SystemHolder,
     entity: &Entity,
     move_type: MovementType,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
     let (dir, end) = match move_type {
@@ -149,15 +151,15 @@ pub fn move_npc(
             let mut movementbuffer = world
                 .get::<&mut MovementBuffer>(entity.0)
                 .expect("Could not find MovementBuffer");
-            let movement = world.get_or_panic::<Movement>(entity);
+            let movement = world.get_or_err::<Movement>(entity)?;
             if movementbuffer.data.is_empty() || movement.is_moving {
-                return;
+                return Ok(());
             }
             let movement_data = movementbuffer.data.pop_front();
             if let Some(data) = movement_data {
                 (dir_to_enum(data.dir), Some(data.end_pos))
             } else {
-                return;
+                return Ok(());
             }
         }
         MovementType::Manual(m_dir, m_end) => (dir_to_enum(m_dir), m_end),
@@ -169,7 +171,7 @@ pub fn move_npc(
             .expect("Could not find EndMovement")
             .0 = end_pos;
     } else {
-        let mut pos = world.get_or_panic::<Position>(entity);
+        let mut pos = world.get_or_err::<Position>(entity)?;
         pos.x += match dir {
             Direction::Left => -1,
             Direction::Right => 1,
@@ -214,7 +216,7 @@ pub fn move_npc(
             .expect("Could not find Dir")
             .0 = enum_to_dir(dir);
     }
-    let last_frame = if world.get_or_panic::<LastMoveFrame>(entity).0 == 1 {
+    let last_frame = if world.get_or_err::<LastMoveFrame>(entity)?.0 == 1 {
         2
     } else {
         1
@@ -225,29 +227,29 @@ pub fn move_npc(
             .expect("Could not find LastFrame")
             .0 = last_frame;
     }
-    let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
-    set_npc_frame(world, systems, entity, frame as usize + last_frame);
+    let frame = world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+    set_npc_frame(world, systems, entity, frame as usize + last_frame)
 }
 
 pub fn end_npc_move(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: &Entity,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         if !movement.is_moving {
-            return;
+            return Ok(());
         }
         movement.is_moving = false;
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
     }
 
-    let end_pos = world.get_or_panic::<EndMovement>(entity).0;
+    let end_pos = world.get_or_err::<EndMovement>(entity)?.0;
     {
         if let Ok(mut pos) = world.get::<&mut Position>(entity.0) {
             pos.x = end_pos.x;
@@ -262,8 +264,8 @@ pub fn end_npc_move(
             .offset = Vec2::new(0.0, 0.0);
     }
 
-    let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
-    set_npc_frame(world, systems, entity, frame as usize);
+    let frame = world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+    set_npc_frame(world, systems, entity, frame as usize)
 }
 
 pub fn update_npc_position(
@@ -316,12 +318,12 @@ pub fn set_npc_frame(
     systems: &mut SystemHolder,
     entity: &Entity,
     frame_index: usize,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
-    let sprite_index = world.get_or_panic::<SpriteIndex>(entity).0;
+    let sprite_index = world.get_or_err::<SpriteIndex>(entity)?.0;
     let size = systems.gfx.get_size(sprite_index);
     let frame_pos = Vec2::new(
         frame_index as f32 % NPC_SPRITE_FRAME_X,
@@ -331,6 +333,7 @@ pub fn set_npc_frame(
         sprite_index,
         Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y),
     );
+    Ok(())
 }
 
 pub fn init_npc_attack(
@@ -338,9 +341,9 @@ pub fn init_npc_attack(
     systems: &mut SystemHolder,
     entity: &Entity,
     seconds: f32,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
     {
@@ -357,8 +360,8 @@ pub fn init_npc_attack(
             attackframe.timer = seconds + 0.16;
         }
     }
-    let frame = world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
-    set_npc_frame(world, systems, entity, frame as usize + 3);
+    let frame = world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+    set_npc_frame(world, systems, entity, frame as usize + 3)
 }
 
 pub fn process_npc_attack(
@@ -366,17 +369,17 @@ pub fn process_npc_attack(
     systems: &mut SystemHolder,
     entity: &Entity,
     seconds: f32,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
-    if !world.get_or_panic::<Attacking>(entity).0 {
-        return;
+    if !world.get_or_err::<Attacking>(entity)?.0 {
+        return Ok(());
     }
 
-    if seconds < world.get_or_panic::<AttackTimer>(entity).0 {
-        if seconds > world.get_or_panic::<AttackFrame>(entity).timer {
+    if seconds < world.get_or_err::<AttackTimer>(entity)?.0 {
+        if seconds > world.get_or_err::<AttackFrame>(entity)?.timer {
             {
                 world
                     .get::<&mut AttackFrame>(entity.0)
@@ -389,18 +392,18 @@ pub fn process_npc_attack(
             }
 
             let mut attackframe =
-                world.get_or_panic::<AttackFrame>(entity).frame;
+                world.get_or_err::<AttackFrame>(entity)?.frame;
             if attackframe > 2 {
                 attackframe = 2;
             }
             let frame =
-                world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
+                world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
             set_npc_frame(
                 world,
                 systems,
                 entity,
                 frame as usize + 3 + attackframe,
-            );
+            )?;
         }
     } else {
         {
@@ -410,23 +413,24 @@ pub fn process_npc_attack(
                 .0 = false;
         }
         let frame =
-            world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
-        set_npc_frame(world, systems, entity, frame as usize);
+            world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+        set_npc_frame(world, systems, entity, frame as usize)?;
     }
+    Ok(())
 }
 
 pub fn process_npc_movement(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: &Entity,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
-    let movement = world.get_or_panic::<Movement>(entity);
+    let movement = world.get_or_err::<Movement>(entity)?;
     if !movement.is_moving {
-        return;
+        return Ok(());
     };
 
     let add_offset = 2.0;
@@ -438,7 +442,7 @@ pub fn process_npc_movement(
                 .expect("Could not find movement")
                 .move_offset += add_offset;
         }
-        let moveoffset = world.get_or_panic::<Movement>(entity).move_offset;
+        let moveoffset = world.get_or_err::<Movement>(entity)?.move_offset;
         {
             let offset = match movement.move_direction {
                 Direction::Up => Vec2::new(0.0, moveoffset),
@@ -452,6 +456,7 @@ pub fn process_npc_movement(
                 .offset = offset;
         }
     } else {
-        end_npc_move(world, systems, entity);
+        end_npc_move(world, systems, entity)?;
     }
+    Ok(())
 }

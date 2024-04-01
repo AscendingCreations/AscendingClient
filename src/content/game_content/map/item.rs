@@ -93,12 +93,13 @@ impl MapItem {
         world: &mut World,
         systems: &mut SystemHolder,
         entity: &Entity,
-    ) {
+    ) -> Result<()> {
         if !world.contains(entity.0) {
-            return;
+            return Ok(());
         }
-        let sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+        let sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
         Self::finalized_data(systems, sprite);
+        Ok(())
     }
 
     pub fn finalized_data(systems: &mut SystemHolder, sprite: usize) {
@@ -136,8 +137,9 @@ pub fn unload_mapitems(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: &Entity,
-) {
-    let item_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+) -> Result<()> {
+    let item_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     systems.gfx.remove_gfx(item_sprite);
     let _ = world.despawn(entity.0);
+    Ok(())
 }

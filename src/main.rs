@@ -254,7 +254,7 @@ async fn main() -> Result<()> {
     let mut buffertask = BufferTask::new();
 
     // Initiate Game Content
-    let mut content = Content::new(&mut world, &mut systems);
+    let mut content = Content::new(&mut world, &mut systems)?;
 
     let mut alert = Alert::new();
 
@@ -348,7 +348,8 @@ async fn main() -> Result<()> {
                         &mut content,
                         &mut alert,
                         event,
-                    );
+                    )
+                    .unwrap();
                 }
                 WindowEvent::CursorMoved { position, .. } => {
                     mouse_pos = *position;
@@ -452,9 +453,11 @@ async fn main() -> Result<()> {
             &mut buffertask,
             seconds,
             &mut loop_timer,
-        );
+        )
+        .unwrap();
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
-            fade_end(&mut systems, &mut world, &mut content, &mut socket);
+            fade_end(&mut systems, &mut world, &mut content, &mut socket)
+                .unwrap();
         }
         if systems.map_fade.fade_logic(&mut systems.gfx, seconds) {
             map_fade_end(&mut systems, &mut world, &mut content);

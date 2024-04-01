@@ -1,3 +1,4 @@
+use crate::Result;
 use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use graphics::*;
 use hecs::World;
@@ -113,13 +114,14 @@ pub fn player_finalized(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: &Entity,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
-    let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
-    let hpbar = world.get_or_panic::<HPBar>(entity);
+    let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
+    let hpbar = world.get_or_err::<HPBar>(entity)?;
     player_finalized_data(systems, player_sprite, &hpbar);
+    Ok(())
 }
 
 pub fn player_finalized_data(
@@ -137,13 +139,14 @@ pub fn unload_player(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: &Entity,
-) {
-    let player_sprite = world.get_or_panic::<SpriteIndex>(entity).0;
+) -> Result<()> {
+    let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     systems.gfx.remove_gfx(player_sprite);
-    let hpbar = world.get_or_panic::<HPBar>(entity);
+    let hpbar = world.get_or_err::<HPBar>(entity)?;
     systems.gfx.remove_gfx(hpbar.bar_index);
     systems.gfx.remove_gfx(hpbar.bg_index);
     let _ = world.despawn(entity.0);
+    Ok(())
 }
 
 pub fn move_player(
@@ -153,9 +156,9 @@ pub fn move_player(
     entity: &Entity,
     content: &mut GameContent,
     move_type: MovementType,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
     let (dir, end) = match move_type {
@@ -163,15 +166,15 @@ pub fn move_player(
             let mut movementbuffer = world
                 .get::<&mut MovementBuffer>(entity.0)
                 .expect("Could not find MovementBuffer");
-            let movement = world.get_or_panic::<Movement>(entity);
+            let movement = world.get_or_err::<Movement>(entity)?;
             if movementbuffer.data.is_empty() || movement.is_moving {
-                return;
+                return Ok(());
             }
             let movement_data = movementbuffer.data.pop_front();
             if let Some(data) = movement_data {
                 (dir_to_enum(data.dir), Some(data.end_pos))
             } else {
-                return;
+                return Ok(());
             }
         }
         MovementType::Manual(m_dir, m_end) => (dir_to_enum(m_dir), m_end),
@@ -179,16 +182,16 @@ pub fn move_player(
 
     if let Some(p) = content.myentity {
         if &p == entity {
-            if world.get_or_panic::<Attacking>(entity).0 {
-                return;
+            if world.get_or_err::<Attacking>(entity)?.0 {
+                return Ok(());
             }
 
-            if world.get_or_panic::<Movement>(entity).is_moving {
-                return;
+            if world.get_or_err::<Movement>(entity)?.is_moving {
+                return Ok(());
             }
 
-            if !can_move(world, systems, entity, content, &dir) {
-                return;
+            if !can_move(world, systems, entity, content, &dir)? {
+                return Ok(());
             }
         }
     }
@@ -199,7 +202,7 @@ pub fn move_player(
             .expect("Could not find EndMovement")
             .0 = end_pos;
     } else {
-        let pos = world.get_or_panic::<Position>(entity);
+        let pos = world.get_or_err::<Position>(entity)?;
 
         let adj = [(0, -1), (1, 0), (0, 1), (-1, 0)];
         let dir_index = enum_to_dir(dir) as usize;
@@ -236,7 +239,7 @@ pub fn move_player(
 
     if let Some(p) = content.myentity {
         if &p == entity {
-            let pos = world.get_or_panic::<Position>(entity);
+            let pos = world.get_or_err::<Position>(entity)?;
             let _ = send_move(socket, dir_u8, pos);
         }
     }
@@ -254,7 +257,7 @@ pub fn move_player(
             .expect("Could not find Dir")
             .0 = dir_u8;
     }
-    let last_frame = if world.get_or_panic::<LastMoveFrame>(entity).0 == 1 {
+    let last_frame = if world.get_or_err::<LastMoveFrame>(entity)?.0 == 1 {
         2
     } else {
         1
@@ -267,8 +270,8 @@ pub fn move_player(
     }
 
     let frame =
-        world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
-    set_player_frame(world, systems, entity, frame as usize + last_frame);
+        world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+    set_player_frame(world, systems, entity, frame as usize + last_frame)
 }
 
 pub fn end_player_move(
@@ -278,14 +281,14 @@ pub fn end_player_move(
     socket: &mut Socket,
     entity: &Entity,
     buffer: &mut BufferTask,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
     if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
         if !movement.is_moving {
-            return;
+            return Ok(());
         }
         movement.is_moving = false;
         movement.move_offset = 0.0;
@@ -293,7 +296,7 @@ pub fn end_player_move(
     }
 
     let mut move_map: bool = false;
-    let end_pos = world.get_or_panic::<EndMovement>(entity).0;
+    let end_pos = world.get_or_err::<EndMovement>(entity)?.0;
     {
         if let Ok(mut pos) = world.get::<&mut Position>(entity.0) {
             pos.x = end_pos.x;
@@ -311,15 +314,15 @@ pub fn end_player_move(
 
     if let Some(p) = &content.myentity {
         if p == entity && move_map {
-            let dir = world.get_or_panic::<Movement>(entity).move_direction;
-            content.move_map(world, systems, socket, dir, buffer);
+            let dir = world.get_or_err::<Movement>(entity)?.move_direction;
+            content.move_map(world, systems, socket, dir, buffer)?;
             finalize_entity(world, systems);
         }
     }
 
     let frame =
-        world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
-    set_player_frame(world, systems, entity, frame as usize);
+        world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+    set_player_frame(world, systems, entity, frame as usize)
 }
 
 pub fn update_player_position(
@@ -372,12 +375,12 @@ pub fn set_player_frame(
     systems: &mut SystemHolder,
     entity: &Entity,
     frame_index: usize,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
-    let sprite_index = world.get_or_panic::<SpriteIndex>(entity).0;
+    let sprite_index = world.get_or_err::<SpriteIndex>(entity)?.0;
     let size = systems.gfx.get_size(sprite_index);
     let frame_pos = Vec2::new(
         frame_index as f32 % PLAYER_SPRITE_FRAME_X,
@@ -387,6 +390,7 @@ pub fn set_player_frame(
         sprite_index,
         Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y),
     );
+    Ok(())
 }
 
 pub fn init_player_attack(
@@ -394,15 +398,15 @@ pub fn init_player_attack(
     systems: &mut SystemHolder,
     entity: &Entity,
     seconds: f32,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
-    if world.get_or_panic::<Attacking>(entity).0
-        || world.get_or_panic::<Movement>(entity).is_moving
+    if world.get_or_err::<Attacking>(entity)?.0
+        || world.get_or_err::<Movement>(entity)?.is_moving
     {
-        return;
+        return Ok(());
     }
 
     {
@@ -420,8 +424,8 @@ pub fn init_player_attack(
         }
     }
     let frame =
-        world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
-    set_player_frame(world, systems, entity, frame as usize + 3);
+        world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+    set_player_frame(world, systems, entity, frame as usize + 3)
 }
 
 pub fn process_player_attack(
@@ -429,17 +433,17 @@ pub fn process_player_attack(
     systems: &mut SystemHolder,
     entity: &Entity,
     seconds: f32,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
-    if !world.get_or_panic::<Attacking>(entity).0 {
-        return;
+    if !world.get_or_err::<Attacking>(entity)?.0 {
+        return Ok(());
     }
 
-    if seconds < world.get_or_panic::<AttackTimer>(entity).0 {
-        if seconds > world.get_or_panic::<AttackFrame>(entity).timer {
+    if seconds < world.get_or_err::<AttackTimer>(entity)?.0 {
+        if seconds > world.get_or_err::<AttackFrame>(entity)?.timer {
             {
                 world
                     .get::<&mut AttackFrame>(entity.0)
@@ -452,18 +456,18 @@ pub fn process_player_attack(
             }
 
             let mut attackframe =
-                world.get_or_panic::<AttackFrame>(entity).frame;
+                world.get_or_err::<AttackFrame>(entity)?.frame;
             if attackframe > 2 {
                 attackframe = 2;
             }
-            let frame = world.get_or_panic::<Dir>(entity).0
+            let frame = world.get_or_err::<Dir>(entity)?.0
                 * PLAYER_SPRITE_FRAME_X as u8;
             set_player_frame(
                 world,
                 systems,
                 entity,
                 frame as usize + 3 + attackframe,
-            );
+            )?;
         }
     } else {
         {
@@ -473,9 +477,10 @@ pub fn process_player_attack(
                 .0 = false;
         }
         let frame =
-            world.get_or_panic::<Dir>(entity).0 * PLAYER_SPRITE_FRAME_X as u8;
-        set_player_frame(world, systems, entity, frame as usize);
+            world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+        set_player_frame(world, systems, entity, frame as usize)?;
     }
+    Ok(())
 }
 
 pub fn process_player_movement(
@@ -485,14 +490,14 @@ pub fn process_player_movement(
     entity: &Entity,
     content: &mut GameContent,
     buffer: &mut BufferTask,
-) {
+) -> Result<()> {
     if !world.contains(entity.0) {
-        return;
+        return Ok(());
     }
 
-    let movement = world.get_or_panic::<Movement>(entity);
+    let movement = world.get_or_err::<Movement>(entity)?;
     if !movement.is_moving {
-        return;
+        return Ok(());
     };
 
     let add_offset = 2.0;
@@ -504,7 +509,7 @@ pub fn process_player_movement(
                 .expect("Could not find movement")
                 .move_offset += add_offset;
         }
-        let moveoffset = world.get_or_panic::<Movement>(entity).move_offset;
+        let moveoffset = world.get_or_err::<Movement>(entity)?.move_offset;
         {
             let offset = match movement.move_direction {
                 Direction::Up => Vec2::new(0.0, moveoffset),
@@ -518,6 +523,7 @@ pub fn process_player_movement(
                 .offset = offset;
         }
     } else {
-        end_player_move(world, systems, content, socket, entity, buffer);
+        end_player_move(world, systems, content, socket, entity, buffer)?;
     }
+    Ok(())
 }

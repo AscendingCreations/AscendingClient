@@ -202,8 +202,8 @@ pub fn can_move(
     entity: &Entity,
     content: &mut GameContent,
     direction: &Direction,
-) -> bool {
-    let pos = world.get_or_panic::<Position>(entity);
+) -> Result<bool> {
+    let pos = world.get_or_err::<Position>(entity)?;
     {
         world
             .get::<&mut Dir>(entity.0)
@@ -215,30 +215,30 @@ pub fn can_move(
             Direction::Right => 1,
         };
     }
-    let entity_type = world.get_or_panic::<EntityType>(entity);
+    let entity_type = world.get_or_err::<EntityType>(entity)?;
     match entity_type {
         EntityType::Player(_) => {
-            let frame = world.get_or_panic::<Dir>(entity).0
+            let frame = world.get_or_err::<Dir>(entity)?.0
                 * PLAYER_SPRITE_FRAME_X as u8;
-            set_player_frame(world, systems, entity, frame as usize);
+            set_player_frame(world, systems, entity, frame as usize)?;
         }
         EntityType::Npc(_) => {
             let frame =
-                world.get_or_panic::<Dir>(entity).0 * NPC_SPRITE_FRAME_X as u8;
-            set_npc_frame(world, systems, entity, frame as usize);
+                world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+            set_npc_frame(world, systems, entity, frame as usize)?;
         }
         _ => {}
     }
     if content.is_using_type.inuse() {
-        return false;
+        return Ok(false);
     }
     let attribute = content
         .map
         .get_attribute(Vec2::new(pos.x as f32, pos.y as f32), direction);
-    !matches!(
+    Ok(!matches!(
         attribute,
         MapAttribute::Blocked | MapAttribute::Storage | MapAttribute::Shop(_)
-    )
+    ))
 }
 
 pub fn get_world_pos(tile_pos: Vec2) -> Vec2 {
