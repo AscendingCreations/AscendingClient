@@ -41,6 +41,8 @@ enum ClientPacket {
     RemoveTradeItem,
     UpdateTradeMoney,
     SubmitTrade,
+    AcceptTrade,
+    DeclineTrade,
 }
 
 pub fn send_register(
@@ -385,11 +387,16 @@ pub fn send_addtradeitem(
     Ok(())
 }
 
-pub fn send_removetradeitem(socket: &mut Socket, slot: u16) -> Result<()> {
+pub fn send_removetradeitem(
+    socket: &mut Socket,
+    slot: u16,
+    amount: u64,
+) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(6)?;
 
     buf.write(ClientPacket::RemoveTradeItem)?;
     buf.write(slot)?;
+    buf.write(amount)?;
     buf.finish()?;
 
     socket.send(buf);
@@ -411,6 +418,26 @@ pub fn send_submittrade(socket: &mut Socket) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(4)?;
 
     buf.write(ClientPacket::SubmitTrade)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_accepttrade(socket: &mut Socket) -> Result<()> {
+    let mut buf = ByteBuffer::new_packet_with(4)?;
+
+    buf.write(ClientPacket::AcceptTrade)?;
+    buf.finish()?;
+
+    socket.send(buf);
+    Ok(())
+}
+
+pub fn send_declinetrade(socket: &mut Socket) -> Result<()> {
+    let mut buf = ByteBuffer::new_packet_with(4)?;
+
+    buf.write(ClientPacket::DeclineTrade)?;
     buf.finish()?;
 
     socket.send(buf);

@@ -140,7 +140,7 @@ pub struct MovementBuffer {
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Hidden(pub bool);
 
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct EntityName(pub String);
 
 #[derive(

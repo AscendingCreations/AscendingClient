@@ -7,15 +7,15 @@ use crate::{
 const MAX_TRADE_X: f32 = 5.0;
 
 #[derive(Clone, Copy, Default)]
-struct ItemSlot {
+pub struct ItemSlot {
     need_update: bool,
-    got_data: bool,
+    pub got_data: bool,
     got_count: bool,
     image: usize,
     count_bg: usize,
     count: usize,
     item_index: u16,
-    count_data: u16,
+    pub count_data: u16,
 }
 
 pub struct Trade {
@@ -29,8 +29,9 @@ pub struct Trade {
     slot: [usize; MAX_TRADE_SLOT * 2],
     pub money_input: Textbox,
     their_money: usize,
-    my_items: [ItemSlot; MAX_TRADE_SLOT],
+    pub my_items: [ItemSlot; MAX_TRADE_SLOT],
     their_items: [ItemSlot; MAX_TRADE_SLOT],
+    pub trade_status: TradeStatus,
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -145,7 +146,7 @@ impl Trade {
                 )),
             }),
             ButtonContentType::Text(ButtonContentText {
-                text: "Submit".into(),
+                text: "Confirm".into(),
                 pos: Vec2::new(0.0, 5.0),
                 color: Color::rgba(255, 255, 255, 255),
                 render_layer: 1,
@@ -324,6 +325,7 @@ impl Trade {
             their_money,
             my_items: [ItemSlot::default(); MAX_TRADE_SLOT],
             their_items: [ItemSlot::default(); MAX_TRADE_SLOT],
+            trade_status: TradeStatus::None,
 
             pos,
             size: w_size,
@@ -362,6 +364,7 @@ impl Trade {
         });
         self.money_input.unload(systems);
         systems.gfx.remove_gfx(self.their_money);
+        self.trade_status = TradeStatus::default();
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
@@ -387,6 +390,10 @@ impl Trade {
         });
         self.money_input.set_visible(systems, visible);
         systems.gfx.set_visible(self.their_money, visible);
+        if !visible {
+            self.trade_status = TradeStatus::default();
+            self.button[1].change_text(systems, "Confirm".into());
+        }
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
@@ -731,6 +738,24 @@ impl Trade {
         }
     }
 
+    pub fn find_trade_slot(&mut self, screen_pos: Vec2) -> Option<usize> {
+        for slot in 0..MAX_TRADE_SLOT {
+            let frame_pos = Vec2::new(
+                slot as f32 % MAX_TRADE_X,
+                (slot as f32 / MAX_TRADE_X).floor(),
+            );
+            let slot_pos = Vec2::new(
+                self.pos.x + 10.0 + (37.0 * frame_pos.x),
+                self.pos.y + 262.0 - (37.0 * frame_pos.y),
+            );
+
+            if is_within_area(screen_pos, slot_pos, Vec2::new(32.0, 32.0)) {
+                return Some(slot);
+            }
+        }
+        None
+    }
+
     pub fn update_trade_slot(
         &mut self,
         systems: &mut SystemHolder,
@@ -852,5 +877,17 @@ impl Trade {
         }
 
         item_slot[slot].got_data = true;
+    }
+
+    pub fn update_trade_money(
+        &mut self,
+        systems: &mut SystemHolder,
+        amount: u64,
+    ) {
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            self.their_money,
+            &format!("{}", amount),
+        );
     }
 }

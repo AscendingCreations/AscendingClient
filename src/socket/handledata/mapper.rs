@@ -83,6 +83,8 @@ pub enum ServerPackets {
     UpdateTradeItem,
     UpdateTradeMoney,
     InitTrade,
+    TradeStatus,
+    TradeRequest,
     ServerPacketCount,
 }
 
@@ -304,6 +306,14 @@ impl PacketRouter {
             (
                 ServerPackets::InitTrade,
                 routes::handle_inittrade as PacketFunction,
+            ),
+            (
+                ServerPackets::TradeStatus,
+                routes::handle_tradestatus as PacketFunction,
+            ),
+            (
+                ServerPackets::TradeRequest,
+                routes::handle_traderequest as PacketFunction,
             ),
         ]))
     }

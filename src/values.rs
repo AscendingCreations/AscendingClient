@@ -94,6 +94,25 @@ pub enum IsUsingType {
     Other(i64),
 }
 
+#[derive(
+    PartialEq,
+    Eq,
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    Deserialize,
+    Serialize,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
+pub enum TradeStatus {
+    #[default]
+    None,
+    Accepted,
+    Submitted,
+}
+
 impl IsUsingType {
     pub fn inuse(self) -> bool {
         !matches!(self, IsUsingType::None)

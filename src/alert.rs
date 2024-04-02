@@ -1,8 +1,8 @@
 use crate::{
-    logic::*, send_addtradeitem, send_deposititem, send_dropitem,
-    send_sellitem, send_switchinvslot, send_switchstorageslot,
-    send_withdrawitem, socket, values::*, widget::*, MouseInputType, Result,
-    Socket, SystemHolder,
+    logic::*, send_accepttrade, send_addtradeitem, send_declinetrade,
+    send_deposititem, send_dropitem, send_removetradeitem, send_sellitem,
+    send_switchinvslot, send_switchstorageslot, send_withdrawitem, socket,
+    values::*, widget::*, MouseInputType, Result, Socket, SystemHolder,
 };
 use graphics::{cosmic_text::Attrs, *};
 use winit::event::KeyEvent;
@@ -18,11 +18,13 @@ pub enum AlertIndex {
     None,
     Drop(u16),
     Sell(u16),
-    Trade(u16),
+    AddTradeTradeItem(u16),
+    RemoveTradeItem(u16),
     MergeInv(u16, u16),
     MergeStorage(u16, u16),
     Deposit(u16, u16),
     Withdraw(u16, u16),
+    TradeRequest,
 }
 
 pub struct AlertTextbox {
@@ -518,10 +520,18 @@ impl Alert {
                 match index {
                     #[allow(clippy::match_single_binding)]
                     0 => match self.custom_index {
+                        AlertIndex::TradeRequest => {
+                            send_accepttrade(socket)?;
+                            self.hide_alert(systems);
+                        }
                         _ => self.hide_alert(systems),
                     }, // Yes
                     #[allow(clippy::match_single_binding)]
                     _ => match self.custom_index {
+                        AlertIndex::TradeRequest => {
+                            send_declinetrade(socket)?;
+                            self.hide_alert(systems);
+                        }
                         _ => self.hide_alert(systems),
                     }, // No
                 }
@@ -546,11 +556,18 @@ impl Alert {
                                 send_sellitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
-                            AlertIndex::Trade(slot) => {
+                            AlertIndex::AddTradeTradeItem(slot) => {
                                 let amount = input_text
                                     .parse::<u16>()
                                     .unwrap_or_default();
                                 send_addtradeitem(socket, slot, amount)?;
+                                self.hide_alert(systems);
+                            }
+                            AlertIndex::RemoveTradeItem(slot) => {
+                                let amount = input_text
+                                    .parse::<u64>()
+                                    .unwrap_or_default();
+                                send_removetradeitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::MergeInv(inv_slot, new_slot) => {
