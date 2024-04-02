@@ -1360,13 +1360,66 @@ pub fn handle_tradestatus(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let trade_status = data.read::<TradeStatus>()?;
+    let my_status = data.read::<TradeStatus>()?;
+    let their_status = data.read::<TradeStatus>()?;
 
-    content.game_content.interface.trade.trade_status = trade_status;
+    content.game_content.interface.trade.trade_status = my_status;
 
-    if trade_status == TradeStatus::Accepted {
+    if my_status == TradeStatus::Accepted
+        && their_status == TradeStatus::Accepted
+    {
         content.game_content.interface.trade.button[1]
-            .change_text(systems, "Submit".into());
+            .change_text(systems, "Confirm".into());
+        content.game_content.interface.trade.update_status(
+            systems,
+            "Click the 'Confirm' Button to proceed".into(),
+        );
+    }
+
+    match my_status {
+        TradeStatus::None => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_my_status(systems, "My Trade: Preparing...".into());
+        }
+        TradeStatus::Accepted => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_my_status(systems, "My Trade: Submitted".into());
+        }
+        TradeStatus::Submitted => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_my_status(systems, "My Trade: Confirmed".into());
+        }
+    }
+    match their_status {
+        TradeStatus::None => {
+            content.game_content.interface.trade.update_their_status(
+                systems,
+                "Their Trade: Preparing...".into(),
+            );
+        }
+        TradeStatus::Accepted => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_their_status(systems, "Their Trade: Submitted".into());
+        }
+        TradeStatus::Submitted => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_their_status(systems, "Their Trade: Confirmed".into());
+        }
     }
 
     Ok(())
