@@ -69,7 +69,7 @@ fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
     );
 }
 
-pub fn build_tls_config(certs_path: &str) -> Result<Arc<rustls::ClientConfig>> {
+pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {
     let mut root_store = RootCertStore::empty();
     let ca_cert = load_certs("keys/ca-crt.pem");
     let certs = load_certs("keys/client.crt");

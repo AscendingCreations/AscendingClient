@@ -771,6 +771,7 @@ pub fn release_inv_slot(
         }
     } else if interface.trade.in_window(screen_pos)
         && interface.trade.order_index == 0
+        && interface.trade.trade_status == TradeStatus::None
     {
         if interface.inventory.item_slot[slot].count_data > 1 {
             alert.show_alert(
@@ -779,7 +780,7 @@ pub fn release_inv_slot(
                 String::new(),
                 "Enter the amount to Trade".into(),
                 250,
-                AlertIndex::Trade(slot as u16),
+                AlertIndex::AddTradeTradeItem(slot as u16),
                 true,
             );
         } else {

@@ -5,8 +5,10 @@ use winit::{event::*, keyboard::*};
 
 use crate::{
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
-    send_closestorage, send_closetrade, send_message, widget::*, Alert,
-    GameContent, MouseInputType, Result, Socket, SystemHolder,
+    send_closestorage, send_closetrade, send_message, send_removetradeitem,
+    send_submittrade, send_updatetrademoney, send_useitem, widget::*, Alert,
+    AlertIndex, AlertType, GameContent, MouseInputType, Result, Socket,
+    SystemHolder, TradeStatus,
 };
 use hecs::World;
 
@@ -21,7 +23,7 @@ mod trade;
 
 pub use chatbox::*;
 use inventory::*;
-use profile::*;
+pub use profile::*;
 use screen::*;
 use setting::*;
 use shop::*;
@@ -52,7 +54,7 @@ pub struct Interface {
     pub storage: Storage,
     pub shop: Shop,
     pub trade: Trade,
-    profile: Profile,
+    pub profile: Profile,
     setting: Setting,
     pub chatbox: Chatbox,
     window_order: Vec<(Window, usize)>,
@@ -170,6 +172,17 @@ impl Interface {
                     }
                 }
             }
+            MouseInputType::MouseDoubleLeftDown => {
+                if interface.inventory.visible
+                    && interface.inventory.order_index == 0
+                {
+                    if let Some(slot) =
+                        interface.inventory.find_inv_slot(screen_pos, false)
+                    {
+                        send_useitem(socket, slot as u16)?;
+                    }
+                }
+            }
             MouseInputType::MouseLeftDown => {
                 result = Interface::click_window_buttons(
                     interface, systems, socket, screen_pos,
@@ -194,6 +207,32 @@ impl Interface {
                             true,
                         );
                         result = true;
+                    }
+                }
+
+                if interface.trade.visible
+                    && interface.trade.order_index == 0
+                    && interface.drag_window.is_none()
+                    && interface.trade.trade_status == TradeStatus::None
+                {
+                    if let Some(slot) =
+                        interface.trade.find_trade_slot(screen_pos)
+                    {
+                        if interface.trade.my_items[slot].got_data {
+                            if interface.trade.my_items[slot].count_data > 1 {
+                                alert.show_alert(
+                                    systems,
+                                    AlertType::Input,
+                                    String::new(),
+                                    "Enter the amount to remove".into(),
+                                    250,
+                                    AlertIndex::RemoveTradeItem(slot as u16),
+                                    true,
+                                );
+                            } else {
+                                send_removetradeitem(socket, slot as u16, 1)?;
+                            }
+                        }
                     }
                 }
 
@@ -239,7 +278,7 @@ impl Interface {
                     trigger_chatbox_button(interface, systems, socket, index)?;
                     result = true;
                 }
-                interface.click_textbox(systems, screen_pos);
+                interface.click_textbox(systems, socket, screen_pos)?;
             }
             MouseInputType::MouseLeftDownMove => {
                 if let Some(slot) = interface.inventory.hold_slot {
@@ -572,8 +611,12 @@ impl Interface {
                     send_closetrade(socket)?;
                 }
                 1 => {
-                    interface.trade.button[index]
-                        .change_text(systems, "Confirm".into());
+                    if matches!(
+                        interface.trade.trade_status,
+                        TradeStatus::None | TradeStatus::Accepted
+                    ) {
+                        send_submittrade(socket)?;
+                    }
                 }
                 _ => {}
             }
@@ -620,8 +663,9 @@ impl Interface {
     pub fn click_textbox(
         &mut self,
         systems: &mut SystemHolder,
+        socket: &mut Socket,
         screen_pos: Vec2,
-    ) {
+    ) -> Result<()> {
         if is_within_area(
             screen_pos,
             Vec2::new(self.chatbox.textbox.pos.x, self.chatbox.textbox.pos.y),
@@ -629,7 +673,7 @@ impl Interface {
         ) {
             self.chatbox.textbox.set_select(systems, true);
             self.selected_textbox = SelectedTextbox::Chatbox;
-            return;
+            return Ok(());
         }
 
         if self.trade.visible
@@ -644,7 +688,7 @@ impl Interface {
         {
             self.trade.money_input.set_select(systems, true);
             self.selected_textbox = SelectedTextbox::Trade;
-            return;
+            return Ok(());
         }
 
         match self.selected_textbox {
@@ -652,11 +696,17 @@ impl Interface {
                 self.chatbox.textbox.set_select(systems, false)
             }
             SelectedTextbox::Trade => {
-                self.trade.money_input.set_select(systems, false)
+                self.trade.money_input.set_select(systems, false);
+                if self.trade.trade_status == TradeStatus::None {
+                    let input_text = self.trade.money_input.text.clone();
+                    let amount = input_text.parse::<u64>().unwrap_or_default();
+                    send_updatetrademoney(socket, amount)?;
+                }
             }
             _ => {}
         }
         self.selected_textbox = SelectedTextbox::None;
+        Ok(())
     }
 }
 

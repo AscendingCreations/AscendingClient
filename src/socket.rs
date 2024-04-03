@@ -100,8 +100,8 @@ pub struct Socket {
 
 impl Socket {
     pub fn new(_config: &Config) -> Self {
-        let tls_config = build_tls_config("keys/ca-crt.pem")
-            .expect("Could not create tls config");
+        let tls_config =
+            build_tls_config().expect("Could not create tls config");
 
         Socket {
             client: Client::new("127.0.0.1", 7010, mio::Token(0), tls_config)

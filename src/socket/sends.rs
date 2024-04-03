@@ -42,6 +42,8 @@ enum ClientPacket {
     RemoveTradeItem,
     UpdateTradeMoney,
     SubmitTrade,
+    AcceptTrade,
+    DeclineTrade,
 }
 
 pub fn send_register(
@@ -60,8 +62,7 @@ pub fn send_register(
     buf.write(sprite)?;
     buf.finish()?;
 
-    socket.tls_send(buf);
-    Ok(())
+    socket.tls_send(buf)
 }
 
 pub fn send_login(
@@ -80,8 +81,7 @@ pub fn send_login(
     buf.write(app_version.2)?;
     buf.finish()?;
 
-    socket.tls_send(buf);
-    Ok(())
+    socket.tls_send(buf)
 }
 
 pub fn send_handshake(socket: &mut Socket, handshake: String) -> Result<()> {
@@ -91,8 +91,7 @@ pub fn send_handshake(socket: &mut Socket, handshake: String) -> Result<()> {
     buf.write(handshake)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_move(socket: &mut Socket, dir: u8, pos: Position) -> Result<()> {
@@ -103,8 +102,7 @@ pub fn send_move(socket: &mut Socket, dir: u8, pos: Position) -> Result<()> {
     buf.write(pos)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_dir(socket: &mut Socket, dir: u8) -> Result<()> {
@@ -114,8 +112,7 @@ pub fn send_dir(socket: &mut Socket, dir: u8) -> Result<()> {
     buf.write(dir)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_attack(
@@ -130,24 +127,17 @@ pub fn send_attack(
     buf.write(entity)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
-pub fn send_useitem(
-    socket: &mut Socket,
-    slot: u16,
-    targettype: u8,
-) -> Result<()> {
+pub fn send_useitem(socket: &mut Socket, slot: u16) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::UseItem)?;
     buf.write(slot)?;
-    buf.write(targettype)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_unequip(socket: &mut Socket, slot: u16) -> Result<()> {
@@ -157,8 +147,7 @@ pub fn send_unequip(socket: &mut Socket, slot: u16) -> Result<()> {
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_switchinvslot(
@@ -175,8 +164,7 @@ pub fn send_switchinvslot(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_pickup(socket: &mut Socket) -> Result<()> {
@@ -185,8 +173,7 @@ pub fn send_pickup(socket: &mut Socket) -> Result<()> {
     buf.write(ClientPacket::PickUp)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_dropitem(
@@ -201,8 +188,7 @@ pub fn send_dropitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_deleteitem(socket: &mut Socket, slot: u16) -> Result<()> {
@@ -212,8 +198,7 @@ pub fn send_deleteitem(socket: &mut Socket, slot: u16) -> Result<()> {
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_switchstorageslot(
@@ -230,8 +215,7 @@ pub fn send_switchstorageslot(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_deletestorageitem(socket: &mut Socket, slot: u16) -> Result<()> {
@@ -241,8 +225,7 @@ pub fn send_deletestorageitem(socket: &mut Socket, slot: u16) -> Result<()> {
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_deposititem(
@@ -259,8 +242,7 @@ pub fn send_deposititem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_withdrawitem(
@@ -277,8 +259,7 @@ pub fn send_withdrawitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_message(
@@ -295,8 +276,7 @@ pub fn send_message(
     buf.write(name)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_command(socket: &mut Socket, command: Command) -> Result<()> {
@@ -306,8 +286,7 @@ pub fn send_command(socket: &mut Socket, command: Command) -> Result<()> {
     buf.write(command)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_settarget(
@@ -320,8 +299,7 @@ pub fn send_settarget(
     buf.write(entity)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_closestorage(socket: &mut Socket) -> Result<()> {
@@ -330,8 +308,7 @@ pub fn send_closestorage(socket: &mut Socket) -> Result<()> {
     buf.write(ClientPacket::CloseStorage)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_closeshop(socket: &mut Socket) -> Result<()> {
@@ -340,8 +317,7 @@ pub fn send_closeshop(socket: &mut Socket) -> Result<()> {
     buf.write(ClientPacket::CloseShop)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_closetrade(socket: &mut Socket) -> Result<()> {
@@ -350,8 +326,7 @@ pub fn send_closetrade(socket: &mut Socket) -> Result<()> {
     buf.write(ClientPacket::CloseTrade)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_buyitem(socket: &mut Socket, slot: u16) -> Result<()> {
@@ -361,8 +336,7 @@ pub fn send_buyitem(socket: &mut Socket, slot: u16) -> Result<()> {
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_sellitem(
@@ -377,8 +351,7 @@ pub fn send_sellitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_addtradeitem(
@@ -393,19 +366,22 @@ pub fn send_addtradeitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
-pub fn send_removetradeitem(socket: &mut Socket, slot: u16) -> Result<()> {
+pub fn send_removetradeitem(
+    socket: &mut Socket,
+    slot: u16,
+    amount: u64,
+) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(6)?;
 
     buf.write(ClientPacket::RemoveTradeItem)?;
     buf.write(slot)?;
+    buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_updatetrademoney(socket: &mut Socket, amount: u64) -> Result<()> {
@@ -415,8 +391,7 @@ pub fn send_updatetrademoney(socket: &mut Socket, amount: u64) -> Result<()> {
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
 }
 
 pub fn send_submittrade(socket: &mut Socket) -> Result<()> {
@@ -425,6 +400,23 @@ pub fn send_submittrade(socket: &mut Socket) -> Result<()> {
     buf.write(ClientPacket::SubmitTrade)?;
     buf.finish()?;
 
-    socket.send(buf);
-    Ok(())
+    socket.send(buf)
+}
+
+pub fn send_accepttrade(socket: &mut Socket) -> Result<()> {
+    let mut buf = ByteBuffer::new_packet_with(4)?;
+
+    buf.write(ClientPacket::AcceptTrade)?;
+    buf.finish()?;
+
+    socket.send(buf)
+}
+
+pub fn send_declinetrade(socket: &mut Socket) -> Result<()> {
+    let mut buf = ByteBuffer::new_packet_with(4)?;
+
+    buf.write(ClientPacket::DeclineTrade)?;
+    buf.finish()?;
+
+    socket.send(buf)
 }

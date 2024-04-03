@@ -6,9 +6,10 @@ use crate::{
     fade::*,
     get_percent, get_start_map_pos, is_map_connected, npc_finalized,
     open_interface, send_handshake, set_npc_frame, unload_mapitems, unload_npc,
-    update_camera, Alert, BufferTask, ChatTask, Content, EncryptionState,
-    EntityType, FtlType, IsUsingType, MapItem, MessageChannel, Position,
-    Result, Socket, SystemHolder, Window, NPC_SPRITE_FRAME_X, VITALS_MAX,
+    update_camera, Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
+    EncryptionState, EntityType, FtlType, IsUsingType, MapItem, MessageChannel,
+    Position, Result, Socket, SystemHolder, TradeStatus, Window,
+    NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -119,7 +120,7 @@ pub fn handle_ingame(
     _socket: &mut Socket,
     _world: &mut World,
     _systems: &mut SystemHolder,
-    content: &mut Content,
+    _content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
@@ -1341,14 +1342,20 @@ pub fn handle_updatetradeitem(
 pub fn handle_updatetrademoney(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let _ = data.read::<u16>()?;
+    let amount = data.read::<u64>()?;
+
+    content
+        .game_content
+        .interface
+        .trade
+        .update_trade_money(systems, amount);
 
     Ok(())
 }
@@ -1373,6 +1380,111 @@ pub fn handle_inittrade(
         .interface
         .trade
         .clear_trade_items(systems);
+
+    Ok(())
+}
+
+pub fn handle_tradestatus(
+    _socket: &mut Socket,
+    _world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    let my_status = data.read::<TradeStatus>()?;
+    let their_status = data.read::<TradeStatus>()?;
+
+    content.game_content.interface.trade.trade_status = my_status;
+
+    if my_status == TradeStatus::Accepted
+        && their_status == TradeStatus::Accepted
+    {
+        content.game_content.interface.trade.button[1]
+            .change_text(systems, "Confirm".into());
+        content.game_content.interface.trade.update_status(
+            systems,
+            "Click the 'Confirm' Button to proceed".into(),
+        );
+    }
+
+    match my_status {
+        TradeStatus::None => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_my_status(systems, "My Trade: Preparing...".into());
+        }
+        TradeStatus::Accepted => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_my_status(systems, "My Trade: Submitted".into());
+        }
+        TradeStatus::Submitted => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_my_status(systems, "My Trade: Confirmed".into());
+        }
+    }
+    match their_status {
+        TradeStatus::None => {
+            content.game_content.interface.trade.update_their_status(
+                systems,
+                "Their Trade: Preparing...".into(),
+            );
+        }
+        TradeStatus::Accepted => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_their_status(systems, "Their Trade: Submitted".into());
+        }
+        TradeStatus::Submitted => {
+            content
+                .game_content
+                .interface
+                .trade
+                .update_their_status(systems, "Their Trade: Confirmed".into());
+        }
+    }
+
+    Ok(())
+}
+
+pub fn handle_traderequest(
+    _socket: &mut Socket,
+    world: &mut World,
+    systems: &mut SystemHolder,
+    _content: &mut Content,
+    alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    let entity = data.read::<Entity>()?;
+    if !world.contains(entity.0) {
+        return Ok(());
+    }
+
+    let name = world.cloned_get_or_err::<EntityName>(&entity)?.0;
+
+    alert.show_alert(
+        systems,
+        AlertType::Confirm,
+        "Would you like to accept this trade request?".into(),
+        format!("{name} would like to trade with you"),
+        250,
+        AlertIndex::TradeRequest,
+        false,
+    );
 
     Ok(())
 }

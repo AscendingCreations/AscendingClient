@@ -2,12 +2,22 @@ use graphics::*;
 
 use crate::{is_within_area, logic::*, values::*, widget::*, SystemHolder};
 
+pub enum ProfileLabel {
+    Level,
+    Money,
+    Damage,
+    Defense,
+}
+
 pub struct Profile {
     pub visible: bool,
     bg: usize,
     header: usize,
     header_text: usize,
     button: Vec<Button>,
+    fixed_label: Vec<usize>,
+    value_label: Vec<usize>,
+    slot: [usize; MAX_EQPT],
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -109,12 +119,111 @@ impl Profile {
         );
         button.push(close_button);
 
+        let mut slot = [0; MAX_EQPT];
+        for (i, slot) in slot.iter_mut().enumerate() {
+            let mut box_rect = Rect::new(&mut systems.renderer, 0);
+            box_rect
+                .set_position(Vec3::new(
+                    w_pos.x + 10.0 + (37.0 * i as f32),
+                    w_pos.y + 10.0,
+                    detail_1,
+                ))
+                .set_size(Vec2::new(32.0, 32.0))
+                .set_color(Color::rgba(200, 200, 200, 255));
+            *slot = systems.gfx.add_rect(box_rect, 0);
+            systems.gfx.set_visible(*slot, false);
+        }
+
+        let mut fixed_label = Vec::with_capacity(5);
+        for index in 0..5 {
+            let (pos, size, msg) = match index {
+                0 => (
+                    Vec3::new(
+                        w_pos.x + 10.0,
+                        w_pos.y + w_size.y - 55.0,
+                        detail_1,
+                    ),
+                    Vec2::new(100.0, 20.0),
+                    "Level",
+                ),
+                1 => (
+                    Vec3::new(
+                        w_pos.x + 10.0,
+                        w_pos.y + w_size.y - 80.0,
+                        detail_1,
+                    ),
+                    Vec2::new(100.0, 20.0),
+                    "Money",
+                ),
+                2 => (
+                    Vec3::new(
+                        w_pos.x + 10.0,
+                        w_pos.y + w_size.y - 105.0,
+                        detail_1,
+                    ),
+                    Vec2::new(100.0, 20.0),
+                    "Damage",
+                ),
+                3 => (
+                    Vec3::new(
+                        w_pos.x + 10.0,
+                        w_pos.y + w_size.y - 130.0,
+                        detail_1,
+                    ),
+                    Vec2::new(100.0, 20.0),
+                    "Defense",
+                ),
+                _ => (
+                    Vec3::new(w_pos.x + 10.0, w_pos.y + 47.0, detail_1),
+                    Vec2::new(100.0, 20.0),
+                    "Equipment",
+                ),
+            };
+            let text = create_label(
+                systems,
+                pos,
+                size,
+                Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+                Color::rgba(200, 200, 200, 255),
+            );
+            let label = systems.gfx.add_text(text, 1);
+            systems.gfx.set_text(&mut systems.renderer, label, msg);
+            systems.gfx.set_visible(label, false);
+            fixed_label.push(label);
+        }
+
+        let mut value_label = Vec::with_capacity(4);
+        for index in 0..4 {
+            let (pos, size) = (
+                Vec3::new(
+                    w_pos.x + 90.0,
+                    w_pos.y + w_size.y - (55.0 + (25.0 * index as f32)),
+                    detail_1,
+                ),
+                Vec2::new(100.0, 20.0),
+            );
+            let text = create_label(
+                systems,
+                pos,
+                size,
+                Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+                Color::rgba(200, 200, 200, 255),
+            );
+            let label = systems.gfx.add_text(text, 1);
+            systems.gfx.set_text(&mut systems.renderer, label, "0");
+            systems.gfx.set_visible(label, false);
+            value_label.push(label);
+        }
+
         Profile {
             visible: false,
             bg,
             header,
             header_text,
             button,
+            fixed_label,
+            value_label,
+            slot,
 
             pos,
             size: w_size,
@@ -142,6 +251,12 @@ impl Profile {
             button.unload(systems);
         });
         self.button.clear();
+        self.slot.iter().for_each(|slot| {
+            systems.gfx.remove_gfx(*slot);
+        });
+        self.fixed_label.iter().for_each(|label| {
+            systems.gfx.remove_gfx(*label);
+        });
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
@@ -155,7 +270,16 @@ impl Profile {
         systems.gfx.set_visible(self.header_text, visible);
         self.button.iter_mut().for_each(|button| {
             button.set_visible(systems, visible);
-        })
+        });
+        self.slot.iter().for_each(|slot| {
+            systems.gfx.set_visible(*slot, visible);
+        });
+        self.fixed_label.iter().for_each(|label| {
+            systems.gfx.set_visible(*label, visible);
+        });
+        self.value_label.iter().for_each(|label| {
+            systems.gfx.set_visible(*label, visible);
+        });
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
@@ -216,6 +340,23 @@ impl Profile {
         self.button.iter_mut().for_each(|button| {
             button.set_z_order(systems, detail_2);
         });
+
+        for i in 0..MAX_EQPT {
+            let mut pos = systems.gfx.get_pos(self.slot[i]);
+            pos.z = detail_1;
+            systems.gfx.set_pos(self.slot[i], pos);
+        }
+
+        self.fixed_label.iter().for_each(|label| {
+            let mut pos = systems.gfx.get_pos(*label);
+            pos.z = detail_1;
+            systems.gfx.set_pos(*label, pos);
+        });
+        self.value_label.iter().for_each(|label| {
+            let mut pos = systems.gfx.get_pos(*label);
+            pos.z = detail_1;
+            systems.gfx.set_pos(*label, pos);
+        });
     }
 
     pub fn move_window(
@@ -260,6 +401,89 @@ impl Profile {
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
         });
+
+        for i in 0..MAX_EQPT {
+            let slot_pos = Vec2::new(
+                self.pos.x + 10.0 + (37.0 * i as f32),
+                self.pos.y + 10.0,
+            );
+
+            let pos = systems.gfx.get_pos(self.slot[i]);
+            systems.gfx.set_pos(
+                self.slot[i],
+                Vec3::new(slot_pos.x, slot_pos.y, pos.z),
+            );
+        }
+
+        for index in 0..5 {
+            let spos = systems.gfx.get_pos(self.fixed_label[index]);
+            let (pos, size) = match index {
+                0 => (
+                    Vec3::new(
+                        self.pos.x + 10.0,
+                        self.pos.y + self.size.y - 55.0,
+                        spos.z,
+                    ),
+                    Vec2::new(100.0, 20.0),
+                ),
+                1 => (
+                    Vec3::new(
+                        self.pos.x + 10.0,
+                        self.pos.y + self.size.y - 80.0,
+                        spos.z,
+                    ),
+                    Vec2::new(100.0, 20.0),
+                ),
+                2 => (
+                    Vec3::new(
+                        self.pos.x + 10.0,
+                        self.pos.y + self.size.y - 105.0,
+                        spos.z,
+                    ),
+                    Vec2::new(100.0, 20.0),
+                ),
+                3 => (
+                    Vec3::new(
+                        self.pos.x + 10.0,
+                        self.pos.y + self.size.y - 130.0,
+                        spos.z,
+                    ),
+                    Vec2::new(100.0, 20.0),
+                ),
+                _ => (
+                    Vec3::new(self.pos.x + 10.0, self.pos.y + 47.0, spos.z),
+                    Vec2::new(100.0, 20.0),
+                ),
+            };
+            systems.gfx.set_pos(
+                self.fixed_label[index],
+                Vec3::new(pos.x, pos.y, pos.z),
+            );
+            systems.gfx.set_bound(
+                self.fixed_label[index],
+                Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+            );
+        }
+
+        for index in 0..4 {
+            let spos = systems.gfx.get_pos(self.value_label[index]);
+            let (pos, size) = (
+                Vec3::new(
+                    self.pos.x + 90.0,
+                    self.pos.y + self.size.y - (55.0 + (25.0 * index as f32)),
+                    spos.z,
+                ),
+                Vec2::new(100.0, 20.0),
+            );
+            systems.gfx.set_pos(
+                self.value_label[index],
+                Vec3::new(pos.x, pos.y, pos.z),
+            );
+            systems.gfx.set_bound(
+                self.value_label[index],
+                Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+            );
+        }
     }
 
     pub fn hover_buttons(
@@ -322,5 +546,24 @@ impl Profile {
         self.button.iter_mut().for_each(|button| {
             button.set_click(systems, false);
         });
+    }
+
+    pub fn set_profile_label_value(
+        &mut self,
+        systems: &mut SystemHolder,
+        label: ProfileLabel,
+        value: u64,
+    ) {
+        let label_index = match label {
+            ProfileLabel::Level => 0,
+            ProfileLabel::Money => 1,
+            ProfileLabel::Damage => 2,
+            ProfileLabel::Defense => 3,
+        };
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            self.value_label[label_index],
+            &format!("{value}"),
+        );
     }
 }
