@@ -6,9 +6,9 @@ use winit::{event::*, keyboard::*};
 use crate::{
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
     send_closestorage, send_closetrade, send_message, send_removetradeitem,
-    send_submittrade, send_updatetrademoney, widget::*, Alert, AlertIndex,
-    AlertType, GameContent, MouseInputType, Result, Socket, SystemHolder,
-    TradeStatus,
+    send_submittrade, send_updatetrademoney, send_useitem, widget::*, Alert,
+    AlertIndex, AlertType, GameContent, MouseInputType, Result, Socket,
+    SystemHolder, TradeStatus,
 };
 use hecs::World;
 
@@ -23,7 +23,7 @@ mod trade;
 
 pub use chatbox::*;
 use inventory::*;
-use profile::*;
+pub use profile::*;
 use screen::*;
 use setting::*;
 use shop::*;
@@ -54,7 +54,7 @@ pub struct Interface {
     pub storage: Storage,
     pub shop: Shop,
     pub trade: Trade,
-    profile: Profile,
+    pub profile: Profile,
     setting: Setting,
     pub chatbox: Chatbox,
     window_order: Vec<(Window, usize)>,
@@ -169,6 +169,17 @@ impl Interface {
                         interface.shop.item_scroll.set_hover(systems, true);
                     } else {
                         interface.shop.item_scroll.set_hover(systems, false);
+                    }
+                }
+            }
+            MouseInputType::MouseDoubleLeftDown => {
+                if interface.inventory.visible
+                    && interface.inventory.order_index == 0
+                {
+                    if let Some(slot) =
+                        interface.inventory.find_inv_slot(screen_pos, false)
+                    {
+                        send_useitem(socket, slot as u16)?;
                     }
                 }
             }

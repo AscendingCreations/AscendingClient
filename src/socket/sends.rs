@@ -124,16 +124,11 @@ pub fn send_attack(
     Ok(())
 }
 
-pub fn send_useitem(
-    socket: &mut Socket,
-    slot: u16,
-    targettype: u8,
-) -> Result<()> {
+pub fn send_useitem(socket: &mut Socket, slot: u16) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
     buf.write(ClientPacket::UseItem)?;
     buf.write(slot)?;
-    buf.write(targettype)?;
     buf.finish()?;
 
     socket.send(buf);

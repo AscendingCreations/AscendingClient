@@ -80,6 +80,12 @@ enum Axis {
     Pitch,
 }
 
+enum MouseEvent {
+    None,
+    Click,
+    Release,
+}
+
 // creates a static global logger type for setting the logger
 static MY_LOGGER: MyLogger = MyLogger(Level::Debug);
 
@@ -329,8 +335,16 @@ async fn main() -> Result<()> {
     // TEMP
     systems.audio.set_music("./audio/caves.ogg")?;
 
+    let mut last_click_time = 0.0f32;
+    let mut click_counter = 0usize;
+    let mut process_click = false;
+    let mut got_click = false;
+
     #[allow(deprecated)]
     event_loop.run(move |event, elwt| {
+        frame_time.update();
+        let seconds = frame_time.seconds();
+
         // we check for the first batch of events to ensure we dont need to stop rendering here first.
         match event {
             Event::WindowEvent {
@@ -383,31 +397,13 @@ async fn main() -> Result<()> {
                 }
                 WindowEvent::MouseInput { state, .. } => match state {
                     ElementState::Pressed => {
-                        handle_mouse_input(
-                            &mut world,
-                            &mut systems,
-                            &mut socket,
-                            MouseInputType::MouseLeftDown,
-                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                            &mut content,
-                            &mut alert,
-                            &mut tooltip,
-                        )
-                        .unwrap();
+                        click_counter += 1;
+                        process_click = false;
+                        last_click_time = seconds;
                         mouse_press = true;
+                        got_click = true;
                     }
                     ElementState::Released => {
-                        handle_mouse_input(
-                            &mut world,
-                            &mut systems,
-                            &mut socket,
-                            MouseInputType::MouseRelease,
-                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                            &mut content,
-                            &mut alert,
-                            &mut tooltip,
-                        )
-                        .unwrap();
                         mouse_press = false;
                     }
                 },
@@ -417,6 +413,62 @@ async fn main() -> Result<()> {
                 systems.renderer.window().request_redraw();
             }
             _ => {}
+        }
+
+        if click_counter > 0 && !process_click {
+            let time_since_last_click = seconds - last_click_time;
+            let mouseinputtype = if click_counter > 1 {
+                MouseInputType::MouseDoubleLeftDown
+            } else {
+                MouseInputType::MouseLeftDown
+            };
+
+            let mut mouse_event = MouseEvent::None;
+            if time_since_last_click > 0.1 && time_since_last_click < 0.18 {
+                if mouse_press && got_click {
+                    mouse_event = MouseEvent::Click;
+                    got_click = false;
+                }
+            } else if time_since_last_click > 0.18 {
+                if got_click {
+                    mouse_event = MouseEvent::Click;
+                    got_click = false;
+                } else if !mouse_press {
+                    mouse_event = MouseEvent::Release;
+                    click_counter = 0;
+                    process_click = true;
+                }
+            }
+
+            match mouse_event {
+                MouseEvent::Click => {
+                    handle_mouse_input(
+                        &mut world,
+                        &mut systems,
+                        &mut socket,
+                        mouseinputtype,
+                        &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                        &mut content,
+                        &mut alert,
+                        &mut tooltip,
+                    )
+                    .unwrap();
+                }
+                MouseEvent::Release => {
+                    handle_mouse_input(
+                        &mut world,
+                        &mut systems,
+                        &mut socket,
+                        MouseInputType::MouseRelease,
+                        &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                        &mut content,
+                        &mut alert,
+                        &mut tooltip,
+                    )
+                    .unwrap();
+                }
+                _ => {}
+            }
         }
 
         // update our inputs.
@@ -445,9 +497,6 @@ async fn main() -> Result<()> {
 
             systems.renderer.update_depth_texture();
         }
-
-        frame_time.update();
-        let seconds = frame_time.seconds();
 
         // Game Loop
         game_loop(

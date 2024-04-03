@@ -52,6 +52,7 @@ pub struct GameContent {
     pub target: Target,
     pub pick_up_timer: f32,
     pub is_using_type: IsUsingType,
+    pub player_money: u64,
 }
 
 impl GameContent {
@@ -70,6 +71,7 @@ impl GameContent {
             target: Target::new(systems),
             pick_up_timer: 0.0,
             is_using_type: IsUsingType::None,
+            player_money: 0,
         }
     }
 
@@ -158,6 +160,29 @@ impl GameContent {
                     .update_storage_slot(systems, index, item);
             },
         );
+
+        if let Some(myindex) = self.myentity {
+            self.interface.profile.set_profile_label_value(
+                systems,
+                ProfileLabel::Level,
+                world.get_or_err::<Level>(&myindex)?.0 as u64,
+            );
+            self.interface.profile.set_profile_label_value(
+                systems,
+                ProfileLabel::Money,
+                self.player_money,
+            );
+            self.interface.profile.set_profile_label_value(
+                systems,
+                ProfileLabel::Damage,
+                world.get_or_err::<Physical>(&myindex)?.damage as u64,
+            );
+            self.interface.profile.set_profile_label_value(
+                systems,
+                ProfileLabel::Defense,
+                world.get_or_err::<Physical>(&myindex)?.defense as u64,
+            );
+        }
 
         self.finalized = true;
         Ok(())
