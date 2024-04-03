@@ -560,6 +560,19 @@ pub fn handle_playervitals(
                     systems
                         .gfx
                         .set_visible(hpbar.bg_index, vitals[0] != vitalmax[0]);
+
+                    content.game_content.interface.vitalbar.update_bar_size(
+                        systems,
+                        0,
+                        vitals[0],
+                        vitalmax[0],
+                    );
+                    content.game_content.interface.vitalbar.update_bar_size(
+                        systems,
+                        1,
+                        vitals[2],
+                        vitalmax[2],
+                    );
                 }
             }
         }

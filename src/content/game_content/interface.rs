@@ -49,6 +49,7 @@ pub enum SelectedTextbox {
 
 pub struct Interface {
     menu_button: [Button; 3],
+    pub vitalbar: VitalBar,
     did_button_click: bool,
     pub inventory: Inventory,
     pub storage: Storage,
@@ -68,6 +69,7 @@ impl Interface {
 
         let mut interface = Interface {
             menu_button,
+            vitalbar: VitalBar::new(systems),
             did_button_click: false,
             inventory: Inventory::new(systems),
             storage: Storage::new(systems),
@@ -99,6 +101,7 @@ impl Interface {
 
     pub fn recreate(&mut self, systems: &mut SystemHolder) {
         self.menu_button = create_menu_button(systems);
+        self.vitalbar = VitalBar::new(systems);
         self.inventory = Inventory::new(systems);
         self.profile = Profile::new(systems);
         self.setting = Setting::new(systems);
@@ -116,6 +119,7 @@ impl Interface {
         self.menu_button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
+        self.vitalbar.unload(systems);
         self.inventory.unload(systems);
         self.profile.unload(systems);
         self.setting.unload(systems);

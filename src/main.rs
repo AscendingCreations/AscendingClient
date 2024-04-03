@@ -292,7 +292,8 @@ async fn main() -> Result<()> {
     );
 
     // create a Text rendering object.
-    let txt_pos = Vec2::new(5.0, systems.size.height - 25.0);
+    let txt_pos =
+        Vec2::new(systems.size.width - 80.0, systems.size.height - 25.0);
     let txt = create_label(
         &mut systems,
         Vec3::new(txt_pos.x, txt_pos.y, 0.0),
