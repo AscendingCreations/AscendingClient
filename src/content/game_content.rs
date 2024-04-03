@@ -53,7 +53,6 @@ pub struct GameContent {
     pub target: Target,
     pub pick_up_timer: f32,
     pub is_using_type: IsUsingType,
-    pub player_money: u64,
 }
 
 impl GameContent {
@@ -73,7 +72,6 @@ impl GameContent {
             target: Target::new(systems),
             pick_up_timer: 0.0,
             is_using_type: IsUsingType::None,
-            player_money: 0,
         }
     }
 
@@ -172,17 +170,39 @@ impl GameContent {
             self.interface.profile.set_profile_label_value(
                 systems,
                 ProfileLabel::Money,
-                self.player_money,
+                self.player_data.player_money,
             );
+            let damage = world
+                .get_or_err::<Physical>(&myindex)?
+                .damage
+                .saturating_add(
+                    player_get_weapon_damage(world, systems, &myindex)?.0
+                        as u32,
+                );
             self.interface.profile.set_profile_label_value(
                 systems,
                 ProfileLabel::Damage,
-                world.get_or_err::<Physical>(&myindex)?.damage as u64,
+                damage as u64,
             );
+            let defense = world
+                .get_or_err::<Physical>(&myindex)?
+                .defense
+                .saturating_add(
+                    player_get_armor_defense(world, systems, &myindex)?.0
+                        as u32,
+                );
             self.interface.profile.set_profile_label_value(
                 systems,
                 ProfileLabel::Defense,
-                world.get_or_err::<Physical>(&myindex)?.defense as u64,
+                defense as u64,
+            );
+        }
+
+        for i in 0..MAX_EQPT {
+            self.interface.profile.update_equipment_slot(
+                systems,
+                i,
+                &self.player_data.equipment[i],
             );
         }
 

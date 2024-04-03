@@ -1,6 +1,8 @@
 use graphics::*;
 
-use crate::{is_within_area, logic::*, values::*, widget::*, SystemHolder};
+use crate::{
+    entity::Item, is_within_area, logic::*, values::*, widget::*, SystemHolder,
+};
 
 pub enum ProfileLabel {
     Level,
@@ -18,11 +20,12 @@ pub struct Profile {
     fixed_label: Vec<usize>,
     value_label: Vec<usize>,
     slot: [usize; MAX_EQPT],
+    eq_img: [Option<usize>; MAX_EQPT],
 
     pub pos: Vec2,
     pub size: Vec2,
     pub z_order: f32,
-    order_index: usize,
+    pub order_index: usize,
     in_hold: bool,
     hold_pos: Vec2,
     header_pos: Vec2,
@@ -224,6 +227,7 @@ impl Profile {
             fixed_label,
             value_label,
             slot,
+            eq_img: [None; MAX_EQPT],
 
             pos,
             size: w_size,
@@ -254,6 +258,12 @@ impl Profile {
         self.slot.iter().for_each(|slot| {
             systems.gfx.remove_gfx(*slot);
         });
+        for i in 0..MAX_EQPT {
+            if let Some(img) = self.eq_img[i] {
+                systems.gfx.remove_gfx(img);
+            }
+            self.eq_img[i] = None;
+        }
         self.fixed_label.iter().for_each(|label| {
             systems.gfx.remove_gfx(*label);
         });
@@ -273,6 +283,11 @@ impl Profile {
         });
         self.slot.iter().for_each(|slot| {
             systems.gfx.set_visible(*slot, visible);
+        });
+        self.eq_img.iter().for_each(|slot| {
+            if let Some(img) = slot {
+                systems.gfx.set_visible(*img, visible);
+            }
         });
         self.fixed_label.iter().for_each(|label| {
             systems.gfx.set_visible(*label, visible);
@@ -345,6 +360,12 @@ impl Profile {
             let mut pos = systems.gfx.get_pos(self.slot[i]);
             pos.z = detail_1;
             systems.gfx.set_pos(self.slot[i], pos);
+
+            if let Some(img) = self.eq_img[i] {
+                let mut pos = systems.gfx.get_pos(img);
+                pos.z = detail_2;
+                systems.gfx.set_pos(img, pos);
+            }
         }
 
         self.fixed_label.iter().for_each(|label| {
@@ -413,6 +434,14 @@ impl Profile {
                 self.slot[i],
                 Vec3::new(slot_pos.x, slot_pos.y, pos.z),
             );
+
+            if let Some(img) = self.eq_img[i] {
+                let pos = systems.gfx.get_pos(img);
+                systems.gfx.set_pos(
+                    img,
+                    Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, pos.z),
+                );
+            }
         }
 
         for index in 0..5 {
@@ -548,6 +577,35 @@ impl Profile {
         });
     }
 
+    pub fn find_eq_slot(
+        &mut self,
+        screen_pos: Vec2,
+        check_empty: bool,
+    ) -> Option<usize> {
+        for slot in 0..MAX_EQPT {
+            let can_proceed = if self.eq_img[slot].is_some() {
+                true
+            } else {
+                check_empty
+            };
+            if can_proceed {
+                let slot_pos = Vec2::new(
+                    self.pos.x + 10.0 + (37.0 * slot as f32),
+                    self.pos.y + 10.0,
+                );
+
+                if screen_pos.x >= slot_pos.x
+                    && screen_pos.x <= slot_pos.x + 32.0
+                    && screen_pos.y >= slot_pos.y
+                    && screen_pos.y <= slot_pos.y + 32.0
+                {
+                    return Some(slot);
+                }
+            }
+        }
+        None
+    }
+
     pub fn set_profile_label_value(
         &mut self,
         systems: &mut SystemHolder,
@@ -565,5 +623,44 @@ impl Profile {
             self.value_label[label_index],
             &format!("{value}"),
         );
+    }
+
+    pub fn update_equipment_slot(
+        &mut self,
+        systems: &mut SystemHolder,
+        slot: usize,
+        item: &Item,
+    ) {
+        if let Some(img) = self.eq_img[slot] {
+            systems.gfx.remove_gfx(img);
+        }
+
+        if item.val == 0 {
+            self.eq_img[slot] = None;
+            return;
+        }
+
+        let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
+        let z_order = detail_origin.sub_f32(0.002, 3);
+
+        let slot_pos = Vec2::new(
+            self.pos.x + 10.0 + (37.0 * slot as f32),
+            self.pos.y + 10.0,
+        );
+
+        let item_sprite = systems.base.item[item.num as usize].sprite;
+
+        let mut img = Image::new(
+            Some(systems.resource.items[item_sprite as usize].allocation),
+            &mut systems.renderer,
+            0,
+        );
+        img.hw = Vec2::new(20.0, 20.0);
+        img.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
+        img.pos = Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, z_order);
+        let eq_img = systems.gfx.add_image(img, 0);
+        systems.gfx.set_visible(eq_img, self.visible);
+
+        self.eq_img[slot] = Some(eq_img);
     }
 }

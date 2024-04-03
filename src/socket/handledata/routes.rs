@@ -5,11 +5,12 @@ use crate::{
     entity::*,
     fade::*,
     get_percent, get_start_map_pos, is_map_connected, npc_finalized,
-    open_interface, send_handshake, set_npc_frame, unload_mapitems, unload_npc,
-    update_camera, Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
+    open_interface, player_get_armor_defense, player_get_weapon_damage,
+    send_handshake, set_npc_frame, unload_mapitems, unload_npc, update_camera,
+    Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
     EncryptionState, EntityType, FtlType, IsUsingType, MapItem, MessageChannel,
-    Position, Result, Socket, SystemHolder, TradeStatus, Window,
-    NPC_SPRITE_FRAME_X, VITALS_MAX,
+    Position, ProfileLabel, Result, Socket, SystemHolder, TradeStatus, Window,
+    MAX_EQPT, NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -248,6 +249,8 @@ pub fn handle_playerdata(
             content.game_content.players.insert(player);
             content.game_content.in_game = true;
         }
+
+        content.game_content.player_data.equipment = equipment.items.clone();
 
         {
             world.get::<&mut EntityName>(entity.0)?.0 = username;
@@ -701,14 +704,72 @@ pub fn handle_playerattack(
 
 pub fn handle_playerequipment(
     _socket: &mut Socket,
-    _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
+    world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
+    let entity = data.read::<Entity>()?;
+    let equipment = data.read::<Equipment>()?;
+
+    {
+        *world.get::<&mut Equipment>(entity.0)? = equipment.clone();
+    }
+
+    if let Some(myentity) = content.game_content.myentity {
+        if myentity == entity {
+            for i in 0..MAX_EQPT {
+                if content.game_content.player_data.equipment[i]
+                    != equipment.items[i]
+                {
+                    content
+                        .game_content
+                        .interface
+                        .profile
+                        .update_equipment_slot(systems, i, &equipment.items[i]);
+                    content.game_content.player_data.equipment[i] =
+                        equipment.items[i];
+                }
+            }
+
+            let damage = world
+                .get_or_err::<Physical>(&myentity)?
+                .damage
+                .saturating_add(
+                    player_get_weapon_damage(world, systems, &myentity)?.0
+                        as u32,
+                );
+            content
+                .game_content
+                .interface
+                .profile
+                .set_profile_label_value(
+                    systems,
+                    ProfileLabel::Damage,
+                    damage as u64,
+                );
+            let defense = world
+                .get_or_err::<Physical>(&myentity)?
+                .defense
+                .saturating_add(
+                    player_get_armor_defense(world, systems, &myentity)?.0
+                        as u32,
+                );
+            content
+                .game_content
+                .interface
+                .profile
+                .set_profile_label_value(
+                    systems,
+                    ProfileLabel::Defense,
+                    defense as u64,
+                );
+        }
+    }
+
     Ok(())
 }
 

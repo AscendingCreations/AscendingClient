@@ -125,6 +125,26 @@ impl IsUsingType {
     Debug,
     PartialEq,
     Eq,
+    Serialize,
+    Deserialize,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
+pub enum EquipmentType {
+    Weapon,
+    Helmet,
+    Chest,
+    Pants,
+    Accessory,
+    Count,
+} //5
+
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
     Deserialize,
     Serialize,
     ByteBufferRead,

@@ -6,9 +6,9 @@ use winit::{event::*, keyboard::*};
 use crate::{
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
     send_closestorage, send_closetrade, send_message, send_removetradeitem,
-    send_submittrade, send_updatetrademoney, send_useitem, widget::*, Alert,
-    AlertIndex, AlertType, GameContent, MouseInputType, Result, Socket,
-    SystemHolder, TradeStatus,
+    send_submittrade, send_unequip, send_updatetrademoney, send_useitem,
+    widget::*, Alert, AlertIndex, AlertType, GameContent, MouseInputType,
+    Result, Socket, SystemHolder, TradeStatus,
 };
 use hecs::World;
 
@@ -180,6 +180,16 @@ impl Interface {
                         interface.inventory.find_inv_slot(screen_pos, false)
                     {
                         send_useitem(socket, slot as u16)?;
+                    }
+                }
+
+                if interface.profile.visible
+                    && interface.profile.order_index == 0
+                {
+                    if let Some(slot) =
+                        interface.profile.find_eq_slot(screen_pos, false)
+                    {
+                        send_unequip(socket, slot as u16)?;
                     }
                 }
             }
