@@ -32,6 +32,7 @@ pub enum ServerPackets {
     Status,
     AlertMsg,
     FltAlert,
+    HandShake,
     LoginOk,
     Ingame,
     UpdateMap,
@@ -304,6 +305,10 @@ impl PacketRouter {
             (
                 ServerPackets::InitTrade,
                 routes::handle_inittrade as PacketFunction,
+            ),
+            (
+                ServerPackets::HandShake,
+                routes::handle_handshake as PacketFunction,
             ),
         ]))
     }

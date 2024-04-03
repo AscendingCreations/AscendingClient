@@ -4,6 +4,7 @@ use mio::net::TcpStream;
 use mio::{Events, Interest, Poll};
 use pki_types::ServerName;
 use serde::{Deserialize, Serialize};
+use std::collections::VecDeque;
 use std::convert::TryFrom;
 use std::io::{self, Read, Write};
 use std::net::ToSocketAddrs;
@@ -78,15 +79,28 @@ impl SocketPollState {
     }
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum EncryptionState {
+    /// Send Unencrypted packets only.
+    None,
+    /// Send Encrypted for both read and write.
+    ReadWrite,
+    ///Migrating from encrypted to unencrypted after the last send.
+    ///Read will start to read unencrypted traffic at this point.
+    ///Only call this when we send the last nagotiation packet.
+    WriteTransfering,
+}
+
 pub struct Socket {
     pub client: Client,
     pub poll: mio::Poll,
     pub buffer: ByteBuffer,
+    pub encrypt_state: EncryptionState,
 }
 
 impl Socket {
     pub fn new(_config: &Config) -> Self {
-        let tls_config = build_tls_config("keys/ca.pem")
+        let tls_config = build_tls_config("keys/ca-crt.pem")
             .expect("Could not create tls config");
 
         Socket {
@@ -96,6 +110,7 @@ impl Socket {
 
             buffer: ByteBuffer::new_packet_with(8192)
                 .expect("Could not create buffer"),
+            encrypt_state: EncryptionState::ReadWrite,
         }
     }
 
@@ -111,11 +126,31 @@ impl Socket {
         self.client.poll_state.set(SocketPollState::Read);
 
         if event.is_readable() {
-            self.read()?;
+            if matches!(self.encrypt_state, EncryptionState::ReadWrite) {
+                self.tls_read()?;
+            } else {
+                self.read()?;
+            }
         }
 
         if event.is_writable() {
-            self.write();
+            if matches!(
+                self.encrypt_state,
+                EncryptionState::WriteTransfering | EncryptionState::ReadWrite
+            ) {
+                self.tls_write();
+            } else {
+                self.write();
+            }
+        }
+
+        if self.encrypt_state == EncryptionState::WriteTransfering
+            && self.client.tls_sends.is_empty()
+        {
+            self.client.tls_sends = VecDeque::new();
+            self.encrypt_state = EncryptionState::None;
+        } else {
+            self.client.poll_state.add(SocketPollState::Write);
         }
 
         match self.client.state {
@@ -126,6 +161,63 @@ impl Socket {
             _ => self.reregister()?,
         }
 
+        Ok(())
+    }
+
+    fn tls_read(&mut self) -> Result<()> {
+        let pos = self.buffer.cursor();
+        self.buffer.move_cursor_to_end();
+
+        loop {
+            match self.client.tls.read_tls(&mut self.client.socket) {
+                Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
+                    break;
+                }
+                Err(ref err) if err.kind() == io::ErrorKind::Interrupted => {
+                    continue;
+                }
+                Err(error) => {
+                    log::error!("TLS read error: {:?}", error);
+                    self.client.state = ClientState::Closing;
+                    return Ok(());
+                }
+                Ok(0) => {
+                    self.client.state = ClientState::Closing;
+                    return Ok(());
+                }
+                Ok(_) => {}
+            }
+
+            let io_state = match self.client.tls.process_new_packets() {
+                Ok(io_state) => io_state,
+                Err(err) => {
+                    log::error!("TLS error: {:?}", err);
+                    self.client.state = ClientState::Closing;
+                    return Ok(());
+                }
+            };
+
+            if io_state.plaintext_bytes_to_read() > 0 {
+                let mut buf = vec![0u8; io_state.plaintext_bytes_to_read()];
+                if self.client.tls.reader().read_exact(&mut buf).is_err() {
+                    self.client.state = ClientState::Closing;
+                    return Ok(());
+                }
+
+                if self.buffer.write_slice(&buf).is_err() {
+                    self.client.state = ClientState::Closing;
+                    return Ok(());
+                }
+            }
+
+            if io_state.peer_has_closed() {
+                self.client.state = ClientState::Closing;
+            }
+
+            break; //If we make it here means we read all we could get and had no Interruptions on the I/O.
+        }
+
+        self.buffer.move_cursor(pos)?;
         Ok(())
     }
 
@@ -159,16 +251,70 @@ impl Socket {
         Ok(())
     }
 
+    pub fn tls_write(&mut self) {
+        loop {
+            let mut packet = match self.client.tls_sends.pop_front() {
+                Some(packet) => packet,
+                None => {
+                    if self.client.tls_sends.capacity() > 25 {
+                        self.client.tls_sends.shrink_to_fit();
+                    }
+                    break;
+                }
+            };
+
+            match self.client.tls.writer().write_all(packet.as_slice()) {
+                Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
+                    self.client.tls_sends.push_front(packet);
+                    break;
+                }
+                Err(_) => {
+                    self.client.state = ClientState::Closing;
+                    return;
+                }
+                Ok(_) => {}
+            }
+        }
+
+        loop {
+            if self.client.tls.wants_write() {
+                match self.client.tls.write_tls(&mut self.client.socket) {
+                    Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
+                        return;
+                    }
+                    Err(ref err)
+                        if err.kind() == io::ErrorKind::Interrupted =>
+                    {
+                        continue;
+                    }
+                    Err(_) => {
+                        self.client.state = ClientState::Closing;
+                        return;
+                    }
+                    Ok(_) => {}
+                };
+            } else {
+                break;
+            }
+        }
+
+        if !self.client.tls_sends.is_empty() {
+            self.client.poll_state.add(SocketPollState::Write);
+        }
+    }
+
     pub fn write(&mut self) {
         let mut count: usize = 0;
 
         //make sure the player exists before we send anything.
         while count < 25 {
-            let mut packet = match self.client.sends.pop() {
+            let mut packet = match self.client.sends.pop_front() {
                 Some(packet) => packet,
                 None => {
-                    self.client.sends.shrink_to_fit();
-                    return;
+                    if self.client.sends.capacity() > 100 {
+                        self.client.sends.shrink_to_fit();
+                    }
+                    break;
                 }
             };
 
@@ -176,14 +322,18 @@ impl Socket {
                 Ok(()) => count += 1,
                 Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
                     //Operation would block so we insert it back in to try again later.
-                    self.client.sends.push(packet);
-                    return;
+                    self.client.sends.push_front(packet);
+                    break;
                 }
                 Err(_) => {
                     self.client.state = ClientState::Closing;
                     return;
                 }
             }
+        }
+
+        if !self.client.sends.is_empty() {
+            self.client.poll_state.add(SocketPollState::Write);
         }
     }
 
@@ -223,24 +373,33 @@ impl Socket {
 
     #[inline]
     #[allow(dead_code)]
-    pub fn send(&mut self, buf: ByteBuffer) {
-        self.client.sends.insert(0, buf);
+    pub fn send(&mut self, buf: ByteBuffer) -> Result<()> {
+        self.client.sends.push_back(buf);
 
         self.client.poll_state.add(SocketPollState::Write);
-        match self.reregister() {
-            Ok(_) => {}
-            Err(_) => panic!("Socket did not reregister on Send write update."),
-        }
+        self.reregister()
+    }
+
+    #[inline]
+    #[allow(dead_code)]
+    pub fn tls_send(&mut self, buf: ByteBuffer) -> Result<()> {
+        self.client.tls_sends.push_back(buf);
+
+        self.client.poll_state.add(SocketPollState::Write);
+        self.reregister()
     }
 }
 
 pub struct Client {
     pub socket: TcpStream,
     pub token: mio::Token,
-    pub tls_conn: rustls::ClientConnection,
+    pub tls: rustls::ClientConnection,
     pub state: ClientState,
     pub poll_state: SocketPollState,
-    pub sends: Vec<ByteBuffer>,
+    /// for unencrypted sends only.
+    pub sends: VecDeque<ByteBuffer>,
+    /// for encrypted sends only.
+    pub tls_sends: VecDeque<ByteBuffer>,
 }
 
 pub trait ByteBufferExt {
@@ -317,17 +476,15 @@ impl Client {
         config: Arc<rustls::ClientConfig>,
     ) -> Result<Client> {
         let socket = connect(host, port)?;
-
-        let servername = ServerName::try_from(host)
-            .expect("invalid DNS name")
-            .to_owned();
+        let server_name = ServerName::try_from(host)?.to_owned();
         Ok(Client {
             socket,
             token,
-            tls_conn: rustls::ClientConnection::new(config, servername)?,
+            tls: rustls::ClientConnection::new(config, server_name)?,
             state: ClientState::Open,
             poll_state: SocketPollState::Read,
-            sends: Vec::new(),
+            sends: VecDeque::new(),
+            tls_sends: VecDeque::new(),
         })
     }
 }

@@ -16,6 +16,7 @@ pub enum Command {
 enum ClientPacket {
     Register,
     Login,
+    HandShake,
     Move,
     Dir,
     Attack,
@@ -59,7 +60,7 @@ pub fn send_register(
     buf.write(sprite)?;
     buf.finish()?;
 
-    socket.send(buf);
+    socket.tls_send(buf);
     Ok(())
 }
 
@@ -77,6 +78,17 @@ pub fn send_login(
     buf.write(app_version.0)?;
     buf.write(app_version.1)?;
     buf.write(app_version.2)?;
+    buf.finish()?;
+
+    socket.tls_send(buf);
+    Ok(())
+}
+
+pub fn send_handshake(socket: &mut Socket, handshake: String) -> Result<()> {
+    let mut buf = ByteBuffer::new_packet_with(handshake.len() + 4)?;
+
+    buf.write(ClientPacket::HandShake)?;
+    buf.write(handshake)?;
     buf.finish()?;
 
     socket.send(buf);

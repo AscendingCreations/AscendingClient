@@ -5,10 +5,10 @@ use crate::{
     entity::*,
     fade::*,
     get_percent, get_start_map_pos, is_map_connected, npc_finalized,
-    open_interface, set_npc_frame, unload_mapitems, unload_npc, update_camera,
-    Alert, BufferTask, ChatTask, Content, EntityType, FtlType, IsUsingType,
-    MapItem, MessageChannel, Position, Result, Socket, SystemHolder, Window,
-    NPC_SPRITE_FRAME_X, VITALS_MAX,
+    open_interface, send_handshake, set_npc_frame, unload_mapitems, unload_npc,
+    update_camera, Alert, BufferTask, ChatTask, Content, EncryptionState,
+    EntityType, FtlType, IsUsingType, MapItem, MessageChannel, Position,
+    Result, Socket, SystemHolder, Window, NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -73,6 +73,26 @@ pub fn handle_fltalert(
     Ok(())
 }
 
+pub fn handle_handshake(
+    socket: &mut Socket,
+    world: &mut World,
+    _systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    if let Some(entity) = content.game_content.myentity {
+        let code = data.read::<String>()?;
+        let handshake = data.read::<String>()?;
+        world.spawn_at(entity.0, (ReloginCode { code },));
+        socket.encrypt_state = EncryptionState::None;
+        send_handshake(socket, handshake)?;
+    }
+    Ok(())
+}
+
 pub fn handle_loginok(
     _socket: &mut Socket,
     _world: &mut World,
@@ -99,7 +119,7 @@ pub fn handle_ingame(
     _socket: &mut Socket,
     _world: &mut World,
     _systems: &mut SystemHolder,
-    _content: &mut Content,
+    content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
@@ -215,10 +235,17 @@ pub fn handle_playerdata(
         let mut vitalmax = [0; VITALS_MAX];
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
 
-        if !world.contains(entity.0) {
-            let player =
-                add_player(world, systems, pos, pos.map, Some(&entity))?;
+        if !world.contains(entity.0) || !content.game_content.in_game {
+            let player = add_player(
+                world,
+                systems,
+                pos,
+                pos.map,
+                Some(&entity),
+                Some(&entity),
+            )?;
             content.game_content.players.insert(player);
+            content.game_content.in_game = true;
         }
 
         {
@@ -284,8 +311,14 @@ pub fn handle_playerspawn(
         if let Some(myentity) = content.game_content.myentity {
             if myentity != entity && !world.contains(entity.0) {
                 let client_map = world.get_or_err::<Position>(&myentity)?.map;
-                let player =
-                    add_player(world, systems, pos, client_map, Some(&entity))?;
+                let player = add_player(
+                    world,
+                    systems,
+                    pos,
+                    client_map,
+                    Some(&entity),
+                    None,
+                )?;
                 content.game_content.players.insert(player);
 
                 {

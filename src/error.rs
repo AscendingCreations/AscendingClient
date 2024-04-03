@@ -117,4 +117,11 @@ pub enum ClientError {
         #[backtrace]
         backtrace: Box<Backtrace>,
     },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
+    RustlsInvalidDns {
+        #[from]
+        error: pki_types::InvalidDnsNameError,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
 }

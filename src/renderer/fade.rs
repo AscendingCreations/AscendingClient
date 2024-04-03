@@ -226,7 +226,11 @@ pub fn fade_end(
             content.switch_content(world, systems, ContentType::Game)?;
 
             let pos = if let Some(entity) = content.game_content.myentity {
-                world.get_or_err::<Position>(&entity)?
+                if content.game_content.in_game {
+                    world.get_or_err::<Position>(&entity)?
+                } else {
+                    Position::default()
+                }
             } else {
                 Position::default()
             };

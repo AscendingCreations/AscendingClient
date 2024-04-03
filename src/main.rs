@@ -30,6 +30,7 @@ use winit::{
     keyboard::*,
     window::{WindowBuilder, WindowButtons},
 };
+use std::env;
 
 mod alert;
 mod audio;
@@ -120,6 +121,8 @@ async fn main() -> Result<()> {
     // Set the Max level we accept logging to the file for.
     log::set_max_level(LevelFilter::Info);
 
+    env::set_var("RUST_BACKTRACE", "1");
+    
     // This allows us to take control of panic!() so we can send it to a file via the logger.
     panic::set_hook(Box::new(|panic_info| {
         let bt = Backtrace::new();
