@@ -72,8 +72,6 @@ fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
 pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {
     let mut root_store = RootCertStore::empty();
     let ca_cert = load_certs("keys/ca-crt.pem");
-    let certs = load_certs("keys/client.crt");
-    let private_key = load_private_key("keys/client-key.pem");
     root_store.add_parsable_certificates(ca_cert);
 
     let config = ClientConfig::builder_with_provider(
@@ -85,9 +83,7 @@ pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {
     )
     .with_protocol_versions(rustls::DEFAULT_VERSIONS)
     .expect("inconsistent cipher-suite/versions selected")
-    .with_root_certificates(root_store)
-    .with_client_auth_cert(certs, private_key)
-    .unwrap();
+    .with_root_certificates(root_store).with_no_client_auth();
 
     Ok(Arc::new(config))
 }
