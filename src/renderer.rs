@@ -109,6 +109,7 @@ where
                 renderer,
                 &self.image_renderer,
                 &self.image_atlas,
+                &self.system,
                 layer,
             );
             pass.render_text(
@@ -121,6 +122,7 @@ where
                 renderer,
                 &self.ui_renderer,
                 &self.ui_atlas,
+                &self.system,
                 layer,
             );
         }

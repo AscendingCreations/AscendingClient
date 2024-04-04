@@ -35,7 +35,7 @@ rcgen = { version = "0.12", features = [
     "pem",
     "ring",
 ], default-features = false }
-rustls = { version = "0.22.2", features = ["logging"] }
+rustls = { version = "0.23.4", default-features = false, features = [ "logging", "ring", "std", "tls12"]}
 toml = "0.8.10"
 rustls-pemfile = "2"
 webpki-roots = "0.26"
@@ -46,17 +46,17 @@ educe = { version = "0.5.11", default-features = false, features = ["Debug", "Pa
 [dependencies.camera]
 package = "ascending_camera"
 #path = "./camera"
-version = "0.1.0"
+version = "0.1.1"
 
 [dependencies.input]
 package = "ascending_input"
 #path = "./input"
-version = "0.1.0"
+version = "0.1.1"
 
 [dependencies.graphics]
 package = "ascending_graphics"
 #path = "./graphics"
-version = "0.2.0"
+version = "0.3.0"
 
 [profile.dev]
 opt-level = 0
