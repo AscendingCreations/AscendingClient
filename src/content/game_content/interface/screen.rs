@@ -3,14 +3,14 @@ use graphics::*;
 
 pub struct VitalBar {
     bg: usize,
-    bar_bg: [usize; 2],
-    bar: [usize; 2],
+    bar_bg: [usize; 3],
+    bar: [usize; 3],
     bar_size: f32,
 }
 
 impl VitalBar {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let size = Vec2::new(200.0, 55.0);
+        let size = Vec2::new(200.0, 68.0);
         let pos = Vec3::new(
             10.0,
             systems.size.height - (size.y + 10.0),
@@ -28,12 +28,13 @@ impl VitalBar {
 
         let bar_size = size.x - 12.0;
 
-        let mut bar_bg = [0; 2];
-        let mut bar = [0; 2];
-        for i in 0..2 {
-            let (add_y, color) = match i {
-                0 => (25.0, Color::rgba(200, 80, 80, 255)),
-                _ => (0.0, Color::rgba(100, 200, 80, 255)),
+        let mut bar_bg = [0; 3];
+        let mut bar = [0; 3];
+        for i in 0..3 {
+            let (add_y, color, height) = match i {
+                0 => (38.0, Color::rgba(200, 80, 80, 255), 20.0),
+                1 => (13.0, Color::rgba(80, 80, 200, 255), 20.0),
+                _ => (0.0, Color::rgba(100, 200, 80, 255), 8.0),
             };
 
             let mut bg_rect = Rect::new(&mut systems.renderer, 0);
@@ -43,7 +44,7 @@ impl VitalBar {
                     pos.y + 5.0 + add_y,
                     ORDER_VITAL_HPBG,
                 ))
-                .set_size(Vec2::new(size.x - 10.0, 20.0))
+                .set_size(Vec2::new(size.x - 10.0, height))
                 .set_color(Color::rgba(100, 100, 100, 255))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(60, 60, 60, 255));
@@ -56,7 +57,7 @@ impl VitalBar {
                     pos.y + 6.0 + add_y,
                     ORDER_VITAL_HP,
                 ))
-                .set_size(Vec2::new(size.x - 12.0, 18.0))
+                .set_size(Vec2::new(size.x - 12.0, height - 2.0))
                 .set_color(color);
             bar[i] = systems.gfx.add_rect(bar_rect, 0);
         }

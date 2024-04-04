@@ -196,6 +196,28 @@ impl GameContent {
                 ProfileLabel::Defense,
                 defense as u64,
             );
+
+            let vitals = world.get_or_err::<Vitals>(&myindex)?;
+            self.interface.vitalbar.update_bar_size(
+                systems,
+                0,
+                vitals.vital[0],
+                vitals.vitalmax[0],
+            );
+            self.interface.vitalbar.update_bar_size(
+                systems,
+                1,
+                vitals.vital[2],
+                vitals.vitalmax[2],
+            );
+
+            let nextexp = player_get_next_lvl_exp(world, &myindex)?;
+            self.interface.vitalbar.update_bar_size(
+                systems,
+                2,
+                self.player_data.levelexp as i32,
+                nextexp as i32,
+            );
         }
 
         for i in 0..MAX_EQPT {

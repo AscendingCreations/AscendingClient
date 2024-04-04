@@ -5,6 +5,8 @@ use crate::{
     AlertIndex, AlertType, Interface, Item, Result, Socket, SystemHolder,
 };
 
+use super::ItemDescription;
+
 const MAX_INV_X: f32 = 5.0;
 
 #[derive(Clone, Copy, Default)]
@@ -588,6 +590,26 @@ impl Inventory {
                     );
                 }
             }
+        }
+    }
+
+    pub fn hover_data(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+        itemdesc: &mut ItemDescription,
+    ) {
+        if !self.visible || self.order_index != 0 {
+            return;
+        }
+
+        if let Some(slot) = self.find_inv_slot(screen_pos, false) {
+            let itemindex = self.item_slot[slot].item_index;
+            itemdesc.set_visible(systems, true);
+            itemdesc.set_data(systems, itemindex as usize);
+            itemdesc.set_position(systems, screen_pos);
+        } else {
+            itemdesc.set_visible(systems, false);
         }
     }
 

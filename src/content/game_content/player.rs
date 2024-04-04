@@ -499,3 +499,33 @@ pub fn process_player_movement(
     }
     Ok(())
 }
+
+pub fn player_get_next_lvl_exp(
+    world: &mut World,
+    entity: &Entity,
+) -> Result<u64> {
+    let mut query = world.query_one::<&Level>(entity.0)?;
+
+    if let Some(player_level) = query.get() {
+        let exp_per_level = match player_level.0 {
+            1..=10 => 100,
+            11..=20 => 250,
+            21..=30 => 400,
+            31..=40 => 550,
+            41..=50 => 700,
+            51..=60 => 850,
+            61..=70 => 1000,
+            71..=80 => 1150,
+            81..=90 => 1300,
+            91..=100 => 1450,
+            101..=120 => 2000,
+            121..=150 => 3000,
+            151..=199 => 4000,
+            _ => 0,
+        };
+
+        Ok(player_level.0 as u64 * exp_per_level as u64)
+    } else {
+        Ok(0)
+    }
+}

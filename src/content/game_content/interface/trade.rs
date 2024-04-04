@@ -4,6 +4,8 @@ use crate::{
     entity::Item, is_within_area, logic::*, values::*, widget::*, SystemHolder,
 };
 
+use super::ItemDescription;
+
 const MAX_TRADE_X: f32 = 5.0;
 
 #[derive(Clone, Copy, Default)]
@@ -782,6 +784,35 @@ impl Trade {
         systems.gfx.center_text(self.status_text);
     }
 
+    pub fn hover_data(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+        itemdesc: &mut ItemDescription,
+    ) {
+        if !self.visible || self.order_index != 0 {
+            return;
+        }
+
+        if let Some(slot) = self.find_mytrade_slot(screen_pos) {
+            let itemindex = self.my_items[slot].item_index;
+            itemdesc.set_visible(systems, true);
+            itemdesc.set_data(systems, itemindex as usize);
+            itemdesc.set_position(systems, screen_pos);
+        } else {
+            itemdesc.set_visible(systems, false);
+        }
+
+        if let Some(slot) = self.find_theirtrade_slot(screen_pos) {
+            let itemindex = self.their_items[slot].item_index;
+            itemdesc.set_visible(systems, true);
+            itemdesc.set_data(systems, itemindex as usize);
+            itemdesc.set_position(systems, screen_pos);
+        } else {
+            itemdesc.set_visible(systems, false);
+        }
+    }
+
     pub fn hover_buttons(
         &mut self,
         systems: &mut SystemHolder,
@@ -865,7 +896,7 @@ impl Trade {
         }
     }
 
-    pub fn find_trade_slot(&mut self, screen_pos: Vec2) -> Option<usize> {
+    pub fn find_mytrade_slot(&mut self, screen_pos: Vec2) -> Option<usize> {
         for slot in 0..MAX_TRADE_SLOT {
             let frame_pos = Vec2::new(
                 slot as f32 % MAX_TRADE_X,
@@ -873,6 +904,25 @@ impl Trade {
             );
             let slot_pos = Vec2::new(
                 self.pos.x + 10.0 + (37.0 * frame_pos.x),
+                self.pos.y + 287.0 - (37.0 * frame_pos.y),
+            );
+
+            if is_within_area(screen_pos, slot_pos, Vec2::new(32.0, 32.0)) {
+                return Some(slot);
+            }
+        }
+        None
+    }
+
+    pub fn find_theirtrade_slot(&mut self, screen_pos: Vec2) -> Option<usize> {
+        for slot in MAX_TRADE_SLOT..MAX_TRADE_SLOT * 2 {
+            let slotindex = slot - MAX_TRADE_SLOT;
+            let frame_pos = Vec2::new(
+                slotindex as f32 % MAX_TRADE_X,
+                (slotindex as f32 / MAX_TRADE_X).floor(),
+            );
+            let slot_pos = Vec2::new(
+                self.pos.x + 210.0 + (37.0 * frame_pos.x),
                 self.pos.y + 287.0 - (37.0 * frame_pos.y),
             );
 

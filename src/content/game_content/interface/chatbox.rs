@@ -38,7 +38,7 @@ pub struct Chatbox {
     pub pos: Vec2,
     pub size: Vec2,
     pub z_order: f32,
-    order_index: usize,
+    pub order_index: usize,
     in_hold: bool,
     hold_pos: Vec2,
 
@@ -418,6 +418,22 @@ impl Chatbox {
                 ),
             );
             systems.gfx.set_bound(data.text, self.chat_bounds);
+        }
+    }
+
+    pub fn hover_scrollbar(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        if self.order_index != 0 {
+            return;
+        }
+
+        if self.scrollbar.in_scroll(screen_pos) {
+            self.scrollbar.set_hover(systems, true);
+        } else {
+            self.scrollbar.set_hover(systems, false);
         }
     }
 

@@ -2,7 +2,7 @@ use crate::{
     add_npc, close_interface,
     content::game_content::{interface::chatbox::*, player::*},
     dir_to_enum,
-    entity::*,
+    entity::{self, *},
     fade::*,
     get_percent, get_start_map_pos, is_map_connected, npc_finalized,
     open_interface, player_get_armor_defense, player_get_weapon_damage,
@@ -801,14 +801,34 @@ pub fn handle_playeraction(
 
 pub fn handle_playerlevel(
     _socket: &mut Socket,
-    _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
+    world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
+    let level = data.read::<i32>()?;
+    let levelexp = data.read::<u64>()?;
+
+    if let Some(myentity) = content.game_content.myentity {
+        if world.contains(myentity.0) {
+            content.game_content.player_data.levelexp = levelexp;
+            {
+                world.get::<&mut Level>(myentity.0)?.0 = level;
+            }
+            let nextexp = player_get_next_lvl_exp(world, &myentity)?;
+
+            content.game_content.interface.vitalbar.update_bar_size(
+                systems,
+                2,
+                levelexp as i32,
+                nextexp as i32,
+            );
+        }
+    }
+
     Ok(())
 }
 

@@ -49,7 +49,6 @@ impl MapItem {
     ) -> Result<Entity> {
         let start_pos = get_start_map_pos(cur_map, pos.map)
             .unwrap_or_else(|| Vec2::new(0.0, 0.0));
-        println!("Pos {:?}", start_pos);
         let mut image = Image::new(
             Some(systems.resource.items[sprite].allocation),
             &mut systems.renderer,

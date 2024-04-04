@@ -14,6 +14,7 @@ use hecs::World;
 
 pub mod chatbox;
 mod inventory;
+mod item_description;
 mod profile;
 mod screen;
 mod setting;
@@ -23,6 +24,7 @@ mod trade;
 
 pub use chatbox::*;
 use inventory::*;
+use item_description::*;
 pub use profile::*;
 use screen::*;
 use setting::*;
@@ -56,6 +58,7 @@ pub struct Interface {
     pub shop: Shop,
     pub trade: Trade,
     pub profile: Profile,
+    pub item_desc: ItemDescription,
     setting: Setting,
     pub chatbox: Chatbox,
     window_order: Vec<(Window, usize)>,
@@ -78,6 +81,7 @@ impl Interface {
             profile: Profile::new(systems),
             setting: Setting::new(systems),
             chatbox: Chatbox::new(systems),
+            item_desc: ItemDescription::new(systems),
             window_order: Vec::new(),
             drag_window: None,
             selected_textbox: SelectedTextbox::None,
@@ -109,6 +113,7 @@ impl Interface {
         self.storage = Storage::new(systems);
         self.shop = Shop::new(systems);
         self.trade = Trade::new(systems);
+        self.item_desc = ItemDescription::new(systems);
         self.add_window_order();
         self.did_button_click = false;
         self.drag_window = None;
@@ -128,6 +133,7 @@ impl Interface {
         self.shop.unload(systems);
         self.trade.unload(systems);
         self.window_order.clear();
+        self.item_desc.unload(systems);
     }
 
     pub fn mouse_input(
@@ -150,31 +156,35 @@ impl Interface {
                 interface.storage.hover_buttons(systems, screen_pos);
                 interface.shop.hover_buttons(systems, screen_pos);
                 interface.trade.hover_buttons(systems, screen_pos);
+                interface.setting.hover_scrollbar(systems, screen_pos);
+                interface.shop.hover_scrollbar(systems, screen_pos);
+                interface.chatbox.hover_scrollbar(systems, screen_pos);
 
-                if interface.setting.visible {
-                    if interface.setting.sfx_scroll.in_scroll(screen_pos) {
-                        interface.setting.sfx_scroll.set_hover(systems, true);
-                    } else {
-                        interface.setting.sfx_scroll.set_hover(systems, false);
-                    }
-                    if interface.setting.bgm_scroll.in_scroll(screen_pos) {
-                        interface.setting.bgm_scroll.set_hover(systems, true);
-                    } else {
-                        interface.setting.bgm_scroll.set_hover(systems, false);
-                    }
-                }
-                if interface.chatbox.scrollbar.in_scroll(screen_pos) {
-                    interface.chatbox.scrollbar.set_hover(systems, true);
-                } else {
-                    interface.chatbox.scrollbar.set_hover(systems, false);
-                }
-                if interface.shop.visible {
-                    if interface.shop.item_scroll.in_scroll(screen_pos) {
-                        interface.shop.item_scroll.set_hover(systems, true);
-                    } else {
-                        interface.shop.item_scroll.set_hover(systems, false);
-                    }
-                }
+                interface.inventory.hover_data(
+                    systems,
+                    screen_pos,
+                    &mut interface.item_desc,
+                );
+                interface.profile.hover_data(
+                    systems,
+                    screen_pos,
+                    &mut interface.item_desc,
+                );
+                interface.shop.hover_data(
+                    systems,
+                    screen_pos,
+                    &mut interface.item_desc,
+                );
+                interface.storage.hover_data(
+                    systems,
+                    screen_pos,
+                    &mut interface.item_desc,
+                );
+                interface.trade.hover_data(
+                    systems,
+                    screen_pos,
+                    &mut interface.item_desc,
+                );
             }
             MouseInputType::MouseDoubleLeftDown => {
                 if interface.inventory.visible
@@ -230,7 +240,7 @@ impl Interface {
                     && interface.trade.trade_status == TradeStatus::None
                 {
                     if let Some(slot) =
-                        interface.trade.find_trade_slot(screen_pos)
+                        interface.trade.find_mytrade_slot(screen_pos)
                     {
                         if interface.trade.my_items[slot].got_data {
                             if interface.trade.my_items[slot].count_data > 1 {

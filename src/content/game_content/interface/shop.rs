@@ -2,6 +2,8 @@ use graphics::*;
 
 use crate::{is_within_area, logic::*, values::*, widget::*, SystemHolder};
 
+use super::ItemDescription;
+
 pub struct ShopItem {
     got_data: bool,
     icon_bg: usize,
@@ -12,6 +14,7 @@ pub struct ShopItem {
     got_count: bool,
     amount_bg: usize,
     amount: usize,
+    item_index: usize,
 }
 
 pub struct Shop {
@@ -312,6 +315,7 @@ impl Shop {
                 got_count: false,
                 amount_bg,
                 amount,
+                item_index: 0,
             });
         }
 
@@ -681,6 +685,53 @@ impl Shop {
         }
     }
 
+    pub fn hover_data(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+        itemdesc: &mut ItemDescription,
+    ) {
+        if !self.visible || self.order_index != 0 {
+            return;
+        }
+
+        let mut got_item = None;
+        for i in 0..5 {
+            let pos = Vec2::new(
+                self.pos.x + 10.0,
+                self.pos.y + 203.0 - (i as f32 * 48.0),
+            );
+
+            if is_within_area(screen_pos, pos, Vec2::new(32.0, 32.0)) {
+                got_item = Some(i);
+            }
+        }
+
+        if let Some(slot) = got_item {
+            itemdesc.set_visible(systems, true);
+            itemdesc.set_data(systems, self.item[slot].item_index);
+            itemdesc.set_position(systems, screen_pos);
+        } else {
+            itemdesc.set_visible(systems, false);
+        }
+    }
+
+    pub fn hover_scrollbar(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        if !self.visible || self.order_index != 0 {
+            return;
+        }
+
+        if self.item_scroll.in_scroll(screen_pos) {
+            self.item_scroll.set_hover(systems, true);
+        } else {
+            self.item_scroll.set_hover(systems, false);
+        }
+    }
+
     pub fn hover_buttons(
         &mut self,
         systems: &mut SystemHolder,
@@ -831,6 +882,7 @@ impl Shop {
             let item_index = systems.gfx.add_image(item_sprite, 0);
             systems.gfx.set_visible(item_index, self.visible);
             self.item[index].icon = Some(item_index);
+            self.item[index].item_index = shop_data[index];
         });
     }
 

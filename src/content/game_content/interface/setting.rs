@@ -14,7 +14,7 @@ pub struct Setting {
     pub pos: Vec2,
     pub size: Vec2,
     pub z_order: f32,
-    order_index: usize,
+    pub order_index: usize,
     in_hold: bool,
     hold_pos: Vec2,
     header_pos: Vec2,
@@ -338,6 +338,27 @@ impl Setting {
 
         self.sfx_scroll.set_pos(systems, self.pos);
         self.bgm_scroll.set_pos(systems, self.pos);
+    }
+
+    pub fn hover_scrollbar(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        if !self.visible || self.order_index != 0 {
+            return;
+        }
+
+        if self.sfx_scroll.in_scroll(screen_pos) {
+            self.sfx_scroll.set_hover(systems, true);
+        } else {
+            self.sfx_scroll.set_hover(systems, false);
+        }
+        if self.bgm_scroll.in_scroll(screen_pos) {
+            self.bgm_scroll.set_hover(systems, true);
+        } else {
+            self.bgm_scroll.set_hover(systems, false);
+        }
     }
 
     pub fn hover_buttons(

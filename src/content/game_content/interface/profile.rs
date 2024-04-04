@@ -4,11 +4,19 @@ use crate::{
     entity::Item, is_within_area, logic::*, values::*, widget::*, SystemHolder,
 };
 
+use super::ItemDescription;
+
 pub enum ProfileLabel {
     Level,
     Money,
     Damage,
     Defense,
+}
+
+#[derive(Clone, Copy)]
+struct EqData {
+    img: usize,
+    index: usize,
 }
 
 pub struct Profile {
@@ -20,7 +28,7 @@ pub struct Profile {
     fixed_label: Vec<usize>,
     value_label: Vec<usize>,
     slot: [usize; MAX_EQPT],
-    eq_img: [Option<usize>; MAX_EQPT],
+    eq_data: [Option<EqData>; MAX_EQPT],
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -227,7 +235,7 @@ impl Profile {
             fixed_label,
             value_label,
             slot,
-            eq_img: [None; MAX_EQPT],
+            eq_data: [None; MAX_EQPT],
 
             pos,
             size: w_size,
@@ -259,10 +267,10 @@ impl Profile {
             systems.gfx.remove_gfx(*slot);
         });
         for i in 0..MAX_EQPT {
-            if let Some(img) = self.eq_img[i] {
-                systems.gfx.remove_gfx(img);
+            if let Some(data) = self.eq_data[i] {
+                systems.gfx.remove_gfx(data.img);
             }
-            self.eq_img[i] = None;
+            self.eq_data[i] = None;
         }
         self.fixed_label.iter().for_each(|label| {
             systems.gfx.remove_gfx(*label);
@@ -284,9 +292,9 @@ impl Profile {
         self.slot.iter().for_each(|slot| {
             systems.gfx.set_visible(*slot, visible);
         });
-        self.eq_img.iter().for_each(|slot| {
-            if let Some(img) = slot {
-                systems.gfx.set_visible(*img, visible);
+        self.eq_data.iter().for_each(|slot| {
+            if let Some(data) = slot {
+                systems.gfx.set_visible(data.img, visible);
             }
         });
         self.fixed_label.iter().for_each(|label| {
@@ -361,10 +369,10 @@ impl Profile {
             pos.z = detail_1;
             systems.gfx.set_pos(self.slot[i], pos);
 
-            if let Some(img) = self.eq_img[i] {
-                let mut pos = systems.gfx.get_pos(img);
+            if let Some(data) = self.eq_data[i] {
+                let mut pos = systems.gfx.get_pos(data.img);
                 pos.z = detail_2;
-                systems.gfx.set_pos(img, pos);
+                systems.gfx.set_pos(data.img, pos);
             }
         }
 
@@ -435,10 +443,10 @@ impl Profile {
                 Vec3::new(slot_pos.x, slot_pos.y, pos.z),
             );
 
-            if let Some(img) = self.eq_img[i] {
-                let pos = systems.gfx.get_pos(img);
+            if let Some(data) = self.eq_data[i] {
+                let pos = systems.gfx.get_pos(data.img);
                 systems.gfx.set_pos(
-                    img,
+                    data.img,
                     Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, pos.z),
                 );
             }
@@ -515,6 +523,27 @@ impl Profile {
         }
     }
 
+    pub fn hover_data(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+        itemdesc: &mut ItemDescription,
+    ) {
+        if !self.visible || self.order_index != 0 {
+            return;
+        }
+
+        if let Some(slot) = self.find_eq_slot(screen_pos, false) {
+            if let Some(data) = self.eq_data[slot] {
+                itemdesc.set_visible(systems, true);
+                itemdesc.set_data(systems, data.index);
+                itemdesc.set_position(systems, screen_pos);
+            }
+        } else {
+            itemdesc.set_visible(systems, false);
+        }
+    }
+
     pub fn hover_buttons(
         &mut self,
         systems: &mut SystemHolder,
@@ -583,7 +612,7 @@ impl Profile {
         check_empty: bool,
     ) -> Option<usize> {
         for slot in 0..MAX_EQPT {
-            let can_proceed = if self.eq_img[slot].is_some() {
+            let can_proceed = if self.eq_data[slot].is_some() {
                 true
             } else {
                 check_empty
@@ -631,12 +660,12 @@ impl Profile {
         slot: usize,
         item: &Item,
     ) {
-        if let Some(img) = self.eq_img[slot] {
-            systems.gfx.remove_gfx(img);
+        if let Some(data) = self.eq_data[slot] {
+            systems.gfx.remove_gfx(data.img);
         }
 
         if item.val == 0 {
-            self.eq_img[slot] = None;
+            self.eq_data[slot] = None;
             return;
         }
 
@@ -661,6 +690,9 @@ impl Profile {
         let eq_img = systems.gfx.add_image(img, 0);
         systems.gfx.set_visible(eq_img, self.visible);
 
-        self.eq_img[slot] = Some(eq_img);
+        self.eq_data[slot] = Some(EqData {
+            img: eq_img,
+            index: item.num as usize,
+        });
     }
 }

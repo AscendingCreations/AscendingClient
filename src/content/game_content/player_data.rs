@@ -7,6 +7,7 @@ pub struct PlayerData {
     pub storage: Vec<Item>,
     pub equipment: Vec<Item>,
     pub player_money: u64,
+    pub levelexp: u64,
 }
 
 impl PlayerData {
@@ -16,6 +17,7 @@ impl PlayerData {
             storage: Vec::new(),
             equipment: Vec::new(),
             player_money: 0,
+            levelexp: 0,
         }
     }
 
