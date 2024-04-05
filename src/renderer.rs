@@ -6,12 +6,13 @@ pub mod fade;
 pub use fade::*;
 
 use crate::{
-    game_content::*, gfx_collection::*, Audio, Config, ItemData,
+    game_content::*, gfx_collection::*, Audio, Config, ItemData, ShopData,
     TextureAllocation,
 };
 
 pub struct DatabaseHolder {
     pub item: Vec<ItemData>,
+    pub shop: Vec<ShopData>,
 }
 
 pub struct SystemHolder {

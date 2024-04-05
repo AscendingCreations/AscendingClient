@@ -795,12 +795,9 @@ impl Shop {
     }
 
     pub fn set_shop(&mut self, systems: &mut SystemHolder, shop_index: usize) {
-        // TEMP DATA
-        let shop_data = [0, 1, 1, 2, 0, 2, 1];
-        let shop_price = [10, 20, 30, 40, 50, 60, 70];
-        let shop_value = [5, 3, 4, 1, 1, 1, 7];
+        let shopdata = systems.base.shop[shop_index].clone();
 
-        let shop_max_item: usize = shop_data.len();
+        let shop_max_item = shopdata.max_item as usize;
 
         self.shop_index = shop_index;
 
@@ -823,7 +820,8 @@ impl Shop {
 
         let max_item = shop_max_item.min(5);
         (0..max_item).for_each(|index| {
-            let item_data = systems.base.item[shop_data[index]].clone();
+            let item_data =
+                systems.base.item[shopdata.item[index].index as usize].clone();
 
             self.item[index].got_data = true;
             self.button[3 + index].set_visible(systems, self.visible);
@@ -846,16 +844,16 @@ impl Shop {
             systems.gfx.set_text(
                 &mut systems.renderer,
                 self.item[index].price,
-                &format!("{}", shop_price[index]),
+                &format!("{}", shopdata.item[index].price),
             );
 
-            if shop_value[index] > 1 {
+            if shopdata.item[index].amount > 1 {
                 self.item[index].got_count = true;
 
                 systems.gfx.set_text(
                     &mut systems.renderer,
                     self.item[index].amount,
-                    &format!("{}", shop_value[index]),
+                    &format!("{}", shopdata.item[index].amount),
                 );
 
                 systems
@@ -882,26 +880,24 @@ impl Shop {
             let item_index = systems.gfx.add_image(item_sprite, 0);
             systems.gfx.set_visible(item_index, self.visible);
             self.item[index].icon = Some(item_index);
-            self.item[index].item_index = shop_data[index];
+            self.item[index].item_index = shopdata.item[index].index as usize;
         });
     }
 
     pub fn set_shop_scroll_value(&mut self, systems: &mut SystemHolder) {
-        // TEMP DATA
-        let shop_data = [0, 1, 1, 2, 0, 2, 1];
-        let shop_price = [10, 20, 30, 40, 50, 60, 70];
-        let shop_value = [5, 3, 4, 1, 1, 1, 7];
-
         if self.item_scroll.max_value == 0 {
             return;
         }
+
+        let shopdata = systems.base.shop[self.shop_index].clone();
 
         let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
         let item_zpos = detail_origin.sub_f32(0.002, 3);
 
         self.shop_start_pos = self.item_scroll.value;
         (self.shop_start_pos..self.shop_start_pos + 5).for_each(|index| {
-            let item_data = systems.base.item[shop_data[index]].clone();
+            let item_data =
+                systems.base.item[shopdata.item[index].index as usize].clone();
 
             let default_index = index - self.shop_start_pos;
 
@@ -917,16 +913,16 @@ impl Shop {
             systems.gfx.set_text(
                 &mut systems.renderer,
                 self.item[default_index].price,
-                &format!("{}", shop_price[index]),
+                &format!("{}", shopdata.item[index].price),
             );
 
-            if shop_value[index] > 1 {
+            if shopdata.item[index].amount > 1 {
                 self.item[default_index].got_count = true;
 
                 systems.gfx.set_text(
                     &mut systems.renderer,
                     self.item[default_index].amount,
-                    &format!("{}", shop_value[index]),
+                    &format!("{}", shopdata.item[index].amount),
                 );
 
                 systems

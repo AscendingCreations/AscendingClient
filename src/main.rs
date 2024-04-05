@@ -234,7 +234,10 @@ async fn main() -> Result<()> {
     let volume = config.bgm_volume as f32 * 0.01;
     audio.set_music_volume(volume);
 
-    let database_holder = DatabaseHolder { item: get_item() };
+    let database_holder = DatabaseHolder {
+        item: get_item(),
+        shop: get_shop(),
+    };
 
     // Compile all rendering data in one type for quick access and passing
     let mut systems = SystemHolder {
