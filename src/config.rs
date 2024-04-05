@@ -17,6 +17,8 @@ pub struct Config {
     pub username: String,
     pub password: String,
     pub save_password: bool,
+    pub bgm_volume: u8,
+    pub sfx_volume: u8,
 }
 
 impl Config {
@@ -83,7 +85,8 @@ pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {
     )
     .with_protocol_versions(rustls::DEFAULT_VERSIONS)
     .expect("inconsistent cipher-suite/versions selected")
-    .with_root_certificates(root_store).with_no_client_auth();
+    .with_root_certificates(root_store)
+    .with_no_client_auth();
 
     Ok(Arc::new(config))
 }

@@ -1350,7 +1350,7 @@ pub fn handle_openstorage(
         Window::Storage,
     );
 
-    content.game_content.is_using_type = IsUsingType::Bank;
+    content.game_content.player_data.is_using_type = IsUsingType::Bank;
 
     Ok(())
 }
@@ -1374,7 +1374,8 @@ pub fn handle_openshop(
         .shop
         .set_shop(systems, shop_index as usize);
 
-    content.game_content.is_using_type = IsUsingType::Store(shop_index as i64);
+    content.game_content.player_data.is_using_type =
+        IsUsingType::Store(shop_index as i64);
 
     Ok(())
 }
@@ -1391,7 +1392,7 @@ pub fn handle_clearisusingtype(
 ) -> Result<()> {
     let _ = data.read::<u16>()?;
 
-    match content.game_content.is_using_type {
+    match content.game_content.player_data.is_using_type {
         IsUsingType::Bank => close_interface(
             &mut content.game_content.interface,
             systems,
@@ -1417,7 +1418,7 @@ pub fn handle_clearisusingtype(
         _ => {}
     }
 
-    content.game_content.is_using_type = IsUsingType::None;
+    content.game_content.player_data.is_using_type = IsUsingType::None;
 
     Ok(())
 }
@@ -1479,7 +1480,8 @@ pub fn handle_inittrade(
 ) -> Result<()> {
     let target_entity = data.read::<Entity>()?;
 
-    content.game_content.is_using_type = IsUsingType::Trading(target_entity);
+    content.game_content.player_data.is_using_type =
+        IsUsingType::Trading(target_entity);
 
     open_interface(&mut content.game_content.interface, systems, Window::Trade);
     content
@@ -1592,6 +1594,28 @@ pub fn handle_traderequest(
         AlertIndex::TradeRequest,
         false,
     );
+
+    Ok(())
+}
+
+pub fn handle_playitemsfx(
+    _socket: &mut Socket,
+    _world: &mut World,
+    systems: &mut SystemHolder,
+    _content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    let index = data.read::<u16>()?;
+
+    if let Some(sfx_name) = &systems.base.item[index as usize].sound_index {
+        let volume = systems.config.sfx_volume as f32 * 0.01;
+        systems
+            .audio
+            .play_effect(&format!("./audio/{}", sfx_name), volume)?;
+    }
 
     Ok(())
 }

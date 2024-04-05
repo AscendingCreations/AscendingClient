@@ -19,6 +19,7 @@ pub struct ItemData {
     pub baseprice: u64,
     pub repairable: bool,
     pub rgba: Rgba,
+    pub sound_index: Option<String>,
 }
 
 pub fn get_item() -> Vec<ItemData> {

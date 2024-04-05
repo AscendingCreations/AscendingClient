@@ -52,7 +52,7 @@ pub struct GameContent {
     pub finalized: bool,
     pub target: Target,
     pub pick_up_timer: f32,
-    pub is_using_type: IsUsingType,
+    pub current_music: String,
 }
 
 impl GameContent {
@@ -71,7 +71,7 @@ impl GameContent {
             player_data: PlayerData::new(),
             target: Target::new(systems),
             pick_up_timer: 0.0,
-            is_using_type: IsUsingType::None,
+            current_music: String::new(),
         }
     }
 
@@ -115,6 +115,8 @@ impl GameContent {
         self.map.map_pos = map;
 
         self.map.map_attribute.clear();
+        self.map.music.clear();
+
         for i in 0..9 {
             let (mx, my) = get_map_loc(map.x, map.y, i);
             let mapdata = load_file(mx, my, map.group as u64);
@@ -125,7 +127,9 @@ impl GameContent {
                     attribute: mapdata.attribute.clone(),
                 },
                 i,
-            ))
+            ));
+
+            self.map.music.push((mapdata.music.clone(), i));
         }
     }
 
@@ -228,6 +232,13 @@ impl GameContent {
             );
         }
 
+        if let Some(music) = &self.map.music[0].0 {
+            if self.current_music != *music {
+                self.current_music = music.clone();
+                systems.audio.set_music(&format!("./audio/{}", music))?;
+            }
+        }
+
         self.finalized = true;
         Ok(())
     }
@@ -258,6 +269,7 @@ impl GameContent {
         for (from, to) in move_maps {
             self.map.index[from].1 = to;
             self.map.map_attribute[from].1 = to;
+            self.map.music[from].1 = to;
         }
 
         let load_maps = match dir {
@@ -271,6 +283,7 @@ impl GameContent {
                 get_map_loc(self.map.map_pos.x, self.map.map_pos.y, to);
             self.map.index[from].1 = to;
             self.map.map_attribute[from].1 = to;
+            self.map.music[from].1 = to;
 
             buffer.add_task(BufferTaskEnum::LoadMap(
                 mx,
@@ -289,6 +302,12 @@ impl GameContent {
                 self.map.map_pos.group as u64,
                 to,
             ));
+            buffer.add_task(BufferTaskEnum::ApplyMapMusic(
+                mx,
+                my,
+                self.map.map_pos.group as u64,
+                to,
+            ));
             buffer.add_task(BufferTaskEnum::UnloadMap(
                 mx,
                 my,
@@ -297,6 +316,14 @@ impl GameContent {
         }
 
         self.map.sort_map();
+
+        if let Some(music) = &self.map.music[0].0 {
+            if self.current_music != *music {
+                self.current_music = music.clone();
+                systems.audio.set_music(&format!("./audio/{}", music))?;
+            }
+        }
+
         update_camera(world, self, systems, socket)
     }
 

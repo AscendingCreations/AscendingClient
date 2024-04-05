@@ -400,9 +400,25 @@ impl Interface {
                             .bgm_scroll
                             .set_move_scroll(systems, screen_pos);
 
-                        if interface.setting.sfx_scroll.in_hold
-                            || interface.setting.bgm_scroll.in_hold
-                        {
+                        if interface.setting.bgm_scroll.in_hold {
+                            interface.setting.update_bgm_value(
+                                systems,
+                                interface.setting.bgm_scroll.value,
+                            );
+                            let volume = interface.setting.bgm_scroll.value
+                                as f32
+                                * 0.01;
+                            systems.audio.set_music_volume(volume);
+                            result = true;
+                        } else if interface.setting.sfx_scroll.in_hold {
+                            interface.setting.update_sfx_value(
+                                systems,
+                                interface.setting.sfx_scroll.value,
+                            );
+                            let volume = interface.setting.sfx_scroll.value
+                                as f32
+                                * 0.01;
+                            systems.audio.set_effect_volume(volume);
                             result = true;
                         }
                     }
@@ -463,6 +479,16 @@ impl Interface {
                 interface.drag_window = None;
 
                 if interface.setting.visible {
+                    if interface.setting.bgm_scroll.in_hold {
+                        systems.config.bgm_volume =
+                            interface.setting.bgm_scroll.value as u8;
+                        systems.config.save_config("settings.toml");
+                    } else if interface.setting.sfx_scroll.in_hold {
+                        systems.config.sfx_volume =
+                            interface.setting.sfx_scroll.value as u8;
+                        systems.config.save_config("settings.toml");
+                    }
+
                     interface
                         .setting
                         .sfx_scroll

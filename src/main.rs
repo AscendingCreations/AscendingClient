@@ -221,13 +221,18 @@ async fn main() -> Result<()> {
     // and another for emojicons.
     let text_atlas = TextAtlas::new(&mut renderer).unwrap();
 
-    let audio = Audio::new(0.15)?;
+    let mut audio = Audio::new(0.15)?;
 
     // Load textures image
     let resource = TextureAllocation::new(&mut atlases, &renderer).unwrap();
 
     // Load config
     let config = Config::read_config("settings.toml");
+
+    let volume = config.sfx_volume as f32 * 0.01;
+    audio.set_effect_volume(volume);
+    let volume = config.bgm_volume as f32 * 0.01;
+    audio.set_music_volume(volume);
 
     let database_holder = DatabaseHolder { item: get_item() };
 
@@ -336,9 +341,6 @@ async fn main() -> Result<()> {
 
     let mut mouse_pos: PhysicalPosition<f64> = PhysicalPosition::new(0.0, 0.0);
     let mut mouse_press: bool = false;
-
-    // TEMP
-    systems.audio.set_music("./audio/caves.ogg")?;
 
     let mut last_click_time = 0.0f32;
     let mut click_counter = 0usize;

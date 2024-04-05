@@ -39,6 +39,10 @@ impl Audio {
         Ok(())
     }
 
+    pub fn stop_music(&mut self) {
+        self.music.clear();
+    }
+
     pub fn set_music_volume(&mut self, volume: f32) {
         self.music.set_volume(volume);
     }

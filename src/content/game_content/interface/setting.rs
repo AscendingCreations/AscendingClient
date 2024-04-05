@@ -11,6 +11,8 @@ pub struct Setting {
     pub bgm_scroll: Scrollbar,
     button: Vec<Button>,
     label: Vec<usize>,
+    sfx_label: usize,
+    bgm_label: usize,
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -78,7 +80,7 @@ impl Setting {
         systems.gfx.center_text(header_text);
         systems.gfx.set_visible(header_text, false);
 
-        let sfx_scroll = Scrollbar::new(
+        let mut sfx_scroll = Scrollbar::new(
             systems,
             Vec2::new(w_pos.x, w_pos.y),
             Vec2::new(w_size.x - 110.0, w_size.y - 90.0),
@@ -103,14 +105,15 @@ impl Setting {
                 border_color: Color::rgba(0, 0, 0, 0),
                 radius: 0.0,
             }),
-            8,
+            100,
             20.0,
             false,
             false,
             None,
         );
+        sfx_scroll.set_value(systems, systems.config.sfx_volume as usize);
 
-        let bgm_scroll = Scrollbar::new(
+        let mut bgm_scroll = Scrollbar::new(
             systems,
             Vec2::new(w_pos.x, w_pos.y),
             Vec2::new(w_size.x - 110.0, w_size.y - 60.0),
@@ -135,12 +138,13 @@ impl Setting {
                 border_color: Color::rgba(0, 0, 0, 0),
                 radius: 0.0,
             }),
-            8,
+            100,
             20.0,
             false,
             false,
             None,
         );
+        bgm_scroll.set_value(systems, systems.config.bgm_volume as usize);
 
         let mut button = Vec::with_capacity(1);
         let close_button = Button::new(
@@ -198,6 +202,42 @@ impl Setting {
             label.push(label_index);
         }
 
+        let tpos =
+            Vec3::new(w_pos.x + 50.0, w_pos.y + w_size.y - 60.0, detail_1);
+        let tsize = Vec2::new(50.0, 20.0);
+        let slabel = create_label(
+            systems,
+            tpos,
+            tsize,
+            Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
+            Color::rgba(200, 200, 200, 255),
+        );
+        let bgm_label = systems.gfx.add_text(slabel, 1);
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            bgm_label,
+            &format!("{}", systems.config.bgm_volume),
+        );
+        systems.gfx.set_visible(bgm_label, false);
+
+        let tpos =
+            Vec3::new(w_pos.x + 50.0, w_pos.y + w_size.y - 90.0, detail_1);
+        let tsize = Vec2::new(50.0, 20.0);
+        let slabel = create_label(
+            systems,
+            tpos,
+            tsize,
+            Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
+            Color::rgba(200, 200, 200, 255),
+        );
+        let sfx_label = systems.gfx.add_text(slabel, 1);
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            sfx_label,
+            &format!("{}", systems.config.sfx_volume),
+        );
+        systems.gfx.set_visible(sfx_label, false);
+
         Setting {
             visible: false,
             bg,
@@ -207,6 +247,8 @@ impl Setting {
             bgm_scroll,
             button,
             label,
+            bgm_label,
+            sfx_label,
 
             pos,
             size: w_size,
@@ -239,6 +281,8 @@ impl Setting {
             systems.gfx.remove_gfx(*text);
         });
         self.button.clear();
+        systems.gfx.remove_gfx(self.bgm_label);
+        systems.gfx.remove_gfx(self.sfx_label);
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
@@ -258,6 +302,8 @@ impl Setting {
         self.label.iter().for_each(|text| {
             systems.gfx.set_visible(*text, visible);
         });
+        systems.gfx.set_visible(self.bgm_label, visible);
+        systems.gfx.set_visible(self.sfx_label, visible);
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
@@ -327,6 +373,14 @@ impl Setting {
             pos.z = detail_1;
             systems.gfx.set_pos(*text, pos);
         });
+
+        let mut pos = systems.gfx.get_pos(self.bgm_label);
+        pos.z = detail_1;
+        systems.gfx.set_pos(self.bgm_label, pos);
+
+        let mut pos = systems.gfx.get_pos(self.sfx_label);
+        pos.z = detail_1;
+        systems.gfx.set_pos(self.sfx_label, pos);
     }
 
     pub fn move_window(
@@ -389,6 +443,30 @@ impl Setting {
                 Bounds::new(tpos.x, tpos.y, tpos.x + 100.0, tpos.y + 20.0),
             );
         });
+
+        let tpos =
+            Vec2::new(self.pos.x + 50.0, self.pos.y + self.size.y - 60.0);
+        let tsize = Vec2::new(50.0, 20.0);
+        let pos = systems.gfx.get_pos(self.bgm_label);
+        systems
+            .gfx
+            .set_pos(self.bgm_label, Vec3::new(tpos.x, tpos.y, pos.z));
+        systems.gfx.set_bound(
+            self.bgm_label,
+            Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
+        );
+
+        let tpos =
+            Vec2::new(self.pos.x + 50.0, self.pos.y + self.size.y - 90.0);
+        let tsize = Vec2::new(50.0, 20.0);
+        let pos = systems.gfx.get_pos(self.sfx_label);
+        systems
+            .gfx
+            .set_pos(self.sfx_label, Vec3::new(tpos.x, tpos.y, pos.z));
+        systems.gfx.set_bound(
+            self.sfx_label,
+            Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
+        );
     }
 
     pub fn hover_scrollbar(
@@ -472,5 +550,29 @@ impl Setting {
         self.button.iter_mut().for_each(|button| {
             button.set_click(systems, false);
         });
+    }
+
+    pub fn update_bgm_value(
+        &mut self,
+        systems: &mut SystemHolder,
+        value: usize,
+    ) {
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            self.bgm_label,
+            &format!("{}", value),
+        );
+    }
+
+    pub fn update_sfx_value(
+        &mut self,
+        systems: &mut SystemHolder,
+        value: usize,
+    ) {
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            self.sfx_label,
+            &format!("{}", value),
+        );
     }
 }

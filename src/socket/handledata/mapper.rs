@@ -86,6 +86,7 @@ pub enum ServerPackets {
     InitTrade,
     TradeStatus,
     TradeRequest,
+    PlayItemSfx,
     ServerPacketCount,
 }
 
@@ -319,6 +320,10 @@ impl PacketRouter {
             (
                 ServerPackets::TradeRequest,
                 routes::handle_traderequest as PacketFunction,
+            ),
+            (
+                ServerPackets::PlayItemSfx,
+                routes::handle_playitemsfx as PacketFunction,
             ),
         ]))
     }

@@ -1,6 +1,8 @@
 use hecs::World;
 
-use crate::{Entity, Equipment, EquipmentType, Item, Result, SystemHolder};
+use crate::{
+    Entity, Equipment, EquipmentType, IsUsingType, Item, Result, SystemHolder,
+};
 
 pub struct PlayerData {
     pub inventory: Vec<Item>,
@@ -8,6 +10,7 @@ pub struct PlayerData {
     pub equipment: Vec<Item>,
     pub player_money: u64,
     pub levelexp: u64,
+    pub is_using_type: IsUsingType,
 }
 
 impl PlayerData {
@@ -18,6 +21,7 @@ impl PlayerData {
             equipment: Vec::new(),
             player_money: 0,
             levelexp: 0,
+            is_using_type: IsUsingType::None,
         }
     }
 

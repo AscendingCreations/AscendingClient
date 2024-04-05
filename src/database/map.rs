@@ -64,7 +64,7 @@ pub struct MapData {
     pub attribute: Vec<MapAttribute>,
     pub zonespawns: [Vec<(u16, u16)>; 5],
     pub zones: [(u64, [Option<u64>; 5]); 5],
-    pub music: u32,
+    pub music: Option<String>,
     pub weather: Weather,
 }
 
@@ -80,7 +80,7 @@ impl MapData {
             attribute: vec![MapAttribute::Walkable; 1024],
             zonespawns: Default::default(),
             zones: Default::default(),
-            music: 0,
+            music: None,
             weather: Weather::default(),
         }
     }

@@ -13,6 +13,7 @@ pub enum BufferTaskEnum {
     LoadMap(i32, i32, u64),
     ApplyMap(i32, i32, u64, usize),
     ApplyMapAttribute(i32, i32, u64, usize),
+    ApplyMapMusic(i32, i32, u64, usize),
     UnloadMap(i32, i32, u64),
 }
 
@@ -63,6 +64,13 @@ impl BufferTask {
                             MapAttributes {
                                 attribute: mapdata.attribute.clone(),
                             };
+                    }
+                }
+                BufferTaskEnum::ApplyMapMusic(mx, my, mg, map_index) => {
+                    let key = format!("{}_{}_{}", mx, my, mg);
+                    if let Some(mapdata) = self.storage.map_data.get(&key) {
+                        content.game_content.map.music[map_index].0 =
+                            mapdata.music.clone();
                     }
                 }
                 BufferTaskEnum::LoadMap(mx, my, mg) => {

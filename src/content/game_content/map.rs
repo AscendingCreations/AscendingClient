@@ -31,6 +31,7 @@ pub struct MapContent {
     pub map_pos: MapPosition,
     pub index: [(usize, usize); 9], // (MapIndex, Order)
     pub map_attribute: Vec<(MapAttributes, usize)>,
+    pub music: Vec<(Option<String>, usize)>,
 }
 
 impl MapContent {
@@ -48,6 +49,7 @@ impl MapContent {
             map_pos: MapPosition::default(),
             index,
             map_attribute: Vec::with_capacity(9),
+            music: Vec::with_capacity(9),
         }
     }
 
@@ -66,11 +68,13 @@ impl MapContent {
             systems.gfx.remove_gfx(*index);
         });
         self.map_attribute.clear();
+        self.music.clear();
     }
 
     pub fn sort_map(&mut self) {
         self.index.sort_by(|a, b| a.1.cmp(&b.1));
         self.map_attribute.sort_by(|a, b| a.1.cmp(&b.1));
+        self.music.sort_by(|a, b| a.1.cmp(&b.1));
     }
 
     pub fn move_pos(&mut self, systems: &mut SystemHolder, pos: Vec2) {
@@ -226,7 +230,7 @@ pub fn can_move(
         }
         _ => {}
     }
-    if content.is_using_type.inuse() {
+    if content.player_data.is_using_type.inuse() {
         return Ok(false);
     }
     let attribute = content
