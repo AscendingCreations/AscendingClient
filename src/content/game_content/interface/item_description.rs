@@ -60,6 +60,7 @@ impl ItemDescription {
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
+        self.visible = visible;
         systems.gfx.set_visible(self.bg, visible);
         if let Some(data) = &self.data {
             for desc_data in data.data.iter() {

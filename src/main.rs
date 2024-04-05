@@ -402,11 +402,13 @@ async fn main() -> Result<()> {
                 }
                 WindowEvent::MouseInput { state, .. } => match state {
                     ElementState::Pressed => {
-                        click_counter += 1;
-                        process_click = false;
-                        last_click_time = seconds;
+                        if click_counter < 2 {
+                            click_counter += 1;
+                            process_click = false;
+                            last_click_time = seconds;
+                            got_click = true;
+                        }
                         mouse_press = true;
-                        got_click = true;
                     }
                     ElementState::Released => {
                         mouse_press = false;

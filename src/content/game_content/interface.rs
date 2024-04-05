@@ -229,6 +229,7 @@ impl Interface {
                             result_window,
                             screen_pos,
                             true,
+                            false,
                         );
                         result = true;
                     }
@@ -305,6 +306,10 @@ impl Interface {
                 interface.click_textbox(systems, socket, screen_pos)?;
             }
             MouseInputType::MouseLeftDownMove => {
+                if interface.item_desc.visible {
+                    interface.item_desc.set_visible(systems, false);
+                }
+
                 if let Some(slot) = interface.inventory.hold_slot {
                     interface
                         .inventory
@@ -323,6 +328,7 @@ impl Interface {
                                     result_window,
                                     screen_pos,
                                     false,
+                                    true,
                                 );
                             }
                             _ => {}
@@ -348,6 +354,7 @@ impl Interface {
                                     result_window,
                                     screen_pos,
                                     false,
+                                    true,
                                 );
                             }
                             _ => {}
@@ -755,10 +762,10 @@ fn trigger_button(
             }
         }
         2 => {
-            if interface.trade.visible {
-                close_interface(interface, systems, Window::Trade);
+            if interface.setting.visible {
+                close_interface(interface, systems, Window::Setting);
             } else {
-                open_interface(interface, systems, Window::Trade);
+                open_interface(interface, systems, Window::Setting);
             }
         }
         _ => {}
@@ -998,11 +1005,12 @@ fn hold_interface(
     window: Window,
     screen_pos: Vec2,
     check_content: bool,
+    hold_check: bool,
 ) {
     interface_set_to_first(interface, systems, window);
     match window {
         Window::Inventory => {
-            if interface.inventory.can_hold(screen_pos) {
+            if interface.inventory.can_hold(screen_pos) && !hold_check {
                 interface.inventory.hold_window(screen_pos);
             } else if let Some(slot) =
                 interface.inventory.find_inv_slot(screen_pos, false)
@@ -1035,7 +1043,7 @@ fn hold_interface(
             interface.chatbox.hold_window(screen_pos);
         }
         Window::Storage => {
-            if interface.storage.can_hold(screen_pos) {
+            if interface.storage.can_hold(screen_pos) && !hold_check {
                 interface.storage.hold_window(screen_pos);
             } else if let Some(slot) =
                 interface.storage.find_storage_slot(screen_pos, false)

@@ -10,6 +10,7 @@ pub struct Setting {
     pub sfx_scroll: Scrollbar,
     pub bgm_scroll: Scrollbar,
     button: Vec<Button>,
+    label: Vec<usize>,
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -80,8 +81,8 @@ impl Setting {
         let sfx_scroll = Scrollbar::new(
             systems,
             Vec2::new(w_pos.x, w_pos.y),
-            Vec2::new(5.0, 5.0),
-            130.0,
+            Vec2::new(w_size.x - 110.0, w_size.y - 90.0),
+            100.0,
             20.0,
             false,
             detail_1,
@@ -112,8 +113,8 @@ impl Setting {
         let bgm_scroll = Scrollbar::new(
             systems,
             Vec2::new(w_pos.x, w_pos.y),
-            Vec2::new(5.0, 35.0),
-            130.0,
+            Vec2::new(w_size.x - 110.0, w_size.y - 60.0),
+            100.0,
             20.0,
             false,
             detail_1,
@@ -175,6 +176,28 @@ impl Setting {
         );
         button.push(close_button);
 
+        let mut label = Vec::with_capacity(2);
+        for i in 0..2 {
+            let (msg, ypos) = match i {
+                0 => ("BGM", w_size.y - 60.0),
+                _ => ("SFX", w_size.y - 90.0),
+            };
+            let tpos = Vec2::new(w_pos.x + 10.0, w_pos.y + ypos);
+            let text = create_label(
+                systems,
+                Vec3::new(tpos.x, tpos.y, detail_1),
+                Vec2::new(100.0, 20.0),
+                Bounds::new(tpos.x, tpos.y, tpos.x + 100.0, tpos.y + 20.0),
+                Color::rgba(200, 200, 200, 255),
+            );
+            let label_index = systems.gfx.add_text(text, 1);
+            systems
+                .gfx
+                .set_text(&mut systems.renderer, label_index, msg);
+            systems.gfx.set_visible(label_index, false);
+            label.push(label_index);
+        }
+
         Setting {
             visible: false,
             bg,
@@ -183,6 +206,7 @@ impl Setting {
             sfx_scroll,
             bgm_scroll,
             button,
+            label,
 
             pos,
             size: w_size,
@@ -211,6 +235,9 @@ impl Setting {
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
+        self.label.iter().for_each(|text| {
+            systems.gfx.remove_gfx(*text);
+        });
         self.button.clear();
     }
 
@@ -227,7 +254,10 @@ impl Setting {
         self.bgm_scroll.set_visible(systems, visible);
         self.button.iter_mut().for_each(|button| {
             button.set_visible(systems, visible);
-        })
+        });
+        self.label.iter().for_each(|text| {
+            systems.gfx.set_visible(*text, visible);
+        });
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
@@ -291,6 +321,12 @@ impl Setting {
         self.button.iter_mut().for_each(|button| {
             button.set_z_order(systems, detail_2);
         });
+
+        self.label.iter().for_each(|text| {
+            let mut pos = systems.gfx.get_pos(*text);
+            pos.z = detail_1;
+            systems.gfx.set_pos(*text, pos);
+        });
     }
 
     pub fn move_window(
@@ -338,6 +374,21 @@ impl Setting {
 
         self.sfx_scroll.set_pos(systems, self.pos);
         self.bgm_scroll.set_pos(systems, self.pos);
+
+        self.label.iter().enumerate().for_each(|(index, text)| {
+            let ypos = match index {
+                0 => self.size.y - 60.0,
+                _ => self.size.y - 90.0,
+            };
+            let tpos = Vec2::new(self.pos.x + 10.0, self.pos.y + ypos);
+
+            let pos = systems.gfx.get_pos(*text);
+            systems.gfx.set_pos(*text, Vec3::new(tpos.x, tpos.y, pos.z));
+            systems.gfx.set_bound(
+                *text,
+                Bounds::new(tpos.x, tpos.y, tpos.x + 100.0, tpos.y + 20.0),
+            );
+        });
     }
 
     pub fn hover_scrollbar(

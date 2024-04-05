@@ -812,20 +812,33 @@ pub fn handle_playerlevel(
     let level = data.read::<i32>()?;
     let levelexp = data.read::<u64>()?;
 
+    content.game_content.player_data.levelexp = levelexp;
+
     if let Some(myentity) = content.game_content.myentity {
         if world.contains(myentity.0) {
-            content.game_content.player_data.levelexp = levelexp;
             {
                 world.get::<&mut Level>(myentity.0)?.0 = level;
             }
             let nextexp = player_get_next_lvl_exp(world, &myentity)?;
 
-            content.game_content.interface.vitalbar.update_bar_size(
-                systems,
-                2,
-                levelexp as i32,
-                nextexp as i32,
-            );
+            if content.game_content.finalized {
+                content.game_content.interface.vitalbar.update_bar_size(
+                    systems,
+                    2,
+                    levelexp as i32,
+                    nextexp as i32,
+                );
+
+                content
+                    .game_content
+                    .interface
+                    .profile
+                    .set_profile_label_value(
+                        systems,
+                        ProfileLabel::Level,
+                        level as u64,
+                    );
+            }
         }
     }
 
