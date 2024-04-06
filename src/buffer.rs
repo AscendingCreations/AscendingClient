@@ -3,7 +3,10 @@ use indexmap::IndexMap;
 use rustls::internal::msgs;
 use std::collections::VecDeque;
 
-use crate::{database::map::*, Content, HPBar, MapAttributes, SystemHolder};
+use crate::{
+    database::map::*, Content, HPBar, MapAttributes, MessageChannel,
+    SystemHolder,
+};
 
 pub struct StoredData {
     pub map_data: IndexMap<String, MapData>,
@@ -96,14 +99,20 @@ impl BufferTask {
 pub struct ChatTask {
     msg: (String, Color),
     header_msg: Option<(String, Color)>,
+    channel: MessageChannel,
 }
 
 impl ChatTask {
     pub fn new(
         msg: (String, Color),
         header_msg: Option<(String, Color)>,
+        channel: MessageChannel,
     ) -> Self {
-        ChatTask { msg, header_msg }
+        ChatTask {
+            msg,
+            header_msg,
+            channel,
+        }
     }
 }
 
@@ -136,6 +145,7 @@ impl ChatBufferTask {
                 systems,
                 task.msg,
                 task.header_msg,
+                task.channel,
             );
         }
     }

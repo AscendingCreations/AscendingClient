@@ -1217,20 +1217,28 @@ pub fn handle_chatmsg(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let _channel = data.read::<MessageChannel>()?;
+        let channel = data.read::<MessageChannel>()?;
         let head_string = data.read::<String>()?;
         let msg_string = data.read::<String>()?;
         let _useraccess = data.read::<Option<UserAccess>>()?;
 
         let header = if !head_string.is_empty() {
-            Some((head_string, COLOR_GREEN))
+            let color = match channel {
+                MessageChannel::Global => COLOR_GREEN,
+                MessageChannel::Map => COLOR_BLUE,
+                MessageChannel::Private => COLOR_RED,
+                _ => COLOR_WHITE,
+            };
+            Some((head_string, color))
         } else {
             None
         };
 
-        buffer
-            .chatbuffer
-            .add_task(ChatTask::new((msg_string, COLOR_WHITE), header));
+        buffer.chatbuffer.add_task(ChatTask::new(
+            (msg_string, COLOR_WHITE),
+            header,
+            channel,
+        ));
     }
 
     Ok(())
