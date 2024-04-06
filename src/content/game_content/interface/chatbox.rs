@@ -162,6 +162,7 @@ pub struct Chatbox {
     pub did_button_click: bool,
     pub scrollbar: Scrollbar,
     pub chat_tab: [ChatTab; 3],
+    msg_selection: usize,
     pub selected_tab: usize,
 
     chat: Vec<Chat>,
@@ -189,6 +190,7 @@ impl Chatbox {
 
         let detail_1 = w_pos.z.sub_f32(0.001, 3);
         let detail_2 = w_pos.z.sub_f32(0.002, 3);
+        let detail_3 = w_pos.z.sub_f32(0.003, 3);
 
         let mut window_rect = Rect::new(&mut systems.renderer, 0);
         window_rect
@@ -220,7 +222,7 @@ impl Chatbox {
             .set_size(chat_areasize)
             .set_color(Color::rgba(160, 160, 160, 255));
         let chatarea_bg = systems.gfx.add_rect(chatarea_rect, 0);
-        let chat_zorder = detail_2;
+        let chat_zorder = detail_3;
         let chat_bounds = Bounds::new(
             chat_area_pos.x,
             chat_area_pos.y,
@@ -402,6 +404,14 @@ impl Chatbox {
         ];
         chat_tab[0].set_select(systems, true);
 
+        let mut selection_rect = Rect::new(&mut systems.renderer, 0);
+        selection_rect
+            .set_position(Vec3::new(0.0, 0.0, detail_3))
+            .set_size(Vec2::new(0.0, 0.0))
+            .set_color(Color::rgba(60, 60, 60, 255));
+        let msg_selection = systems.gfx.add_rect(selection_rect, 0);
+        systems.gfx.set_visible(msg_selection, false);
+
         Chatbox {
             window,
             textbox_bg,
@@ -424,6 +434,7 @@ impl Chatbox {
             hold_pos: Vec2::new(0.0, 0.0),
             chat_tab,
             selected_tab: 0,
+            msg_selection,
 
             min_bound: Vec2::new(
                 systems.size.width - w_size.x,
@@ -448,6 +459,7 @@ impl Chatbox {
         self.chat_tab.iter_mut().for_each(|tab| {
             tab.unload(systems);
         });
+        systems.gfx.remove_gfx(self.msg_selection);
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
@@ -504,6 +516,7 @@ impl Chatbox {
         let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
         let detail_1 = detail_origin.sub_f32(0.001, 3);
         let detail_2 = detail_origin.sub_f32(0.002, 3);
+        let detail_3 = detail_origin.sub_f32(0.002, 3);
 
         let pos = systems.gfx.get_pos(self.window);
         systems
@@ -514,7 +527,7 @@ impl Chatbox {
             .gfx
             .set_pos(self.textbox_bg, Vec3::new(pos.x, pos.y, detail_1));
         let pos = systems.gfx.get_pos(self.chatarea_bg);
-        self.chat_zorder = detail_2;
+        self.chat_zorder = detail_3;
         systems
             .gfx
             .set_pos(self.chatarea_bg, Vec3::new(pos.x, pos.y, detail_1));
@@ -530,6 +543,11 @@ impl Chatbox {
                 .gfx
                 .set_pos(chat.text, Vec3::new(pos.x, pos.y, self.chat_zorder));
         }
+
+        let pos = systems.gfx.get_pos(self.msg_selection);
+        systems
+            .gfx
+            .set_pos(self.msg_selection, Vec3::new(pos.x, pos.y, detail_2));
 
         self.chat_tab.iter_mut().for_each(|tab| {
             tab.set_z_order(systems, [detail_origin, detail_1]);
@@ -576,7 +594,7 @@ impl Chatbox {
         });
         self.scrollbar.set_pos(systems, self.pos);
 
-        let scroll_y = self.chat_scroll_value * 20;
+        let scroll_y = self.chat_scroll_value * 16;
         for data in self.chat.iter_mut() {
             let start_pos = Vec2::new(
                 self.chat_bounds.left,
@@ -592,6 +610,12 @@ impl Chatbox {
             );
             systems.gfx.set_bound(data.text, self.chat_bounds);
         }
+
+        let pos = systems.gfx.get_pos(self.msg_selection);
+        systems
+            .gfx
+            .set_pos(self.msg_selection, Vec3::new(0.0, 0.0, pos.z));
+        systems.gfx.set_visible(self.msg_selection, false);
 
         self.chat_tab.iter_mut().for_each(|tab| {
             tab.move_pos(systems, self.pos);
@@ -637,6 +661,58 @@ impl Chatbox {
         for tab in self.chat_tab.iter_mut() {
             let in_area = tab.in_area(screen_pos);
             tab.set_hover(systems, in_area);
+        }
+    }
+
+    pub fn hover_msg(&mut self, systems: &mut SystemHolder, screen_pos: Vec2) {
+        let mut got_index = None;
+        for (index, chat) in self.chat.iter().enumerate() {
+            if can_channel_show(chat.channel, self.selected_tab)
+                && is_within_area(
+                    screen_pos,
+                    Vec2::new(self.chat_bounds.left, self.chat_bounds.bottom),
+                    self.chat_areasize,
+                )
+            {
+                let scroll_y = self.chat_scroll_value * 16;
+                let start_pos = Vec2::new(
+                    self.chat_bounds.left,
+                    self.chat_bounds.bottom - chat.size.y,
+                );
+                let pos = Vec2::new(
+                    start_pos.x,
+                    (start_pos.y + 2.0 + chat.adjust_y) - scroll_y as f32,
+                );
+                if is_within_area(screen_pos, pos, chat.size) {
+                    got_index = Some((index, pos));
+                    break;
+                }
+            }
+        }
+
+        if let Some((index, mut pos)) = got_index {
+            let chat = self.chat[index];
+
+            let new_y = pos.y.max(self.chat_bounds.bottom);
+            let adjust_size_y =
+                if new_y != pos.y { new_y - pos.y } else { 0.0 };
+            pos.y = pos.y.max(self.chat_bounds.bottom);
+
+            let mut size = chat.size;
+            size.y -= adjust_size_y;
+            size.y = size
+                .y
+                .min((self.chat_bounds.bottom + self.chat_areasize.y) - pos.y);
+
+            systems.gfx.set_visible(self.msg_selection, true);
+
+            let curpos = systems.gfx.get_pos(self.msg_selection);
+            systems
+                .gfx
+                .set_pos(self.msg_selection, Vec3::new(pos.x, pos.y, curpos.z));
+            systems.gfx.set_size(self.msg_selection, size);
+        } else {
+            systems.gfx.set_visible(self.msg_selection, false);
         }
     }
 

@@ -151,6 +151,7 @@ impl Interface {
             MouseInputType::MouseMove => {
                 Interface::hover_buttons(interface, systems, screen_pos);
                 interface.chatbox.hover_buttons(systems, screen_pos);
+                interface.chatbox.hover_msg(systems, screen_pos);
                 interface.profile.hover_buttons(systems, screen_pos);
                 interface.inventory.hover_buttons(systems, screen_pos);
                 interface.setting.hover_buttons(systems, screen_pos);
