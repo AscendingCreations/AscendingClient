@@ -1,5 +1,6 @@
 use crate::game_content::entity::*;
 use bytey::{ByteBufferRead, ByteBufferWrite};
+use graphics::*;
 use serde::{Deserialize, Serialize};
 
 pub const TILE_SIZE: usize = 20;
@@ -159,6 +160,11 @@ pub enum FtlType {
     Money,
 }
 
+pub const COLOR_WHITE: Color = Color::rgba(255, 255, 255, 255);
+pub const COLOR_RED: Color = Color::rgba(230, 30, 30, 255);
+pub const COLOR_BLUE: Color = Color::rgba(30, 30, 230, 255);
+pub const COLOR_GREEN: Color = Color::rgba(10, 230, 10, 255);
+
 pub const VITALS_MAX: usize = VitalTypes::Count as usize;
 pub const MAX_INV: usize = 30;
 pub const MAX_TRADE_SLOT: usize = 30;
@@ -189,14 +195,16 @@ pub const ORDER_GUI_WINDOW: f32 = 2.999; // The whole 2.9xxx will be used for Ga
 pub const ORDER_HOLD_ITEM: f32 = 1.99;
 pub const ORDER_ITEM_DESC: f32 = 1.989;
 pub const ORDER_ITEM_DESC_TEXT: f32 = 1.988;
-pub const ORDER_ALERT_BG: f32 = 1.89;
-pub const ORDER_ALERT: f32 = 1.88;
-pub const ORDER_ALERT_HEADER: f32 = 1.87;
-pub const ORDER_ALERT_HEADER_TEXT: f32 = 1.86;
-pub const ORDER_ALERT_TEXT: f32 = 1.87;
-pub const ORDER_ALERT_TEXTBOX_BG: f32 = 1.87;
-pub const ORDER_ALERT_TEXTBOX: f32 = 1.86;
-pub const ORDER_ALERT_BUTTON: f32 = 1.87;
+pub const ORDER_FLOAT_TEXT_BG: f32 = 1.8;
+pub const ORDER_FLOAT_TEXT: f32 = 1.7;
+pub const ORDER_ALERT_BG: f32 = 1.59;
+pub const ORDER_ALERT: f32 = 1.58;
+pub const ORDER_ALERT_HEADER: f32 = 1.57;
+pub const ORDER_ALERT_HEADER_TEXT: f32 = 1.56;
+pub const ORDER_ALERT_TEXT: f32 = 1.57;
+pub const ORDER_ALERT_TEXTBOX_BG: f32 = 1.57;
+pub const ORDER_ALERT_TEXTBOX: f32 = 1.56;
+pub const ORDER_ALERT_BUTTON: f32 = 1.57;
 pub const ORDER_TOOLTIP: f32 = 1.05;
 pub const ORDER_TOOLTIP_TEXT: f32 = 1.0;
 pub const ORDER_FADE: f32 = 0.9;

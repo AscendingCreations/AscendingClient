@@ -16,6 +16,7 @@ use hecs::World;
 
 mod camera;
 pub mod entity;
+pub mod floating_text;
 pub mod map;
 pub mod npc;
 pub mod player;
@@ -24,6 +25,7 @@ pub mod target;
 
 use camera::*;
 pub use entity::*;
+pub use floating_text::*;
 pub use map::*;
 pub use npc::*;
 pub use player::*;
@@ -53,6 +55,7 @@ pub struct GameContent {
     pub target: Target,
     pub pick_up_timer: f32,
     pub current_music: String,
+    pub float_text: FloatingText,
 }
 
 impl GameContent {
@@ -72,6 +75,7 @@ impl GameContent {
             target: Target::new(systems),
             pick_up_timer: 0.0,
             current_music: String::new(),
+            float_text: FloatingText::new(),
         }
     }
 
@@ -82,6 +86,7 @@ impl GameContent {
             *key = false;
         });
         self.target.recreate(systems);
+        self.float_text.recreate();
         self.finalized = false;
     }
 
@@ -108,6 +113,7 @@ impl GameContent {
         self.target.unload(systems);
         self.map.unload(systems);
         self.player_data.unload();
+        self.float_text.unload(systems);
         Ok(())
     }
 

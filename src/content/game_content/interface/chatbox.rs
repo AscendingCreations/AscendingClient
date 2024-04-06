@@ -7,11 +7,6 @@ const MAX_CHAT_LINE: usize = 8;
 const VISIBLE_SIZE: f32 = 160.0;
 const MAX_CHAT: usize = 100;
 
-pub const COLOR_WHITE: Color = Color::rgba(255, 255, 255, 255);
-pub const COLOR_RED: Color = Color::rgba(230, 30, 30, 255);
-pub const COLOR_BLUE: Color = Color::rgba(30, 30, 230, 255);
-pub const COLOR_GREEN: Color = Color::rgba(10, 230, 10, 255);
-
 #[derive(Debug)]
 pub struct Chat {
     text: usize,

@@ -35,13 +35,23 @@ rcgen = { version = "0.12", features = [
     "pem",
     "ring",
 ], default-features = false }
-rustls = { version = "0.23.4", default-features = false, features = [ "logging", "ring", "std", "tls12"]}
+rustls = { version = "0.23.4", default-features = false, features = [
+    "logging",
+    "ring",
+    "std",
+    "tls12",
+] }
 toml = "0.8.10"
 rustls-pemfile = "2"
 webpki-roots = "0.26"
 webpki = "0.22.4"
 regex = "1.10.3"
-educe = { version = "0.5.11", default-features = false, features = ["Debug", "PartialEq", "Default"]}
+educe = { version = "0.5.11", default-features = false, features = [
+    "Debug",
+    "PartialEq",
+    "Default",
+] }
+rand = "0.8.5"
 
 [dependencies.camera]
 package = "ascending_camera"

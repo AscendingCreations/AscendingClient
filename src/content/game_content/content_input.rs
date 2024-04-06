@@ -4,7 +4,7 @@ use winit::{event::*, keyboard::*};
 
 use crate::{
     content::*, socket::*, Alert, ContentType, MouseInputType, SystemHolder,
-    Tooltip,
+    Tooltip, COLOR_RED,
 };
 
 use super::{
@@ -69,7 +69,7 @@ impl GameContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        _socket: &mut Socket,
         alert: &mut Alert,
         event: &KeyEvent,
     ) -> Result<()> {
@@ -112,7 +112,15 @@ impl GameContent {
             #[allow(clippy::single_match)]
             match event.physical_key {
                 PhysicalKey::Code(KeyCode::F1) => {
-                    send_command(socket, Command::Trade)?;
+                    if let Some(myentity) = content.game_content.myentity {
+                        add_float_text(
+                            systems,
+                            &mut content.game_content,
+                            world.get_or_err::<Position>(&myentity)?,
+                            "-5".into(),
+                            COLOR_RED,
+                        )
+                    }
                 }
                 _ => {}
             }

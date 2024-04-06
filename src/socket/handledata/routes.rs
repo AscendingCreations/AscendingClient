@@ -1,5 +1,5 @@
 use crate::{
-    add_npc, close_interface,
+    add_float_text, add_npc, close_interface,
     content::game_content::{interface::chatbox::*, player::*},
     dir_to_enum,
     entity::{self, *},
@@ -7,6 +7,7 @@ use crate::{
     get_percent, get_start_map_pos, is_map_connected, npc_finalized,
     open_interface, player_get_armor_defense, player_get_weapon_damage,
     send_handshake, set_npc_frame, unload_mapitems, unload_npc, update_camera,
+    values::*,
     Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
     EncryptionState, EntityType, FtlType, IsUsingType, MapItem, MessageChannel,
     Position, ProfileLabel, Result, Socket, SystemHolder, TradeStatus, Window,
@@ -1616,6 +1617,54 @@ pub fn handle_playitemsfx(
             .audio
             .play_effect(&format!("./audio/{}", sfx_name), volume)?;
     }
+
+    Ok(())
+}
+
+pub fn handle_floattextdamage(
+    _socket: &mut Socket,
+    _world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    let amount = data.read::<u16>()?;
+    let pos = data.read::<Position>()?;
+
+    add_float_text(
+        systems,
+        &mut content.game_content,
+        pos,
+        format!("-{}", amount),
+        COLOR_RED,
+    );
+
+    Ok(())
+}
+
+pub fn handle_floattextheal(
+    _socket: &mut Socket,
+    _world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    let amount = data.read::<u16>()?;
+    let pos = data.read::<Position>()?;
+
+    add_float_text(
+        systems,
+        &mut content.game_content,
+        pos,
+        format!("+{}", amount),
+        COLOR_GREEN,
+    );
 
     Ok(())
 }

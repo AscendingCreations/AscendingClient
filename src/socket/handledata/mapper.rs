@@ -87,6 +87,8 @@ pub enum ServerPackets {
     TradeStatus,
     TradeRequest,
     PlayItemSfx,
+    FloatTextDamage,
+    FloatTextHeal,
     ServerPacketCount,
 }
 
@@ -324,6 +326,14 @@ impl PacketRouter {
             (
                 ServerPackets::PlayItemSfx,
                 routes::handle_playitemsfx as PacketFunction,
+            ),
+            (
+                ServerPackets::FloatTextDamage,
+                routes::handle_floattextdamage as PacketFunction,
+            ),
+            (
+                ServerPackets::FloatTextHeal,
+                routes::handle_floattextheal as PacketFunction,
             ),
         ]))
     }

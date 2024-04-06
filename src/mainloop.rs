@@ -23,6 +23,7 @@ pub fn game_loop(
     match content.content_type {
         ContentType::Game => {
             update_camera(world, &mut content.game_content, systems, socket)?;
+            float_text_loop(systems, &mut content.game_content, seconds);
 
             if seconds > loop_timer.player_tmr {
                 update_player(
