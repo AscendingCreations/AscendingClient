@@ -7,9 +7,10 @@ const MAX_CHAT_LINE: usize = 8;
 const VISIBLE_SIZE: f32 = 160.0;
 const MAX_CHAT: usize = 100;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Chat {
     text: usize,
+    msg: String,
     size: Vec2,
     adjust_y: f32,
     channel: MessageChannel,
@@ -163,6 +164,7 @@ pub struct Chatbox {
     pub scrollbar: Scrollbar,
     pub chat_tab: [ChatTab; 3],
     msg_selection: usize,
+    msg_select_index: Option<usize>,
     pub selected_tab: usize,
 
     chat: Vec<Chat>,
@@ -435,6 +437,7 @@ impl Chatbox {
             chat_tab,
             selected_tab: 0,
             msg_selection,
+            msg_select_index: None,
 
             min_bound: Vec2::new(
                 systems.size.width - w_size.x,
@@ -691,14 +694,12 @@ impl Chatbox {
         }
 
         if let Some((index, mut pos)) = got_index {
-            let chat = self.chat[index];
-
             let new_y = pos.y.max(self.chat_bounds.bottom);
             let adjust_size_y =
                 if new_y != pos.y { new_y - pos.y } else { 0.0 };
             pos.y = pos.y.max(self.chat_bounds.bottom);
 
-            let mut size = chat.size;
+            let mut size = self.chat[index].size;
             size.y -= adjust_size_y;
             size.y = size
                 .y
@@ -711,9 +712,22 @@ impl Chatbox {
                 .gfx
                 .set_pos(self.msg_selection, Vec3::new(pos.x, pos.y, curpos.z));
             systems.gfx.set_size(self.msg_selection, size);
+
+            self.msg_select_index = Some(index);
         } else {
             systems.gfx.set_visible(self.msg_selection, false);
+
+            self.msg_select_index = None;
         }
+    }
+
+    pub fn get_selected_msg(&mut self) -> Option<String> {
+        if let Some(index) = self.msg_select_index {
+            if let Some(chatdata) = self.chat.get(index) {
+                return Some(chatdata.msg.clone());
+            }
+        }
+        None
     }
 
     pub fn click_buttons(
@@ -824,7 +838,7 @@ impl Chatbox {
         let text = systems.gfx.add_text(text_data, 1);
         let msg_color = Attrs::new().color(msg.1);
 
-        if let Some(header) = header_msg {
+        let msg = if let Some(header) = header_msg {
             let header_color = Attrs::new().color(header.1);
             systems.gfx.set_rich_text(
                 &mut systems.renderer,
@@ -834,17 +848,20 @@ impl Chatbox {
                     (msg.0.as_str(), msg_color),
                 ],
             );
+            format!("{}{}", header.0, msg.0)
         } else {
             systems.gfx.set_rich_text(
                 &mut systems.renderer,
                 text,
                 [(msg.0.as_str(), msg_color)],
             );
-        }
+            format!("{}", msg.0)
+        };
         let size = systems.gfx.get_measure(text);
 
         let chat = Chat {
             text,
+            msg,
             size,
             adjust_y: size.y,
             channel,
@@ -944,6 +961,7 @@ impl Chatbox {
             self.scrollbar.set_value(systems, 0);
             self.scrollbar.set_max_value(systems, 0);
         }
+        self.chat_scroll_value = self.scrollbar.value;
     }
 }
 
