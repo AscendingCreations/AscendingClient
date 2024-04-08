@@ -121,6 +121,7 @@ impl GameContent {
         self.map.map_pos = map;
 
         self.map.map_attribute.clear();
+        self.map.dir_block.clear();
         self.map.music.clear();
 
         for i in 0..9 {
@@ -136,6 +137,13 @@ impl GameContent {
             ));
 
             self.map.music.push((mapdata.music.clone(), i));
+
+            self.map.dir_block.push((
+                MapDirBlock {
+                    dir: mapdata.dir_block.clone(),
+                },
+                i,
+            ));
         }
     }
 
@@ -275,6 +283,7 @@ impl GameContent {
         for (from, to) in move_maps {
             self.map.index[from].1 = to;
             self.map.map_attribute[from].1 = to;
+            self.map.dir_block[from].1 = to;
             self.map.music[from].1 = to;
         }
 
@@ -289,6 +298,7 @@ impl GameContent {
                 get_map_loc(self.map.map_pos.x, self.map.map_pos.y, to);
             self.map.index[from].1 = to;
             self.map.map_attribute[from].1 = to;
+            self.map.dir_block[from].1 = to;
             self.map.music[from].1 = to;
 
             buffer.add_task(BufferTaskEnum::LoadMap(

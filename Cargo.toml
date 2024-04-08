@@ -52,6 +52,7 @@ educe = { version = "0.5.11", default-features = false, features = [
     "Default",
 ] }
 rand = "0.8.5"
+bit_op = "0.1.1"
 
 [dependencies.camera]
 package = "ascending_camera"

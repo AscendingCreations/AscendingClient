@@ -4,8 +4,8 @@ use rustls::internal::msgs;
 use std::collections::VecDeque;
 
 use crate::{
-    database::map::*, Content, HPBar, MapAttributes, MessageChannel,
-    SystemHolder,
+    database::map::*, Content, HPBar, MapAttributes, MapDirBlock,
+    MessageChannel, SystemHolder,
 };
 
 pub struct StoredData {
@@ -17,6 +17,7 @@ pub enum BufferTaskEnum {
     ApplyMap(i32, i32, u64, usize),
     ApplyMapAttribute(i32, i32, u64, usize),
     ApplyMapMusic(i32, i32, u64, usize),
+    ApplyMapDirBlock(i32, i32, u64, usize),
     UnloadMap(i32, i32, u64),
 }
 
@@ -66,6 +67,15 @@ impl BufferTask {
                         content.game_content.map.map_attribute[map_index].0 =
                             MapAttributes {
                                 attribute: mapdata.attribute.clone(),
+                            };
+                    }
+                }
+                BufferTaskEnum::ApplyMapDirBlock(mx, my, mg, map_index) => {
+                    let key = format!("{}_{}_{}", mx, my, mg);
+                    if let Some(mapdata) = self.storage.map_data.get(&key) {
+                        content.game_content.map.dir_block[map_index].0 =
+                            MapDirBlock {
+                                dir: mapdata.dir_block.clone(),
                             };
                     }
                 }

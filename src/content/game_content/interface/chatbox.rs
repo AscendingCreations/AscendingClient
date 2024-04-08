@@ -855,7 +855,7 @@ impl Chatbox {
                 text,
                 [(msg.0.as_str(), msg_color)],
             );
-            format!("{}", msg.0)
+            msg.0
         };
         let size = systems.gfx.get_measure(text);
 

@@ -1,3 +1,4 @@
+use bit_op::{bit_u8::*, BitOp};
 use graphics::*;
 use hecs::World;
 
@@ -18,6 +19,11 @@ pub struct MapAttributes {
     pub attribute: Vec<MapAttribute>,
 }
 
+#[derive(Clone, Debug)]
+pub struct MapDirBlock {
+    pub dir: Vec<u8>,
+}
+
 impl MapAttributes {
     pub fn default() -> Self {
         MapAttributes {
@@ -30,6 +36,7 @@ impl MapAttributes {
 pub struct MapContent {
     pub map_pos: MapPosition,
     pub index: [(usize, usize); 9], // (MapIndex, Order)
+    pub dir_block: Vec<(MapDirBlock, usize)>,
     pub map_attribute: Vec<(MapAttributes, usize)>,
     pub music: Vec<(Option<String>, usize)>,
 }
@@ -48,6 +55,7 @@ impl MapContent {
         Self {
             map_pos: MapPosition::default(),
             index,
+            dir_block: Vec::with_capacity(9),
             map_attribute: Vec::with_capacity(9),
             music: Vec::with_capacity(9),
         }
@@ -67,12 +75,14 @@ impl MapContent {
         self.index.iter().for_each(|(index, _)| {
             systems.gfx.remove_gfx(*index);
         });
+        self.dir_block.clear();
         self.map_attribute.clear();
         self.music.clear();
     }
 
     pub fn sort_map(&mut self) {
         self.index.sort_by(|a, b| a.1.cmp(&b.1));
+        self.dir_block.sort_by(|a, b| a.1.cmp(&b.1));
         self.map_attribute.sort_by(|a, b| a.1.cmp(&b.1));
         self.music.sort_by(|a, b| a.1.cmp(&b.1));
     }
@@ -136,6 +146,11 @@ impl MapContent {
         }
         let tile_num = get_tile_pos(new_pos.x as i32, new_pos.y as i32);
         self.map_attribute[map_index].0.attribute[tile_num].clone()
+    }
+
+    pub fn get_dir_block(&self, pos: Vec2, map_index: usize) -> u8 {
+        let tile_num = get_tile_pos(pos.x as i32, pos.y as i32);
+        self.dir_block[map_index].0.dir[tile_num]
     }
 }
 
@@ -233,6 +248,19 @@ pub fn can_move(
     if content.player_data.is_using_type.inuse() {
         return Ok(false);
     }
+
+    let dir_block = content
+        .map
+        .get_dir_block(Vec2::new(pos.x as f32, pos.y as f32), 0);
+    if match direction {
+        Direction::Down => dir_block.get(B0) == 0b00000001,
+        Direction::Right => dir_block.get(B3) == 0b00001000,
+        Direction::Up => dir_block.get(B1) == 0b00000010,
+        Direction::Left => dir_block.get(B2) == 0b00000100,
+    } {
+        return Ok(false);
+    }
+
     let attribute = content
         .map
         .get_attribute(Vec2::new(pos.x as f32, pos.y as f32), direction);
