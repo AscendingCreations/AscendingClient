@@ -1,12 +1,24 @@
 use graphics::*;
 use serde::{Deserialize, Serialize};
-use std::fs::OpenOptions;
-use std::io::BufReader;
+use std::fs::{File, OpenOptions};
+use std::io::{BufReader, Read};
 use std::path::Path;
+
+use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 
 use crate::{MapPosition, SystemHolder};
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Default)]
+#[derive(
+    Clone,
+    Debug,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Default,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct WarpData {
     pub map_x: i32,
     pub map_y: i32,
@@ -15,14 +27,33 @@ pub struct WarpData {
     pub tile_y: u32,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Default)]
+#[derive(
+    Clone,
+    Debug,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Default,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct ItemSpawnData {
     pub index: u32,
     pub amount: u16,
     pub timer: u64,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(
+    Clone,
+    Debug,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub enum MapAttribute {
     Walkable,
     Blocked,
@@ -36,7 +67,16 @@ pub enum MapAttribute {
 }
 
 #[derive(
-    Copy, Clone, Deserialize, Serialize, PartialEq, Eq, Default, Debug,
+    Copy,
+    Clone,
+    Deserialize,
+    Serialize,
+    PartialEq,
+    Eq,
+    Default,
+    Debug,
+    ByteBufferRead,
+    ByteBufferWrite,
 )]
 pub enum Weather {
     #[default]
@@ -52,12 +92,16 @@ pub enum Weather {
     Windy,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(
+    Clone, Debug, Serialize, Deserialize, ByteBufferRead, ByteBufferWrite,
+)]
 pub struct Tile {
     pub id: Vec<u32>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(
+    Clone, Debug, Serialize, Deserialize, ByteBufferRead, ByteBufferWrite,
+)]
 pub struct MapData {
     pub position: MapPosition,
     pub tile: Vec<Tile>,
@@ -88,7 +132,7 @@ impl MapData {
     }
 }
 
-pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
+pub fn load_filex(x: i32, y: i32, group: u64) -> MapData {
     if !is_map_exist(x, y, group) {
         println!("Map does not exist");
         return MapData::default(x, y, group);
@@ -114,8 +158,38 @@ pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
     }
 }
 
+pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
+    if !is_map_exist(x, y, group) {
+        println!("Map does not exist");
+        return MapData::default(x, y, group);
+    }
+
+    let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
+    match OpenOptions::new().read(true).open(&name) {
+        Ok(mut file) => {
+            let mut data = Vec::new();
+            file.read_to_end(&mut data).unwrap();
+
+            let mut buf = ByteBuffer::new().unwrap();
+            buf.write(data).unwrap();
+            buf.move_cursor_to_start();
+
+            buf.read::<MapData>().unwrap()
+        }
+        Err(e) => {
+            println!("Failed to load {}, Err {:?}", name, e);
+            MapData::default(x, y, group)
+        }
+    }
+}
+
 pub fn is_map_exist(x: i32, y: i32, group: u64) -> bool {
     let name = format!("./data/maps/{}_{}_{}.json", x, y, group);
+    Path::new(&name).exists()
+}
+
+pub fn is_map_bin_exist(x: i32, y: i32, group: u64) -> bool {
+    let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
     Path::new(&name).exists()
 }
 

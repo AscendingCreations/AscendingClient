@@ -22,6 +22,7 @@ use std::{
     io::{prelude::*, Read, Write},
     iter, panic,
     sync::Arc,
+    time::{Duration, Instant},
 };
 use wgpu::{Backends, Dx12Compiler, InstanceDescriptor, InstanceFlags};
 use winit::{
@@ -179,15 +180,13 @@ async fn main() -> Result<()> {
     let mut renderer = instance
         .create_device(
             window,
-            &wgpu::RequestAdapterOptions {
-                // High performance mode says to use Dedicated Graphics devices first.
-                // Low power is APU graphic devices First.
-                power_preference: wgpu::PowerPreference::HighPerformance,
-                compatible_surface: Some(&compatible_surface),
-                // we will never use this as this forces us to use an alternative renderer.
-                force_fallback_adapter: false,
+            //used to find adapters
+            AdapterOptions {
+                allowed_backends: Backends::all(),
+                power: AdapterPowerSettings::HighPower,
+                compatible_surface: Some(compatible_surface),
             },
-            // used to deturmine if we need special limits or features for our backends.
+            // used to deturmine which adapters support our special limits or features for our backends.
             &wgpu::DeviceDescriptor {
                 required_features: wgpu::Features::default(),
                 required_limits: wgpu::Limits::default(),
@@ -333,7 +332,10 @@ async fn main() -> Result<()> {
     bindings.insert_action(Action::Quit, vec![Key::Character('q').into()]);
 
     // set bindings and create our own input handler.
-    let mut input_handler = InputHandler::new(bindings);
+    // Increase the milli second to higher numbers if you need to support accessability for
+    // slower clicking users. can have presets.
+    let mut input_handler =
+        InputHandler::new(bindings, Duration::from_millis(180));
 
     let mut frame_time = FrameTime::new();
     let mut time = 0.0f32;
@@ -345,9 +347,6 @@ async fn main() -> Result<()> {
     let mut mouse_pos: PhysicalPosition<f64> = PhysicalPosition::new(0.0, 0.0);
     let mut mouse_press: bool = false;
 
-    let mut last_click_time = 0.0f32;
-    let mut click_counter = 0usize;
-    let mut process_click = false;
     let mut got_click = false;
 
     #[allow(deprecated)]
@@ -407,13 +406,8 @@ async fn main() -> Result<()> {
                 }
                 WindowEvent::MouseInput { state, .. } => match state {
                     ElementState::Pressed => {
-                        if click_counter < 2 {
-                            click_counter += 1;
-                            process_click = false;
-                            last_click_time = seconds;
-                            got_click = true;
-                        }
                         mouse_press = true;
+                        got_click = false;
                     }
                     ElementState::Released => {
                         mouse_press = false;
@@ -427,64 +421,52 @@ async fn main() -> Result<()> {
             _ => {}
         }
 
-        if click_counter > 0 && !process_click {
-            let time_since_last_click = seconds - last_click_time;
-            let mouseinputtype = if click_counter > 1 {
-                MouseInputType::MouseDoubleLeftDown
-            } else {
-                MouseInputType::MouseLeftDown
-            };
+        // update our inputs.
+        input_handler.update(systems.renderer.window(), &event, 1.0);
 
-            let mut mouse_event = MouseEvent::None;
-            if time_since_last_click > 0.1 && time_since_last_click < 0.18 {
-                if mouse_press && got_click {
-                    mouse_event = MouseEvent::Click;
-                    got_click = false;
-                }
-            } else if time_since_last_click > 0.18 {
-                if got_click {
-                    mouse_event = MouseEvent::Click;
-                    got_click = false;
-                } else if !mouse_press {
-                    mouse_event = MouseEvent::Release;
-                    click_counter = 0;
-                    process_click = true;
-                }
-            }
+        for input in input_handler.events() {
+            if let input::InputEvent::MouseButtonAction(action) = input {
+                let mouseinputtype = match action {
+                    input::MouseButtonAction::Single(_) => {
+                        Some(MouseInputType::MouseLeftDown)
+                    }
+                    input::MouseButtonAction::Double(_) => {
+                        Some(MouseInputType::MouseDoubleLeftDown)
+                    }
+                    _ => None,
+                };
 
-            match mouse_event {
-                MouseEvent::Click => {
+                if let Some(inputtype) = mouseinputtype {
                     handle_mouse_input(
                         &mut world,
                         &mut systems,
                         &mut socket,
-                        mouseinputtype,
+                        inputtype,
                         &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                         &mut content,
                         &mut alert,
                         &mut tooltip,
                     )
                     .unwrap();
+                    got_click = true;
                 }
-                MouseEvent::Release => {
-                    handle_mouse_input(
-                        &mut world,
-                        &mut systems,
-                        &mut socket,
-                        MouseInputType::MouseRelease,
-                        &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                        &mut content,
-                        &mut alert,
-                        &mut tooltip,
-                    )
-                    .unwrap();
-                }
-                _ => {}
             }
         }
 
-        // update our inputs.
-        input_handler.update(systems.renderer.window(), &event, 1.0);
+        if !mouse_press && got_click {
+            got_click = false;
+            handle_mouse_input(
+                &mut world,
+                &mut systems,
+                &mut socket,
+                MouseInputType::MouseRelease,
+                &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                &mut content,
+                &mut alert,
+                &mut tooltip,
+            )
+            .unwrap();
+        }
 
         // update our renderer based on events here
         if !systems.renderer.update(&event).unwrap() {
@@ -603,7 +585,6 @@ async fn main() -> Result<()> {
 
         fps += 1;
 
-        input_handler.end_frame();
         systems.renderer.window().pre_present_notify();
         systems.renderer.present().unwrap();
 

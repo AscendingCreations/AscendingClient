@@ -62,12 +62,12 @@ version = "0.1.1"
 [dependencies.input]
 package = "ascending_input"
 #path = "./input"
-version = "0.1.1"
+version = "0.2.1"
 
 [dependencies.graphics]
 package = "ascending_graphics"
 #path = "./graphics"
-version = "0.3.0"
+version = "0.4.0"
 
 [profile.dev]
 opt-level = 0
