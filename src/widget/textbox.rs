@@ -1,11 +1,12 @@
 use arboard::Clipboard;
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
+use graphics::{cosmic_text::rustybuzz::ttf_parser::name::Name, *};
 
 const KEY_CTRL: usize = 0;
 const MAX_KEY: usize = 1;
 
-use winit::{event::*, keyboard::*};
+use input::Key;
+use winit::keyboard::NamedKey;
 
 use crate::{logic::*, widget::*, SystemHolder};
 
@@ -154,33 +155,30 @@ impl Textbox {
     pub fn enter_text(
         &mut self,
         systems: &mut SystemHolder,
-        event: &KeyEvent,
+        key: &Key,
+        pressed: bool,
         numeric_only: bool,
     ) {
         if !self.visible {
             return;
         }
 
-        match event.physical_key {
-            PhysicalKey::Code(KeyCode::ControlLeft)
-            | PhysicalKey::Code(KeyCode::ControlRight) => {
-                self.special_key_hold[KEY_CTRL] = event.state.is_pressed();
-            }
-            _ => {}
+        if let Key::Named(NamedKey::Control) = key {
+            self.special_key_hold[KEY_CTRL] = pressed;
         }
 
-        if !event.state.is_pressed() || !self.is_selected {
+        if !pressed || !self.is_selected {
             return;
         }
 
         let mut did_edit = false;
         if self.special_key_hold[KEY_CTRL] {
             if !numeric_only {
-                match event.physical_key {
-                    PhysicalKey::Code(KeyCode::KeyC) => {
+                match key {
+                    Key::Character('c') => {
                         set_clipboard_text(self.text.clone());
                     }
-                    PhysicalKey::Code(KeyCode::KeyV) => {
+                    Key::Character('v') => {
                         self.text.push_str(&get_clipboard_text());
                         did_edit = true;
                     }
@@ -188,12 +186,12 @@ impl Textbox {
                 }
             }
         } else {
-            match event.physical_key {
-                PhysicalKey::Code(KeyCode::Backspace) => {
+            match key {
+                Key::Named(NamedKey::Backspace) => {
                     self.text.pop();
                     did_edit = true;
                 }
-                PhysicalKey::Code(KeyCode::Delete) => {
+                Key::Named(NamedKey::Delete) => {
                     self.text.clear();
                     did_edit = true;
                 }
@@ -201,16 +199,14 @@ impl Textbox {
                     if self.text.len() >= self.limit {
                         return;
                     }
-                    if is_text(event) {
-                        if let Some(char) = event.logical_key.to_text() {
-                            let can_proceed = if numeric_only {
-                                is_numeric(char)
-                            } else {
-                                true
-                            };
-                            if can_proceed {
-                                self.text.push_str(char);
-                            }
+                    if let Key::Character(char) = key {
+                        let can_proceed = if numeric_only {
+                            is_numeric(&char.to_string())
+                        } else {
+                            true
+                        };
+                        if can_proceed {
+                            self.text.push_str(&char.to_string());
                         }
                         did_edit = true;
                     }
@@ -245,6 +241,7 @@ impl Textbox {
     }
 }
 
+/*
 pub fn is_text(event: &KeyEvent) -> bool {
     matches!(
         event.physical_key,
@@ -300,6 +297,7 @@ pub fn is_text(event: &KeyEvent) -> bool {
         )
     )
 }
+ */
 
 pub fn is_numeric(char: &str) -> bool {
     char.trim().parse::<i64>().is_ok()

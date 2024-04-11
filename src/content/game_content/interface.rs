@@ -1,7 +1,8 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use winit::{event::*, keyboard::*};
+use input::Key;
+use winit::keyboard::NamedKey;
 
 use crate::{
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
@@ -534,7 +535,8 @@ impl Interface {
         game_content: &mut GameContent,
         _world: &mut World,
         systems: &mut SystemHolder,
-        event: &KeyEvent,
+        key: &Key,
+        pressed: bool,
     ) {
         match game_content.interface.selected_textbox {
             SelectedTextbox::Chatbox => {
@@ -542,14 +544,14 @@ impl Interface {
                     .interface
                     .chatbox
                     .textbox
-                    .enter_text(systems, event, false);
+                    .enter_text(systems, key, pressed, false);
             }
             SelectedTextbox::Trade => {
                 game_content
                     .interface
                     .trade
                     .money_input
-                    .enter_text(systems, event, true);
+                    .enter_text(systems, key, pressed, true);
             }
             _ => {}
         }

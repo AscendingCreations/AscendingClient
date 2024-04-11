@@ -1,6 +1,7 @@
 use graphics::*;
 use hecs::World;
-use winit::{event::*, keyboard::*};
+use input::Key;
+use winit::keyboard::NamedKey;
 
 use crate::{
     content::*, socket::*, Alert, ContentType, MouseInputType, SystemHolder,
@@ -71,46 +72,47 @@ impl GameContent {
         systems: &mut SystemHolder,
         _socket: &mut Socket,
         alert: &mut Alert,
-        event: &KeyEvent,
+        key: &Key,
+        pressed: bool,
     ) -> Result<()> {
         if alert.visible {
-            alert.alert_key_input(systems, event);
+            alert.alert_key_input(systems, key, pressed);
             return Ok(());
         }
 
-        Interface::key_input(&mut content.game_content, world, systems, event);
+        Interface::key_input(
+            &mut content.game_content,
+            world,
+            systems,
+            key,
+            pressed,
+        );
 
-        match event.physical_key {
+        /*match key {
             PhysicalKey::Code(KeyCode::ArrowUp) => {
-                content.game_content.keyinput[KEY_MOVEUP] =
-                    event.state.is_pressed();
+                content.game_content.keyinput[KEY_MOVEUP] = pressed;
             }
             PhysicalKey::Code(KeyCode::ArrowDown) => {
-                content.game_content.keyinput[KEY_MOVEDOWN] =
-                    event.state.is_pressed();
+                content.game_content.keyinput[KEY_MOVEDOWN] = pressed;
             }
             PhysicalKey::Code(KeyCode::ArrowLeft) => {
-                content.game_content.keyinput[KEY_MOVELEFT] =
-                    event.state.is_pressed();
+                content.game_content.keyinput[KEY_MOVELEFT] = pressed;
             }
             PhysicalKey::Code(KeyCode::ArrowRight) => {
-                content.game_content.keyinput[KEY_MOVERIGHT] =
-                    event.state.is_pressed();
+                content.game_content.keyinput[KEY_MOVERIGHT] = pressed;
             }
             PhysicalKey::Code(KeyCode::ControlLeft) => {
-                content.game_content.keyinput[KEY_ATTACK] =
-                    event.state.is_pressed();
+                content.game_content.keyinput[KEY_ATTACK] = pressed;
             }
             PhysicalKey::Code(KeyCode::Space) => {
-                content.game_content.keyinput[KEY_PICKUP] =
-                    event.state.is_pressed();
+                content.game_content.keyinput[KEY_PICKUP] = pressed;
             }
             _ => {}
-        }
+        }*/
 
-        if event.state.is_pressed() {
+        /*if pressed {
             #[allow(clippy::single_match)]
-            match event.physical_key {
+            match key {
                 PhysicalKey::Code(KeyCode::F1) => {
                     if let Some(myentity) = content.game_content.myentity {
                         add_float_text(
@@ -124,7 +126,7 @@ impl GameContent {
                 }
                 _ => {}
             }
-        }
+        }*/
         Ok(())
     }
 }

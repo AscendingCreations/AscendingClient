@@ -1,6 +1,7 @@
 use graphics::*;
 use hecs::World;
-use winit::{event::*, keyboard::*};
+use input::Key;
+use winit::keyboard::NamedKey;
 
 use crate::{
     content::*, socket::*, Alert, ContentType, MouseInputType, SystemHolder,
@@ -67,10 +68,11 @@ impl MenuContent {
         systems: &mut SystemHolder,
         _socket: &mut Socket,
         alert: &mut Alert,
-        event: &KeyEvent,
+        key: &Key,
+        pressed: bool,
     ) {
         if alert.visible {
-            alert.alert_key_input(systems, event);
+            alert.alert_key_input(systems, key, pressed);
             return;
         }
 
@@ -80,7 +82,8 @@ impl MenuContent {
                     &mut content.menu_content,
                     world,
                     systems,
-                    event,
+                    key,
+                    pressed,
                 );
             }
             WindowType::Login => {
@@ -88,7 +91,8 @@ impl MenuContent {
                     &mut content.menu_content,
                     world,
                     systems,
-                    event,
+                    key,
+                    pressed,
                 );
             }
             _ => {}

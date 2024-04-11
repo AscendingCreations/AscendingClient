@@ -1,6 +1,7 @@
 use graphics::*;
 use hecs::World;
-use winit::{event::*, keyboard::*};
+use input::Key;
+use winit::keyboard::NamedKey;
 
 use crate::{
     content::{menu_content::content_input::*, *},
@@ -57,17 +58,18 @@ pub fn handle_key_input(
     socket: &mut Socket,
     content: &mut Content,
     alert: &mut Alert,
-    event: &KeyEvent,
+    key: &Key,
+    pressed: bool,
 ) -> Result<()> {
     match content.content_type {
         ContentType::Game => {
             GameContent::key_input(
-                content, world, systems, socket, alert, event,
+                content, world, systems, socket, alert, key, pressed,
             )?;
         }
         ContentType::Menu => {
             MenuContent::key_input(
-                content, world, systems, socket, alert, event,
+                content, world, systems, socket, alert, key, pressed,
             );
         }
     }

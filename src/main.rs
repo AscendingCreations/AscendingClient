@@ -29,7 +29,7 @@ use winit::{
     dpi::{PhysicalPosition, PhysicalSize},
     event::*,
     event_loop::{ControlFlow, EventLoop},
-    keyboard::*,
+    keyboard::NamedKey,
     window::{WindowBuilder, WindowButtons},
 };
 
@@ -347,8 +347,6 @@ async fn main() -> Result<()> {
     let mut mouse_pos: PhysicalPosition<f64> = PhysicalPosition::new(0.0, 0.0);
     let mut mouse_press: bool = false;
 
-    let mut got_click = false;
-
     #[allow(deprecated)]
     event_loop.run(move |event, elwt| {
         frame_time.update();
@@ -360,61 +358,11 @@ async fn main() -> Result<()> {
                 ref event,
                 window_id,
                 ..
-            } if window_id == systems.renderer.window().id() => match event {
-                WindowEvent::CloseRequested => {
+            } if window_id == systems.renderer.window().id() => {
+                if let WindowEvent::CloseRequested = event {
                     elwt.exit();
                 }
-                WindowEvent::KeyboardInput { event, .. } => {
-                    handle_key_input(
-                        &mut world,
-                        &mut systems,
-                        &mut socket,
-                        &mut content,
-                        &mut alert,
-                        event,
-                    )
-                    .unwrap();
-                }
-                WindowEvent::CursorMoved { position, .. } => {
-                    mouse_pos = *position;
-
-                    if mouse_press {
-                        handle_mouse_input(
-                            &mut world,
-                            &mut systems,
-                            &mut socket,
-                            MouseInputType::MouseLeftDownMove,
-                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                            &mut content,
-                            &mut alert,
-                            &mut tooltip,
-                        )
-                        .unwrap();
-                    } else {
-                        handle_mouse_input(
-                            &mut world,
-                            &mut systems,
-                            &mut socket,
-                            MouseInputType::MouseMove,
-                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                            &mut content,
-                            &mut alert,
-                            &mut tooltip,
-                        )
-                        .unwrap();
-                    }
-                }
-                WindowEvent::MouseInput { state, .. } => match state {
-                    ElementState::Pressed => {
-                        mouse_press = true;
-                        got_click = false;
-                    }
-                    ElementState::Released => {
-                        mouse_press = false;
-                    }
-                },
-                _ => {}
-            },
+            }
             Event::AboutToWait => {
                 systems.renderer.window().request_redraw();
             }
@@ -425,47 +373,112 @@ async fn main() -> Result<()> {
         input_handler.update(systems.renderer.window(), &event, 1.0);
 
         for input in input_handler.events() {
-            if let input::InputEvent::MouseButtonAction(action) = input {
-                let mouseinputtype = match action {
-                    input::MouseButtonAction::Single(_) => {
-                        Some(MouseInputType::MouseLeftDown)
-                    }
-                    input::MouseButtonAction::Double(_) => {
-                        Some(MouseInputType::MouseDoubleLeftDown)
-                    }
-                    _ => None,
-                };
-
-                if let Some(inputtype) = mouseinputtype {
-                    handle_mouse_input(
+            match input {
+                input::InputEvent::KeyInput { key, pressed, .. } => {
+                    handle_key_input(
                         &mut world,
                         &mut systems,
                         &mut socket,
-                        inputtype,
-                        &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                         &mut content,
                         &mut alert,
-                        &mut tooltip,
+                        key,
+                        *pressed,
                     )
                     .unwrap();
-                    got_click = true;
                 }
-            }
-        }
+                input::InputEvent::MouseButton { button, pressed } => {
+                    if *button == MouseButton::Left {
+                        if *pressed {
+                            handle_mouse_input(
+                                &mut world,
+                                &mut systems,
+                                &mut socket,
+                                MouseInputType::MouseLeftDown,
+                                &Vec2::new(
+                                    mouse_pos.x as f32,
+                                    mouse_pos.y as f32,
+                                ),
+                                &mut content,
+                                &mut alert,
+                                &mut tooltip,
+                            )
+                            .unwrap();
+                            mouse_press = true;
+                        } else if mouse_press {
+                            handle_mouse_input(
+                                &mut world,
+                                &mut systems,
+                                &mut socket,
+                                MouseInputType::MouseRelease,
+                                &Vec2::new(
+                                    mouse_pos.x as f32,
+                                    mouse_pos.y as f32,
+                                ),
+                                &mut content,
+                                &mut alert,
+                                &mut tooltip,
+                            )
+                            .unwrap();
+                            mouse_press = false;
+                        }
+                    }
+                }
+                input::InputEvent::MousePosition => {
+                    if let Some(position) =
+                        input_handler.physical_mouse_position()
+                    {
+                        mouse_pos = position;
 
-        if !mouse_press && got_click {
-            got_click = false;
-            handle_mouse_input(
-                &mut world,
-                &mut systems,
-                &mut socket,
-                MouseInputType::MouseRelease,
-                &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
-                &mut content,
-                &mut alert,
-                &mut tooltip,
-            )
-            .unwrap();
+                        if mouse_press {
+                            handle_mouse_input(
+                                &mut world,
+                                &mut systems,
+                                &mut socket,
+                                MouseInputType::MouseLeftDownMove,
+                                &Vec2::new(
+                                    position.x as f32,
+                                    position.y as f32,
+                                ),
+                                &mut content,
+                                &mut alert,
+                                &mut tooltip,
+                            )
+                            .unwrap();
+                        } else {
+                            handle_mouse_input(
+                                &mut world,
+                                &mut systems,
+                                &mut socket,
+                                MouseInputType::MouseMove,
+                                &Vec2::new(
+                                    position.x as f32,
+                                    position.y as f32,
+                                ),
+                                &mut content,
+                                &mut alert,
+                                &mut tooltip,
+                            )
+                            .unwrap();
+                        }
+                    }
+                }
+                input::InputEvent::MouseButtonAction(action) => {
+                    if let input::MouseButtonAction::Double(_) = action {
+                        handle_mouse_input(
+                            &mut world,
+                            &mut systems,
+                            &mut socket,
+                            MouseInputType::MouseDoubleLeftDown,
+                            &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
+                            &mut content,
+                            &mut alert,
+                            &mut tooltip,
+                        )
+                        .unwrap();
+                    }
+                }
+                _ => {}
+            }
         }
 
         // update our renderer based on events here

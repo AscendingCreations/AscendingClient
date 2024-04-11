@@ -5,7 +5,8 @@ use crate::{
     values::*, widget::*, MouseInputType, Result, Socket, SystemHolder,
 };
 use graphics::{cosmic_text::Attrs, *};
-use winit::event::KeyEvent;
+use input::Key;
+use winit::keyboard::NamedKey;
 
 #[derive(PartialEq, Eq)]
 pub enum AlertType {
@@ -489,13 +490,15 @@ impl Alert {
     pub fn alert_key_input(
         &mut self,
         systems: &mut SystemHolder,
-        event: &KeyEvent,
+        key: &Key,
+        pressed: bool,
     ) {
         if let Some(textbox) = &mut self.input_box {
             if textbox.selected {
                 textbox.textbox.enter_text(
                     systems,
-                    event,
+                    key,
+                    pressed,
                     textbox.numeric_only,
                 );
             }
