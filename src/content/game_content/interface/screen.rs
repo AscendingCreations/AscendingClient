@@ -71,12 +71,12 @@ impl VitalBar {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
         self.bar.iter().for_each(|index| {
-            systems.gfx.remove_gfx(*index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *index);
         });
         self.bar_bg.iter().for_each(|index| {
-            systems.gfx.remove_gfx(*index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *index);
         });
     }
 

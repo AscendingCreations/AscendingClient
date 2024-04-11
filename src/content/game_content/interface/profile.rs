@@ -256,24 +256,26 @@ impl Profile {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
-        systems.gfx.remove_gfx(self.header);
-        systems.gfx.remove_gfx(self.header_text);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.header_text);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.button.clear();
         self.slot.iter().for_each(|slot| {
-            systems.gfx.remove_gfx(*slot);
+            systems.gfx.remove_gfx(&mut systems.renderer, *slot);
         });
         for i in 0..MAX_EQPT {
             if let Some(data) = self.eq_data[i] {
-                systems.gfx.remove_gfx(data.img);
+                systems.gfx.remove_gfx(&mut systems.renderer, data.img);
             }
             self.eq_data[i] = None;
         }
         self.fixed_label.iter().for_each(|label| {
-            systems.gfx.remove_gfx(*label);
+            systems.gfx.remove_gfx(&mut systems.renderer, *label);
         });
     }
 
@@ -661,7 +663,7 @@ impl Profile {
         item: &Item,
     ) {
         if let Some(data) = self.eq_data[slot] {
-            systems.gfx.remove_gfx(data.img);
+            systems.gfx.remove_gfx(&mut systems.renderer, data.img);
         }
 
         if item.val == 0 {

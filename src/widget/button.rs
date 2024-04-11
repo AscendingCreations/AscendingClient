@@ -201,10 +201,10 @@ impl Button {
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
         if let Some(index) = self.index {
-            systems.gfx.remove_gfx(index);
+            systems.gfx.remove_gfx(&mut systems.renderer, index);
         }
         if let Some(content_index) = self.content {
-            systems.gfx.remove_gfx(content_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, content_index);
         }
     }
 

@@ -65,7 +65,15 @@ impl GfxCollection {
         self.collection.insert(gfx)
     }
 
-    pub fn remove_gfx(&mut self, index: usize) {
+    pub fn remove_gfx(&mut self, renderer: &mut GpuRenderer, index: usize) {
+        if let Some(data) = self.collection.get_mut(index) {
+            match &data.gfx {
+                GfxType::Image(image) => image.unload(renderer),
+                GfxType::Rect(rect) => rect.unload(renderer),
+                GfxType::Text(text) => text.unload(renderer),
+                GfxType::Map(map) => map.unload(renderer),
+            }
+        }
         if self.collection.contains(index) {
             self.collection.remove(index);
         }

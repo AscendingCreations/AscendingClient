@@ -177,9 +177,9 @@ impl Scrollbar {
 
     pub fn unload(&self, systems: &mut SystemHolder) {
         if let Some(index) = self.bg {
-            systems.gfx.remove_gfx(index);
+            systems.gfx.remove_gfx(&mut systems.renderer, index);
         }
-        systems.gfx.remove_gfx(self.scroll);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.scroll);
     }
 
     pub fn in_scroll(&mut self, screen_pos: Vec2) -> bool {

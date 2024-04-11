@@ -381,20 +381,26 @@ impl Shop {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
-        systems.gfx.remove_gfx(self.header);
-        systems.gfx.remove_gfx(self.header_text);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.header_text);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.button.clear();
         self.item.iter_mut().for_each(|item| {
-            systems.gfx.remove_gfx(item.icon_bg);
-            systems.gfx.remove_gfx(item.name);
-            systems.gfx.remove_gfx(item.price_icon);
-            systems.gfx.remove_gfx(item.price);
-            systems.gfx.remove_gfx(item.amount_bg);
-            systems.gfx.remove_gfx(item.amount);
+            systems.gfx.remove_gfx(&mut systems.renderer, item.icon_bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, item.name);
+            systems
+                .gfx
+                .remove_gfx(&mut systems.renderer, item.price_icon);
+            systems.gfx.remove_gfx(&mut systems.renderer, item.price);
+            systems
+                .gfx
+                .remove_gfx(&mut systems.renderer, item.amount_bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, item.amount);
         });
         self.item_scroll.unload(systems);
     }
@@ -811,7 +817,7 @@ impl Shop {
             systems.gfx.set_visible(item.amount, false);
             systems.gfx.set_visible(item.amount_bg, false);
             if let Some(item_sprite) = item.icon {
-                systems.gfx.remove_gfx(item_sprite);
+                systems.gfx.remove_gfx(&mut systems.renderer, item_sprite);
             }
         });
 
@@ -902,7 +908,7 @@ impl Shop {
             let default_index = index - self.shop_start_pos;
 
             if let Some(sprite_icon) = self.item[default_index].icon {
-                systems.gfx.remove_gfx(sprite_icon);
+                systems.gfx.remove_gfx(&mut systems.renderer, sprite_icon);
             }
 
             systems.gfx.set_text(

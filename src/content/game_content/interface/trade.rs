@@ -410,27 +410,37 @@ impl Trade {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
-        systems.gfx.remove_gfx(self.header);
-        systems.gfx.remove_gfx(self.header_text);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.header_text);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.button.clear();
         self.slot.iter().for_each(|slot| {
-            systems.gfx.remove_gfx(*slot);
+            systems.gfx.remove_gfx(&mut systems.renderer, *slot);
         });
         self.name_bg.iter().for_each(|image| {
-            systems.gfx.remove_gfx(*image);
+            systems.gfx.remove_gfx(&mut systems.renderer, *image);
         });
-        systems.gfx.remove_gfx(self.my_status_text);
-        systems.gfx.remove_gfx(self.their_status_text);
-        systems.gfx.remove_gfx(self.status_text);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.my_status_text);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.their_status_text);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.status_text);
         self.money_icon.iter().for_each(|image| {
-            systems.gfx.remove_gfx(*image);
+            systems.gfx.remove_gfx(&mut systems.renderer, *image);
         });
         self.money_input.unload(systems);
-        systems.gfx.remove_gfx(self.their_money);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.their_money);
         self.trade_status = TradeStatus::default();
     }
 
@@ -883,10 +893,19 @@ impl Trade {
                 (&mut self.my_items, slot)
             };
             if item_slot[render_slot].got_data {
-                systems.gfx.remove_gfx(item_slot[render_slot].image);
+                systems.gfx.remove_gfx(
+                    &mut systems.renderer,
+                    item_slot[render_slot].image,
+                );
                 if item_slot[render_slot].got_count {
-                    systems.gfx.remove_gfx(item_slot[render_slot].count_bg);
-                    systems.gfx.remove_gfx(item_slot[render_slot].count);
+                    systems.gfx.remove_gfx(
+                        &mut systems.renderer,
+                        item_slot[render_slot].count_bg,
+                    );
+                    systems.gfx.remove_gfx(
+                        &mut systems.renderer,
+                        item_slot[render_slot].count,
+                    );
                 }
                 item_slot[render_slot].got_data = false;
                 item_slot[render_slot].got_count = false;
@@ -958,10 +977,17 @@ impl Trade {
             {
                 return;
             }
-            systems.gfx.remove_gfx(item_slot[slot].image);
+            systems
+                .gfx
+                .remove_gfx(&mut systems.renderer, item_slot[slot].image);
             if item_slot[slot].got_count {
-                systems.gfx.remove_gfx(item_slot[slot].count_bg);
-                systems.gfx.remove_gfx(item_slot[slot].count);
+                systems.gfx.remove_gfx(
+                    &mut systems.renderer,
+                    item_slot[slot].count_bg,
+                );
+                systems
+                    .gfx
+                    .remove_gfx(&mut systems.renderer, item_slot[slot].count);
             }
             item_slot[slot].got_data = false;
             item_slot[slot].got_count = false;

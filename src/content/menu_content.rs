@@ -65,7 +65,7 @@ impl MenuContent {
 
     pub fn show(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(self.bg, true);
-        create_window(systems, self, WindowType::Login);
+        create_window(systems, self, WindowType::Register);
     }
 
     pub fn hide(&mut self, systems: &mut SystemHolder) {
@@ -75,16 +75,16 @@ impl MenuContent {
 
     pub fn clear_window(&mut self, systems: &mut SystemHolder) {
         self.window.iter().for_each(|gfx_index| {
-            systems.gfx.remove_gfx(*gfx_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
         });
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.label.iter().for_each(|gfx_index| {
-            systems.gfx.remove_gfx(*gfx_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
         });
         self.unique_label.iter().for_each(|gfx_index| {
-            systems.gfx.remove_gfx(*gfx_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
         });
         self.checkbox.iter_mut().for_each(|checkbox| {
             checkbox.unload(systems);
@@ -93,7 +93,7 @@ impl MenuContent {
             textbox.unload(systems);
         });
         self.image.iter_mut().for_each(|gfx_index| {
-            systems.gfx.remove_gfx(*gfx_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
         });
         self.window.clear();
         self.button.clear();

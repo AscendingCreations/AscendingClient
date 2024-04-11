@@ -1,5 +1,5 @@
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
+use graphics::{cosmic_text::Wrap, *};
 
 use crate::SystemHolder;
 
@@ -47,4 +47,19 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
     text.use_camera = true;
     text.changed = true;
     text
+}
+
+pub fn measure_string(systems: &mut SystemHolder, text: String) -> Vec2 {
+    Text::measure_string(
+        &mut systems.renderer.font_sys,
+        &text,
+        Attrs::new(),
+        TextOptions {
+            shaping: Shaping::Advanced,
+            metrics: Some(Metrics::new(16.0, 16.0).scale(systems.scale as f32)),
+            buffer_size: Vec2::new(systems.size.width, systems.size.height),
+            scale: 1.0,
+            wrap: Wrap::None,
+        },
+    )
 }

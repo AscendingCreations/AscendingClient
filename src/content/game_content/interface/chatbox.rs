@@ -112,8 +112,8 @@ impl ChatTab {
     }
 
     fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
-        systems.gfx.remove_gfx(self.text);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.text);
     }
 
     fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: [f32; 2]) {
@@ -448,21 +448,27 @@ impl Chatbox {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.window);
-        systems.gfx.remove_gfx(self.textbox_bg);
-        systems.gfx.remove_gfx(self.chatarea_bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.window);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.textbox_bg);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.chatarea_bg);
         self.textbox.unload(systems);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.chat.iter().for_each(|chat| {
-            systems.gfx.remove_gfx(chat.text);
+            systems.gfx.remove_gfx(&mut systems.renderer, chat.text);
         });
         self.scrollbar.unload(systems);
         self.chat_tab.iter_mut().for_each(|tab| {
             tab.unload(systems);
         });
-        systems.gfx.remove_gfx(self.msg_selection);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.msg_selection);
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {

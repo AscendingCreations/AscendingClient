@@ -45,7 +45,9 @@ impl Target {
     }
 
     pub fn unload(&self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.img_index);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.img_index);
     }
 
     pub fn set_target(

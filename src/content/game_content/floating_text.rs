@@ -35,8 +35,8 @@ impl FloatingText {
     pub fn unload(&mut self, systems: &mut SystemHolder) {
         self.unload = true;
         for data in &self.data {
-            systems.gfx.remove_gfx(data.text);
-            systems.gfx.remove_gfx(data.text_bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, data.text);
+            systems.gfx.remove_gfx(&mut systems.renderer, data.text_bg);
         }
         self.data.clear();
     }
@@ -99,10 +99,14 @@ pub fn float_text_loop(
     }
 
     for index in remove_list.iter().rev() {
-        systems.gfx.remove_gfx(content.float_text.data[*index].text);
-        systems
-            .gfx
-            .remove_gfx(content.float_text.data[*index].text_bg);
+        systems.gfx.remove_gfx(
+            &mut systems.renderer,
+            content.float_text.data[*index].text,
+        );
+        systems.gfx.remove_gfx(
+            &mut systems.renderer,
+            content.float_text.data[*index].text_bg,
+        );
         content.float_text.data.swap_remove(*index);
     }
 }

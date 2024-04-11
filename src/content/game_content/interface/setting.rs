@@ -269,20 +269,26 @@ impl Setting {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
-        systems.gfx.remove_gfx(self.header);
-        systems.gfx.remove_gfx(self.header_text);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.header_text);
         self.sfx_scroll.unload(systems);
         self.bgm_scroll.unload(systems);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.label.iter().for_each(|text| {
-            systems.gfx.remove_gfx(*text);
+            systems.gfx.remove_gfx(&mut systems.renderer, *text);
         });
         self.button.clear();
-        systems.gfx.remove_gfx(self.bgm_label);
-        systems.gfx.remove_gfx(self.sfx_label);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.bgm_label);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.sfx_label);
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {

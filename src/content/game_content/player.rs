@@ -148,10 +148,14 @@ pub fn unload_player(
     entity: &Entity,
 ) -> Result<()> {
     let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-    systems.gfx.remove_gfx(player_sprite);
+    systems.gfx.remove_gfx(&mut systems.renderer, player_sprite);
     let hpbar = world.get_or_err::<HPBar>(entity)?;
-    systems.gfx.remove_gfx(hpbar.bar_index);
-    systems.gfx.remove_gfx(hpbar.bg_index);
+    systems
+        .gfx
+        .remove_gfx(&mut systems.renderer, hpbar.bar_index);
+    systems
+        .gfx
+        .remove_gfx(&mut systems.renderer, hpbar.bg_index);
     world.despawn(entity.0)?;
     Ok(())
 }

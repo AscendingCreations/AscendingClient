@@ -176,18 +176,26 @@ impl Inventory {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
-        systems.gfx.remove_gfx(self.header);
-        systems.gfx.remove_gfx(self.header_text);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.header_text);
         self.slot.iter().for_each(|slot| {
-            systems.gfx.remove_gfx(*slot);
+            systems.gfx.remove_gfx(&mut systems.renderer, *slot);
         });
         self.item_slot.iter().for_each(|item_slot| {
             if item_slot.got_data {
-                systems.gfx.remove_gfx(item_slot.image);
+                systems
+                    .gfx
+                    .remove_gfx(&mut systems.renderer, item_slot.image);
                 if item_slot.got_count {
-                    systems.gfx.remove_gfx(item_slot.count_bg);
-                    systems.gfx.remove_gfx(item_slot.count);
+                    systems
+                        .gfx
+                        .remove_gfx(&mut systems.renderer, item_slot.count_bg);
+                    systems
+                        .gfx
+                        .remove_gfx(&mut systems.renderer, item_slot.count);
                 }
             }
         });
@@ -288,10 +296,18 @@ impl Inventory {
             {
                 return;
             }
-            systems.gfx.remove_gfx(self.item_slot[slot].image);
+            systems
+                .gfx
+                .remove_gfx(&mut systems.renderer, self.item_slot[slot].image);
             if self.item_slot[slot].got_count {
-                systems.gfx.remove_gfx(self.item_slot[slot].count_bg);
-                systems.gfx.remove_gfx(self.item_slot[slot].count);
+                systems.gfx.remove_gfx(
+                    &mut systems.renderer,
+                    self.item_slot[slot].count_bg,
+                );
+                systems.gfx.remove_gfx(
+                    &mut systems.renderer,
+                    self.item_slot[slot].count,
+                );
             }
             self.item_slot[slot].got_data = false;
             self.item_slot[slot].got_count = false;

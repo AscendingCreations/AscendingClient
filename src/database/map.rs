@@ -132,39 +132,11 @@ impl MapData {
     }
 }
 
-pub fn load_filex(x: i32, y: i32, group: u64) -> MapData {
+pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
     if !is_map_exist(x, y, group) {
         println!("Map does not exist");
         return MapData::default(x, y, group);
     }
-
-    let name = format!("./data/maps/{}_{}_{}.json", x, y, group);
-    match OpenOptions::new().read(true).open(&name) {
-        Ok(file) => {
-            let reader = BufReader::new(file);
-
-            match serde_json::from_reader(reader) {
-                Ok(data) => data,
-                Err(e) => {
-                    println!("Failed to load {}, Err {:?}", name, e);
-                    MapData::default(x, y, group)
-                }
-            }
-        }
-        Err(e) => {
-            println!("Failed to load {}, Err {:?}", name, e);
-            MapData::default(x, y, group)
-        }
-    }
-}
-
-pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
-    if !is_map_bin_exist(x, y, group) {
-        println!("Map does not exist");
-        return MapData::default(x, y, group);
-    }
-
-    return MapData::default(x, y, group);
 
     let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
     match OpenOptions::new().read(true).open(&name) {
@@ -172,12 +144,11 @@ pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
             let mut data = Vec::new();
             file.read_to_end(&mut data).unwrap();
 
-            println!("Data: {:?}", data);
-
             let mut buf = ByteBuffer::new().unwrap();
             buf.write(data).unwrap();
             buf.move_cursor_to_start();
 
+            buf.move_cursor(8).unwrap();
             buf.read::<MapData>().unwrap()
         }
         Err(e) => {
@@ -188,11 +159,6 @@ pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
 }
 
 pub fn is_map_exist(x: i32, y: i32, group: u64) -> bool {
-    let name = format!("./data/maps/{}_{}_{}.json", x, y, group);
-    Path::new(&name).exists()
-}
-
-pub fn is_map_bin_exist(x: i32, y: i32, group: u64) -> bool {
     let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
     Path::new(&name).exists()
 }

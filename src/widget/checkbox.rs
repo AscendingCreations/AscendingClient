@@ -218,10 +218,12 @@ impl Checkbox {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.image);
-        systems.gfx.remove_gfx(self.check_image);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.image);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.check_image);
         if let Some(data) = &mut self.text_type {
-            systems.gfx.remove_gfx(data.0);
+            systems.gfx.remove_gfx(&mut systems.renderer, data.0);
         }
     }
 

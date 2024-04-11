@@ -51,10 +51,12 @@ impl ItemDescription {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
         if let Some(data) = &self.data {
             for desc_data in data.data.iter() {
-                systems.gfx.remove_gfx(desc_data.index);
+                systems
+                    .gfx
+                    .remove_gfx(&mut systems.renderer, desc_data.index);
             }
         }
     }
@@ -75,7 +77,9 @@ impl ItemDescription {
                 return;
             } else {
                 for desc_data in data.data.iter() {
-                    systems.gfx.remove_gfx(desc_data.index);
+                    systems
+                        .gfx
+                        .remove_gfx(&mut systems.renderer, desc_data.index);
                 }
             }
         }

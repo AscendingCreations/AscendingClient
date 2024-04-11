@@ -102,17 +102,22 @@ impl Textbox {
         systems.gfx.set_visible(self.bg, self.is_selected);
         if self.is_selected {
             systems.caret.index = Some(self.caret);
-        } else if let Some(index) = systems.caret.index {
-            if index == self.caret {
-                systems.caret.index = None;
+        } else {
+            systems.gfx.set_visible(self.caret, false);
+            if let Some(index) = systems.caret.index {
+                if index == self.caret {
+                    systems.caret.index = None;
+                }
             }
         }
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(self.bg);
-        systems.gfx.remove_gfx(self.text_index);
-        systems.gfx.remove_gfx(self.caret);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, self.text_index);
+        systems.gfx.remove_gfx(&mut systems.renderer, self.caret);
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
@@ -231,12 +236,28 @@ impl Textbox {
         } else {
             match key {
                 Key::Named(NamedKey::Backspace) => {
-                    self.text.pop();
+                    if self.caret_pos == self.text.len() {
+                        self.text.pop();
+                        self.caret_pos = self.caret_pos.saturating_sub(1);
+                    } else if self.caret_pos > 0 {
+                        println!("Pos: {:?}", self.caret_pos);
+                        self.text.remove(self.caret_pos - 1);
+                        self.caret_pos = self.caret_pos.saturating_sub(1);
+                    }
+
                     did_edit = true;
                 }
                 Key::Named(NamedKey::Delete) => {
                     self.text.clear();
                     did_edit = true;
+                }
+                Key::Named(NamedKey::ArrowLeft) => {
+                    self.move_caret_pos(systems, true);
+                    return;
+                }
+                Key::Named(NamedKey::ArrowRight) => {
+                    self.move_caret_pos(systems, false);
+                    return;
                 }
                 _ => {
                     if self.text.len() >= self.limit {
@@ -249,8 +270,17 @@ impl Textbox {
                             true
                         };
                         if can_proceed {
-                            self.text.push_str(&char.to_string());
+                            self.text.insert(self.caret_pos, *char);
+                            self.caret_pos += 1;
+                            //self.text.push_str(&char.to_string());
+                            did_edit = true;
                         }
+                    } else if Key::Named(NamedKey::Space) == *key
+                        && !numeric_only
+                    {
+                        self.text.insert(self.caret_pos, ' ');
+                        self.caret_pos += 1;
+                        //self.text.push(' ');
                         did_edit = true;
                     }
                 }
@@ -267,6 +297,7 @@ impl Textbox {
                 .gfx
                 .set_text(&mut systems.renderer, self.text_index, &msg);
             self.adjust_text(systems);
+            self.update_caret(systems);
         }
     }
 
@@ -279,7 +310,52 @@ impl Textbox {
         self.adjust_x = adjust_x;
         systems.gfx.set_pos(
             self.text_index,
-            Vec3::new(self.pos.x - self.adjust_x, self.pos.y, self.pos.z),
+            Vec3::new(
+                self.pos.x - self.adjust_x,
+                self.pos.y,
+                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+            ),
+        );
+    }
+
+    pub fn update_caret(&mut self, systems: &mut SystemHolder) {
+        let (first, second) = self.text.split_at(self.caret_pos);
+        let first_x = measure_string(systems, first.to_string()).x;
+        let _second_x = measure_string(systems, second.to_string()).x;
+
+        systems.gfx.set_pos(
+            self.caret,
+            Vec3::new(
+                self.pos.x + first_x - self.adjust_x,
+                self.pos.y,
+                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+            ),
+        );
+    }
+
+    pub fn move_caret_pos(
+        &mut self,
+        systems: &mut SystemHolder,
+        move_left: bool,
+    ) {
+        if move_left {
+            self.caret_pos = self.caret_pos.saturating_sub(1);
+        } else {
+            self.caret_pos =
+                self.caret_pos.saturating_add(1).min(self.text.len());
+        }
+
+        let (first, second) = self.text.split_at(self.caret_pos);
+        let first_x = measure_string(systems, first.to_string()).x;
+        let _second_x = measure_string(systems, second.to_string()).x;
+
+        systems.gfx.set_pos(
+            self.caret,
+            Vec3::new(
+                self.pos.x + first_x - self.adjust_x,
+                self.pos.y,
+                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+            ),
         );
     }
 }

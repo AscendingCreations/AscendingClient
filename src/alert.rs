@@ -72,16 +72,16 @@ impl Alert {
     ) {
         if self.visible {
             self.window.iter().for_each(|gfx_index| {
-                systems.gfx.remove_gfx(*gfx_index);
+                systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
             });
             self.text.iter().for_each(|gfx_index| {
-                systems.gfx.remove_gfx(*gfx_index);
+                systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
             });
             self.button.iter_mut().for_each(|button| {
                 button.unload(systems);
             });
             if let Some(textbox) = &mut self.input_box {
-                systems.gfx.remove_gfx(textbox.bg);
+                systems.gfx.remove_gfx(&mut systems.renderer, textbox.bg);
                 textbox.textbox.unload(systems);
             }
         }
@@ -386,16 +386,16 @@ impl Alert {
         }
         self.visible = false;
         self.window.iter().for_each(|gfx_index| {
-            systems.gfx.remove_gfx(*gfx_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
         });
         self.text.iter().for_each(|gfx_index| {
-            systems.gfx.remove_gfx(*gfx_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
         });
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         if let Some(textbox) = &mut self.input_box {
-            systems.gfx.remove_gfx(textbox.bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, textbox.bg);
             textbox.textbox.unload(systems);
         }
         self.input_box = None;

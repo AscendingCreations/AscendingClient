@@ -73,7 +73,7 @@ impl MapContent {
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
         self.index.iter().for_each(|(index, _)| {
-            systems.gfx.remove_gfx(*index);
+            systems.gfx.remove_gfx(&mut systems.renderer, *index);
         });
         self.dir_block.clear();
         self.map_attribute.clear();

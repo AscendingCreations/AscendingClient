@@ -67,7 +67,7 @@ version = "0.2.1"
 [dependencies.graphics]
 package = "ascending_graphics"
 #path = "./graphics"
-version = "0.4.0"
+version = "0.4.2"
 
 [profile.dev]
 opt-level = 0

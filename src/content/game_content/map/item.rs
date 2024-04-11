@@ -136,7 +136,7 @@ pub fn unload_mapitems(
     entity: &Entity,
 ) -> Result<()> {
     let item_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-    systems.gfx.remove_gfx(item_sprite);
+    systems.gfx.remove_gfx(&mut systems.renderer, item_sprite);
     world.despawn(entity.0)?;
     Ok(())
 }
