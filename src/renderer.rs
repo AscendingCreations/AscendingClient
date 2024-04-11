@@ -10,6 +10,12 @@ use crate::{
     TextureAllocation,
 };
 
+pub struct TextCaret {
+    pub visible: bool,
+    pub index: Option<usize>,
+    pub timer: f32,
+}
+
 pub struct DatabaseHolder {
     pub item: Vec<ItemData>,
     pub shop: Vec<ShopData>,
@@ -26,6 +32,7 @@ pub struct SystemHolder {
     pub config: Config,
     pub base: DatabaseHolder,
     pub audio: Audio,
+    pub caret: TextCaret,
 }
 
 pub struct State<Controls>

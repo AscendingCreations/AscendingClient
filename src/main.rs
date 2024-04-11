@@ -250,6 +250,11 @@ async fn main() -> Result<()> {
         config,
         base: database_holder,
         audio,
+        caret: TextCaret {
+            visible: false,
+            index: None,
+            timer: 0.0,
+        },
     };
     systems.fade.init_setup(
         &mut systems.renderer,
@@ -503,6 +508,14 @@ async fn main() -> Result<()> {
             });
 
             systems.renderer.update_depth_texture();
+        }
+
+        if let Some(gfx_index) = systems.caret.index {
+            if systems.caret.timer <= seconds {
+                systems.caret.visible = !systems.caret.visible;
+                systems.caret.timer = seconds + 0.5;
+                systems.gfx.set_visible(gfx_index, systems.caret.visible);
+            }
         }
 
         // Game Loop

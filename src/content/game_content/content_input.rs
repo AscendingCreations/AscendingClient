@@ -88,32 +88,32 @@ impl GameContent {
             pressed,
         );
 
-        /*match key {
-            PhysicalKey::Code(KeyCode::ArrowUp) => {
+        match key {
+            Key::Named(NamedKey::ArrowUp) => {
                 content.game_content.keyinput[KEY_MOVEUP] = pressed;
             }
-            PhysicalKey::Code(KeyCode::ArrowDown) => {
+            Key::Named(NamedKey::ArrowDown) => {
                 content.game_content.keyinput[KEY_MOVEDOWN] = pressed;
             }
-            PhysicalKey::Code(KeyCode::ArrowLeft) => {
+            Key::Named(NamedKey::ArrowLeft) => {
                 content.game_content.keyinput[KEY_MOVELEFT] = pressed;
             }
-            PhysicalKey::Code(KeyCode::ArrowRight) => {
+            Key::Named(NamedKey::ArrowRight) => {
                 content.game_content.keyinput[KEY_MOVERIGHT] = pressed;
             }
-            PhysicalKey::Code(KeyCode::ControlLeft) => {
+            Key::Named(NamedKey::Control) => {
                 content.game_content.keyinput[KEY_ATTACK] = pressed;
             }
-            PhysicalKey::Code(KeyCode::Space) => {
+            Key::Named(NamedKey::Space) => {
                 content.game_content.keyinput[KEY_PICKUP] = pressed;
             }
             _ => {}
-        }*/
+        }
 
-        /*if pressed {
+        if pressed {
             #[allow(clippy::single_match)]
             match key {
-                PhysicalKey::Code(KeyCode::F1) => {
+                Key::Named(NamedKey::F1) => {
                     if let Some(myentity) = content.game_content.myentity {
                         add_float_text(
                             systems,
@@ -126,7 +126,7 @@ impl GameContent {
                 }
                 _ => {}
             }
-        }*/
+        }
         Ok(())
     }
 }

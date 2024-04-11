@@ -159,16 +159,20 @@ pub fn load_filex(x: i32, y: i32, group: u64) -> MapData {
 }
 
 pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
-    if !is_map_exist(x, y, group) {
+    if !is_map_bin_exist(x, y, group) {
         println!("Map does not exist");
         return MapData::default(x, y, group);
     }
+
+    return MapData::default(x, y, group);
 
     let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
     match OpenOptions::new().read(true).open(&name) {
         Ok(mut file) => {
             let mut data = Vec::new();
             file.read_to_end(&mut data).unwrap();
+
+            println!("Data: {:?}", data);
 
             let mut buf = ByteBuffer::new().unwrap();
             buf.write(data).unwrap();
