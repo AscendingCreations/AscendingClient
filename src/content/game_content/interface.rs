@@ -741,6 +741,7 @@ impl Interface {
             self.chatbox.textbox.size,
         ) {
             self.chatbox.textbox.set_select(systems, true);
+            self.chatbox.textbox.select_text(systems, screen_pos);
             self.selected_textbox = SelectedTextbox::Chatbox;
             return Ok(());
         }
@@ -756,6 +757,7 @@ impl Interface {
             )
         {
             self.trade.money_input.set_select(systems, true);
+            self.trade.money_input.select_text(systems, screen_pos);
             self.selected_textbox = SelectedTextbox::Trade;
             return Ok(());
         }

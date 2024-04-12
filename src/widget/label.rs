@@ -57,7 +57,7 @@ pub fn measure_string(systems: &mut SystemHolder, text: String) -> Vec2 {
         TextOptions {
             shaping: Shaping::Advanced,
             metrics: Some(Metrics::new(16.0, 16.0).scale(systems.scale as f32)),
-            buffer_size: Vec2::new(systems.size.width, systems.size.height),
+            buffer_size: Vec2::new(4096.0, systems.size.height),
             scale: 1.0,
             wrap: Wrap::None,
         },

@@ -404,7 +404,7 @@ impl Chatbox {
                 "Global".into(),
             ),
         ];
-        chat_tab[0].set_select(systems, true);
+        chat_tab[0].set_select(systems, false);
 
         let mut selection_rect = Rect::new(&mut systems.renderer, 0);
         selection_rect

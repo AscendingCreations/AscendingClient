@@ -13,6 +13,7 @@ use crate::{logic::*, widget::*, SystemHolder};
 pub struct Textbox {
     visible: bool,
     pub text: String,
+    data_text: String,
     char_size: Vec<f32>,
     text_index: usize,
     bg: usize,
@@ -53,13 +54,14 @@ impl Textbox {
         let bg = systems.gfx.add_rect(rect, 0);
         systems.gfx.set_visible(bg, false);
 
-        let text_data = create_label(
+        let mut text_data = create_label(
             systems,
             Vec3::new(pos.x, pos.y, pos.z.sub_f32(z_step.0, z_step.1)),
             size,
             Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
             text_color,
         );
+        text_data.set_wrap(&mut systems.renderer, cosmic_text::Wrap::None);
         let text_index = systems.gfx.add_text(text_data, render_layer);
         systems.gfx.set_visible(text_index, visible);
 
@@ -78,6 +80,7 @@ impl Textbox {
         Textbox {
             visible,
             text: String::new(),
+            data_text: String::new(),
             char_size: Vec::new(),
             text_index,
             bg,
@@ -140,7 +143,7 @@ impl Textbox {
         systems.gfx.set_pos(
             self.text_index,
             Vec3::new(
-                self.pos.x,
+                self.pos.x + self.adjust_x,
                 self.pos.y,
                 self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
@@ -148,7 +151,7 @@ impl Textbox {
         systems.gfx.set_pos(
             self.caret,
             Vec3::new(
-                self.pos.x,
+                self.pos.x + self.caret_left,
                 self.pos.y,
                 self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
@@ -162,7 +165,7 @@ impl Textbox {
         systems.gfx.set_pos(
             self.text_index,
             Vec3::new(
-                self.pos.x,
+                self.pos.x + self.adjust_x,
                 self.pos.y,
                 self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
@@ -170,7 +173,7 @@ impl Textbox {
         systems.gfx.set_bound(
             self.text_index,
             Bounds::new(
-                self.pos.x,
+                self.pos.x + self.adjust_x,
                 self.pos.y,
                 self.pos.x + self.size.x,
                 self.pos.y + self.size.y,
@@ -179,7 +182,7 @@ impl Textbox {
         systems.gfx.set_pos(
             self.caret,
             Vec3::new(
-                self.pos.x,
+                self.pos.x + self.caret_left,
                 self.pos.y,
                 self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
@@ -188,18 +191,33 @@ impl Textbox {
 
     pub fn set_text(&mut self, systems: &mut SystemHolder, text: String) {
         self.text.clear();
-        if !text.is_empty() {
-            self.text.push_str(&text);
+        self.data_text.clear();
+        self.char_size.clear();
+        self.caret_left = 0.0;
+        self.caret_pos = 0;
+
+        if text.is_empty() {
+            return;
         }
+
+        self.text.push_str(&text);
         let msg = if self.hide_content {
             self.text.chars().map(|_| '*').collect()
         } else {
             self.text.clone()
         };
+        self.data_text.push_str(&msg);
+
+        for char in msg.chars().rev() {
+            let size = measure_string(systems, char.to_string()).x;
+            self.char_size.insert(self.caret_pos, size);
+        }
+
         systems
             .gfx
             .set_text(&mut systems.renderer, self.text_index, &msg);
-        //self.adjust_text(systems);
+
+        self.move_caret_pos(systems, false, self.data_text.len(), false);
     }
 
     pub fn enter_text(
@@ -229,7 +247,33 @@ impl Textbox {
                         set_clipboard_text(self.text.clone());
                     }
                     Key::Character('v') => {
-                        self.text.push_str(&get_clipboard_text());
+                        let clipboard_text = get_clipboard_text();
+                        if self.data_text.len() + clipboard_text.len()
+                            >= self.limit
+                        {
+                            return;
+                        }
+
+                        self.text.insert_str(self.caret_pos, &clipboard_text);
+                        let clipboard = if self.hide_content {
+                            clipboard_text.chars().map(|_| '*').collect()
+                        } else {
+                            clipboard_text.clone()
+                        };
+                        self.data_text.insert_str(self.caret_pos, &clipboard);
+
+                        for char in clipboard.chars().rev() {
+                            let size =
+                                measure_string(systems, char.to_string()).x;
+                            self.char_size.insert(self.caret_pos, size);
+                        }
+                        self.move_caret_pos(
+                            systems,
+                            false,
+                            clipboard_text.len(),
+                            false,
+                        );
+
                         did_edit = true;
                     }
                     _ => {}
@@ -238,19 +282,22 @@ impl Textbox {
         } else {
             match key {
                 Key::Named(NamedKey::Backspace) => {
-                    if self.caret_pos == self.text.len() {
+                    if self.caret_pos == self.data_text.len() {
                         self.move_caret_pos(systems, true, 1, true);
                         self.text.pop();
+                        self.data_text.pop();
                         self.char_size.pop();
                     } else if self.caret_pos > 0 {
                         self.move_caret_pos(systems, true, 1, true);
                         self.text.remove(self.caret_pos);
+                        self.data_text.remove(self.caret_pos);
                         self.char_size.remove(self.caret_pos);
                     }
                     did_edit = true;
                 }
                 Key::Named(NamedKey::Delete) => {
                     self.text.clear();
+                    self.data_text.clear();
                     did_edit = true;
                 }
                 Key::Named(NamedKey::ArrowLeft) => {
@@ -262,48 +309,46 @@ impl Textbox {
                     return;
                 }
                 _ => {
-                    if self.text.len() >= self.limit {
+                    if self.data_text.len() >= self.limit {
                         return;
                     }
-                    if let Key::Character(char) = key {
+                    let key_char = if let Key::Character(char) = key {
+                        Some(*char)
+                    } else if Key::Named(NamedKey::Space) == *key {
+                        Some(' ')
+                    } else {
+                        None
+                    };
+
+                    if let Some(char) = key_char {
                         let can_proceed = if numeric_only {
                             is_numeric(&char.to_string())
                         } else {
                             true
                         };
                         if can_proceed {
-                            self.text.insert(self.caret_pos, *char);
+                            let msg =
+                                if self.hide_content { '*' } else { char };
+
+                            self.text.insert(self.caret_pos, char);
+                            self.data_text.insert(self.caret_pos, msg);
                             let size =
-                                measure_string(systems, char.to_string())
-                                    .x
-                                    .floor();
+                                measure_string(systems, msg.to_string()).x;
                             self.char_size.insert(self.caret_pos, size);
                             self.move_caret_pos(systems, false, 1, false);
                             did_edit = true;
                         }
-                    } else if Key::Named(NamedKey::Space) == *key
-                        && !numeric_only
-                    {
-                        self.text.insert(self.caret_pos, ' ');
-                        let size =
-                            measure_string(systems, ' '.to_string()).x.floor();
-                        self.char_size.insert(self.caret_pos, size);
-                        self.move_caret_pos(systems, false, 1, false);
-                        did_edit = true;
                     }
                 }
             };
         }
 
         if did_edit {
-            let msg = if self.hide_content {
-                self.text.chars().map(|_| '*').collect()
-            } else {
-                self.text.clone()
-            };
-            systems
-                .gfx
-                .set_text(&mut systems.renderer, self.text_index, &msg);
+            systems.gfx.set_text(
+                &mut systems.renderer,
+                self.text_index,
+                &self.data_text,
+            );
         }
     }
 
@@ -320,8 +365,10 @@ impl Textbox {
             (self.caret_pos, end)
         } else {
             let start = self.caret_pos;
-            self.caret_pos =
-                self.caret_pos.saturating_add(count).min(self.text.len());
+            self.caret_pos = self
+                .caret_pos
+                .saturating_add(count)
+                .min(self.data_text.len());
             (start, self.caret_pos)
         };
         let size = measure_string(systems, self.text[start..end].to_string()).x;
@@ -341,13 +388,15 @@ impl Textbox {
         }
 
         if remove_content {
-            let total_size = measure_string(systems, self.text.clone()).x;
+            let total_size = measure_string(systems, self.data_text.clone()).x;
             if total_size > self.size.x {
                 let visible_size = total_size + self.adjust_x;
-                let leftover = self.size.x - visible_size;
-                if leftover > 0.0 {
-                    self.caret_left += leftover;
-                    self.adjust_x += leftover;
+                if visible_size > 0.0 {
+                    let leftover = self.size.x - visible_size;
+                    if leftover > 0.0 {
+                        self.caret_left += leftover;
+                        self.adjust_x += leftover;
+                    }
                 }
             } else if self.adjust_x < 0.0 {
                 self.caret_left += self.adjust_x * -1.0;
@@ -371,6 +420,60 @@ impl Textbox {
                 self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
         );
+    }
+
+    pub fn select_text(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        if !is_within_area(
+            screen_pos,
+            Vec2::new(self.pos.x, self.pos.y),
+            self.size,
+        ) {
+            return;
+        }
+
+        let mut char_pos = Vec::with_capacity(self.data_text.len());
+        let mut pos_x = 0.0;
+        for size in self.char_size.iter() {
+            char_pos.push(pos_x);
+            pos_x += size;
+        }
+
+        let mut found_index = None;
+        for (index, pos) in char_pos.iter().enumerate() {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(self.pos.x + pos + self.adjust_x, self.pos.y),
+                Vec2::new(self.char_size[index], self.size.y),
+            ) {
+                found_index = Some(index);
+                break;
+            }
+        }
+        if found_index.is_none() {
+            found_index = Some(self.data_text.len());
+        }
+        if let Some(index) = found_index {
+            let offset = index as i32 - self.caret_pos as i32;
+            match offset.cmp(&0) {
+                std::cmp::Ordering::Less => {
+                    let move_count = offset.abs();
+                    self.move_caret_pos(
+                        systems,
+                        true,
+                        move_count as usize,
+                        false,
+                    );
+                }
+                std::cmp::Ordering::Greater => {
+                    self.move_caret_pos(systems, false, offset as usize, false);
+                }
+                _ => {}
+            }
+        }
     }
 }
 

@@ -129,7 +129,7 @@ async fn main() -> Result<()> {
     log::set_max_level(LevelFilter::Info);
 
     //Comment this out if you do not want a backtrace on error to show.
-    env::set_var("RUST_BACKTRACE", "1");
+    //env::set_var("RUST_BACKTRACE", "1");
 
     // This allows us to take control of panic!() so we can send it to a file via the logger.
     panic::set_hook(Box::new(|panic_info| {

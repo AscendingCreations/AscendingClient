@@ -653,6 +653,7 @@ impl Alert {
                 textbox.textbox.size,
             ) {
                 textbox.textbox.set_select(systems, true);
+                textbox.textbox.select_text(systems, screen_pos);
                 textbox.selected = true;
             } else {
                 textbox.textbox.set_select(systems, false);

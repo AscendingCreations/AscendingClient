@@ -242,24 +242,24 @@ pub fn click_textbox(
     systems: &mut SystemHolder,
     screen_pos: Vec2,
 ) {
-    let mut checkbox_found = None;
+    let mut textbox_found = None;
     for (index, textbox) in menu_content.textbox.iter_mut().enumerate() {
         if is_within_area(
             screen_pos,
             Vec2::new(textbox.pos.x, textbox.pos.y),
             textbox.size,
         ) {
-            textbox.set_select(systems, true);
-            checkbox_found = Some(index)
+            textbox_found = Some(index)
         }
     }
     if let Some(index) = menu_content.selected_textbox {
         menu_content.textbox[index].set_select(systems, false);
     }
-    if let Some(index) = checkbox_found {
+    if let Some(index) = textbox_found {
         menu_content.textbox[index].set_select(systems, true);
+        menu_content.textbox[index].select_text(systems, screen_pos);
     }
-    menu_content.selected_textbox = checkbox_found;
+    menu_content.selected_textbox = textbox_found;
 }
 
 pub fn hover_textbox(
