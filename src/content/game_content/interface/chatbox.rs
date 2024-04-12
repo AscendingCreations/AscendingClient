@@ -241,9 +241,11 @@ impl Chatbox {
             1,
             255,
             Color::rgba(120, 120, 120, 255),
+            Color::rgba(10, 10, 150, 255),
             false,
             true,
             None,
+            vec![],
         );
 
         let button = [

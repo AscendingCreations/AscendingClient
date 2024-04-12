@@ -332,9 +332,11 @@ impl Trade {
             1,
             10,
             Color::rgba(80, 80, 80, 255),
+            Color::rgba(10, 10, 150, 255),
             false,
             false,
             None,
+            vec![],
         );
         money_input.set_text(systems, "0".into());
 

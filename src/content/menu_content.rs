@@ -257,9 +257,26 @@ pub fn click_textbox(
     }
     if let Some(index) = textbox_found {
         menu_content.textbox[index].set_select(systems, true);
+        menu_content.textbox[index].set_hold(true);
         menu_content.textbox[index].select_text(systems, screen_pos);
     }
     menu_content.selected_textbox = textbox_found;
+}
+
+pub fn release_textbox(menu_content: &mut MenuContent) {
+    if let Some(index) = menu_content.selected_textbox {
+        menu_content.textbox[index].set_hold(false);
+    }
+}
+
+pub fn hold_move_textbox(
+    menu_content: &mut MenuContent,
+    systems: &mut SystemHolder,
+    screen_pos: Vec2,
+) {
+    if let Some(index) = menu_content.selected_textbox {
+        menu_content.textbox[index].hold_move(systems, screen_pos);
+    }
 }
 
 pub fn hover_textbox(
@@ -380,9 +397,16 @@ pub fn create_window(
                     Color::rgba(100, 100, 100, 255),
                 );
                 let textindex = systems.gfx.add_text(text, 1);
-                let msg = match index {
-                    1 => "Password",
-                    _ => "Email",
+                let (msg, disable_option) = match index {
+                    1 => (
+                        "Password",
+                        vec![
+                            TextDisable::Selection,
+                            TextDisable::Copy,
+                            TextDisable::Paste,
+                        ],
+                    ),
+                    _ => ("Email", vec![]),
                 };
                 systems.gfx.set_text(&mut systems.renderer, textindex, msg);
                 content.label.push(textindex);
@@ -402,9 +426,11 @@ pub fn create_window(
                     1,
                     255,
                     Color::rgba(120, 120, 120, 255),
+                    Color::rgba(10, 10, 150, 255),
                     is_hidden,
                     true,
                     None,
+                    disable_option,
                 );
 
                 match index {
@@ -646,10 +672,13 @@ pub fn create_window(
                     1,
                     255,
                     Color::rgba(120, 120, 120, 255),
+                    Color::rgba(10, 10, 150, 255),
                     false,
                     true,
                     tooltip,
+                    vec![],
                 );
+
                 content.textbox.push(textbox);
             }
 

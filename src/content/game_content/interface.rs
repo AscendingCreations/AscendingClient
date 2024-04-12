@@ -454,6 +454,8 @@ impl Interface {
                     if interface.chatbox.scrollbar.in_hold {
                         result = true;
                     }
+
+                    interface.hold_move_textbox(systems, screen_pos);
                 }
             }
             MouseInputType::MouseRelease => {
@@ -473,6 +475,7 @@ impl Interface {
                 }
 
                 interface.reset_buttons(systems);
+                interface.release_textbox();
 
                 if let Some(window) = &interface.drag_window {
                     match window {
@@ -741,6 +744,7 @@ impl Interface {
             self.chatbox.textbox.size,
         ) {
             self.chatbox.textbox.set_select(systems, true);
+            self.chatbox.textbox.set_hold(true);
             self.chatbox.textbox.select_text(systems, screen_pos);
             self.selected_textbox = SelectedTextbox::Chatbox;
             return Ok(());
@@ -757,6 +761,7 @@ impl Interface {
             )
         {
             self.trade.money_input.set_select(systems, true);
+            self.trade.money_input.set_hold(true);
             self.trade.money_input.select_text(systems, screen_pos);
             self.selected_textbox = SelectedTextbox::Trade;
             return Ok(());
@@ -778,6 +783,34 @@ impl Interface {
         }
         self.selected_textbox = SelectedTextbox::None;
         Ok(())
+    }
+
+    pub fn release_textbox(&mut self) {
+        match self.selected_textbox {
+            SelectedTextbox::Chatbox => {
+                self.chatbox.textbox.set_hold(false);
+            }
+            SelectedTextbox::Trade => {
+                self.trade.money_input.set_hold(false);
+            }
+            _ => {}
+        }
+    }
+
+    pub fn hold_move_textbox(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        match self.selected_textbox {
+            SelectedTextbox::Chatbox => {
+                self.chatbox.textbox.hold_move(systems, screen_pos);
+            }
+            SelectedTextbox::Trade => {
+                self.trade.money_input.hold_move(systems, screen_pos);
+            }
+            _ => {}
+        }
     }
 }
 

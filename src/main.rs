@@ -513,7 +513,7 @@ async fn main() -> Result<()> {
         if let Some(gfx_index) = systems.caret.index {
             if systems.caret.timer <= seconds {
                 systems.caret.visible = !systems.caret.visible;
-                systems.caret.timer = seconds + 0.5;
+                systems.caret.timer = seconds + 0.35;
                 systems.gfx.set_visible(gfx_index, systems.caret.visible);
             }
         }

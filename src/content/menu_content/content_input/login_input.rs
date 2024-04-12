@@ -39,9 +39,13 @@ pub fn login_mouse_input(
 
             click_textbox(menu_content, systems, screen_pos);
         }
+        MouseInputType::MouseLeftDownMove => {
+            hold_move_textbox(menu_content, systems, screen_pos);
+        }
         MouseInputType::MouseRelease => {
             reset_buttons(menu_content, systems);
             reset_checkbox(menu_content, systems);
+            release_textbox(menu_content);
         }
         _ => {}
     }

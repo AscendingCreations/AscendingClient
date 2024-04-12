@@ -320,9 +320,11 @@ impl Alert {
                     5,
                     10,
                     Color::rgba(80, 80, 80, 255),
+                    Color::rgba(10, 10, 150, 255),
                     false,
                     true,
                     None,
+                    vec![],
                 );
                 self.input_box = Some(AlertTextbox {
                     bg: systems.gfx.add_rect(textbox_bg, 4),
@@ -481,6 +483,7 @@ impl Alert {
             }
             MouseInputType::MouseRelease => {
                 self.reset_buttons(systems);
+                self.release_textbox();
             }
             _ => {}
         }
@@ -653,11 +656,32 @@ impl Alert {
                 textbox.textbox.size,
             ) {
                 textbox.textbox.set_select(systems, true);
+                textbox.textbox.set_hold(true);
                 textbox.textbox.select_text(systems, screen_pos);
                 textbox.selected = true;
             } else {
                 textbox.textbox.set_select(systems, false);
                 textbox.selected = false;
+            }
+        }
+    }
+
+    pub fn release_textbox(&mut self) {
+        if let Some(textbox) = &mut self.input_box {
+            if textbox.selected {
+                textbox.textbox.set_hold(false);
+            }
+        }
+    }
+
+    pub fn hold_move_textbox(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) {
+        if let Some(textbox) = &mut self.input_box {
+            if textbox.selected {
+                textbox.textbox.hold_move(systems, screen_pos);
             }
         }
     }
