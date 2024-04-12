@@ -13,6 +13,7 @@ use crate::{logic::*, widget::*, SystemHolder};
 pub struct Textbox {
     visible: bool,
     pub text: String,
+    char_size: Vec<f32>,
     text_index: usize,
     bg: usize,
     limit: usize,
@@ -77,6 +78,7 @@ impl Textbox {
         Textbox {
             visible,
             text: String::new(),
+            char_size: Vec::new(),
             text_index,
             bg,
             limit,
@@ -197,7 +199,7 @@ impl Textbox {
         systems
             .gfx
             .set_text(&mut systems.renderer, self.text_index, &msg);
-        self.adjust_text(systems);
+        //self.adjust_text(systems);
     }
 
     pub fn enter_text(
@@ -237,14 +239,14 @@ impl Textbox {
             match key {
                 Key::Named(NamedKey::Backspace) => {
                     if self.caret_pos == self.text.len() {
+                        self.move_caret_pos(systems, true, 1, true);
                         self.text.pop();
-                        self.caret_pos = self.caret_pos.saturating_sub(1);
+                        self.char_size.pop();
                     } else if self.caret_pos > 0 {
-                        println!("Pos: {:?}", self.caret_pos);
-                        self.text.remove(self.caret_pos - 1);
-                        self.caret_pos = self.caret_pos.saturating_sub(1);
+                        self.move_caret_pos(systems, true, 1, true);
+                        self.text.remove(self.caret_pos);
+                        self.char_size.remove(self.caret_pos);
                     }
-
                     did_edit = true;
                 }
                 Key::Named(NamedKey::Delete) => {
@@ -252,11 +254,11 @@ impl Textbox {
                     did_edit = true;
                 }
                 Key::Named(NamedKey::ArrowLeft) => {
-                    self.move_caret_pos(systems, true);
+                    self.move_caret_pos(systems, true, 1, false);
                     return;
                 }
                 Key::Named(NamedKey::ArrowRight) => {
-                    self.move_caret_pos(systems, false);
+                    self.move_caret_pos(systems, false, 1, false);
                     return;
                 }
                 _ => {
@@ -271,16 +273,22 @@ impl Textbox {
                         };
                         if can_proceed {
                             self.text.insert(self.caret_pos, *char);
-                            self.caret_pos += 1;
-                            //self.text.push_str(&char.to_string());
+                            let size =
+                                measure_string(systems, char.to_string())
+                                    .x
+                                    .floor();
+                            self.char_size.insert(self.caret_pos, size);
+                            self.move_caret_pos(systems, false, 1, false);
                             did_edit = true;
                         }
                     } else if Key::Named(NamedKey::Space) == *key
                         && !numeric_only
                     {
                         self.text.insert(self.caret_pos, ' ');
-                        self.caret_pos += 1;
-                        //self.text.push(' ');
+                        let size =
+                            measure_string(systems, ' '.to_string()).x.floor();
+                        self.char_size.insert(self.caret_pos, size);
+                        self.move_caret_pos(systems, false, 1, false);
                         did_edit = true;
                     }
                 }
@@ -296,63 +304,69 @@ impl Textbox {
             systems
                 .gfx
                 .set_text(&mut systems.renderer, self.text_index, &msg);
-            self.adjust_text(systems);
-            self.update_caret(systems);
         }
-    }
-
-    pub fn adjust_text(&mut self, systems: &mut SystemHolder) {
-        let adjust_x =
-            (systems.gfx.get_measure(self.text_index).x - self.size.x).max(0.0);
-        if self.adjust_x == adjust_x {
-            return;
-        }
-        self.adjust_x = adjust_x;
-        systems.gfx.set_pos(
-            self.text_index,
-            Vec3::new(
-                self.pos.x - self.adjust_x,
-                self.pos.y,
-                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
-            ),
-        );
-    }
-
-    pub fn update_caret(&mut self, systems: &mut SystemHolder) {
-        let (first, second) = self.text.split_at(self.caret_pos);
-        let first_x = measure_string(systems, first.to_string()).x;
-        let _second_x = measure_string(systems, second.to_string()).x;
-
-        systems.gfx.set_pos(
-            self.caret,
-            Vec3::new(
-                self.pos.x + first_x - self.adjust_x,
-                self.pos.y,
-                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
-            ),
-        );
     }
 
     pub fn move_caret_pos(
         &mut self,
         systems: &mut SystemHolder,
         move_left: bool,
+        count: usize,
+        remove_content: bool,
     ) {
-        if move_left {
-            self.caret_pos = self.caret_pos.saturating_sub(1);
+        let (start, end) = if move_left {
+            let end = self.caret_pos;
+            self.caret_pos = self.caret_pos.saturating_sub(count);
+            (self.caret_pos, end)
         } else {
+            let start = self.caret_pos;
             self.caret_pos =
-                self.caret_pos.saturating_add(1).min(self.text.len());
+                self.caret_pos.saturating_add(count).min(self.text.len());
+            (start, self.caret_pos)
+        };
+        let size = measure_string(systems, self.text[start..end].to_string()).x;
+
+        if move_left {
+            self.caret_left -= size;
+        } else {
+            self.caret_left += size;
         }
 
-        let (first, second) = self.text.split_at(self.caret_pos);
-        let first_x = measure_string(systems, first.to_string()).x;
-        let _second_x = measure_string(systems, second.to_string()).x;
+        if self.caret_left < 0.0 {
+            self.adjust_x += (self.caret_left * -1.0).max(0.0);
+            self.caret_left = 0.0;
+        } else if self.caret_left > self.size.x {
+            self.adjust_x -= (self.caret_left - self.size.x).max(0.0);
+            self.caret_left = self.size.x;
+        }
 
+        if remove_content {
+            let total_size = measure_string(systems, self.text.clone()).x;
+            if total_size > self.size.x {
+                let visible_size = total_size + self.adjust_x;
+                let leftover = self.size.x - visible_size;
+                if leftover > 0.0 {
+                    self.caret_left += leftover;
+                    self.adjust_x += leftover;
+                }
+            } else if self.adjust_x < 0.0 {
+                self.caret_left += self.adjust_x * -1.0;
+                self.adjust_x = 0.0;
+            }
+        }
+
+        systems.gfx.set_pos(
+            self.text_index,
+            Vec3::new(
+                self.pos.x + self.adjust_x,
+                self.pos.y,
+                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+            ),
+        );
         systems.gfx.set_pos(
             self.caret,
             Vec3::new(
-                self.pos.x + first_x - self.adjust_x,
+                self.pos.x + self.caret_left,
                 self.pos.y,
                 self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
