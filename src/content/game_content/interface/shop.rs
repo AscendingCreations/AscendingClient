@@ -286,7 +286,7 @@ impl Shop {
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
-            let amount_bg = systems.gfx.add_rect(amount_bg_rect, 0);
+            let amount_bg = systems.gfx.add_rect(amount_bg_rect, 1);
             systems.gfx.set_visible(amount_bg, false);
 
             let text_size = Vec2::new(32.0, 16.0);
@@ -302,7 +302,7 @@ impl Shop {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let amount = systems.gfx.add_text(text, 1);
+            let amount = systems.gfx.add_text(text, 2);
             systems.gfx.set_visible(amount, false);
 
             item.push(ShopItem {
