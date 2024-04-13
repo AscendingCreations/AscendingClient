@@ -123,7 +123,7 @@ impl MapData {
             },
             tile: vec![Tile { id: vec![0; 1024] }; 9],
             dir_block: vec![0; 1024],
-            attribute: vec![MapAttribute::Walkable; 1024],
+            attribute: vec![MapAttribute::Blocked; 1024],
             zonespawns: Default::default(),
             zones: Default::default(),
             music: None,
