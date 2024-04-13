@@ -60,7 +60,7 @@ pub fn add_npc(
         Vec3::new(0.0, 0.0, ORDER_ENTITY_NAME),
         Vec2::new(20.0, 20.0),
         Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
-        Color::rgba(230, 230, 230, 255),
+        Color::rgba(200, 40, 40, 255),
     );
     let name_index = systems.gfx.add_text(entity_name, 1);
     let entitynamemap = EntityNameMap(name_index);

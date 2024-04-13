@@ -163,7 +163,7 @@ pub enum FtlType {
 pub const COLOR_WHITE: Color = Color::rgba(255, 255, 255, 255);
 pub const COLOR_RED: Color = Color::rgba(230, 30, 30, 255);
 pub const COLOR_BLUE: Color = Color::rgba(30, 30, 230, 255);
-pub const COLOR_GREEN: Color = Color::rgba(10, 230, 10, 255);
+pub const COLOR_GREEN: Color = Color::rgba(40, 255, 40, 255);
 
 pub const VITALS_MAX: usize = VitalTypes::Count as usize;
 pub const MAX_INV: usize = 30;

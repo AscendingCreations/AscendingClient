@@ -247,6 +247,13 @@ impl Textbox {
         self.caret_pos = 0;
 
         if text.is_empty() {
+            systems
+                .gfx
+                .set_text(&mut systems.renderer, self.text_index, "");
+            let pos = systems.gfx.get_pos(self.caret);
+            systems
+                .gfx
+                .set_pos(self.caret, Vec3::new(self.pos.x, self.pos.y, pos.z));
             return;
         }
 

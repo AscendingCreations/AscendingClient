@@ -222,7 +222,7 @@ impl Chatbox {
                 chatarea_zorder,
             ))
             .set_size(chat_areasize)
-            .set_color(Color::rgba(160, 160, 160, 255));
+            .set_color(Color::rgba(140, 140, 140, 255));
         let chatarea_bg = systems.gfx.add_rect(chatarea_rect, 0);
         let chat_zorder = detail_3;
         let chat_bounds = Bounds::new(
