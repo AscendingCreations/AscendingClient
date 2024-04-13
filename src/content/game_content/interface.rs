@@ -45,6 +45,7 @@ pub enum Window {
     Trade,
 }
 
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum SelectedTextbox {
     None,
     Chatbox,
@@ -65,7 +66,7 @@ pub struct Interface {
     pub chatbox: Chatbox,
     window_order: Vec<(Window, usize)>,
     drag_window: Option<Window>,
-    selected_textbox: SelectedTextbox,
+    pub selected_textbox: SelectedTextbox,
 }
 
 impl Interface {
@@ -1208,72 +1209,4 @@ fn adjust_window_zorder(interface: &mut Interface, systems: &mut SystemHolder) {
         }
         order -= 0.01;
     }
-}
-
-fn send_chat(
-    interface: &mut Interface,
-    systems: &mut SystemHolder,
-    socket: &mut Socket,
-) -> Result<()> {
-    let input_string = interface.chatbox.textbox.text.clone();
-    if input_string.is_empty() {
-        return Ok(());
-    }
-
-    if let Some(char) = input_string.chars().next() {
-        match char {
-            '@' => {
-                let msg = &input_string[1..];
-                if let Some(index) = msg.find(' ') {
-                    let (name, message) = msg.split_at(index);
-                    send_message(
-                        socket,
-                        crate::MessageChannel::Private,
-                        message.into(),
-                        name.into(),
-                    )?;
-                } else {
-                    interface.chatbox.add_chat(
-                        systems,
-                        ("Invalid Command".into(), COLOR_WHITE),
-                        None,
-                        crate::MessageChannel::Map,
-                    );
-                }
-            }
-            '/' => {
-                let msg = &input_string[1..];
-                match msg {
-                    "trade" => {
-                        interface.chatbox.add_chat(
-                            systems,
-                            ("Trade Request Sent".into(), COLOR_WHITE),
-                            None,
-                            crate::MessageChannel::Map,
-                        );
-                        send_command(socket, crate::Command::Trade)?;
-                    }
-                    _ => {
-                        interface.chatbox.add_chat(
-                            systems,
-                            ("Invalid Command".into(), COLOR_WHITE),
-                            None,
-                            crate::MessageChannel::Map,
-                        );
-                    }
-                }
-            }
-            _ => {
-                let channel = match interface.chatbox.selected_tab {
-                    2 => crate::MessageChannel::Global,
-                    _ => crate::MessageChannel::Map,
-                };
-                send_message(socket, channel, input_string, String::new())?;
-            }
-        }
-    }
-
-    interface.chatbox.textbox.set_text(systems, String::new());
-
-    Ok(())
 }

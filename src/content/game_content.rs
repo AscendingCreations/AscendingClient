@@ -355,6 +355,10 @@ impl GameContent {
         socket: &mut Socket,
         seconds: f32,
     ) -> Result<()> {
+        if self.interface.selected_textbox != SelectedTextbox::None {
+            return Ok(());
+        }
+
         for i in 0..MAX_KEY {
             if self.keyinput[i] {
                 match i {

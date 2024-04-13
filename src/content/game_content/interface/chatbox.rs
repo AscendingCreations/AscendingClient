@@ -1,7 +1,10 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{is_within_area, logic::*, values::*, widget::*, SystemHolder};
+use crate::{
+    is_within_area, logic::*, send_command, send_message, values::*, widget::*,
+    Interface, Result, Socket, SystemHolder,
+};
 
 const MAX_CHAT_LINE: usize = 8;
 const VISIBLE_SIZE: f32 = 160.0;
@@ -979,4 +982,72 @@ pub fn can_channel_show(channel: MessageChannel, selected_tab: usize) -> bool {
         MessageChannel::Map => selected_tab == 1 || selected_tab == 0,
         _ => selected_tab == 0,
     }
+}
+
+pub fn send_chat(
+    interface: &mut Interface,
+    systems: &mut SystemHolder,
+    socket: &mut Socket,
+) -> Result<()> {
+    let input_string = interface.chatbox.textbox.text.clone();
+    if input_string.is_empty() {
+        return Ok(());
+    }
+
+    if let Some(char) = input_string.chars().next() {
+        match char {
+            '@' => {
+                let msg = &input_string[1..];
+                if let Some(index) = msg.find(' ') {
+                    let (name, message) = msg.split_at(index);
+                    send_message(
+                        socket,
+                        crate::MessageChannel::Private,
+                        message.into(),
+                        name.into(),
+                    )?;
+                } else {
+                    interface.chatbox.add_chat(
+                        systems,
+                        ("Invalid Command".into(), COLOR_WHITE),
+                        None,
+                        crate::MessageChannel::Map,
+                    );
+                }
+            }
+            '/' => {
+                let msg = &input_string[1..];
+                match msg {
+                    "trade" => {
+                        interface.chatbox.add_chat(
+                            systems,
+                            ("Trade Request Sent".into(), COLOR_WHITE),
+                            None,
+                            crate::MessageChannel::Map,
+                        );
+                        send_command(socket, crate::Command::Trade)?;
+                    }
+                    _ => {
+                        interface.chatbox.add_chat(
+                            systems,
+                            ("Invalid Command".into(), COLOR_WHITE),
+                            None,
+                            crate::MessageChannel::Map,
+                        );
+                    }
+                }
+            }
+            _ => {
+                let channel = match interface.chatbox.selected_tab {
+                    2 => crate::MessageChannel::Global,
+                    _ => crate::MessageChannel::Map,
+                };
+                send_message(socket, channel, input_string, String::new())?;
+            }
+        }
+    }
+
+    interface.chatbox.textbox.set_text(systems, String::new());
+
+    Ok(())
 }
