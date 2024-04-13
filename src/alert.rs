@@ -550,48 +550,64 @@ impl Alert {
                         #[allow(clippy::match_single_binding)]
                         0 => match self.custom_index {
                             AlertIndex::Drop(slot) => {
-                                let amount = input_text.parse::<u16>()?;
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
                                 send_dropitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Sell(slot) => {
-                                let amount = input_text.parse::<u16>()?;
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
                                 send_sellitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::AddTradeTradeItem(slot) => {
-                                let amount = input_text.parse::<u16>()?;
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
                                 send_addtradeitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::RemoveTradeItem(slot) => {
-                                let amount = input_text.parse::<u64>()?;
+                                let amount = input_text
+                                    .parse::<u64>()
+                                    .unwrap_or_default();
                                 send_removetradeitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::MergeInv(inv_slot, new_slot) => {
-                                let amount = input_text.parse::<u16>()?;
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
                                 send_switchinvslot(
                                     socket, inv_slot, new_slot, amount,
                                 )?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::MergeStorage(inv_slot, new_slot) => {
-                                let amount = input_text.parse::<u16>()?;
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
                                 send_switchstorageslot(
                                     socket, inv_slot, new_slot, amount,
                                 )?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Deposit(inv_slot, bank_slot) => {
-                                let amount = input_text.parse::<u16>()?;
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
                                 send_deposititem(
                                     socket, inv_slot, bank_slot, amount,
                                 )?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Withdraw(inv_slot, bank_slot) => {
-                                let amount = input_text.parse::<u16>()?;
+                                let amount = input_text
+                                    .parse::<u16>()
+                                    .unwrap_or_default();
                                 send_withdrawitem(
                                     socket, inv_slot, bank_slot, amount,
                                 )?;

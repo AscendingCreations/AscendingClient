@@ -776,7 +776,7 @@ impl Interface {
                 self.trade.money_input.set_select(systems, false);
                 if self.trade.trade_status == TradeStatus::None {
                     let input_text = self.trade.money_input.text.clone();
-                    let amount = input_text.parse::<u64>()?;
+                    let amount = input_text.parse::<u64>().unwrap_or_default();
                     send_updatetrademoney(socket, amount)?;
                 }
             }
