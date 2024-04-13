@@ -114,6 +114,7 @@ impl GameContent {
         self.map.unload(systems);
         self.player_data.unload();
         self.float_text.unload(systems);
+        systems.caret.index = None;
         Ok(())
     }
 

@@ -70,6 +70,7 @@ impl MenuContent {
 
     pub fn hide(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(self.bg, false);
+        systems.caret.index = None;
         self.clear_window(systems)
     }
 

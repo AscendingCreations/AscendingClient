@@ -735,64 +735,6 @@ impl Textbox {
     }
 }
 
-/*
-pub fn is_text(event: &KeyEvent) -> bool {
-    matches!(
-        event.physical_key,
-        PhysicalKey::Code(
-            KeyCode::KeyA
-                | KeyCode::KeyB
-                | KeyCode::KeyC
-                | KeyCode::KeyD
-                | KeyCode::KeyE
-                | KeyCode::KeyF
-                | KeyCode::KeyG
-                | KeyCode::KeyH
-                | KeyCode::KeyI
-                | KeyCode::KeyJ
-                | KeyCode::KeyK
-                | KeyCode::KeyL
-                | KeyCode::KeyM
-                | KeyCode::KeyN
-                | KeyCode::KeyO
-                | KeyCode::KeyP
-                | KeyCode::KeyQ
-                | KeyCode::KeyR
-                | KeyCode::KeyS
-                | KeyCode::KeyT
-                | KeyCode::KeyU
-                | KeyCode::KeyV
-                | KeyCode::KeyW
-                | KeyCode::KeyX
-                | KeyCode::KeyY
-                | KeyCode::KeyZ
-                | KeyCode::Digit1
-                | KeyCode::Digit2
-                | KeyCode::Digit3
-                | KeyCode::Digit4
-                | KeyCode::Digit5
-                | KeyCode::Digit6
-                | KeyCode::Digit7
-                | KeyCode::Digit8
-                | KeyCode::Digit9
-                | KeyCode::Digit0
-                | KeyCode::Comma
-                | KeyCode::Period
-                | KeyCode::BracketLeft
-                | KeyCode::BracketRight
-                | KeyCode::Backquote
-                | KeyCode::Minus
-                | KeyCode::Equal
-                | KeyCode::Quote
-                | KeyCode::Backslash
-                | KeyCode::Semicolon
-                | KeyCode::Slash
-                | KeyCode::Space,
-        )
-    )
-}
- */
-
 pub fn is_numeric(char: &str) -> bool {
     char.trim().parse::<i64>().is_ok()
 }

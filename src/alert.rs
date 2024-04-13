@@ -400,6 +400,7 @@ impl Alert {
             systems.gfx.remove_gfx(&mut systems.renderer, textbox.bg);
             textbox.textbox.unload(systems);
         }
+        systems.caret.index = None;
         self.input_box = None;
     }
 
@@ -549,64 +550,48 @@ impl Alert {
                         #[allow(clippy::match_single_binding)]
                         0 => match self.custom_index {
                             AlertIndex::Drop(slot) => {
-                                let amount = input_text
-                                    .parse::<u16>()
-                                    .unwrap_or_default();
+                                let amount = input_text.parse::<u16>()?;
                                 send_dropitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Sell(slot) => {
-                                let amount = input_text
-                                    .parse::<u16>()
-                                    .unwrap_or_default();
+                                let amount = input_text.parse::<u16>()?;
                                 send_sellitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::AddTradeTradeItem(slot) => {
-                                let amount = input_text
-                                    .parse::<u16>()
-                                    .unwrap_or_default();
+                                let amount = input_text.parse::<u16>()?;
                                 send_addtradeitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::RemoveTradeItem(slot) => {
-                                let amount = input_text
-                                    .parse::<u64>()
-                                    .unwrap_or_default();
+                                let amount = input_text.parse::<u64>()?;
                                 send_removetradeitem(socket, slot, amount)?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::MergeInv(inv_slot, new_slot) => {
-                                let amount = input_text
-                                    .parse::<u16>()
-                                    .unwrap_or_default();
+                                let amount = input_text.parse::<u16>()?;
                                 send_switchinvslot(
                                     socket, inv_slot, new_slot, amount,
                                 )?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::MergeStorage(inv_slot, new_slot) => {
-                                let amount = input_text
-                                    .parse::<u16>()
-                                    .unwrap_or_default();
+                                let amount = input_text.parse::<u16>()?;
                                 send_switchstorageslot(
                                     socket, inv_slot, new_slot, amount,
                                 )?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Deposit(inv_slot, bank_slot) => {
-                                let amount = input_text
-                                    .parse::<u16>()
-                                    .unwrap_or_default();
+                                let amount = input_text.parse::<u16>()?;
                                 send_deposititem(
                                     socket, inv_slot, bank_slot, amount,
                                 )?;
                                 self.hide_alert(systems);
                             }
                             AlertIndex::Withdraw(inv_slot, bank_slot) => {
-                                let amount = input_text
-                                    .parse::<u16>()
-                                    .unwrap_or_default();
+                                let amount = input_text.parse::<u16>()?;
                                 send_withdrawitem(
                                     socket, inv_slot, bank_slot, amount,
                                 )?;
