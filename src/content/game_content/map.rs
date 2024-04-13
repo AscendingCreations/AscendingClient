@@ -148,6 +148,37 @@ impl MapContent {
         self.map_attribute[map_index].0.attribute[tile_num].clone()
     }
 
+    pub fn get_next_pos(
+        &self,
+        pos: Position,
+        direction: &Direction,
+    ) -> Position {
+        let mut new_pos = pos;
+        match direction {
+            Direction::Down => new_pos.y -= 1,
+            Direction::Left => new_pos.x -= 1,
+            Direction::Right => new_pos.x += 1,
+            Direction::Up => new_pos.y += 1,
+        };
+        if new_pos.x < 0 {
+            new_pos.x = 31;
+            new_pos.map.x -= 1;
+        }
+        if new_pos.y < 0 {
+            new_pos.y = 31;
+            new_pos.map.y -= 1;
+        }
+        if new_pos.x >= 32 {
+            new_pos.x = 0;
+            new_pos.map.x += 1;
+        }
+        if new_pos.y >= 32 {
+            new_pos.y = 0;
+            new_pos.map.x += 1;
+        }
+        new_pos
+    }
+
     pub fn get_dir_block(&self, pos: Vec2, map_index: usize) -> u8 {
         let tile_num = get_tile_pos(pos.x as i32, pos.y as i32);
         self.dir_block[map_index].0.dir[tile_num]
@@ -259,6 +290,20 @@ pub fn can_move(
         Direction::Left => dir_block.get(B2) == 0b00000100,
     } {
         return Ok(false);
+    }
+
+    let next_pos = content.map.get_next_pos(pos, direction);
+    {
+        if world.query::<(&WorldEntityType, &Position)>().iter().any(
+            |(target, (worldtype, pos))| {
+                *pos == next_pos
+                    && target != entity.0
+                    && (*worldtype == WorldEntityType::Npc
+                        || *worldtype == WorldEntityType::Player)
+            },
+        ) {
+            return Ok(false);
+        }
     }
 
     let attribute = content
