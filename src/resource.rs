@@ -27,6 +27,7 @@ pub struct TextureAllocation {
     pub tilesheet: Vec<TilesheetData>,
     pub items: Vec<TextureData>,
     pub players: Vec<TextureData>,
+    pub npcs: Vec<TextureData>,
 }
 
 impl TextureAllocation {
@@ -61,7 +62,8 @@ impl TextureAllocation {
             })
         }
 
-        let (mut tilesheet, mut items, mut players) = (
+        let (mut tilesheet, mut items, mut players, mut npcs) = (
+            Vec::with_capacity(32),
             Vec::with_capacity(32),
             Vec::with_capacity(32),
             Vec::with_capacity(32),
@@ -94,6 +96,15 @@ impl TextureAllocation {
             });
         }
 
+        for path in get_dir_files("./images/npc/") {
+            npcs.push(TextureData {
+                name: path.path().display().to_string(),
+                allocation: Texture::from_file(path.path())?
+                    .upload(&mut atlases[0], renderer)
+                    .ok_or_else(|| OtherError::new("failed to upload image"))?,
+            });
+        }
+
         // Complete! We can now pass the result
         Ok(Self {
             menu_bg: textures.remove(0),
@@ -106,6 +117,7 @@ impl TextureAllocation {
             tilesheet,
             items,
             players,
+            npcs,
         })
     }
 }

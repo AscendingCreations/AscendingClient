@@ -148,6 +148,9 @@ pub struct Hidden(pub bool);
 #[derive(Debug, Clone, Default)]
 pub struct EntityName(pub String);
 
+#[derive(Debug, Clone, Copy, Default)]
+pub struct EntityNameMap(pub usize);
+
 #[derive(
     Debug,
     Copy,

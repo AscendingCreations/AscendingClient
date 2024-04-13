@@ -140,8 +140,14 @@ fn trigger_button(
                 return;
             }*/
 
-            send_register(socket, username, password, email, 1)
-                .expect("Failed to send register");
+            send_register(
+                socket,
+                username,
+                password,
+                email,
+                menu_content.content_data as u8,
+            )
+            .expect("Failed to send register");
         }
         1 => {
             // Sign In

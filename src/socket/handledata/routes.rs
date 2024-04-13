@@ -4,9 +4,10 @@ use crate::{
     dir_to_enum,
     entity::{self, *},
     fade::*,
-    get_percent, get_start_map_pos, is_map_connected, npc_finalized,
-    open_interface, player_get_armor_defense, player_get_weapon_damage,
-    send_handshake, set_npc_frame, unload_mapitems, unload_npc, update_camera,
+    get_percent, get_start_map_pos, init_npc_attack, is_map_connected,
+    npc_finalized, open_interface, player_get_armor_defense,
+    player_get_weapon_damage, send_handshake, set_npc_frame, unload_mapitems,
+    unload_npc, update_camera,
     values::*,
     Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
     EncryptionState, EntityType, FtlType, IsUsingType, MapItem, MessageChannel,
@@ -246,12 +247,18 @@ pub fn handle_playerdata(
                 pos.map,
                 Some(&entity),
                 Some(&entity),
+                sprite as usize,
             )?;
             content.game_content.players.insert(player);
             content.game_content.in_game = true;
         }
 
         content.game_content.player_data.equipment = equipment.items.clone();
+
+        let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
+        systems
+            .gfx
+            .set_text(&mut systems.renderer, entity_name.0, &username);
 
         {
             world.get::<&mut EntityName>(entity.0)?.0 = username;
@@ -323,8 +330,16 @@ pub fn handle_playerspawn(
                     client_map,
                     Some(&entity),
                     None,
+                    sprite as usize,
                 )?;
                 content.game_content.players.insert(player);
+
+                let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
+                systems.gfx.set_text(
+                    &mut systems.renderer,
+                    entity_name.0,
+                    &username,
+                );
 
                 {
                     world.get::<&mut EntityName>(entity.0)?.0 = username;
@@ -998,9 +1013,25 @@ pub fn handle_npcdata(
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
                 let client_map = world.get_or_err::<Position>(&myentity)?.map;
-                let npc =
-                    add_npc(world, systems, pos, client_map, Some(&entity))?;
+                let npc = add_npc(
+                    world,
+                    systems,
+                    pos,
+                    client_map,
+                    Some(&entity),
+                    num as usize,
+                )?;
                 content.game_content.npcs.insert(npc);
+
+                if let Some(npc_data) = systems.base.npc.get(num as usize) {
+                    let entity_name =
+                        world.get_or_err::<EntityNameMap>(&entity)?;
+                    systems.gfx.set_text(
+                        &mut systems.renderer,
+                        entity_name.0,
+                        &npc_data.name,
+                    );
+                }
 
                 {
                     world.get::<&mut Dir>(entity.0)?.0 = dir;
@@ -1171,11 +1202,11 @@ pub fn handle_npcvital(
 pub fn handle_npcattack(
     _socket: &mut Socket,
     world: &mut World,
-    _systems: &mut SystemHolder,
+    systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
-    _seconds: f32,
+    seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
     let count = data.read::<u32>()?;
@@ -1184,7 +1215,7 @@ pub fn handle_npcattack(
         let entity = data.read::<Entity>()?;
 
         if world.contains(entity.0) {
-            //ToDo Npc Attack
+            init_npc_attack(world, systems, &entity, seconds)?;
         }
     }
 

@@ -617,13 +617,17 @@ pub fn update_camera(
 
     content.map.move_pos(systems, content.camera.pos);
 
-    for (entity, (worldentitytype, sprite, pos, pos_offset, hp_bar)) in world
+    for (
+        entity,
+        (worldentitytype, sprite, pos, pos_offset, hp_bar, entitynamemap),
+    ) in world
         .query_mut::<(
             &WorldEntityType,
             &SpriteIndex,
             &Position,
             &PositionOffset,
             Option<&mut HPBar>,
+            Option<&mut EntityNameMap>,
         )>()
         .into_iter()
     {
@@ -635,40 +639,44 @@ pub fn update_camera(
         match worldentitytype {
             WorldEntityType::Player => {
                 if let Some(hpbar) = hp_bar {
-                    if is_target {
-                        if !hpbar.visible {
-                            hpbar.visible = true;
-                            systems.gfx.set_visible(hpbar.bar_index, true);
-                            systems.gfx.set_visible(hpbar.bg_index, true);
+                    if let Some(namemap) = entitynamemap {
+                        if is_target {
+                            if !hpbar.visible {
+                                hpbar.visible = true;
+                                systems.gfx.set_visible(hpbar.bar_index, true);
+                                systems.gfx.set_visible(hpbar.bg_index, true);
+                            }
+                        } else if hpbar.visible {
+                            hpbar.visible = false;
+                            systems.gfx.set_visible(hpbar.bar_index, false);
+                            systems.gfx.set_visible(hpbar.bg_index, false);
                         }
-                    } else if hpbar.visible {
-                        hpbar.visible = false;
-                        systems.gfx.set_visible(hpbar.bar_index, false);
-                        systems.gfx.set_visible(hpbar.bg_index, false);
+                        update_player_position(
+                            systems, content, socket, sprite.0, pos,
+                            pos_offset, hpbar, namemap, is_target,
+                        )?;
                     }
-                    update_player_position(
-                        systems, content, socket, sprite.0, pos, pos_offset,
-                        hpbar, is_target,
-                    )?;
                 }
             }
             WorldEntityType::Npc => {
                 if let Some(hpbar) = hp_bar {
-                    if is_target {
-                        if !hpbar.visible {
-                            hpbar.visible = true;
-                            systems.gfx.set_visible(hpbar.bar_index, true);
-                            systems.gfx.set_visible(hpbar.bg_index, true);
+                    if let Some(namemap) = entitynamemap {
+                        if is_target {
+                            if !hpbar.visible {
+                                hpbar.visible = true;
+                                systems.gfx.set_visible(hpbar.bar_index, true);
+                                systems.gfx.set_visible(hpbar.bg_index, true);
+                            }
+                        } else if hpbar.visible {
+                            hpbar.visible = false;
+                            systems.gfx.set_visible(hpbar.bar_index, false);
+                            systems.gfx.set_visible(hpbar.bg_index, false);
                         }
-                    } else if hpbar.visible {
-                        hpbar.visible = false;
-                        systems.gfx.set_visible(hpbar.bar_index, false);
-                        systems.gfx.set_visible(hpbar.bg_index, false);
+                        update_npc_position(
+                            systems, content, socket, sprite.0, pos,
+                            pos_offset, hpbar, namemap, is_target,
+                        )?;
                     }
-                    update_npc_position(
-                        systems, content, socket, sprite.0, pos, pos_offset,
-                        hpbar, is_target,
-                    )?;
                 }
             }
             WorldEntityType::MapItem => {

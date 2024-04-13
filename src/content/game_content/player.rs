@@ -1,4 +1,4 @@
-use crate::Result;
+use crate::{create_label, Result};
 use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use graphics::*;
 use hecs::World;
@@ -28,12 +28,13 @@ pub fn add_player(
     cur_map: MapPosition,
     entity: Option<&Entity>,
     myentity: Option<&Entity>,
+    sprite: usize,
 ) -> Result<Entity> {
     let start_pos = get_start_map_pos(cur_map, pos.map)
         .unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
     let mut image = Image::new(
-        Some(systems.resource.players[0].allocation),
+        Some(systems.resource.players[sprite].allocation),
         &mut systems.renderer,
         0,
     );
@@ -63,6 +64,16 @@ pub fn add_player(
         .set_color(Color::rgba(180, 30, 30, 255));
     let bar_index = systems.gfx.add_rect(bar_image, 0);
     systems.gfx.set_visible(bar_index, false);
+
+    let entity_name = create_label(
+        systems,
+        Vec3::new(0.0, 0.0, ORDER_ENTITY_NAME),
+        Vec2::new(20.0, 20.0),
+        Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
+        Color::rgba(230, 230, 230, 255),
+    );
+    let name_index = systems.gfx.add_text(entity_name, 1);
+    let entitynamemap = EntityNameMap(name_index);
 
     let hpbar = HPBar {
         visible: false,
@@ -96,6 +107,7 @@ pub fn add_player(
         MovementBuffer::default(),
         hpbar,
         Finalized::default(),
+        entitynamemap,
     );
 
     let is_myentity = entity == myentity;
@@ -156,6 +168,10 @@ pub fn unload_player(
     systems
         .gfx
         .remove_gfx(&mut systems.renderer, hpbar.bg_index);
+    let entitynamemap = world.get_or_err::<EntityNameMap>(entity)?;
+    systems
+        .gfx
+        .remove_gfx(&mut systems.renderer, entitynamemap.0);
     world.despawn(entity.0)?;
     Ok(())
 }
@@ -329,6 +345,7 @@ pub fn update_player_position(
     pos: &Position,
     pos_offset: &PositionOffset,
     hpbar: &HPBar,
+    entitynamemap: &EntityNameMap,
     is_target: bool,
 ) -> Result<()> {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
@@ -364,6 +381,15 @@ pub fn update_player_position(
         hpbar.bg_index,
         Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG),
     );
+
+    let textsize = systems.gfx.get_measure(entitynamemap.0).floor();
+    let name_pos =
+        pos + Vec2::new(((sprite_size.x - textsize.x) * 0.5).floor(), 40.0);
+    systems.gfx.set_pos(
+        entitynamemap.0,
+        Vec3::new(name_pos.x, name_pos.y, ORDER_ENTITY_NAME),
+    );
+
     Ok(())
 }
 
