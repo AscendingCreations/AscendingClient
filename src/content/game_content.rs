@@ -641,6 +641,11 @@ pub fn update_camera(
         } else {
             false
         };
+        let is_my_entity = if let Some(myentity) = content.myentity {
+            myentity.0 == entity
+        } else {
+            false
+        };
         match worldentitytype {
             WorldEntityType::Player => {
                 if let Some(hpbar) = hp_bar {
@@ -651,7 +656,7 @@ pub fn update_camera(
                                 systems.gfx.set_visible(hpbar.bar_index, true);
                                 systems.gfx.set_visible(hpbar.bg_index, true);
                             }
-                        } else if hpbar.visible {
+                        } else if hpbar.visible && !is_my_entity {
                             hpbar.visible = false;
                             systems.gfx.set_visible(hpbar.bar_index, false);
                             systems.gfx.set_visible(hpbar.bg_index, false);

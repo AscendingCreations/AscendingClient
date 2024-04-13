@@ -261,6 +261,8 @@ pub fn handle_playerdata(
             .set_text(&mut systems.renderer, entity_name.0, &username);
 
         {
+            world.get::<&mut HPBar>(entity.0)?.visible =
+                vitals[0] != vitalmax[0];
             world.get::<&mut EntityName>(entity.0)?.0 = username;
             *world.get::<&mut UserAccess>(entity.0)? = useraccess;
             world.get::<&mut Dir>(entity.0)?.0 = dir;
@@ -283,6 +285,13 @@ pub fn handle_playerdata(
                 vital.vitalmax = vitalmax;
             }
         }
+
+        let hpbar = world.get_or_err::<HPBar>(&entity)?;
+        let mut size = systems.gfx.get_size(hpbar.bar_index);
+        size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
+        systems.gfx.set_size(hpbar.bar_index, size);
+        systems.gfx.set_visible(hpbar.bar_index, hpbar.visible);
+        systems.gfx.set_visible(hpbar.bg_index, hpbar.visible);
     }
     Ok(())
 }
@@ -568,8 +577,12 @@ pub fn handle_playervitals(
             let mut size = systems.gfx.get_size(hpbar.bar_index);
             size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
             systems.gfx.set_size(hpbar.bar_index, size);
+
             if let Some(myentity) = content.game_content.myentity {
                 if entity == myentity {
+                    world.get::<&mut HPBar>(entity.0)?.visible =
+                        vitals[0] != vitalmax[0];
+
                     systems
                         .gfx
                         .set_visible(hpbar.bar_index, vitals[0] != vitalmax[0]);
@@ -864,14 +877,21 @@ pub fn handle_playerlevel(
 pub fn handle_playermoney(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let _vals = data.read::<u64>()?;
+    let vals = data.read::<u64>()?;
+
+    content.game_content.player_data.player_money = vals;
+    content
+        .game_content
+        .interface
+        .profile
+        .set_profile_label_value(systems, ProfileLabel::Money, vals);
 
     Ok(())
 }
