@@ -234,7 +234,7 @@ pub fn fade_end(
             } else {
                 Position::default()
             };
-            content.game_content.init_map(systems, pos.map);
+            content.game_content.init_map(systems, pos.map)?;
             content
                 .game_content
                 .init_finalized_data(world, systems, socket)?;

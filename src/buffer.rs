@@ -5,7 +5,7 @@ use std::collections::VecDeque;
 
 use crate::{
     database::map::*, Content, HPBar, MapAttributes, MapDirBlock,
-    MessageChannel, SystemHolder,
+    MessageChannel, Result, SystemHolder,
 };
 
 pub struct StoredData {
@@ -42,10 +42,10 @@ impl BufferTask {
         &mut self,
         systems: &mut SystemHolder,
         content: &mut Content,
-    ) {
+    ) -> Result<()> {
         self.chatbuffer.process_buffer(systems, content);
         if self.task.is_empty() {
-            return;
+            return Ok(());
         }
 
         let task_data = self.task.pop_front();
@@ -88,7 +88,7 @@ impl BufferTask {
                 }
                 BufferTaskEnum::LoadMap(mx, my, mg) => {
                     let key = format!("{}_{}_{}", mx, my, mg);
-                    let map_data = load_file(mx, my, mg);
+                    let map_data = load_file(mx, my, mg)?;
                     self.storage.map_data.insert(key, map_data);
                 }
                 BufferTaskEnum::UnloadMap(mx, my, mg) => {
@@ -99,6 +99,7 @@ impl BufferTask {
                 }
             }
         }
+        Ok(())
     }
 
     pub fn add_task(&mut self, task: BufferTaskEnum) {

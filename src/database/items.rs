@@ -1,9 +1,12 @@
-use crate::data_types::*;
+use crate::{data_types::*, Result};
+use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use serde::{Deserialize, Serialize};
-use std::fs::OpenOptions;
-use std::io::BufReader;
+use std::fs::{File, OpenOptions};
+use std::io::{BufReader, Read};
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(
+    Clone, Debug, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite,
+)]
 pub struct ItemData {
     pub name: String,
     pub levelreq: u16,
@@ -22,14 +25,14 @@ pub struct ItemData {
     pub sound_index: Option<String>,
 }
 
-pub fn get_item() -> Vec<ItemData> {
+pub fn get_item() -> Result<Vec<ItemData>> {
     let mut item_data: Vec<ItemData> = Vec::new();
 
     let mut count = 0;
     let mut got_data = true;
 
     while got_data {
-        if let Some(data) = load_file(count) {
+        if let Some(data) = load_file(count)? {
             item_data.push(data);
             count += 1;
             got_data = true;
@@ -38,21 +41,24 @@ pub fn get_item() -> Vec<ItemData> {
         }
     }
 
-    item_data
+    Ok(item_data)
 }
 
-fn load_file(id: usize) -> Option<ItemData> {
-    let name = format!("./data/items/{}.json", id);
+fn load_file(id: usize) -> Result<Option<ItemData>> {
+    let name = format!("./data/items/{}.bin", id);
 
     match OpenOptions::new().read(true).open(name) {
-        Ok(file) => {
-            let reader = BufReader::new(file);
+        Ok(mut file) => {
+            let mut data = Vec::new();
+            file.read_to_end(&mut data)?;
 
-            match serde_json::from_reader(reader) {
-                Ok(v) => Some(v),
-                Err(_) => None,
-            }
+            let mut buf = ByteBuffer::new()?;
+            buf.write(data)?;
+            buf.move_cursor_to_start();
+
+            buf.move_cursor(8)?;
+            Ok(Some(buf.read::<ItemData>()?))
         }
-        Err(_) => None,
+        Err(_) => Ok(None),
     }
 }

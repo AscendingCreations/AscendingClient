@@ -6,7 +6,7 @@ use std::path::Path;
 
 use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 
-use crate::{MapPosition, SystemHolder};
+use crate::{MapPosition, Result, SystemHolder};
 
 #[derive(
     Clone,
@@ -132,28 +132,28 @@ impl MapData {
     }
 }
 
-pub fn load_file(x: i32, y: i32, group: u64) -> MapData {
+pub fn load_file(x: i32, y: i32, group: u64) -> Result<MapData> {
     if !is_map_exist(x, y, group) {
         println!("Map does not exist");
-        return MapData::default(x, y, group);
+        return Ok(MapData::default(x, y, group));
     }
 
     let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
     match OpenOptions::new().read(true).open(&name) {
         Ok(mut file) => {
             let mut data = Vec::new();
-            file.read_to_end(&mut data).unwrap();
+            file.read_to_end(&mut data)?;
 
-            let mut buf = ByteBuffer::new().unwrap();
-            buf.write(data).unwrap();
+            let mut buf = ByteBuffer::new()?;
+            buf.write(data)?;
             buf.move_cursor_to_start();
 
-            buf.move_cursor(8).unwrap();
-            buf.read::<MapData>().unwrap()
+            buf.move_cursor(8)?;
+            Ok(buf.read::<MapData>()?)
         }
         Err(e) => {
             println!("Failed to load {}, Err {:?}", name, e);
-            MapData::default(x, y, group)
+            Ok(MapData::default(x, y, group))
         }
     }
 }

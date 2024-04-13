@@ -436,7 +436,7 @@ pub fn handle_playerwarp(
         if let Some(myentity) = content.game_content.myentity {
             if myentity == entity {
                 if old_pos.map != pos.map {
-                    content.game_content.init_map(systems, pos.map);
+                    content.game_content.init_map(systems, pos.map)?;
                 }
                 update_camera(
                     world,

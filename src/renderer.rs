@@ -6,8 +6,8 @@ pub mod fade;
 pub use fade::*;
 
 use crate::{
-    game_content::*, gfx_collection::*, Audio, Config, ItemData, ShopData,
-    TextureAllocation,
+    game_content::*, gfx_collection::*, Audio, Config, ItemData, NpcData,
+    ShopData, TextureAllocation,
 };
 
 pub struct TextCaret {
@@ -19,6 +19,7 @@ pub struct TextCaret {
 pub struct DatabaseHolder {
     pub item: Vec<ItemData>,
     pub shop: Vec<ShopData>,
+    pub npc: Vec<NpcData>,
 }
 
 pub struct SystemHolder {

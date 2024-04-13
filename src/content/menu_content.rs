@@ -65,7 +65,7 @@ impl MenuContent {
 
     pub fn show(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(self.bg, true);
-        create_window(systems, self, WindowType::Register);
+        create_window(systems, self, WindowType::Login);
     }
 
     pub fn hide(&mut self, systems: &mut SystemHolder) {

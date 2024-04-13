@@ -234,8 +234,9 @@ async fn main() -> Result<()> {
     audio.set_music_volume(volume);
 
     let database_holder = DatabaseHolder {
-        item: get_item(),
-        shop: get_shop(),
+        item: get_item()?,
+        shop: get_shop()?,
+        npc: get_npc()?,
     };
 
     // Compile all rendering data in one type for quick access and passing
@@ -592,7 +593,9 @@ async fn main() -> Result<()> {
         )
         .unwrap();
 
-        buffertask.process_buffer(&mut systems, &mut content);
+        buffertask
+            .process_buffer(&mut systems, &mut content)
+            .unwrap();
 
         if time < seconds {
             systems.gfx.set_rich_text(

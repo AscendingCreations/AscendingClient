@@ -1,31 +1,36 @@
-use crate::values::MAX_SHOP_ITEM;
+use crate::{values::MAX_SHOP_ITEM, Result};
+use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use educe::Educe;
 use serde::{Deserialize, Serialize};
-use std::fs::OpenOptions;
-use std::io::BufReader;
+use std::fs::{File, OpenOptions};
+use std::io::{BufReader, Read};
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
+#[derive(
+    Clone, Copy, Debug, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite,
+)]
 pub struct ShopItem {
     pub index: u16,
     pub amount: u16,
     pub price: u64,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(
+    Clone, Debug, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite,
+)]
 pub struct ShopData {
     pub name: String,
     pub max_item: u16,
     pub item: [ShopItem; MAX_SHOP_ITEM],
 }
 
-pub fn get_shop() -> Vec<ShopData> {
+pub fn get_shop() -> Result<Vec<ShopData>> {
     let mut shop_data: Vec<ShopData> = Vec::new();
 
     let mut count = 0;
     let mut got_data = true;
 
     while got_data {
-        if let Some(data) = load_file(count) {
+        if let Some(data) = load_file(count)? {
             shop_data.push(data);
             count += 1;
             got_data = true;
@@ -34,21 +39,24 @@ pub fn get_shop() -> Vec<ShopData> {
         }
     }
 
-    shop_data
+    Ok(shop_data)
 }
 
-fn load_file(id: usize) -> Option<ShopData> {
-    let name = format!("./data/shops/{}.json", id);
+fn load_file(id: usize) -> Result<Option<ShopData>> {
+    let name = format!("./data/shops/{}.bin", id);
 
     match OpenOptions::new().read(true).open(name) {
-        Ok(file) => {
-            let reader = BufReader::new(file);
+        Ok(mut file) => {
+            let mut data = Vec::new();
+            file.read_to_end(&mut data)?;
 
-            match serde_json::from_reader(reader) {
-                Ok(v) => Some(v),
-                Err(_) => None,
-            }
+            let mut buf = ByteBuffer::new()?;
+            buf.write(data)?;
+            buf.move_cursor_to_start();
+
+            buf.move_cursor(8)?;
+            Ok(Some(buf.read::<ShopData>()?))
         }
-        Err(_) => None,
+        Err(_) => Ok(None),
     }
 }

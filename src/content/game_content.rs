@@ -117,7 +117,11 @@ impl GameContent {
         Ok(())
     }
 
-    pub fn init_map(&mut self, systems: &mut SystemHolder, map: MapPosition) {
+    pub fn init_map(
+        &mut self,
+        systems: &mut SystemHolder,
+        map: MapPosition,
+    ) -> Result<()> {
         self.map.map_pos = map;
 
         self.map.map_attribute.clear();
@@ -126,7 +130,7 @@ impl GameContent {
 
         for i in 0..9 {
             let (mx, my) = get_map_loc(map.x, map.y, i);
-            let mapdata = load_file(mx, my, map.group as u64);
+            let mapdata = load_file(mx, my, map.group as u64)?;
             load_map_data(systems, &mapdata, self.map.index[i].0);
 
             self.map.map_attribute.push((
@@ -145,6 +149,7 @@ impl GameContent {
                 i,
             ));
         }
+        Ok(())
     }
 
     pub fn init_finalized_data(
