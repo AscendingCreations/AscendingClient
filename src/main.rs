@@ -603,7 +603,7 @@ async fn main() -> Result<()> {
                 }
 
                 //We will only attempt to reconnect every second.
-                time = seconds + 1.0;
+                reconnect_time = seconds + 1.0;
             } else {
                 //TODO: Sherwin also set the status here too.
             }
