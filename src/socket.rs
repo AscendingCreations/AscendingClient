@@ -99,19 +99,15 @@ pub struct Socket {
 }
 
 impl Socket {
-    pub fn new(_config: &Config) -> Self {
-        let tls_config =
-            build_tls_config().expect("Could not create tls config");
+    pub fn new(_config: &Config) -> Result<Self> {
+        let tls_config = build_tls_config()?;
 
-        Socket {
-            client: Client::new("127.0.0.1", 7010, mio::Token(0), tls_config)
-                .expect("Could not create Client"),
-            poll: Poll::new().expect("Could not create poll"),
-
-            buffer: ByteBuffer::new_packet_with(8192)
-                .expect("Could not create buffer"),
+        Ok(Socket {
+            client: Client::new("127.0.0.1", 7010, mio::Token(0), tls_config)?,
+            poll: Poll::new()?,
+            buffer: ByteBuffer::new_packet_with(8192)?,
             encrypt_state: EncryptionState::ReadWrite,
-        }
+        })
     }
 
     #[inline]

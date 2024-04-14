@@ -287,7 +287,7 @@ async fn main() -> Result<()> {
 
     let mut tooltip = Tooltip::new(&mut systems);
 
-    let mut socket = Socket::new(&systems.config);
+    let mut socket = Socket::new(&systems.config).unwrap();
     let router = PacketRouter::init();
     socket.register().expect("Failed to register socket");
 
@@ -348,6 +348,7 @@ async fn main() -> Result<()> {
 
     let mut frame_time = FrameTime::new();
     let mut time = 0.0f32;
+    let mut reconnect_time = 0.0f32;
     let mut fps = 0u32;
     let fps_label_color = Attrs::new().color(Color::rgba(200, 100, 100, 255));
     let fps_number_color = Attrs::new().color(Color::rgba(255, 255, 255, 255));
@@ -581,9 +582,33 @@ async fn main() -> Result<()> {
             .queue()
             .submit(std::iter::once(encoder.finish()));
 
-        if let Err(e) = poll_events(&mut socket) {
-            println!("Poll event error: {:?}", e);
+        let disconneted = match poll_events(&mut socket) {
+            Ok(disconnected) => disconnected,
+            Err(e) => {
+                println!("Poll event error: {:?}", e);
+                true
+            }
+        };
+
+        //This only should throw if their conenction was 100% lost.
+        if disconneted || socket.client.state == ClientState::Closed {
+            //TODO: Sherwin: Set the user back to the home page and clear out the world.
+
+            //Try to reconnect.
+            if reconnect_time < seconds {
+                if let Ok(s) = Socket::new(&systems.config) {
+                    socket = s;
+                } else {
+                    //TODO: Sherwin Set a Connection Status Text on the Home Page to Not Connected.
+                }
+
+                //We will only attempt to reconnect every second.
+                time = seconds + 1.0;
+            } else {
+                //TODO: Sherwin also set the status here too.
+            }
         }
+
         process_packets(
             &mut socket,
             &router,
