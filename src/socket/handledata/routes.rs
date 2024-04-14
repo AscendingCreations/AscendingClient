@@ -28,6 +28,8 @@ pub fn handle_ping(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
+    //Leave this Empty as server will send these to test if they are still connected or not.
+    //we dont need to actually handle these packets. This is to logout stuck accounts mostly.
     Ok(())
 }
 

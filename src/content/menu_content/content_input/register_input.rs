@@ -6,7 +6,8 @@ use winit::keyboard::NamedKey;
 
 use crate::{
     button, content::*, logic::*, socket::*, Alert, AlertIndex, AlertType,
-    ContentType, MouseInputType, SystemHolder, Tooltip,
+    ContentType, MouseInputType, SystemHolder, Tooltip, APP_MAJOR, APP_MINOR,
+    APP_REV,
 };
 
 pub fn register_mouse_input(
@@ -146,6 +147,7 @@ fn trigger_button(
                 password,
                 email,
                 menu_content.content_data as u8,
+                (APP_MAJOR, APP_MINOR, APP_REV),
             )
             .expect("Failed to send register");
         }

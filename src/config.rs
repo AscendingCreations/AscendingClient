@@ -19,6 +19,7 @@ pub struct Config {
     pub save_password: bool,
     pub bgm_volume: u8,
     pub sfx_volume: u8,
+    pub reconnect_code: String,
 }
 
 impl Config {

@@ -5,7 +5,8 @@ use winit::keyboard::NamedKey;
 
 use crate::{
     button, content::*, fade::*, logic::FloatFix, socket::*, Alert,
-    ContentType, MouseInputType, SystemHolder, Tooltip,
+    ContentType, MouseInputType, SystemHolder, Tooltip, APP_MAJOR, APP_MINOR,
+    APP_REV,
 };
 
 pub fn login_mouse_input(
@@ -80,8 +81,14 @@ fn trigger_button(
             systems.config.password.clone_from(&password);
             systems.config.save_config("settings.toml");
 
-            send_login(socket, username, password, (1, 1, 1))
-                .expect("Failed to send login");
+            send_login(
+                socket,
+                username,
+                password,
+                (APP_MAJOR, APP_MINOR, APP_REV),
+                &systems.config.reconnect_code,
+            )
+            .expect("Failed to send login");
         }
         1 => {
             // Register

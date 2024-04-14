@@ -52,6 +52,7 @@ pub fn send_register(
     password: String,
     email: String,
     sprite: u8,
+    app_version: (u16, u16, u16),
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(128)?;
 
@@ -60,6 +61,9 @@ pub fn send_register(
     buf.write(password)?;
     buf.write(email)?;
     buf.write(sprite)?;
+    buf.write(app_version.0)?;
+    buf.write(app_version.1)?;
+    buf.write(app_version.2)?;
     buf.finish()?;
 
     socket.tls_send(buf)
@@ -70,6 +74,7 @@ pub fn send_login(
     username: String,
     password: String,
     app_version: (u16, u16, u16),
+    reconnect_code: &str,
 ) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(778)?;
 
@@ -79,6 +84,7 @@ pub fn send_login(
     buf.write(app_version.0)?;
     buf.write(app_version.1)?;
     buf.write(app_version.2)?;
+    buf.write(reconnect_code)?;
     buf.finish()?;
 
     socket.tls_send(buf)
