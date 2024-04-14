@@ -137,11 +137,6 @@ pub struct MovementBuffer {
     pub data: VecDeque<MovementData>,
 }
 
-#[derive(Clone, Debug, Default)]
-pub struct ReloginCode {
-    pub code: String,
-}
-
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Hidden(pub bool);
 

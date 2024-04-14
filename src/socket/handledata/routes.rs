@@ -81,18 +81,19 @@ pub fn handle_fltalert(
 
 pub fn handle_handshake(
     socket: &mut Socket,
-    world: &mut World,
-    _systems: &mut SystemHolder,
+    _world: &mut World,
+    systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    if let Some(entity) = content.game_content.myentity {
+    if let Some(_entity) = content.game_content.myentity {
         let code = data.read::<String>()?;
         let handshake = data.read::<String>()?;
-        world.spawn_at(entity.0, (ReloginCode { code },));
+        systems.config.reconnect_code = code;
+        systems.config.save_config("settings.toml");
         socket.encrypt_state = EncryptionState::None;
         send_handshake(socket, handshake)?;
     }
