@@ -95,6 +95,7 @@ pub fn handle_handshake(
         systems.config.reconnect_code = code;
         systems.config.save_config("settings.toml");
         socket.encrypt_state = EncryptionState::None;
+        socket.client.socket.set_nodelay(true)?;
         send_handshake(socket, handshake)?;
     }
     Ok(())
