@@ -290,7 +290,6 @@ async fn main() -> Result<()> {
     let mut socket = Socket::new(&systems.config).unwrap();
     let router = PacketRouter::init();
     socket.register().expect("Failed to register socket");
-    content.menu_content.set_status_online(&mut systems);
 
     // setup our system which includes Camera and projection as well as our controls.
     // for the camera.
@@ -349,9 +348,9 @@ async fn main() -> Result<()> {
 
     let mut frame_time = FrameTime::new();
     let mut time = 0.0f32;
-    let mut ping_time = 0.0f32;
-    let mut reconnect_time = 0.0f32;
-    let mut reconnect_trys = 0;
+    let mut _ping_time = 0.0f32;
+    let mut _reconnect_time = 0.0f32;
+    let mut _reconnect_trys = 0;
     let mut fps = 0u32;
     let fps_label_color = Attrs::new().color(Color::rgba(200, 100, 100, 255));
     let fps_number_color = Attrs::new().color(Color::rgba(255, 255, 255, 255));
@@ -411,6 +410,7 @@ async fn main() -> Result<()> {
                                 &mut world,
                                 &mut systems,
                                 &mut socket,
+                                elwt,
                                 MouseInputType::MouseLeftDown,
                                 &Vec2::new(
                                     mouse_pos.x as f32,
@@ -427,6 +427,7 @@ async fn main() -> Result<()> {
                                 &mut world,
                                 &mut systems,
                                 &mut socket,
+                                elwt,
                                 MouseInputType::MouseRelease,
                                 &Vec2::new(
                                     mouse_pos.x as f32,
@@ -452,6 +453,7 @@ async fn main() -> Result<()> {
                                 &mut world,
                                 &mut systems,
                                 &mut socket,
+                                elwt,
                                 MouseInputType::MouseLeftDownMove,
                                 &Vec2::new(
                                     position.x as f32,
@@ -467,6 +469,7 @@ async fn main() -> Result<()> {
                                 &mut world,
                                 &mut systems,
                                 &mut socket,
+                                elwt,
                                 MouseInputType::MouseMove,
                                 &Vec2::new(
                                     position.x as f32,
@@ -486,6 +489,7 @@ async fn main() -> Result<()> {
                             &mut world,
                             &mut systems,
                             &mut socket,
+                            elwt,
                             MouseInputType::MouseDoubleLeftDown,
                             &Vec2::new(mouse_pos.x as f32, mouse_pos.y as f32),
                             &mut content,
@@ -591,9 +595,49 @@ async fn main() -> Result<()> {
             .submit(std::iter::once(encoder.finish()));
 
         match poll_events(&mut socket) {
-            Ok(d) => {}
+            Ok(d) => {
+                if d {
+                    println!("Poll Events Disconnected");
+                    if content.content_type == ContentType::Game {
+                        alert.show_alert(
+                            &mut systems,
+                            AlertType::Inform,
+                            "You have been disconnected".into(),
+                            "Alert Message".into(),
+                            250,
+                            AlertIndex::None,
+                            false,
+                        );
+                        content
+                            .switch_content(
+                                &mut world,
+                                &mut systems,
+                                ContentType::Menu,
+                            )
+                            .unwrap();
+                    }
+                }
+            }
             Err(e) => {
                 println!("Poll event error: {:?}", e);
+                if content.content_type == ContentType::Game {
+                    alert.show_alert(
+                        &mut systems,
+                        AlertType::Inform,
+                        "You have been disconnected".into(),
+                        "Alert Message".into(),
+                        250,
+                        AlertIndex::None,
+                        false,
+                    );
+                    content
+                        .switch_content(
+                            &mut world,
+                            &mut systems,
+                            ContentType::Menu,
+                        )
+                        .unwrap();
+                }
             }
         }
 
