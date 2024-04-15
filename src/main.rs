@@ -349,7 +349,9 @@ async fn main() -> Result<()> {
 
     let mut frame_time = FrameTime::new();
     let mut time = 0.0f32;
+    let mut ping_time = 0.0f32;
     let mut reconnect_time = 0.0f32;
+    let mut reconnect_trys = 0;
     let mut fps = 0u32;
     let fps_label_color = Attrs::new().color(Color::rgba(200, 100, 100, 255));
     let fps_number_color = Attrs::new().color(Color::rgba(255, 255, 255, 255));
@@ -371,6 +373,11 @@ async fn main() -> Result<()> {
                 ..
             } if window_id == systems.renderer.window().id() => {
                 if let WindowEvent::CloseRequested = event {
+                    socket
+                        .client
+                        .socket
+                        .shutdown(std::net::Shutdown::Both)
+                        .unwrap();
                     elwt.exit();
                 }
             }
@@ -583,31 +590,10 @@ async fn main() -> Result<()> {
             .queue()
             .submit(std::iter::once(encoder.finish()));
 
-        let disconneted = match poll_events(&mut socket) {
-            Ok(disconnected) => disconnected,
+        match poll_events(&mut socket) {
+            Ok(d) => {}
             Err(e) => {
                 println!("Poll event error: {:?}", e);
-                true
-            }
-        };
-
-        //This only should throw if their conenction was 100% lost.
-        if disconneted || socket.client.state == ClientState::Closed {
-            println!("Not connected");
-            //TODO: Sherwin: Set the user back to the home page and clear out the world.
-
-            //Try to reconnect.
-            if reconnect_time < seconds {
-                if let Ok(s) = Socket::new(&systems.config) {
-                    socket = s;
-                } else {
-                    content.menu_content.set_status_offline(&mut systems);
-                }
-
-                //We will only attempt to reconnect every second.
-                reconnect_time = seconds + 1.0;
-            } else {
-                content.menu_content.set_status_offline(&mut systems);
             }
         }
 

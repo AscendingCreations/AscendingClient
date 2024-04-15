@@ -14,6 +14,7 @@ pub enum Command {
     Copy, Clone, Debug, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
 )]
 enum ClientPacket {
+    Ping,
     Register,
     Login,
     HandShake,
@@ -425,4 +426,19 @@ pub fn send_declinetrade(socket: &mut Socket) -> Result<()> {
     buf.finish()?;
 
     socket.send(buf)
+}
+
+pub fn send_ping(socket: &mut Socket) -> Result<()> {
+    let mut buf = ByteBuffer::new_packet_with(10)?;
+
+    buf.write(ClientPacket::Ping)?;
+    buf.write(0u64)?;
+    buf.finish()?;
+
+    match socket.encrypt_state {
+        EncryptionState::None => socket.send(buf),
+        EncryptionState::ReadWrite | EncryptionState::WriteTransfering => {
+            socket.tls_send(buf)
+        }
+    }
 }

@@ -24,7 +24,6 @@ pub fn add_player(
     pos: Position,
     cur_map: MapPosition,
     entity: Option<&Entity>,
-    myentity: Option<&Entity>,
     sprite: usize,
 ) -> Result<Entity> {
     let start_pos = get_start_map_pos(cur_map, pos.map)
@@ -107,14 +106,8 @@ pub fn add_player(
         entitynamemap,
     );
 
-    let is_myentity = entity == myentity;
-
     if let Some(data) = entity {
-        if is_myentity {
-            world.insert(data.0, component1)?;
-        } else {
-            world.spawn_at(data.0, component1);
-        }
+        world.spawn_at(data.0, component1);
         world.insert(data.0, component2)?;
         world.insert_one(data.0, EntityType::Player(Entity(data.0)))?;
         Ok(Entity(data.0))

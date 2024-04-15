@@ -83,22 +83,19 @@ pub fn handle_handshake(
     socket: &mut Socket,
     _world: &mut World,
     systems: &mut SystemHolder,
-    content: &mut Content,
+    _content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    if let Some(_entity) = content.game_content.myentity {
-        let code = data.read::<String>()?;
-        let handshake = data.read::<String>()?;
-        systems.config.reconnect_code = code;
-        systems.config.save_config("settings.toml");
-        socket.encrypt_state = EncryptionState::None;
-        socket.client.socket.set_nodelay(true)?;
-        send_handshake(socket, handshake)?;
-    }
-    Ok(())
+    let code = data.read::<String>()?;
+    let handshake = data.read::<String>()?;
+    systems.config.reconnect_code = code;
+    systems.config.save_config("settings.toml");
+    socket.encrypt_state = EncryptionState::None;
+    socket.client.socket.set_nodelay(true)?;
+    send_handshake(socket, handshake)
 }
 
 pub fn handle_loginok(
@@ -250,14 +247,17 @@ pub fn handle_playerdata(
                 pos,
                 pos.map,
                 Some(&entity),
-                Some(&entity),
                 sprite as usize,
             )?;
             content.game_content.players.insert(player);
             content.game_content.in_game = true;
         }
 
-        content.game_content.player_data.equipment = equipment.items.clone();
+        content
+            .game_content
+            .player_data
+            .equipment
+            .clone_from(&equipment.items);
 
         let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
         systems
@@ -342,7 +342,6 @@ pub fn handle_playerspawn(
                     pos,
                     client_map,
                     Some(&entity),
-                    None,
                     sprite as usize,
                 )?;
                 content.game_content.players.insert(player);

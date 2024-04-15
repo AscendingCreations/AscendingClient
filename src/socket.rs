@@ -110,6 +110,15 @@ impl Socket {
         })
     }
 
+    pub fn reconnect(&mut self) -> Result<()> {
+        let tls_config = build_tls_config()?;
+        self.client =
+            Client::new("127.0.0.1", 7010, mio::Token(0), tls_config)?;
+        self.encrypt_state = EncryptionState::ReadWrite;
+        self.buffer.truncate(0)?;
+        Ok(())
+    }
+
     #[inline]
     #[allow(dead_code)]
     pub fn set_to_closing(&mut self) {
@@ -151,7 +160,8 @@ impl Socket {
 
         match self.client.state {
             ClientState::Closing => {
-                self.client.socket.shutdown(std::net::Shutdown::Both)?;
+                self.poll.registry().deregister(&mut self.client.socket)?;
+                //self.client.socket.shutdown(std::net::Shutdown::Both)?;
                 self.client.state = ClientState::Closed;
             }
             _ => self.reregister()?,

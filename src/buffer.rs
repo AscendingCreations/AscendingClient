@@ -82,8 +82,9 @@ impl BufferTask {
                 BufferTaskEnum::ApplyMapMusic(mx, my, mg, map_index) => {
                     let key = format!("{}_{}_{}", mx, my, mg);
                     if let Some(mapdata) = self.storage.map_data.get(&key) {
-                        content.game_content.map.music[map_index].0 =
-                            mapdata.music.clone();
+                        content.game_content.map.music[map_index]
+                            .0
+                            .clone_from(&mapdata.music);
                     }
                 }
                 BufferTaskEnum::LoadMap(mx, my, mg) => {
