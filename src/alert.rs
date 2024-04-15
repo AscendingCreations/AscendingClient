@@ -26,6 +26,7 @@ pub enum AlertIndex {
     Deposit(u16, u16),
     Withdraw(u16, u16),
     TradeRequest,
+    Offline,
 }
 
 pub struct AlertTextbox {
@@ -462,6 +463,7 @@ impl Alert {
         &mut self,
         systems: &mut SystemHolder,
         socket: &mut Socket,
+        elwt: &winit::event_loop::EventLoopWindowTarget<()>,
         input_type: MouseInputType,
         tooltip: &mut Tooltip,
         screen_pos: Vec2,
@@ -478,7 +480,7 @@ impl Alert {
                 let button_index = self.click_buttons(systems, screen_pos);
                 if let Some(index) = button_index {
                     self.did_button_click = true;
-                    self.select_option(systems, socket, index)?;
+                    self.select_option(systems, socket, elwt, index)?;
                 }
                 self.click_textbox(systems, screen_pos);
             }
@@ -513,6 +515,7 @@ impl Alert {
         &mut self,
         systems: &mut SystemHolder,
         socket: &mut Socket,
+        elwt: &winit::event_loop::EventLoopWindowTarget<()>,
         index: usize,
     ) -> Result<()> {
         match self.alert_type {
@@ -520,6 +523,9 @@ impl Alert {
             {
                 #[allow(clippy::match_single_binding)]
                 match self.custom_index {
+                    AlertIndex::Offline => {
+                        elwt.exit();
+                    }
                     _ => self.hide_alert(systems),
                 }
             }

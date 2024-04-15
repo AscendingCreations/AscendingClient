@@ -24,6 +24,7 @@ pub fn handle_mouse_input(
     world: &mut World,
     systems: &mut SystemHolder,
     socket: &mut Socket,
+    elwt: &winit::event_loop::EventLoopWindowTarget<()>,
     input_type: MouseInputType,
     mouse_pos: &Vec2,
     content: &mut Content,
@@ -38,14 +39,14 @@ pub fn handle_mouse_input(
     match content.content_type {
         ContentType::Game => {
             GameContent::mouse_input(
-                content, world, systems, socket, alert, tooltip, input_type,
-                screen_pos,
+                content, world, systems, socket, elwt, alert, tooltip,
+                input_type, screen_pos,
             )?;
         }
         ContentType::Menu => {
             MenuContent::mouse_input(
-                content, world, systems, socket, alert, tooltip, input_type,
-                screen_pos,
+                content, world, systems, socket, elwt, alert, tooltip,
+                input_type, screen_pos,
             )?;
         }
     }

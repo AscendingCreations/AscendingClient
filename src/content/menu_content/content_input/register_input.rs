@@ -168,15 +168,27 @@ fn trigger_button(
                 return;
             }
 
-            send_register(
+            match send_register(
                 socket,
                 username,
                 password,
                 email,
                 menu_content.content_data as u8,
                 (APP_MAJOR, APP_MINOR, APP_REV),
-            )
-            .expect("Failed to send register");
+            ) {
+                Ok(_) => {}
+                Err(_) => {
+                    alert.show_alert(
+                        systems,
+                        AlertType::Inform,
+                        "Server is offline".into(),
+                        "Alert Message".into(),
+                        250,
+                        AlertIndex::Offline,
+                        false,
+                    );
+                }
+            }
         }
         1 => {
             // Sign In

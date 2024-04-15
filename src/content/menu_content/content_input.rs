@@ -20,6 +20,7 @@ impl MenuContent {
         world: &mut World,
         systems: &mut SystemHolder,
         socket: &mut Socket,
+        elwt: &winit::event_loop::EventLoopWindowTarget<()>,
         alert: &mut Alert,
         tooltip: &mut Tooltip,
         input_type: MouseInputType,
@@ -27,7 +28,7 @@ impl MenuContent {
     ) -> Result<()> {
         if alert.visible {
             return alert.alert_mouse_input(
-                systems, socket, input_type, tooltip, screen_pos,
+                systems, socket, elwt, input_type, tooltip, screen_pos,
             );
         }
 

@@ -4,9 +4,9 @@ use input::Key;
 use winit::keyboard::NamedKey;
 
 use crate::{
-    button, content::*, fade::*, logic::FloatFix, socket::*, Alert,
-    ContentType, MouseInputType, SystemHolder, Tooltip, APP_MAJOR, APP_MINOR,
-    APP_REV,
+    button, content::*, fade::*, logic::FloatFix, socket::*, Alert, AlertIndex,
+    AlertType, ContentType, MouseInputType, SystemHolder, Tooltip, APP_MAJOR,
+    APP_MINOR, APP_REV,
 };
 
 pub fn login_mouse_input(
@@ -14,7 +14,7 @@ pub fn login_mouse_input(
     _world: &mut World,
     systems: &mut SystemHolder,
     socket: &mut Socket,
-    _alert: &mut Alert,
+    alert: &mut Alert,
     tooltip: &mut Tooltip,
     input_type: MouseInputType,
     screen_pos: Vec2,
@@ -28,7 +28,7 @@ pub fn login_mouse_input(
             let button_index = click_buttons(menu_content, systems, screen_pos);
             if let Some(index) = button_index {
                 menu_content.did_button_click = true;
-                trigger_button(menu_content, systems, socket, index);
+                trigger_button(menu_content, systems, socket, alert, index);
             }
 
             let checkbox_index =
@@ -69,6 +69,7 @@ fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut SystemHolder,
     socket: &mut Socket,
+    alert: &mut Alert,
     index: usize,
 ) {
     match index {
@@ -81,14 +82,26 @@ fn trigger_button(
             systems.config.password.clone_from(&password);
             systems.config.save_config("settings.toml");
 
-            send_login(
+            match send_login(
                 socket,
                 username,
                 password,
                 (APP_MAJOR, APP_MINOR, APP_REV),
                 &systems.config.reconnect_code,
-            )
-            .expect("Failed to send login");
+            ) {
+                Ok(_) => {}
+                Err(_) => {
+                    alert.show_alert(
+                        systems,
+                        AlertType::Inform,
+                        "Server is offline".into(),
+                        "Alert Message".into(),
+                        250,
+                        AlertIndex::Offline,
+                        false,
+                    );
+                }
+            }
         }
         1 => {
             // Register

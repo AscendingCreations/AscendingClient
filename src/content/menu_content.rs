@@ -56,11 +56,6 @@ impl MenuContent {
             Color::rgba(220, 220, 220, 255),
         );
         let server_status = systems.gfx.add_text(text, 1);
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            server_status,
-            "Server Status: Checking..",
-        );
 
         MenuContent {
             bg,

@@ -19,6 +19,7 @@ impl GameContent {
         world: &mut World,
         systems: &mut SystemHolder,
         socket: &mut Socket,
+        elwt: &winit::event_loop::EventLoopWindowTarget<()>,
         alert: &mut Alert,
         tooltip: &mut Tooltip,
         input_type: MouseInputType,
@@ -28,6 +29,7 @@ impl GameContent {
             return alert.alert_mouse_input(
                 systems,
                 socket,
+                elwt,
                 input_type.clone(),
                 tooltip,
                 screen_pos,
