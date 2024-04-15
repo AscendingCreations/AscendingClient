@@ -3,9 +3,9 @@ use graphics::*;
 use hecs::World;
 
 use crate::{
-    content::game_content::player::*, content::game_content::*,
-    database::map::*, entity::*, values::*, Direction, EntityType,
-    MapAttribute, SystemHolder, WorldExtras,
+    content::game_content::player::*, content::game_content::*, data_types::*,
+    database::map::*, values::*, Direction, EntityType, MapAttribute,
+    SystemHolder,
 };
 
 pub mod item;

@@ -1,7 +1,7 @@
 use graphics::*;
 
 use crate::{
-    entity::Item, is_within_area, logic::*, values::*, widget::*, SystemHolder,
+    data_types::*, is_within_area, logic::*, values::*, widget::*, SystemHolder,
 };
 
 use super::ItemDescription;

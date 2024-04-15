@@ -4,7 +4,7 @@ use rustls::internal::msgs;
 use std::collections::VecDeque;
 
 use crate::{
-    database::map::*, Content, HPBar, MapAttributes, MapDirBlock,
+    data_types::*, database::map::*, Content, MapAttributes, MapDirBlock,
     MessageChannel, Result, SystemHolder,
 };
 

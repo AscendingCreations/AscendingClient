@@ -114,15 +114,11 @@ impl GameContent {
             #[allow(clippy::single_match)]
             match key {
                 Key::Named(NamedKey::F1) => {
-                    if let Some(myentity) = content.game_content.myentity {
-                        add_float_text(
-                            systems,
-                            &mut content.game_content,
-                            world.get_or_err::<Position>(&myentity)?,
-                            "-5".into(),
-                            COLOR_RED,
-                        )
-                    }
+                    content.switch_content(
+                        world,
+                        systems,
+                        ContentType::Menu,
+                    )?;
                 }
                 _ => {}
             }

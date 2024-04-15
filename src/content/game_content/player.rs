@@ -14,11 +14,8 @@ pub struct PlayerPvP {
 }
 
 use crate::{
-    fade::*,
-    game_content::{entity::*, *},
-    send_move,
-    values::*,
-    Direction, Socket, SystemHolder,
+    data_types::*, fade::*, game_content::*, send_move, values::*, Direction,
+    Socket, SystemHolder,
 };
 
 pub fn add_player(

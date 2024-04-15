@@ -1,6 +1,6 @@
 use crate::{
-    get_start_map_pos, label::*, GameContent, MapPosition, Position,
-    SystemHolder, ORDER_FLOAT_TEXT, ORDER_FLOAT_TEXT_BG, TILE_SIZE,
+    data_types::*, get_start_map_pos, label::*, GameContent, SystemHolder,
+    ORDER_FLOAT_TEXT, ORDER_FLOAT_TEXT_BG, TILE_SIZE,
 };
 use graphics::{
     cosmic_text::{Attrs, Metrics, Stretch, Style, Weight},

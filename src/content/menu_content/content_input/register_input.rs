@@ -71,75 +71,102 @@ fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut SystemHolder,
     socket: &mut Socket,
-    _alert: &mut Alert,
+    alert: &mut Alert,
     index: usize,
 ) {
     match index {
         0 => {
             // Register
-            /*let email_regex = Regex::new(
+            let email_regex = Regex::new(
                 r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})",
             ).expect("Could not create email regex");
 
             if menu_content.textbox[0].text != menu_content.textbox[1].text {
-                alert.show_alert(systems, AlertType::Inform,
+                alert.show_alert(
+                    systems,
+                    AlertType::Inform,
                     "Email did not match".into(),
                     "Alert Message".into(),
                     250,
-                    None);
+                    AlertIndex::None,
+                    false,
+                );
                 return;
             }
 
             if menu_content.textbox[2].text != menu_content.textbox[3].text {
-                alert.show_alert(systems, AlertType::Inform,
+                alert.show_alert(
+                    systems,
+                    AlertType::Inform,
                     "Password did not match".into(),
                     "Alert Message".into(),
                     250,
-                    None);
+                    AlertIndex::None,
+                    false,
+                );
                 return;
-            }*/
+            }
 
             let email = menu_content.textbox[0].text.clone();
             let password = menu_content.textbox[2].text.clone();
             let username = menu_content.textbox[4].text.clone();
 
-            /*if !username.chars().all(is_name_acceptable)
+            if !username.chars().all(is_name_acceptable)
                 || !password.chars().all(is_password_acceptable)
             {
-                alert.show_alert(systems, AlertType::Inform,
-                    "Username or Password contains unaccepted Characters".into(),
+                alert.show_alert(
+                    systems,
+                    AlertType::Inform,
+                    "Username or Password contains unaccepted Characters"
+                        .into(),
                     "Alert Message".into(),
                     250,
-                    None);
+                    AlertIndex::None,
+                    false,
+                );
                 return;
             }
 
             if username.len() >= 64 {
-                alert.show_alert(systems, AlertType::Inform,
-                    "Username has too many Characters, 64 Characters Max".into(),
+                alert.show_alert(
+                    systems,
+                    AlertType::Inform,
+                    "Username has too many Characters, 64 Characters Max"
+                        .into(),
                     "Alert Message".into(),
                     250,
-                    None);
+                    AlertIndex::None,
+                    false,
+                );
                 return;
             }
 
             if password.len() >= 128 {
-                alert.show_alert(systems, AlertType::Inform,
-                    "Password has too many Characters, 128 Characters Max".into(),
+                alert.show_alert(
+                    systems,
+                    AlertType::Inform,
+                    "Password has too many Characters, 128 Characters Max"
+                        .into(),
                     "Alert Message".into(),
                     250,
-                    None);
+                    AlertIndex::None,
+                    false,
+                );
                 return;
             }
 
             if !email_regex.is_match(&email) {
-                alert.show_alert(systems, AlertType::Inform,
+                alert.show_alert(
+                    systems,
+                    AlertType::Inform,
                     "Email must be an actual email.".into(),
                     "Alert Message".into(),
                     250,
-                    None);
+                    AlertIndex::None,
+                    false,
+                );
                 return;
-            }*/
+            }
 
             send_register(
                 socket,

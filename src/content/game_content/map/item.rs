@@ -4,30 +4,12 @@ use hecs::World;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    game_content::{entity::*, Camera, *},
+    data_types::*,
+    game_content::{Camera, *},
     get_start_map_pos,
     values::*,
     SystemHolder,
 };
-
-#[derive(
-    Debug,
-    Copy,
-    Clone,
-    Serialize,
-    Deserialize,
-    PartialEq,
-    Eq,
-    ByteBufferWrite,
-    ByteBufferRead,
-    Default,
-)]
-pub struct Item {
-    pub num: u32,
-    pub val: u16,
-    pub level: u8,
-    pub data: [i16; 5],
-}
 
 #[derive(
     Debug, Copy, Clone, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,

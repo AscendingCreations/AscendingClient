@@ -98,7 +98,7 @@ pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
         rect_color: Color::rgba(80, 80, 80, 255),
         got_border: true,
         border_color: Color::rgba(40, 40, 40, 255),
-        border_radius: 8.0,
+        border_radius: 0.0,
         hover_change: ButtonChangeType::ColorChange(Color::rgba(
             135, 135, 135, 255,
         )),

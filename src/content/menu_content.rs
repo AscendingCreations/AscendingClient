@@ -1,13 +1,14 @@
-use graphics::*;
+use graphics::{cosmic_text::Attrs, *};
 
 pub mod content_input;
+pub mod login;
+pub mod register;
 
 pub use content_input::*;
+pub use login::*;
+pub use register::*;
 
-use crate::{
-    content::*, is_within_area, values::*, widget::*, Config, SystemHolder,
-    SCREEN_HEIGHT, SCREEN_WIDTH,
-};
+use crate::{content::*, is_within_area, values::*, widget::*, SystemHolder};
 use hecs::World;
 
 pub enum WindowType {
@@ -27,6 +28,7 @@ pub struct MenuContent {
     textbox: Vec<Textbox>,
     selected_textbox: Option<usize>,
     image: Vec<usize>,
+    pub server_status: usize,
 
     pub content_data: usize,
 
@@ -46,6 +48,20 @@ impl MenuContent {
         bg_image.uv = Vec4::new(0.0, 0.0, 800.0, 600.0);
         let bg = systems.gfx.add_image(bg_image, 0);
 
+        let text = create_label(
+            systems,
+            Vec3::new(10.0, 10.0, ORDER_SERVER_STATUS),
+            Vec2::new(200.0, 20.0),
+            Bounds::new(10.0, 10.0, 210.0, 30.0),
+            Color::rgba(220, 220, 220, 255),
+        );
+        let server_status = systems.gfx.add_text(text, 1);
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            server_status,
+            "Server Status: Checking..",
+        );
+
         MenuContent {
             bg,
             cur_window: WindowType::None,
@@ -60,16 +76,19 @@ impl MenuContent {
             did_checkbox_click: false,
             selected_textbox: None,
             content_data: 0,
+            server_status,
         }
     }
 
     pub fn show(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(self.bg, true);
+        systems.gfx.set_visible(self.server_status, true);
         create_window(systems, self, WindowType::Login);
     }
 
     pub fn hide(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(self.bg, false);
+        systems.gfx.set_visible(self.server_status, false);
         systems.caret.index = None;
         self.clear_window(systems)
     }
@@ -105,6 +124,34 @@ impl MenuContent {
         self.image.clear();
         self.selected_textbox = None;
         self.content_data = 0;
+    }
+
+    pub fn set_status_online(&mut self, systems: &mut SystemHolder) {
+        systems.gfx.set_rich_text(
+            &mut systems.renderer,
+            self.server_status,
+            [
+                (
+                    "Server Status: ",
+                    Attrs::new().color(Color::rgba(220, 220, 220, 255)),
+                ),
+                ("Online", Attrs::new().color(Color::rgba(10, 200, 20, 255))),
+            ],
+        );
+    }
+
+    pub fn set_status_offline(&mut self, systems: &mut SystemHolder) {
+        systems.gfx.set_rich_text(
+            &mut systems.renderer,
+            self.server_status,
+            [
+                (
+                    "Server Status: ",
+                    Attrs::new().color(Color::rgba(220, 220, 220, 255)),
+                ),
+                ("Offline", Attrs::new().color(Color::rgba(200, 10, 20, 255))),
+            ],
+        );
     }
 }
 
@@ -307,583 +354,12 @@ pub fn create_window(
     content.cur_window = window_type;
     content.clear_window(systems);
 
-    let screen_size = Vec2::new(SCREEN_WIDTH as f32, SCREEN_HEIGHT as f32);
-
     match content.cur_window {
         WindowType::Login => {
-            let size = Vec2::new(348.0, 226.0);
-            let pos = Vec2::new((screen_size.x - size.x) * 0.5, 80.0);
-
-            let mut menu_rect = Rect::new(&mut systems.renderer, 0);
-            menu_rect
-                .set_position(Vec3::new(
-                    pos.x - 1.0,
-                    pos.y - 1.0,
-                    ORDER_MENU_WINDOW,
-                ))
-                .set_size(size + 2.0)
-                .set_color(Color::rgba(160, 160, 160, 255))
-                .set_border_color(Color::rgba(10, 10, 10, 255))
-                .set_border_width(1.0);
-            content.window.push(systems.gfx.add_rect(menu_rect, 0));
-
-            let mut header_rect = Rect::new(&mut systems.renderer, 0);
-            header_rect
-                .set_position(Vec3::new(
-                    pos.x,
-                    pos.y + 196.0,
-                    ORDER_MENU_WINDOW_CONTENT,
-                ))
-                .set_size(Vec2::new(size.x, 30.0))
-                .set_color(Color::rgba(120, 120, 120, 255));
-            content.window.push(systems.gfx.add_rect(header_rect, 0));
-
-            let header_text = create_label(
-                systems,
-                Vec3::new(
-                    pos.x,
-                    pos.y + 199.0,
-                    ORDER_MENU_WINDOW_CONTENT_DETAIL,
-                ),
-                Vec2::new(size.x, 20.0),
-                Bounds::new(
-                    pos.x,
-                    pos.y + 199.0,
-                    pos.x + size.x,
-                    pos.y + 219.0,
-                ),
-                Color::rgba(240, 240, 240, 255),
-            );
-            let text_index = systems.gfx.add_text(header_text, 1);
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                text_index,
-                "Login Window",
-            );
-            systems.gfx.center_text(text_index);
-            content.label.push(text_index);
-
-            for index in 0..2 {
-                let mut labelbox = Rect::new(&mut systems.renderer, 0);
-                let mut textbox = Rect::new(&mut systems.renderer, 0);
-                let addy = match index {
-                    1 => 123.0,
-                    _ => 154.0,
-                };
-                labelbox
-                    .set_position(Vec3::new(
-                        pos.x + 24.0,
-                        pos.y + addy,
-                        ORDER_MENU_WINDOW_CONTENT,
-                    ))
-                    .set_size(Vec2::new(116.0, 24.0))
-                    .set_color(Color::rgba(208, 208, 208, 255));
-                textbox
-                    .set_position(Vec3::new(
-                        pos.x + 140.0,
-                        pos.y + addy,
-                        ORDER_MENU_WINDOW_CONTENT,
-                    ))
-                    .set_size(Vec2::new(184.0, 24.0))
-                    .set_color(Color::rgba(90, 90, 90, 255));
-                content.window.push(systems.gfx.add_rect(labelbox, 0));
-                content.window.push(systems.gfx.add_rect(textbox, 0));
-
-                let tpos = Vec2::new(pos.x + 27.0, pos.y + addy + 2.0);
-                let text = create_label(
-                    systems,
-                    Vec3::new(tpos.x, tpos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
-                    Vec2::new(110.0, 20.0),
-                    Bounds::new(tpos.x, tpos.y, tpos.x + 110.0, tpos.y + 20.0),
-                    Color::rgba(100, 100, 100, 255),
-                );
-                let textindex = systems.gfx.add_text(text, 1);
-                let (msg, disable_option) = match index {
-                    1 => (
-                        "Password",
-                        vec![
-                            TextDisable::Selection,
-                            TextDisable::Copy,
-                            TextDisable::Paste,
-                        ],
-                    ),
-                    _ => ("Email", vec![]),
-                };
-                systems.gfx.set_text(&mut systems.renderer, textindex, msg);
-                content.label.push(textindex);
-
-                let is_hidden = index == 1;
-
-                let mut textbox = Textbox::new(
-                    systems,
-                    Vec3::new(
-                        pos.x + 142.0,
-                        pos.y + addy + 2.0,
-                        ORDER_MENU_WINDOW_CONTENT_DETAIL,
-                    ),
-                    (0.01, 2),
-                    Vec2::new(180.0, 20.0),
-                    Color::rgba(240, 240, 240, 255),
-                    1,
-                    255,
-                    Color::rgba(120, 120, 120, 255),
-                    Color::rgba(10, 10, 150, 255),
-                    is_hidden,
-                    true,
-                    None,
-                    disable_option,
-                );
-
-                match index {
-                    1 => textbox
-                        .set_text(systems, systems.config.password.clone()),
-                    _ => textbox
-                        .set_text(systems, systems.config.username.clone()),
-                }
-                content.textbox.push(textbox);
-            }
-
-            let button = Button::new(
-                systems,
-                ButtonType::Rect(ButtonRect {
-                    rect_color: Color::rgba(100, 100, 100, 255),
-                    got_border: true,
-                    border_color: Color::rgba(70, 70, 70, 255),
-                    border_radius: 0.0,
-                    hover_change: ButtonChangeType::ColorChange(Color::rgba(
-                        180, 180, 180, 255,
-                    )),
-                    click_change: ButtonChangeType::ColorChange(Color::rgba(
-                        40, 40, 40, 255,
-                    )),
-                }),
-                ButtonContentType::Text(ButtonContentText {
-                    text: "Login".to_string(),
-                    pos: Vec2::new(0.0, 7.0),
-                    color: Color::rgba(230, 230, 230, 255),
-                    render_layer: 1,
-                    hover_change: ButtonChangeType::ColorChange(Color::rgba(
-                        80, 80, 80, 255,
-                    )),
-                    click_change: ButtonChangeType::ColorChange(Color::rgba(
-                        170, 170, 170, 255,
-                    )),
-                }),
-                Vec2::new(pos.x, pos.y),
-                Vec2::new(104.0, 45.0),
-                ORDER_MENU_WINDOW_CONTENT,
-                (0.01, 2),
-                Vec2::new(140.0, 34.0),
-                0,
-                true,
-                None,
-            );
-            content.button.push(button);
-
-            let button = Button::new(
-                systems,
-                ButtonType::None,
-                ButtonContentType::Text(ButtonContentText {
-                    text: "Register".to_string(),
-                    pos: Vec2::new(0.0, 0.0),
-                    color: Color::rgba(80, 80, 80, 255),
-                    render_layer: 1,
-                    hover_change: ButtonChangeType::ColorChange(Color::rgba(
-                        240, 240, 240, 255,
-                    )),
-                    click_change: ButtonChangeType::ColorChange(Color::rgba(
-                        80, 80, 80, 255,
-                    )),
-                }),
-                Vec2::new(pos.x, pos.y),
-                Vec2::new(104.0, 19.0),
-                ORDER_MENU_WINDOW_CONTENT,
-                (0.01, 2),
-                Vec2::new(140.0, 20.0),
-                0,
-                true,
-                None,
-            );
-            content.button.push(button);
-
-            let mut checkbox = Checkbox::new(
-                systems,
-                CheckboxType::Rect(CheckboxRect {
-                    rect_color: Color::rgba(100, 100, 100, 255),
-                    got_border: true,
-                    border_color: Color::rgba(50, 50, 50, 255),
-                    border_radius: 2.0,
-                    hover_change: CheckboxChangeType::ColorChange(Color::rgba(
-                        140, 140, 140, 255,
-                    )),
-                    click_change: CheckboxChangeType::ColorChange(Color::rgba(
-                        70, 70, 70, 255,
-                    )),
-                }),
-                CheckType::SetRect(CheckRect {
-                    rect_color: Color::rgba(200, 200, 200, 255),
-                    got_border: false,
-                    border_color: Color::rgba(255, 255, 255, 255),
-                    border_radius: 2.0,
-                    pos: Vec2::new(5.0, 5.0),
-                    size: Vec2::new(14.0, 14.0),
-                }),
-                Vec2::new(pos.x, pos.y),
-                Vec2::new(116.0, 92.0),
-                ORDER_MENU_WINDOW_CONTENT,
-                (0.01, 2),
-                Vec2::new(24.0, 24.0),
-                0,
-                Some(CheckboxText {
-                    text: "Remember account?".to_string(),
-                    offset_pos: Vec2::new(3.0, 2.0),
-                    render_layer: 1,
-                    label_size: Vec2::new(180.0, 20.0),
-                    color: Color::rgba(80, 80, 80, 255),
-                    hover_change: CheckboxChangeType::ColorChange(Color::rgba(
-                        240, 240, 240, 255,
-                    )),
-                    click_change: CheckboxChangeType::ColorChange(Color::rgba(
-                        80, 80, 80, 255,
-                    )),
-                }),
-                true,
-                None,
-            );
-            checkbox.set_click(systems, systems.config.save_password);
-            content.checkbox.push(checkbox);
+            create_login(systems, content);
         }
         WindowType::Register => {
-            let size = Vec2::new(348.0, 375.0);
-            let pos = Vec2::new((screen_size.x - size.x) * 0.5, 20.0);
-
-            let mut menu_rect = Rect::new(&mut systems.renderer, 0);
-            menu_rect
-                .set_position(Vec3::new(
-                    pos.x - 1.0,
-                    pos.y - 1.0,
-                    ORDER_MENU_WINDOW,
-                ))
-                .set_size(size + 2.0)
-                .set_color(Color::rgba(160, 160, 160, 255))
-                .set_border_color(Color::rgba(10, 10, 10, 255))
-                .set_border_width(1.0);
-            content.window.push(systems.gfx.add_rect(menu_rect, 0));
-
-            let mut header_rect = Rect::new(&mut systems.renderer, 0);
-            header_rect
-                .set_position(Vec3::new(
-                    pos.x,
-                    pos.y + 345.0,
-                    ORDER_MENU_WINDOW_CONTENT,
-                ))
-                .set_size(Vec2::new(size.x, 30.0))
-                .set_color(Color::rgba(120, 120, 120, 255));
-            content.window.push(systems.gfx.add_rect(header_rect, 0));
-
-            let header_text = create_label(
-                systems,
-                Vec3::new(
-                    pos.x,
-                    pos.y + 348.0,
-                    ORDER_MENU_WINDOW_CONTENT_DETAIL,
-                ),
-                Vec2::new(size.x, 20.0),
-                Bounds::new(
-                    pos.x,
-                    pos.y + 348.0,
-                    pos.x + size.x,
-                    pos.y + 368.0,
-                ),
-                Color::rgba(240, 240, 240, 255),
-            );
-            let text_index = systems.gfx.add_text(header_text, 1);
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                text_index,
-                "Register Window",
-            );
-            systems.gfx.center_text(text_index);
-            content.label.push(text_index);
-
-            for index in 0..5 {
-                let mut labelbox = Rect::new(&mut systems.renderer, 0);
-                let mut textbox_bg = Rect::new(&mut systems.renderer, 0);
-                let addy = match index {
-                    1 => 278.0,
-                    2 => 247.0,
-                    3 => 222.0,
-                    4 => 191.0,
-                    _ => 303.0,
-                };
-                labelbox
-                    .set_position(Vec3::new(
-                        pos.x + 24.0,
-                        pos.y + addy,
-                        ORDER_MENU_WINDOW_CONTENT,
-                    ))
-                    .set_size(Vec2::new(116.0, 24.0))
-                    .set_color(Color::rgba(208, 208, 208, 255));
-                textbox_bg
-                    .set_position(Vec3::new(
-                        pos.x + 140.0,
-                        pos.y + addy,
-                        ORDER_MENU_WINDOW_CONTENT,
-                    ))
-                    .set_size(Vec2::new(184.0, 24.0))
-                    .set_color(Color::rgba(90, 90, 90, 255));
-                content.window.push(systems.gfx.add_rect(labelbox, 0));
-                content.window.push(systems.gfx.add_rect(textbox_bg, 0));
-
-                let tpos = Vec2::new(pos.x + 27.0, pos.y + addy + 2.0);
-                let text = create_label(
-                    systems,
-                    Vec3::new(tpos.x, tpos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
-                    Vec2::new(110.0, 20.0),
-                    Bounds::new(tpos.x, tpos.y, tpos.x + 110.0, tpos.y + 20.0),
-                    Color::rgba(100, 100, 100, 255),
-                );
-                let textindex = systems.gfx.add_text(text, 1);
-                let msg = match index {
-                    1 => "Retype",
-                    2 => "Password",
-                    3 => "Retype",
-                    4 => "Username",
-                    _ => "Email",
-                };
-                systems.gfx.set_text(&mut systems.renderer, textindex, msg);
-                content.label.push(textindex);
-
-                let tooltip = match index {
-                    0 | 1 => Some("The quick brown fox jumps over the lazy dog, this is a very long message that should wrap around".to_string()),
-                    4 => Some("This is a tip msg for Username".to_string()),
-                    _ => None,
-                };
-
-                let textbox = Textbox::new(
-                    systems,
-                    Vec3::new(
-                        pos.x + 142.0,
-                        pos.y + addy + 2.0,
-                        ORDER_MENU_WINDOW_CONTENT_DETAIL,
-                    ),
-                    (0.01, 2),
-                    Vec2::new(180.0, 20.0),
-                    Color::rgba(240, 240, 240, 255),
-                    1,
-                    255,
-                    Color::rgba(120, 120, 120, 255),
-                    Color::rgba(10, 10, 150, 255),
-                    false,
-                    true,
-                    tooltip,
-                    vec![],
-                );
-
-                content.textbox.push(textbox);
-            }
-
-            let mut sprite_bg = Rect::new(&mut systems.renderer, 0);
-            sprite_bg
-                .set_position(Vec3::new(
-                    pos.x + 34.0,
-                    pos.y + 98.0,
-                    ORDER_MENU_WINDOW_CONTENT,
-                ))
-                .set_size(Vec2::new(80.0, 80.0))
-                .set_color(Color::rgba(120, 120, 120, 255));
-            content.window.push(systems.gfx.add_rect(sprite_bg, 0));
-
-            let mut image = Image::new(
-                Some(systems.resource.players[0].allocation),
-                &mut systems.renderer,
-                0,
-            );
-            image.hw = Vec2::new(80.0, 80.0);
-            image.pos = Vec3::new(
-                pos.x + 34.0,
-                pos.y + 98.0,
-                ORDER_MENU_WINDOW_CONTENT_DETAIL,
-            );
-            image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
-            content.image.push(systems.gfx.add_image(image, 0));
-
-            let sprite_label = create_label(
-                systems,
-                Vec3::new(
-                    pos.x + 142.0,
-                    pos.y + 148.0,
-                    ORDER_MENU_WINDOW_CONTENT_DETAIL,
-                ),
-                Vec2::new(size.x, 20.0),
-                Bounds::new(
-                    pos.x + 142.0,
-                    pos.y + 148.0,
-                    pos.x + 306.0,
-                    pos.y + 168.0,
-                ),
-                Color::rgba(80, 80, 80, 255),
-            );
-            let sprite_index = systems.gfx.add_text(sprite_label, 1);
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                sprite_index,
-                "Sprite Selection",
-            );
-            systems.gfx.center_text(sprite_index);
-            content.label.push(sprite_index);
-
-            let button = Button::new(
-                systems,
-                ButtonType::Rect(ButtonRect {
-                    rect_color: Color::rgba(100, 100, 100, 255),
-                    got_border: true,
-                    border_color: Color::rgba(70, 70, 70, 255),
-                    border_radius: 0.0,
-                    hover_change: ButtonChangeType::ColorChange(Color::rgba(
-                        180, 180, 180, 255,
-                    )),
-                    click_change: ButtonChangeType::ColorChange(Color::rgba(
-                        40, 40, 40, 255,
-                    )),
-                }),
-                ButtonContentType::Text(ButtonContentText {
-                    text: "Register".to_string(),
-                    pos: Vec2::new(0.0, 7.0),
-                    color: Color::rgba(230, 230, 230, 255),
-                    render_layer: 1,
-                    hover_change: ButtonChangeType::ColorChange(Color::rgba(
-                        80, 80, 80, 255,
-                    )),
-                    click_change: ButtonChangeType::ColorChange(Color::rgba(
-                        170, 170, 170, 255,
-                    )),
-                }),
-                Vec2::new(pos.x, pos.y),
-                Vec2::new(104.0, 45.0),
-                ORDER_MENU_WINDOW_CONTENT,
-                (0.01, 2),
-                Vec2::new(140.0, 34.0),
-                0,
-                true,
-                None,
-            );
-            content.button.push(button);
-
-            let button = Button::new(
-                systems,
-                ButtonType::None,
-                ButtonContentType::Text(ButtonContentText {
-                    text: "Sign In".to_string(),
-                    pos: Vec2::new(0.0, 0.0),
-                    color: Color::rgba(80, 80, 80, 255),
-                    render_layer: 1,
-                    hover_change: ButtonChangeType::ColorChange(Color::rgba(
-                        240, 240, 240, 255,
-                    )),
-                    click_change: ButtonChangeType::ColorChange(Color::rgba(
-                        80, 80, 80, 255,
-                    )),
-                }),
-                Vec2::new(pos.x, pos.y),
-                Vec2::new(104.0, 19.0),
-                ORDER_MENU_WINDOW_CONTENT,
-                (0.01, 2),
-                Vec2::new(140.0, 20.0),
-                0,
-                true,
-                None,
-            );
-            content.button.push(button);
-
-            let button = Button::new(
-                systems,
-                ButtonType::Rect(ButtonRect {
-                    rect_color: Color::rgba(100, 100, 100, 255),
-                    got_border: true,
-                    border_color: Color::rgba(70, 70, 70, 255),
-                    border_radius: 0.0,
-                    hover_change: ButtonChangeType::ColorChange(Color::rgba(
-                        180, 180, 180, 255,
-                    )),
-                    click_change: ButtonChangeType::ColorChange(Color::rgba(
-                        40, 40, 40, 255,
-                    )),
-                }),
-                ButtonContentType::Image(ButtonContentImg {
-                    res: systems.resource.horizontal_arrow.allocation,
-                    pos: Vec2::new(0.0, 0.0),
-                    uv: Vec2::new(0.0, 0.0),
-                    size: Vec2::new(24.0, 24.0),
-                    hover_change: ButtonChangeType::None,
-                    click_change: ButtonChangeType::None,
-                }),
-                Vec2::new(pos.x, pos.y),
-                Vec2::new(142.0, 118.0),
-                ORDER_MENU_WINDOW_CONTENT,
-                (0.01, 2),
-                Vec2::new(24.0, 24.0),
-                0,
-                true,
-                None,
-            );
-            content.button.push(button);
-
-            let button = Button::new(
-                systems,
-                ButtonType::Rect(ButtonRect {
-                    rect_color: Color::rgba(100, 100, 100, 255),
-                    got_border: true,
-                    border_color: Color::rgba(70, 70, 70, 255),
-                    border_radius: 0.0,
-                    hover_change: ButtonChangeType::ColorChange(Color::rgba(
-                        180, 180, 180, 255,
-                    )),
-                    click_change: ButtonChangeType::ColorChange(Color::rgba(
-                        40, 40, 40, 255,
-                    )),
-                }),
-                ButtonContentType::Image(ButtonContentImg {
-                    res: systems.resource.horizontal_arrow.allocation,
-                    pos: Vec2::new(0.0, 0.0),
-                    uv: Vec2::new(24.0, 0.0),
-                    size: Vec2::new(24.0, 24.0),
-                    hover_change: ButtonChangeType::None,
-                    click_change: ButtonChangeType::None,
-                }),
-                Vec2::new(pos.x, pos.y),
-                Vec2::new(282.0, 118.0),
-                ORDER_MENU_WINDOW_CONTENT,
-                (0.01, 2),
-                Vec2::new(24.0, 24.0),
-                0,
-                true,
-                None,
-            );
-            content.button.push(button);
-
-            let sprite_number_text = create_label(
-                systems,
-                Vec3::new(
-                    pos.x + 170.0,
-                    pos.y + 120.0,
-                    ORDER_MENU_WINDOW_CONTENT_DETAIL,
-                ),
-                Vec2::new(size.x, 20.0),
-                Bounds::new(
-                    pos.x + 170.0,
-                    pos.y + 120.0,
-                    pos.x + 278.0,
-                    pos.y + 140.0,
-                ),
-                Color::rgba(80, 80, 80, 255),
-            );
-            let sprite_number = systems.gfx.add_text(sprite_number_text, 1);
-            systems
-                .gfx
-                .set_text(&mut systems.renderer, sprite_number, "0");
-            systems.gfx.center_text(sprite_number);
-            content.unique_label.push(sprite_number);
+            create_register(systems, content);
         }
         _ => {}
     }

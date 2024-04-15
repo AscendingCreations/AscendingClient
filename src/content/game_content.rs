@@ -9,13 +9,12 @@ pub use content_input::*;
 pub use interface::*;
 
 use crate::{
-    buffer::*, content::*, database::*, logic::*, send_attack, send_pickup,
-    values::*, Direction, Result, Socket, SystemHolder,
+    buffer::*, content::*, data_types::*, database::*, logic::*, send_attack,
+    send_pickup, values::*, Direction, Result, Socket, SystemHolder,
 };
 use hecs::World;
 
 mod camera;
-pub mod entity;
 pub mod floating_text;
 pub mod map;
 pub mod npc;
@@ -24,7 +23,6 @@ pub mod player_data;
 pub mod target;
 
 use camera::*;
-pub use entity::*;
 pub use floating_text::*;
 pub use map::*;
 pub use npc::*;

@@ -6,7 +6,7 @@ use std::path::Path;
 
 use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 
-use crate::{MapPosition, Result, SystemHolder};
+use crate::{data_types::*, Result, SystemHolder};
 
 #[derive(
     Clone,

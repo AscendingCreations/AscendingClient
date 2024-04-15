@@ -1,8 +1,6 @@
 use hecs::World;
 
-use crate::{
-    Entity, Equipment, EquipmentType, IsUsingType, Item, Result, SystemHolder,
-};
+use crate::{data_types::*, EquipmentType, IsUsingType, Result, SystemHolder};
 
 pub struct PlayerData {
     pub inventory: Vec<Item>,

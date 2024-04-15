@@ -1,8 +1,8 @@
 use crate::{
     add_float_text, add_npc, close_interface,
     content::game_content::{interface::chatbox::*, player::*},
+    data_types::*,
     dir_to_enum,
-    entity::{self, *},
     fade::*,
     get_percent, get_start_map_pos, init_npc_attack, is_map_connected,
     npc_finalized, open_interface, player_get_armor_defense,
@@ -11,8 +11,8 @@ use crate::{
     values::*,
     Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
     EncryptionState, EntityType, FtlType, IsUsingType, MapItem, MessageChannel,
-    Position, ProfileLabel, Result, Socket, SystemHolder, TradeStatus, Window,
-    MAX_EQPT, NPC_SPRITE_FRAME_X, VITALS_MAX,
+    ProfileLabel, Result, Socket, SystemHolder, TradeStatus, Window, MAX_EQPT,
+    NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;

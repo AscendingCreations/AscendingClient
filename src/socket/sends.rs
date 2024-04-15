@@ -1,4 +1,4 @@
-use crate::{socket::*, values::*, Entity, Position};
+use crate::{data_types::*, socket::*, values::*};
 use bytey::ByteBuffer;
 
 #[derive(Clone, Debug, PartialEq, Eq, ByteBufferRead, ByteBufferWrite)]

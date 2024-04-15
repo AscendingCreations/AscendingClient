@@ -1,5 +1,5 @@
 use crate::{
-    send_settarget, Entity, Result, Socket, SystemHolder, ORDER_TARGET,
+    data_types::*, send_settarget, Result, Socket, SystemHolder, ORDER_TARGET,
 };
 use graphics::*;
 use hecs::World;

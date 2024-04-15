@@ -1,4 +1,4 @@
-use crate::game_content::entity::*;
+use crate::data_types::*;
 use bytey::{ByteBufferRead, ByteBufferWrite};
 use graphics::*;
 use serde::{Deserialize, Serialize};
@@ -177,6 +177,7 @@ pub const ORDER_MENU_WINDOW: f32 = 10.8;
 pub const ORDER_MENU_WINDOW_CONTENT: f32 = 10.7;
 pub const ORDER_MENU_WINDOW_CONTENT_DETAIL: f32 = 10.6;
 pub const ORDER_MENU_WINDOW_CONTENT_DETAIL2: f32 = 10.5;
+pub const ORDER_SERVER_STATUS: f32 = 10.8;
 // Lower Map Order 9.3 - 9.0
 pub const ORDER_MAP_ITEM: f32 = 8.5;
 pub const ORDER_PLAYER: f32 = 8.0;

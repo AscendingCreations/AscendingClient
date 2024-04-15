@@ -290,6 +290,7 @@ async fn main() -> Result<()> {
     let mut socket = Socket::new(&systems.config).unwrap();
     let router = PacketRouter::init();
     socket.register().expect("Failed to register socket");
+    content.menu_content.set_status_online(&mut systems);
 
     // setup our system which includes Camera and projection as well as our controls.
     // for the camera.
@@ -592,6 +593,7 @@ async fn main() -> Result<()> {
 
         //This only should throw if their conenction was 100% lost.
         if disconneted || socket.client.state == ClientState::Closed {
+            println!("Not connected");
             //TODO: Sherwin: Set the user back to the home page and clear out the world.
 
             //Try to reconnect.
@@ -599,13 +601,13 @@ async fn main() -> Result<()> {
                 if let Ok(s) = Socket::new(&systems.config) {
                     socket = s;
                 } else {
-                    //TODO: Sherwin Set a Connection Status Text on the Home Page to Not Connected.
+                    content.menu_content.set_status_offline(&mut systems);
                 }
 
                 //We will only attempt to reconnect every second.
                 reconnect_time = seconds + 1.0;
             } else {
-                //TODO: Sherwin also set the status here too.
+                content.menu_content.set_status_offline(&mut systems);
             }
         }
 

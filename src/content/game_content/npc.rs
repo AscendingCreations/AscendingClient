@@ -4,10 +4,8 @@ use hecs::World;
 pub const NPC_SPRITE_FRAME_X: f32 = 6.0;
 
 use crate::{
-    create_label,
-    game_content::{entity::*, *},
-    values::*,
-    Direction, Result, SystemHolder,
+    create_label, data_types::*, game_content::*, values::*, Direction, Result,
+    SystemHolder,
 };
 
 pub fn add_npc(
