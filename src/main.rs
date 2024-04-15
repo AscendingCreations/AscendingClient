@@ -291,6 +291,7 @@ async fn main() -> Result<()> {
     let mut socket = Socket::new(&systems.config).unwrap();
     let router = PacketRouter::init();
     socket.register().expect("Failed to register socket");
+    content.menu_content.set_status_offline(&mut systems);
 
     // setup our system which includes Camera and projection as well as our controls.
     // for the camera.
@@ -349,10 +350,11 @@ async fn main() -> Result<()> {
 
     let mut frame_time = FrameTime::new();
     let mut time = 0.0f32;
-    let mut _ping_time = 0.0f32;
-    let mut _reconnect_time = 0.0f32;
-    let mut _reconnect_trys = 0;
+    let mut reconnect_time = 0.0f32;
+    let mut reset_timer = 0.0f32;
     let mut fps = 0u32;
+    let mut start_ping = true;
+    let mut reset_status = true;
     let fps_label_color = Attrs::new().color(Color::rgba(200, 100, 100, 255));
     let fps_number_color = Attrs::new().color(Color::rgba(255, 255, 255, 255));
     let mut loop_timer = LoopTimer::default();
@@ -373,11 +375,13 @@ async fn main() -> Result<()> {
                 ..
             } if window_id == systems.renderer.window().id() => {
                 if let WindowEvent::CloseRequested = event {
-                    socket
-                        .client
-                        .socket
-                        .shutdown(std::net::Shutdown::Both)
-                        .unwrap();
+                    if socket.client.state == ClientState::Open {
+                        socket
+                            .client
+                            .socket
+                            .shutdown(std::net::Shutdown::Both)
+                            .unwrap();
+                    }
                     elwt.exit();
                 }
             }
@@ -603,24 +607,45 @@ async fn main() -> Result<()> {
             }
         };
 
-        if disconnect && socket.client.state == ClientState::Closed {
-            if content.content_type == ContentType::Game {
-                alert.show_alert(
-                    &mut systems,
-                    AlertType::Inform,
-                    "You have been disconnected".into(),
-                    "Alert Message".into(),
-                    250,
-                    AlertIndex::None,
-                    false,
-                );
-                content
-                    .switch_content(&mut world, &mut systems, ContentType::Menu)
-                    .unwrap();
-            }
+        if disconnect || socket.client.state == ClientState::Closed {
+            if reconnect_time < seconds {
+                if content.content_type == ContentType::Game {
+                    alert.show_alert(
+                        &mut systems,
+                        AlertType::Inform,
+                        "You have been disconnected".into(),
+                        "Alert Message".into(),
+                        250,
+                        AlertIndex::None,
+                        false,
+                    );
 
-            socket.reconnect().unwrap();
-            socket.register().unwrap();
+                    content
+                        .switch_content(
+                            &mut world,
+                            &mut systems,
+                            ContentType::Menu,
+                        )
+                        .unwrap();
+                }
+
+                start_ping = true;
+                socket.reconnect().unwrap();
+                socket.register().unwrap();
+            }
+            content.menu_content.set_status_offline(&mut systems);
+            reconnect_time = seconds + 1.0;
+        } else if reset_timer < seconds && reset_status {
+            reset_status = false;
+            content.menu_content.set_status_online(&mut systems);
+        }
+
+        if start_ping {
+            start_ping = false;
+            reset_status = true;
+            reset_timer = seconds + 3.0;
+            println!("ping sent");
+            send_ping(&mut socket).unwrap();
         }
 
         process_packets(

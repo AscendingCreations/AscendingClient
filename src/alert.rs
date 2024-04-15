@@ -519,12 +519,11 @@ impl Alert {
         index: usize,
     ) -> Result<()> {
         match self.alert_type {
-            AlertType::Inform =>
-            {
+            AlertType::Inform => {
                 #[allow(clippy::match_single_binding)]
                 match self.custom_index {
                     AlertIndex::Offline => {
-                        elwt.exit();
+                        //elwt.exit();
                     }
                     _ => self.hide_alert(systems),
                 }

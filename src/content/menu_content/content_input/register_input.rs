@@ -184,7 +184,7 @@ fn trigger_button(
                         "Server is offline".into(),
                         "Alert Message".into(),
                         250,
-                        AlertIndex::Offline,
+                        AlertIndex::None,
                         false,
                     );
                 }
