@@ -259,6 +259,7 @@ async fn main() -> Result<()> {
             index: None,
             timer: 0.0,
         },
+        try_once: true,
     };
     systems.fade.init_setup(
         &mut systems.renderer,
@@ -590,11 +591,17 @@ async fn main() -> Result<()> {
             .queue()
             .submit(std::iter::once(encoder.finish()));
 
-        match poll_events(&mut socket) {
-            Ok(d) => {}
+        let disconnect = match poll_events(&mut socket) {
+            Ok(d) => d,
             Err(e) => {
                 println!("Poll event error: {:?}", e);
+                true
             }
+        };
+
+        if disconnect && socket.client.state == ClientState::Closed {
+            socket.reconnect().unwrap();
+            socket.register().unwrap();
         }
 
         process_packets(
