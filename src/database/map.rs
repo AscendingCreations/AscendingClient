@@ -1,4 +1,5 @@
 use graphics::*;
+use log::error;
 use serde::{Deserialize, Serialize};
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, Read};
@@ -151,7 +152,7 @@ pub fn load_file(x: i32, y: i32, group: u64) -> Result<MapData> {
             Ok(buf.read::<MapData>()?)
         }
         Err(e) => {
-            println!("Failed to load {}, Err {:?}", name, e);
+            error!("Failed to load {}, Err {:?}", name, e);
             Ok(MapData::default(x, y, group))
         }
     }

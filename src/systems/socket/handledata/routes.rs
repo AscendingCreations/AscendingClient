@@ -54,10 +54,9 @@ pub fn handle_alertmsg(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let message = data.read::<String>()?;
-    let close = data.read::<u8>()?;
+    let _message = data.read::<String>()?;
+    let _close = data.read::<u8>()?;
 
-    println!("{}, should close: {}", message, close);
     Ok(())
 }
 

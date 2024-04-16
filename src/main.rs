@@ -65,7 +65,7 @@ enum MouseEvent {
 }
 
 // creates a static global logger type for setting the logger
-static MY_LOGGER: MyLogger = MyLogger(log::Level::Debug);
+static MY_LOGGER: MyLogger = MyLogger(log::Level::Trace);
 pub static APP_MAJOR: u16 = 1;
 pub static APP_MINOR: u16 = 1;
 pub static APP_REV: u16 = 1;
@@ -85,14 +85,12 @@ impl log::Log for MyLogger {
             let msg = format!("{} - {}\n", record.level(), record.args());
             println!("{}", &msg);
 
-            let mut file = match File::options()
-                .append(true)
-                .create(true)
-                .open("paniclog.txt")
-            {
-                Ok(v) => v,
-                Err(_) => return,
-            };
+            let mut file =
+                match File::options().append(true).create(true).open("log.txt")
+                {
+                    Ok(v) => v,
+                    Err(_) => return,
+                };
 
             let _ = file.write(msg.as_bytes());
         }
@@ -271,7 +269,7 @@ async fn main() -> Result<()> {
 
     let mut socket = Socket::new(&systems.config).unwrap();
     let router = PacketRouter::init();
-    socket.register().expect("Failed to register socket");
+    socket.register().unwrap();
     content.menu_content.set_status_offline(&mut systems);
 
     // setup our system which includes Camera and projection as well as our controls.
@@ -578,7 +576,7 @@ async fn main() -> Result<()> {
         let disconnect = match poll_events(&mut socket) {
             Ok(d) => d,
             Err(e) => {
-                println!("Poll event error: {:?}", e);
+                error!("Poll event error: {:?}", e);
                 true
             }
         };
@@ -620,7 +618,6 @@ async fn main() -> Result<()> {
             start_ping = false;
             reset_status = true;
             reset_timer = seconds + 3.0;
-            println!("ping sent");
             send_ping(&mut socket).unwrap();
         }
 

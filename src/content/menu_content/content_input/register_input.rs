@@ -79,7 +79,7 @@ fn trigger_button(
             // Register
             let email_regex = Regex::new(
                 r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})",
-            ).expect("Could not create email regex");
+            ).unwrap();
 
             if menu_content.textbox[0].text != menu_content.textbox[1].text {
                 alert.show_alert(

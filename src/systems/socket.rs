@@ -1,5 +1,6 @@
 use bytey::ByteBuffer;
 use hecs::World;
+use log::{info, warn};
 use mio::net::TcpStream;
 use mio::{Events, Interest, Poll};
 use pki_types::ServerName;
@@ -460,7 +461,7 @@ fn connect(host: &str, port: u16) -> Result<TcpStream> {
     let addrs = (host, port).to_socket_addrs()?;
 
     for addr in addrs {
-        println!("{:?}", addr);
+        info!("{:?}", addr);
         let stream = TcpStream::connect(addr);
 
         if let Ok(stream) = stream {
@@ -503,7 +504,7 @@ pub fn poll_events(socket: &mut Socket) -> Result<bool> {
         socket.process(event)?;
 
         if let ClientState::Closed = socket.client.state {
-            println!("Disconnected");
+            warn!("Disconnected");
             return Ok(true);
         }
     }

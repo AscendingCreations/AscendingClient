@@ -217,7 +217,6 @@ impl Interface {
 
                 if interface.chatbox.order_index == 0 {
                     if let Some(text) = interface.chatbox.get_selected_msg() {
-                        println!("Copied: {text}");
                         set_clipboard_text(text);
                     }
                 }

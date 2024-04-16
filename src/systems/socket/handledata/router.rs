@@ -1,3 +1,5 @@
+use log::error;
+
 use crate::{data_types::*, fade::*, socket::*, BufferTask};
 
 #[allow(clippy::too_many_arguments)]
@@ -24,7 +26,7 @@ pub fn handle_data(
     ) {
         Ok(_) => Ok(()),
         Err(e) => {
-            println!("Error {}", e);
+            error!("Error {}", e);
             Err(e)
         }
     }

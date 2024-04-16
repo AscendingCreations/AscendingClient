@@ -133,7 +133,7 @@ where
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("render pass"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                view: renderer.frame_buffer().as_ref().expect("no frame view?"),
+                view: renderer.frame_buffer().as_ref().unwrap(),
                 resolve_target: None,
                 ops: wgpu::Operations {
                     load: wgpu::LoadOp::Clear(wgpu::Color {
