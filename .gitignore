@@ -1,7 +1,8 @@
 **/target
 *.lock
-paniclog.txt
+log.txt
 *.7z
 *.exe
 *.zip
 *.json
+.VSCodeCounter/
