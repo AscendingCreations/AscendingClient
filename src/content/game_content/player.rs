@@ -106,11 +106,6 @@ pub fn add_player(
         entitynamemap,
     );
 
-    /*if systems.try_once {
-        systems.try_once = false;
-        return Err(crate::ClientError::Other(OtherError::new("test")));
-    }*/
-
     if let Some(data) = entity {
         world.spawn_at(data.0, component1);
         world.insert(data.0, component2)?;
