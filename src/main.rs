@@ -375,13 +375,6 @@ async fn main() -> Result<()> {
                 ..
             } if window_id == systems.renderer.window().id() => {
                 if let WindowEvent::CloseRequested = event {
-                    if socket.client.state == ClientState::Open {
-                        socket
-                            .client
-                            .socket
-                            .shutdown(std::net::Shutdown::Both)
-                            .unwrap();
-                    }
                     elwt.exit();
                 }
             }

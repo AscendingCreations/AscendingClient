@@ -515,7 +515,7 @@ impl Alert {
         &mut self,
         systems: &mut SystemHolder,
         socket: &mut Socket,
-        elwt: &winit::event_loop::EventLoopWindowTarget<()>,
+        _elwt: &winit::event_loop::EventLoopWindowTarget<()>,
         index: usize,
     ) -> Result<()> {
         match self.alert_type {
