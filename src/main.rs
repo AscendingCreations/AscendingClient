@@ -354,7 +354,7 @@ async fn main() -> Result<()> {
     let mut reset_timer = 0.0f32;
     let mut fps = 0u32;
     let mut start_ping = true;
-    let mut reset_status = true;
+    let mut reset_status = false;
     let fps_label_color = Attrs::new().color(Color::rgba(200, 100, 100, 255));
     let fps_number_color = Attrs::new().color(Color::rgba(255, 255, 255, 255));
     let mut loop_timer = LoopTimer::default();
