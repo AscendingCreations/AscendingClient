@@ -421,6 +421,7 @@ pub fn handle_playermove(
                     }
                 } else {
                     unload_player(world, systems, &entity)?;
+                    content.game_content.players.swap_remove(&entity);
                 }
             }
         }
@@ -493,7 +494,7 @@ pub fn handle_dataremovelist(
     _socket: &mut Socket,
     world: &mut World,
     systems: &mut SystemHolder,
-    _content: &mut Content,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
@@ -506,12 +507,15 @@ pub fn handle_dataremovelist(
         match world_entity_type {
             WorldEntityType::Player => {
                 unload_player(world, systems, entity)?;
+                content.game_content.players.swap_remove(entity);
             }
             WorldEntityType::Npc => {
                 unload_npc(world, systems, entity)?;
+                content.game_content.npcs.swap_remove(entity);
             }
             WorldEntityType::MapItem => {
                 unload_mapitems(world, systems, entity)?;
+                content.game_content.mapitems.swap_remove(entity);
             }
             _ => {}
         }
@@ -1119,6 +1123,7 @@ pub fn handle_npcmove(
                     }
                 } else {
                     unload_npc(world, systems, &entity)?;
+                    content.game_content.npcs.swap_remove(&entity);
                 }
             }
         }
@@ -1364,12 +1369,15 @@ pub fn handle_entityunload(
             match world_entity_type {
                 WorldEntityType::Player => {
                     unload_player(world, systems, &entity)?;
+                    content.game_content.players.swap_remove(&entity);
                 }
                 WorldEntityType::Npc => {
                     unload_npc(world, systems, &entity)?;
+                    content.game_content.npcs.swap_remove(&entity);
                 }
                 WorldEntityType::MapItem => {
                     unload_mapitems(world, systems, &entity)?;
+                    content.game_content.mapitems.swap_remove(&entity);
                 }
                 _ => {}
             }
