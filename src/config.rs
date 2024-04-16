@@ -1,3 +1,5 @@
+use graphics::wgpu::Backend;
+use log::LevelFilter;
 use rustls::{
     client::danger,
     crypto::{ring as provider, CryptoProvider},
@@ -8,9 +10,38 @@ use rustls::{
 use serde::{Deserialize, Serialize};
 use std::{fs, io::BufReader, sync::Arc};
 
-use crate::Result;
+use crate::{renderer::*, Result};
 
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Serialize, Deserialize, Debug)]
+pub enum ClientLevelFilter {
+    /// A level lower than all log levels.
+    Off,
+    /// Corresponds to the `Error` log level.
+    Error,
+    /// Corresponds to the `Warn` log level.
+    Warn,
+    /// Corresponds to the `Info` log level.
+    Info,
+    /// Corresponds to the `Debug` log level.
+    Debug,
+    /// Corresponds to the `Trace` log level.
+    Trace,
+}
+
+impl ClientLevelFilter {
+    pub fn parse_enum(&self) -> LevelFilter {
+        match self {
+            ClientLevelFilter::Off => LevelFilter::Off,
+            ClientLevelFilter::Error => LevelFilter::Error,
+            ClientLevelFilter::Warn => LevelFilter::Warn,
+            ClientLevelFilter::Info => LevelFilter::Info,
+            ClientLevelFilter::Debug => LevelFilter::Debug,
+            ClientLevelFilter::Trace => LevelFilter::Trace,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
     pub host: Option<String>,
     pub port: Option<u16>,
@@ -20,6 +51,13 @@ pub struct Config {
     pub bgm_volume: u8,
     pub sfx_volume: u8,
     pub reconnect_code: String,
+    pub level_filter: ClientLevelFilter,
+    pub enable_backtrace: bool,
+    pub graphic_backend: String,
+    pub show_fps: bool,
+    pub power_settings: ClientAdapterPowerSettings,
+    pub present_mode: ClientPresentMode,
+    pub gpu_instance: ClientGPUInstances,
 }
 
 impl Config {
@@ -37,6 +75,42 @@ impl Config {
     pub fn save_config(&self, path: &str) {
         let toml_data = toml::to_string(self).unwrap();
         fs::write(path, toml_data).unwrap();
+    }
+
+    pub fn append_graphic_backend(&self) {
+        let text: Vec<&str> = self.graphic_backend.split('|').collect();
+        let mut backend = Vec::new();
+        for data in text.iter() {
+            match *data {
+                "OpenGL" => backend.push(Backend::Gl),
+                "DX12" => backend.push(Backend::Dx12),
+                "Vulkan" => backend.push(Backend::Vulkan),
+                "Metal" => backend.push(Backend::Metal),
+                _ => {}
+            }
+        }
+    }
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            host: None,
+            port: None,
+            username: String::new(),
+            password: String::new(),
+            save_password: false,
+            bgm_volume: 70,
+            sfx_volume: 70,
+            reconnect_code: String::new(),
+            level_filter: ClientLevelFilter::Info,
+            enable_backtrace: false,
+            graphic_backend: "OpenGL|DX12|Vulkan|Metal".to_string(),
+            show_fps: false,
+            power_settings: ClientAdapterPowerSettings::HighPower,
+            present_mode: ClientPresentMode::AutoVsync,
+            gpu_instance: ClientGPUInstances::None,
+        }
     }
 }
 

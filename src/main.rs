@@ -126,13 +126,19 @@ impl log::Log for MyLogger {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Load config
+    let config = Config::read_config("settings.toml");
+    config.append_graphic_backend();
+
     // Create logger to output to a File
     log::set_logger(&MY_LOGGER).unwrap();
     // Set the Max level we accept logging to the file for.
-    log::set_max_level(LevelFilter::Info);
+    log::set_max_level(config.level_filter.parse_enum());
 
     //Comment this out if you do not want a backtrace on error to show.
-    //env::set_var("RUST_BACKTRACE", "1");
+    if config.enable_backtrace {
+        env::set_var("RUST_BACKTRACE", "1");
+    }
 
     // This allows us to take control of panic!() so we can send it to a file via the logger.
     panic::set_hook(Box::new(|panic_info| {
@@ -168,7 +174,7 @@ async fn main() -> Result<()> {
     // play the game basically.
     let instance = wgpu::Instance::new(InstanceDescriptor {
         backends: Backends::all(),
-        flags: InstanceFlags::empty(),
+        flags: config.gpu_instance.to_flag(),
         dx12_shader_compiler: Dx12Compiler::default(),
         gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
     });
@@ -186,7 +192,7 @@ async fn main() -> Result<()> {
             //used to find adapters
             AdapterOptions {
                 allowed_backends: Backends::all(),
-                power: AdapterPowerSettings::HighPower,
+                power: config.power_settings.parse_enum(),
                 compatible_surface: Some(compatible_surface),
             },
             // used to deturmine which adapters support our special limits or features for our backends.
@@ -197,7 +203,7 @@ async fn main() -> Result<()> {
             },
             None,
             // How we are presenting the screen which causes it to either clip to a FPS limit or be unlimited.
-            wgpu::PresentMode::AutoVsync,
+            config.present_mode.parse_enum(),
         )
         .await
         .unwrap();
@@ -227,9 +233,6 @@ async fn main() -> Result<()> {
 
     // Load textures image
     let resource = TextureAllocation::new(&mut atlases, &renderer).unwrap();
-
-    // Load config
-    let config = Config::read_config("settings.toml");
 
     let volume = config.sfx_volume as f32 * 0.01;
     audio.set_effect_volume(volume);
@@ -320,6 +323,7 @@ async fn main() -> Result<()> {
         Color::rgba(255, 255, 255, 255),
     );
     let text = systems.gfx.add_text(txt, 4, "FPS".into());
+    systems.gfx.set_visible(text, systems.config.show_fps);
 
     // Allow the window to be seen. hiding it then making visible speeds up
     // load times.

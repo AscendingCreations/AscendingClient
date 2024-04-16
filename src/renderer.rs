@@ -1,4 +1,8 @@
-use graphics::*;
+use graphics::{
+    wgpu::{InstanceFlags, PresentMode},
+    *,
+};
+use serde::{Deserialize, Serialize};
 use winit::dpi::PhysicalSize;
 
 pub mod fade;
@@ -9,6 +13,67 @@ use crate::{
     game_content::*, gfx_collection::*, Audio, Config, ItemData, NpcData,
     ShopData, TextureAllocation,
 };
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum ClientAdapterPowerSettings {
+    LowPower,
+    HighPower,
+}
+
+impl ClientAdapterPowerSettings {
+    pub fn parse_enum(&self) -> AdapterPowerSettings {
+        match self {
+            ClientAdapterPowerSettings::HighPower => {
+                AdapterPowerSettings::HighPower
+            }
+            ClientAdapterPowerSettings::LowPower => {
+                AdapterPowerSettings::LowPower
+            }
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum ClientPresentMode {
+    AutoVsync,
+    AutoNoVsync,
+    Fifo,
+    FifoRelaxed,
+    Immediate,
+    Mailbox,
+}
+
+impl ClientPresentMode {
+    pub fn parse_enum(&self) -> PresentMode {
+        match self {
+            ClientPresentMode::AutoVsync => PresentMode::AutoVsync,
+            ClientPresentMode::AutoNoVsync => PresentMode::AutoNoVsync,
+            ClientPresentMode::Fifo => PresentMode::Fifo,
+            ClientPresentMode::FifoRelaxed => PresentMode::FifoRelaxed,
+            ClientPresentMode::Immediate => PresentMode::Immediate,
+            ClientPresentMode::Mailbox => PresentMode::Mailbox,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum ClientGPUInstances {
+    None,
+    Debug,
+    Validation,
+    All,
+}
+
+impl ClientGPUInstances {
+    pub fn to_flag(&self) -> InstanceFlags {
+        match self {
+            ClientGPUInstances::None => InstanceFlags::empty(),
+            ClientGPUInstances::Debug => InstanceFlags::DEBUG,
+            ClientGPUInstances::Validation => InstanceFlags::VALIDATION,
+            ClientGPUInstances::All => InstanceFlags::debugging(),
+        }
+    }
+}
 
 pub struct TextCaret {
     pub visible: bool,
