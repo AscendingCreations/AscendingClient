@@ -1,7 +1,7 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{create_label, values::*, SystemHolder};
+use crate::{create_label, data_types::*, SystemHolder};
 
 pub struct Tooltip {
     window: usize,

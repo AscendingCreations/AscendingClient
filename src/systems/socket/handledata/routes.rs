@@ -7,12 +7,10 @@ use crate::{
     get_percent, get_start_map_pos, init_npc_attack, is_map_connected,
     npc_finalized, open_interface, player_get_armor_defense,
     player_get_weapon_damage, send_handshake, set_npc_frame, unload_mapitems,
-    unload_npc, update_camera,
-    values::*,
-    Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
-    EncryptionState, EntityType, FtlType, IsUsingType, MapItem, MessageChannel,
-    ProfileLabel, Result, Socket, SystemHolder, TradeStatus, Window, MAX_EQPT,
-    NPC_SPRITE_FRAME_X, VITALS_MAX,
+    unload_npc, update_camera, Alert, AlertIndex, AlertType, BufferTask,
+    ChatTask, Content, EncryptionState, EntityType, FtlType, IsUsingType,
+    MapItem, MessageChannel, ProfileLabel, Result, Socket, SystemHolder,
+    TradeStatus, Window, MAX_EQPT, NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;

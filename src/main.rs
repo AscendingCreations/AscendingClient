@@ -14,7 +14,7 @@ use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 use hecs::World;
 use input::{Bindings, FrameTime, InputHandler, Key};
-use log::{error, info, warn, Level, LevelFilter, Metadata, Record};
+use log::{error, info, warn, LevelFilter, Metadata, Record};
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::{
@@ -33,41 +33,17 @@ use winit::{
     window::{WindowBuilder, WindowButtons},
 };
 
-mod alert;
-mod audio;
-mod buffer;
-pub mod config;
 mod content;
 mod data_types;
 mod database;
-mod error;
-mod gfx_collection;
-mod inputs;
-mod logic;
-mod mainloop;
-mod renderer;
-mod resource;
-mod socket;
-mod time_ext;
-mod values;
+mod systems;
 mod widget;
 
-use alert::*;
-use audio::*;
-use buffer::*;
-pub use config::*;
 use content::*;
+pub use data_types::*;
 use database::*;
-pub use error::*;
-use gfx_collection::*;
-use inputs::*;
-use logic::*;
-use mainloop::*;
-use renderer::*;
-use resource::*;
-use socket::*;
-use values::*;
-use widget::*;
+use systems::*;
+pub use widget::*;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
 enum Action {
@@ -89,12 +65,12 @@ enum MouseEvent {
 }
 
 // creates a static global logger type for setting the logger
-static MY_LOGGER: MyLogger = MyLogger(Level::Debug);
+static MY_LOGGER: MyLogger = MyLogger(log::Level::Debug);
 pub static APP_MAJOR: u16 = 1;
 pub static APP_MINOR: u16 = 1;
 pub static APP_REV: u16 = 1;
 
-struct MyLogger(pub Level);
+struct MyLogger(pub log::Level);
 
 impl log::Log for MyLogger {
     // checks if it can log these types of events.
@@ -128,7 +104,6 @@ impl log::Log for MyLogger {
 async fn main() -> Result<()> {
     // Load config
     let config = Config::read_config("settings.toml");
-    config.append_graphic_backend();
 
     // Create logger to output to a File
     log::set_logger(&MY_LOGGER).unwrap();
@@ -169,11 +144,13 @@ async fn main() -> Result<()> {
             .unwrap(),
     );
 
+    let backend = config.append_graphic_backend();
+
     // Generates an Instance for WGPU. Sets WGPU to be allowed on all possible supported backends
     // These are DX12, DX11, Vulkan, Metal and Gles. if none of these work on a system they cant
     // play the game basically.
     let instance = wgpu::Instance::new(InstanceDescriptor {
-        backends: Backends::all(),
+        backends: backend,
         flags: config.gpu_instance.to_flag(),
         dx12_shader_compiler: Dx12Compiler::default(),
         gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
@@ -191,7 +168,7 @@ async fn main() -> Result<()> {
             window,
             //used to find adapters
             AdapterOptions {
-                allowed_backends: Backends::all(),
+                allowed_backends: backend,
                 power: config.power_settings.parse_enum(),
                 compatible_surface: Some(compatible_surface),
             },

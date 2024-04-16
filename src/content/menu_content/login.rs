@@ -1,7 +1,7 @@
 use graphics::*;
 
 use crate::{
-    content::*, values::*, widget::*, Config, SystemHolder, SCREEN_WIDTH,
+    content::*, data_types::*, widget::*, Config, SystemHolder, SCREEN_WIDTH,
 };
 
 pub fn create_login(systems: &mut SystemHolder, content: &mut MenuContent) {

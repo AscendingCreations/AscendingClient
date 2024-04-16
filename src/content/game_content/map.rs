@@ -4,8 +4,7 @@ use hecs::World;
 
 use crate::{
     content::game_content::player::*, content::game_content::*, data_types::*,
-    database::map::*, values::*, Direction, EntityType, MapAttribute,
-    SystemHolder,
+    database::map::*, Direction, EntityType, MapAttribute, SystemHolder,
 };
 
 pub mod item;

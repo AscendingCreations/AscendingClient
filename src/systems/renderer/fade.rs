@@ -3,10 +3,7 @@ use graphics::*;
 use hecs::World;
 use winit::dpi::PhysicalSize;
 
-use crate::{
-    content::*, data_types::*, gfx_collection::*, values::*, Result, Socket,
-    SystemHolder,
-};
+use crate::{content::*, data_types::*, Result, Socket, SystemHolder};
 
 #[derive(Default)]
 pub enum FadeData {

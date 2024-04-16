@@ -27,8 +27,8 @@ pub struct BufferTask {
     pub chatbuffer: ChatBufferTask,
 }
 
-impl BufferTask {
-    pub fn new() -> Self {
+impl Default for BufferTask {
+    fn default() -> Self {
         BufferTask {
             task: VecDeque::new(),
             storage: StoredData {
@@ -36,6 +36,12 @@ impl BufferTask {
             },
             chatbuffer: ChatBufferTask::new(),
         }
+    }
+}
+
+impl BufferTask {
+    pub fn new() -> Self {
+        BufferTask::default()
     }
 
     pub fn process_buffer(
@@ -128,15 +134,14 @@ impl ChatTask {
     }
 }
 
+#[derive(Default)]
 pub struct ChatBufferTask {
     pub task: VecDeque<ChatTask>,
 }
 
 impl ChatBufferTask {
     pub fn new() -> Self {
-        ChatBufferTask {
-            task: VecDeque::new(),
-        }
+        ChatBufferTask::default()
     }
 
     pub fn process_buffer(

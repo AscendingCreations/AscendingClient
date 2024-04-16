@@ -2,11 +2,15 @@ use crate::{database::*, Config, Result, SystemHolder};
 use hecs::World;
 
 pub mod game_content;
+pub mod inputs;
 pub mod menu_content;
+pub mod resource;
 
 pub use game_content::*;
+pub use inputs::*;
 use log::info;
 pub use menu_content::*;
+pub use resource::*;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ContentType {

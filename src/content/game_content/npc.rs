@@ -4,7 +4,7 @@ use hecs::World;
 pub const NPC_SPRITE_FRAME_X: f32 = 6.0;
 
 use crate::{
-    create_label, data_types::*, game_content::*, values::*, Direction, Result,
+    create_label, data_types::*, game_content::*, Direction, Result,
     SystemHolder,
 };
 

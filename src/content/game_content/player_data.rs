@@ -2,6 +2,7 @@ use hecs::World;
 
 use crate::{data_types::*, EquipmentType, IsUsingType, Result, SystemHolder};
 
+#[derive(Default)]
 pub struct PlayerData {
     pub inventory: Vec<Item>,
     pub storage: Vec<Item>,

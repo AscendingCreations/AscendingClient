@@ -1,4 +1,4 @@
-use crate::{get_percent, values::*, widget::*, SystemHolder};
+use crate::{data_types::*, get_percent, widget::*, SystemHolder};
 use graphics::*;
 
 pub struct VitalBar {

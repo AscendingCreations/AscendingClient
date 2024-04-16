@@ -1,5 +1,5 @@
-use graphics::wgpu::Backend;
-use log::LevelFilter;
+use graphics::wgpu::{Backend, Backends};
+use log::{debug, LevelFilter};
 use rustls::{
     client::danger,
     crypto::{ring as provider, CryptoProvider},
@@ -77,18 +77,20 @@ impl Config {
         fs::write(path, toml_data).unwrap();
     }
 
-    pub fn append_graphic_backend(&self) {
+    pub fn append_graphic_backend(&self) -> Backends {
         let text: Vec<&str> = self.graphic_backend.split('|').collect();
-        let mut backend = Vec::new();
+        let mut backends = Backends::empty();
         for data in text.iter() {
             match *data {
-                "OpenGL" => backend.push(Backend::Gl),
-                "DX12" => backend.push(Backend::Dx12),
-                "Vulkan" => backend.push(Backend::Vulkan),
-                "Metal" => backend.push(Backend::Metal),
+                "OpenGL" => backends |= Backends::GL,
+                "DX12" => backends |= Backends::DX12,
+                "Vulkan" => backends |= Backends::VULKAN,
+                "Metal" => backends |= Backends::METAL,
                 _ => {}
             }
         }
+        debug!("Backends: {:?}", backends);
+        backends
     }
 }
 

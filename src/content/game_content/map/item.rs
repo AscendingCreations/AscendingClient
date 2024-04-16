@@ -6,9 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     data_types::*,
     game_content::{Camera, *},
-    get_start_map_pos,
-    values::*,
-    SystemHolder,
+    get_start_map_pos, SystemHolder,
 };
 
 #[derive(

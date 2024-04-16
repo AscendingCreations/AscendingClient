@@ -1,8 +1,9 @@
 use crate::{
-    logic::*, send_accepttrade, send_addtradeitem, send_declinetrade,
-    send_deposititem, send_dropitem, send_removetradeitem, send_sellitem,
-    send_switchinvslot, send_switchstorageslot, send_withdrawitem, socket,
-    values::*, widget::*, MouseInputType, Result, Socket, SystemHolder,
+    data_types::*, logic::*, send_accepttrade, send_addtradeitem,
+    send_declinetrade, send_deposititem, send_dropitem, send_removetradeitem,
+    send_sellitem, send_switchinvslot, send_switchstorageslot,
+    send_withdrawitem, socket, widget::*, MouseInputType, Result, Socket,
+    SystemHolder,
 };
 use graphics::{cosmic_text::Attrs, *};
 use input::Key;
@@ -47,8 +48,8 @@ pub struct Alert {
     custom_index: AlertIndex,
 }
 
-impl Alert {
-    pub fn new() -> Self {
+impl Default for Alert {
+    fn default() -> Self {
         Alert {
             window: Vec::new(),
             button: Vec::new(),
@@ -59,6 +60,12 @@ impl Alert {
             did_button_click: false,
             custom_index: AlertIndex::None,
         }
+    }
+}
+
+impl Alert {
+    pub fn new() -> Self {
+        Alert::default()
     }
 
     pub fn show_alert(

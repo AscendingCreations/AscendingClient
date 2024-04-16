@@ -8,7 +8,9 @@ pub use content_input::*;
 pub use login::*;
 pub use register::*;
 
-use crate::{content::*, is_within_area, values::*, widget::*, SystemHolder};
+use crate::{
+    content::*, data_types::*, is_within_area, widget::*, SystemHolder,
+};
 use hecs::World;
 
 pub enum WindowType {
@@ -23,7 +25,7 @@ pub struct MenuContent {
     window: Vec<usize>,
     label: Vec<usize>,
     unique_label: Vec<usize>,
-    button: Vec<Button>,
+    button: Vec<crate::widget::Button>,
     checkbox: Vec<Checkbox>,
     textbox: Vec<Textbox>,
     selected_textbox: Option<usize>,

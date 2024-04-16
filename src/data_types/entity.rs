@@ -1,4 +1,4 @@
-use crate::{values::*, ClientError, Direction, Result};
+use crate::{data_types::*, ClientError, Direction, Result};
 use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use core::any::type_name;
 use educe::Educe;

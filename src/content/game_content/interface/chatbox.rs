@@ -2,8 +2,8 @@ use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
 use crate::{
-    is_within_area, logic::*, send_command, send_message, values::*, widget::*,
-    Interface, Result, Socket, SystemHolder,
+    data_types::*, is_within_area, logic::*, send_command, send_message,
+    widget::*, Interface, Result, Socket, SystemHolder,
 };
 
 const MAX_CHAT_LINE: usize = 8;

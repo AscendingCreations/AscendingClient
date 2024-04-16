@@ -10,8 +10,8 @@ pub mod fade;
 pub use fade::*;
 
 use crate::{
-    game_content::*, gfx_collection::*, Audio, Config, ItemData, NpcData,
-    ShopData, TextureAllocation,
+    data_types::*, game_content::*, Audio, Config, ItemData, NpcData, ShopData,
+    TextureAllocation,
 };
 
 #[derive(Serialize, Deserialize, Debug)]

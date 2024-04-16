@@ -1,6 +1,6 @@
 use graphics::*;
 
-use crate::{content::*, values::*, widget::*, SystemHolder, SCREEN_WIDTH};
+use crate::{content::*, data_types::*, widget::*, SystemHolder, SCREEN_WIDTH};
 
 pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
     let size = Vec2::new(348.0, 375.0);

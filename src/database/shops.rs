@@ -1,4 +1,4 @@
-use crate::{values::MAX_SHOP_ITEM, Result};
+use crate::{data_types::*, Result};
 use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use educe::Educe;
 use serde::{Deserialize, Serialize};

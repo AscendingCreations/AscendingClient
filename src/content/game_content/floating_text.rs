@@ -19,6 +19,7 @@ struct FloatingTextData {
     spawned: bool,
 }
 
+#[derive(Default)]
 pub struct FloatingText {
     unload: bool,
     data: Vec<FloatingTextData>,
