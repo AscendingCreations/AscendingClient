@@ -33,7 +33,7 @@ pub fn add_npc(
     );
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
-    let sprite = systems.gfx.add_image(image, 0);
+    let sprite = systems.gfx.add_image(image, 0, "Npc Sprite".into());
     systems.gfx.set_visible(sprite, false);
 
     let mut bg_image = Rect::new(&mut systems.renderer, 0);
@@ -43,14 +43,14 @@ pub fn add_npc(
         .set_color(Color::rgba(80, 80, 80, 255))
         .set_border_width(1.0)
         .set_border_color(Color::rgba(10, 10, 10, 255));
-    let bg_index = systems.gfx.add_rect(bg_image, 0);
+    let bg_index = systems.gfx.add_rect(bg_image, 0, "Npc HP BG".into());
     systems.gfx.set_visible(bg_index, false);
     let mut bar_image = Rect::new(&mut systems.renderer, 0);
     bar_image
         .set_size(Vec2::new(18.0, 4.0))
         .set_position(Vec3::new(1.0, 1.0, ORDER_HPBAR))
         .set_color(Color::rgba(180, 30, 30, 255));
-    let bar_index = systems.gfx.add_rect(bar_image, 0);
+    let bar_index = systems.gfx.add_rect(bar_image, 0, "Npc HP Bar".into());
     systems.gfx.set_visible(bar_index, false);
 
     let entity_name = create_label(
@@ -60,7 +60,7 @@ pub fn add_npc(
         Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
         Color::rgba(200, 40, 40, 255),
     );
-    let name_index = systems.gfx.add_text(entity_name, 1);
+    let name_index = systems.gfx.add_text(entity_name, 1, "Npc Name".into());
     let entitynamemap = EntityNameMap(name_index);
 
     let hpbar = HPBar {

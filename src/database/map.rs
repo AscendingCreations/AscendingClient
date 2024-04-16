@@ -134,7 +134,6 @@ impl MapData {
 
 pub fn load_file(x: i32, y: i32, group: u64) -> Result<MapData> {
     if !is_map_exist(x, y, group) {
-        println!("Map does not exist");
         return Ok(MapData::default(x, y, group));
     }
 

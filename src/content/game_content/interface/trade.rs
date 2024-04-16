@@ -71,7 +71,7 @@ impl Trade {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0);
+        let bg = systems.gfx.add_rect(rect, 0, "Trade Window".into());
         systems.gfx.set_visible(bg, false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
@@ -82,7 +82,8 @@ impl Trade {
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header = systems.gfx.add_rect(header_rect, 0);
+        let header =
+            systems.gfx.add_rect(header_rect, 0, "Trade Header".into());
         systems.gfx.set_visible(header, false);
 
         let text = create_label(
@@ -97,7 +98,8 @@ impl Trade {
             ),
             Color::rgba(200, 200, 200, 255),
         );
-        let header_text = systems.gfx.add_text(text, 1);
+        let header_text =
+            systems.gfx.add_text(text, 1, "Trade Header Text".into());
         systems
             .gfx
             .set_text(&mut systems.renderer, header_text, "Trade");
@@ -217,7 +219,8 @@ impl Trade {
                 ))
                 .set_size(Vec2::new(32.0, 32.0))
                 .set_color(Color::rgba(200, 200, 200, 255));
-            slot[index] = systems.gfx.add_rect(box_rect, 0);
+            slot[index] =
+                systems.gfx.add_rect(box_rect, 0, "Trade Slot BG".into());
             systems.gfx.set_visible(slot[index], false);
         });
         (MAX_TRADE_SLOT..MAX_TRADE_SLOT * 2).for_each(|index| {
@@ -235,7 +238,8 @@ impl Trade {
                 ))
                 .set_size(Vec2::new(32.0, 32.0))
                 .set_color(Color::rgba(200, 200, 200, 255));
-            slot[index] = systems.gfx.add_rect(box_rect, 0);
+            slot[index] =
+                systems.gfx.add_rect(box_rect, 0, "Trade Slot BG".into());
             systems.gfx.set_visible(slot[index], false);
         });
 
@@ -254,8 +258,8 @@ impl Trade {
                 detail_1,
             ));
         let name_bg = [
-            systems.gfx.add_rect(my_name_bg, 0),
-            systems.gfx.add_rect(their_name_bg, 0),
+            systems.gfx.add_rect(my_name_bg, 0, "Trade Name".into()),
+            systems.gfx.add_rect(their_name_bg, 0, "Trade Name".into()),
         ];
         systems.gfx.set_visible(name_bg[0], false);
         systems.gfx.set_visible(name_bg[1], false);
@@ -272,7 +276,8 @@ impl Trade {
             ),
             Color::rgba(220, 220, 220, 255),
         );
-        let my_status_text = systems.gfx.add_text(mystatus, 1);
+        let my_status_text =
+            systems.gfx.add_text(mystatus, 1, "Trade Status".into());
         systems.gfx.set_text(
             &mut systems.renderer,
             my_status_text,
@@ -291,7 +296,8 @@ impl Trade {
             ),
             Color::rgba(220, 220, 220, 255),
         );
-        let their_status_text = systems.gfx.add_text(theirstatus, 1);
+        let their_status_text =
+            systems.gfx.add_text(theirstatus, 1, "Trade Status".into());
         systems.gfx.set_text(
             &mut systems.renderer,
             their_status_text,
@@ -317,8 +323,14 @@ impl Trade {
         their_money_icon.hw = Vec2::new(20.0, 20.0);
         their_money_icon.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         let money_icon = [
-            systems.gfx.add_image(my_money_icon, 0),
-            systems.gfx.add_image(their_money_icon, 0),
+            systems
+                .gfx
+                .add_image(my_money_icon, 0, "Trade Money Icon".into()),
+            systems.gfx.add_image(
+                their_money_icon,
+                0,
+                "Trade Money Icon".into(),
+            ),
         ];
         systems.gfx.set_visible(money_icon[0], false);
         systems.gfx.set_visible(money_icon[1], false);
@@ -352,7 +364,10 @@ impl Trade {
             ),
             Color::rgba(200, 200, 200, 255),
         );
-        let their_money = systems.gfx.add_text(their_money_text, 1);
+        let their_money =
+            systems
+                .gfx
+                .add_text(their_money_text, 1, "Trade Money".into());
         systems
             .gfx
             .set_text(&mut systems.renderer, their_money, "0");
@@ -370,7 +385,10 @@ impl Trade {
             ),
             Color::rgba(220, 220, 220, 255),
         );
-        let status_text = systems.gfx.add_text(statustext, 1);
+        let status_text =
+            systems
+                .gfx
+                .add_text(statustext, 1, "Trade Main Status".into());
         systems.gfx.set_text(&mut systems.renderer, status_text, "");
         systems.gfx.center_text(status_text);
         systems.gfx.set_visible(status_text, false);
@@ -1037,7 +1055,7 @@ impl Trade {
         image.hw = Vec2::new(20.0, 20.0);
         image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         image.pos = Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, item_zpos);
-        let image_index = systems.gfx.add_image(image, 0);
+        let image_index = systems.gfx.add_image(image, 0, "Trade Item".into());
         systems.gfx.set_visible(image_index, self.visible);
 
         item_slot[slot].image = image_index;
@@ -1052,7 +1070,8 @@ impl Trade {
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
-            let text_bg_index = systems.gfx.add_rect(text_bg, 1);
+            let text_bg_index =
+                systems.gfx.add_rect(text_bg, 1, "Trade Item BG".into());
             systems.gfx.set_visible(text_bg_index, self.visible);
 
             let text_size = Vec2::new(32.0, 16.0);
@@ -1068,7 +1087,8 @@ impl Trade {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let text_index = systems.gfx.add_text(text, 2);
+            let text_index =
+                systems.gfx.add_text(text, 2, "Trade Item Amount".into());
             systems.gfx.set_text(
                 &mut systems.renderer,
                 text_index,

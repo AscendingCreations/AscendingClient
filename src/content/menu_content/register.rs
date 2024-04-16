@@ -13,7 +13,11 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         .set_color(Color::rgba(160, 160, 160, 255))
         .set_border_color(Color::rgba(10, 10, 10, 255))
         .set_border_width(1.0);
-    content.window.push(systems.gfx.add_rect(menu_rect, 0));
+    content.window.push(systems.gfx.add_rect(
+        menu_rect,
+        0,
+        "Register Window".into(),
+    ));
 
     let mut header_rect = Rect::new(&mut systems.renderer, 0);
     header_rect
@@ -24,7 +28,11 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         ))
         .set_size(Vec2::new(size.x, 30.0))
         .set_color(Color::rgba(120, 120, 120, 255));
-    content.window.push(systems.gfx.add_rect(header_rect, 0));
+    content.window.push(systems.gfx.add_rect(
+        header_rect,
+        0,
+        "Register Header".into(),
+    ));
 
     let header_text = create_label(
         systems,
@@ -33,7 +41,10 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         Bounds::new(pos.x, pos.y + 348.0, pos.x + size.x, pos.y + 368.0),
         Color::rgba(240, 240, 240, 255),
     );
-    let text_index = systems.gfx.add_text(header_text, 1);
+    let text_index =
+        systems
+            .gfx
+            .add_text(header_text, 1, "Register Header Text".into());
     systems
         .gfx
         .set_text(&mut systems.renderer, text_index, "Register Window");
@@ -66,8 +77,16 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
             ))
             .set_size(Vec2::new(184.0, 24.0))
             .set_color(Color::rgba(90, 90, 90, 255));
-        content.window.push(systems.gfx.add_rect(labelbox, 0));
-        content.window.push(systems.gfx.add_rect(textbox_bg, 0));
+        content.window.push(systems.gfx.add_rect(
+            labelbox,
+            0,
+            "Register Labelbox".into(),
+        ));
+        content.window.push(systems.gfx.add_rect(
+            textbox_bg,
+            0,
+            "Register Textbox BG".into(),
+        ));
 
         let tpos = Vec2::new(pos.x + 27.0, pos.y + addy + 2.0);
         let text = create_label(
@@ -77,7 +96,7 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
             Bounds::new(tpos.x, tpos.y, tpos.x + 110.0, tpos.y + 20.0),
             Color::rgba(100, 100, 100, 255),
         );
-        let textindex = systems.gfx.add_text(text, 1);
+        let textindex = systems.gfx.add_text(text, 1, "Register Label".into());
         let msg = match index {
             1 => "Retype",
             2 => "Password",
@@ -126,7 +145,11 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         ))
         .set_size(Vec2::new(80.0, 80.0))
         .set_color(Color::rgba(120, 120, 120, 255));
-    content.window.push(systems.gfx.add_rect(sprite_bg, 0));
+    content.window.push(systems.gfx.add_rect(
+        sprite_bg,
+        0,
+        "Register Sprite BG".into(),
+    ));
 
     let mut image = Image::new(
         Some(systems.resource.players[0].allocation),
@@ -137,7 +160,11 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
     image.pos =
         Vec3::new(pos.x + 34.0, pos.y + 98.0, ORDER_MENU_WINDOW_CONTENT_DETAIL);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
-    content.image.push(systems.gfx.add_image(image, 0));
+    content.image.push(systems.gfx.add_image(
+        image,
+        0,
+        "Register Sprite".into(),
+    ));
 
     let sprite_label = create_label(
         systems,
@@ -150,7 +177,10 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         Bounds::new(pos.x + 142.0, pos.y + 148.0, pos.x + 306.0, pos.y + 168.0),
         Color::rgba(80, 80, 80, 255),
     );
-    let sprite_index = systems.gfx.add_text(sprite_label, 1);
+    let sprite_index =
+        systems
+            .gfx
+            .add_text(sprite_label, 1, "Register Sprite Label".into());
     systems.gfx.set_text(
         &mut systems.renderer,
         sprite_index,
@@ -299,7 +329,11 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         Bounds::new(pos.x + 170.0, pos.y + 120.0, pos.x + 278.0, pos.y + 140.0),
         Color::rgba(80, 80, 80, 255),
     );
-    let sprite_number = systems.gfx.add_text(sprite_number_text, 1);
+    let sprite_number = systems.gfx.add_text(
+        sprite_number_text,
+        1,
+        "Register Sprite Number".into(),
+    );
     systems
         .gfx
         .set_text(&mut systems.renderer, sprite_number, "0");

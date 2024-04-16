@@ -19,7 +19,7 @@ impl Target {
         image.hw = Vec2::new(40.0, 40.0);
         image.pos = Vec3::new(0.0, 0.0, ORDER_TARGET);
         image.uv = Vec4::new(0.0, 40.0, 40.0, 40.0);
-        let img_index = systems.gfx.add_image(image, 0);
+        let img_index = systems.gfx.add_image(image, 0, "Target Image".into());
         systems.gfx.set_visible(img_index, false);
 
         Target {
@@ -37,7 +37,7 @@ impl Target {
         image.hw = Vec2::new(40.0, 40.0);
         image.pos = Vec3::new(0.0, 0.0, ORDER_TARGET);
         image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
-        let img_index = systems.gfx.add_image(image, 0);
+        let img_index = systems.gfx.add_image(image, 0, "Target Image".into());
         systems.gfx.set_visible(img_index, false);
 
         self.img_index = img_index;

@@ -67,7 +67,7 @@ impl Storage {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0);
+        let bg = systems.gfx.add_rect(rect, 0, "Storage BG".into());
         systems.gfx.set_visible(bg, false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
@@ -78,7 +78,10 @@ impl Storage {
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header = systems.gfx.add_rect(header_rect, 0);
+        let header =
+            systems
+                .gfx
+                .add_rect(header_rect, 0, "Storage Header".into());
         systems.gfx.set_visible(header, false);
 
         let text = create_label(
@@ -88,7 +91,8 @@ impl Storage {
             Bounds::new(pos.x, pos.y + 279.0, pos.x + w_size.x, pos.y + 299.0),
             Color::rgba(200, 200, 200, 255),
         );
-        let header_text = systems.gfx.add_text(text, 1);
+        let header_text =
+            systems.gfx.add_text(text, 1, "Storage Header Text".into());
         systems
             .gfx
             .set_text(&mut systems.renderer, header_text, "Storage");
@@ -110,7 +114,7 @@ impl Storage {
                 ))
                 .set_size(Vec2::new(32.0, 32.0))
                 .set_color(Color::rgba(200, 200, 200, 255));
-            *slot = systems.gfx.add_rect(box_rect, 0);
+            *slot = systems.gfx.add_rect(box_rect, 0, "Storage Slot BG".into());
             systems.gfx.set_visible(*slot, false);
         }
 
@@ -351,7 +355,8 @@ impl Storage {
         image.hw = Vec2::new(20.0, 20.0);
         image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         image.pos = Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, item_zpos);
-        let image_index = systems.gfx.add_image(image, 0);
+        let image_index =
+            systems.gfx.add_image(image, 0, "Storage Item".into());
         systems.gfx.set_visible(image_index, self.visible);
 
         self.item_slot[slot].image = image_index;
@@ -366,7 +371,8 @@ impl Storage {
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
-            let text_bg_index = systems.gfx.add_rect(text_bg, 1);
+            let text_bg_index =
+                systems.gfx.add_rect(text_bg, 1, "Storage Amount BG".into());
             systems.gfx.set_visible(text_bg_index, self.visible);
 
             let text_size = Vec2::new(32.0, 16.0);
@@ -382,7 +388,8 @@ impl Storage {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let text_index = systems.gfx.add_text(text, 2);
+            let text_index =
+                systems.gfx.add_text(text, 2, "Storage Amount".into());
             systems.gfx.set_text(
                 &mut systems.renderer,
                 text_index,

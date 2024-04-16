@@ -88,7 +88,11 @@ impl Scrollbar {
                 scrollbg_rect
                     .set_size(Vec2::new(bar_size + 2.0, thickness + 2.0));
             }
-            let bg = systems.gfx.add_rect(scrollbg_rect, data.render_layer);
+            let bg = systems.gfx.add_rect(
+                scrollbg_rect,
+                data.render_layer,
+                "Scrollbar BG".into(),
+            );
             systems.gfx.set_visible(bg, visible);
             Some(bg)
         } else {
@@ -143,7 +147,11 @@ impl Scrollbar {
                 .set_border_width(1.0)
                 .set_border_color(scrollbar.border_color);
         }
-        let scroll = systems.gfx.add_rect(scroll_rect, scrollbar.render_layer);
+        let scroll = systems.gfx.add_rect(
+            scroll_rect,
+            scrollbar.render_layer,
+            "Scrollbar Scroll".into(),
+        );
         systems.gfx.set_visible(scroll, visible);
 
         Scrollbar {

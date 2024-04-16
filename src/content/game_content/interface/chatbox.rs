@@ -48,7 +48,7 @@ impl ChatTab {
             .set_border_width(1.0)
             .set_color(Color::rgba(100, 100, 100, 255))
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let bg = systems.gfx.add_rect(bg_rect, 0);
+        let bg = systems.gfx.add_rect(bg_rect, 0, "ChatTab BG".into());
         systems.gfx.set_visible(bg, true);
 
         let text_data = create_label(
@@ -58,7 +58,7 @@ impl ChatTab {
             Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + 20.0),
             Color::rgba(255, 255, 255, 255),
         );
-        let text = systems.gfx.add_text(text_data, 1);
+        let text = systems.gfx.add_text(text_data, 1, "ChatTab Text".into());
         systems.gfx.set_text(&mut systems.renderer, text, &msg);
         systems.gfx.center_text(text);
         systems.gfx.set_visible(text, true);
@@ -204,7 +204,7 @@ impl Chatbox {
             .set_color(Color::rgba(120, 120, 120, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let window = systems.gfx.add_rect(window_rect, 0);
+        let window = systems.gfx.add_rect(window_rect, 0, "Chatbox BG".into());
 
         let mut textbox_rect = Rect::new(&mut systems.renderer, 0);
         let textbox_zpos = detail_1;
@@ -212,7 +212,10 @@ impl Chatbox {
             .set_position(Vec3::new(w_pos.x + 5.0, w_pos.y + 5.0, textbox_zpos))
             .set_size(Vec2::new(w_size.x - 75.0, 24.0))
             .set_color(Color::rgba(80, 80, 80, 255));
-        let textbox_bg = systems.gfx.add_rect(textbox_rect, 0);
+        let textbox_bg =
+            systems
+                .gfx
+                .add_rect(textbox_rect, 0, "Chatbox Textbox BG".into());
 
         let mut chatarea_rect = Rect::new(&mut systems.renderer, 0);
         let chatarea_zorder = detail_1;
@@ -226,7 +229,10 @@ impl Chatbox {
             ))
             .set_size(chat_areasize)
             .set_color(Color::rgba(140, 140, 140, 255));
-        let chatarea_bg = systems.gfx.add_rect(chatarea_rect, 0);
+        let chatarea_bg =
+            systems
+                .gfx
+                .add_rect(chatarea_rect, 0, "Chatbox Chat Area".into());
         let chat_zorder = detail_3;
         let chat_bounds = Bounds::new(
             chat_area_pos.x,
@@ -416,7 +422,10 @@ impl Chatbox {
             .set_position(Vec3::new(0.0, 0.0, detail_3))
             .set_size(Vec2::new(0.0, 0.0))
             .set_color(Color::rgba(60, 60, 60, 255));
-        let msg_selection = systems.gfx.add_rect(selection_rect, 0);
+        let msg_selection =
+            systems
+                .gfx
+                .add_rect(selection_rect, 0, "Chatbox Selection".into());
         systems.gfx.set_visible(msg_selection, false);
 
         Chatbox {
@@ -846,7 +855,7 @@ impl Chatbox {
             )
             .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
 
-        let text = systems.gfx.add_text(text_data, 1);
+        let text = systems.gfx.add_text(text_data, 1, "Chatbox Text".into());
         let msg_color = Attrs::new().color(msg.1);
 
         let msg = if let Some(header) = header_msg {

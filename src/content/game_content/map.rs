@@ -49,7 +49,7 @@ impl MapContent {
             let mut mapdata = Map::new(&mut systems.renderer, TILE_SIZE as u32);
             mapdata.pos = get_mapindex_base_pos(i);
             mapdata.can_render = true;
-            *index = (systems.gfx.add_map(mapdata, 0), i);
+            *index = (systems.gfx.add_map(mapdata, 0, "Map".into()), i);
         }
 
         Self {
@@ -66,7 +66,7 @@ impl MapContent {
             let mut mapdata = Map::new(&mut systems.renderer, TILE_SIZE as u32);
             mapdata.pos = get_mapindex_base_pos(i);
             mapdata.can_render = true;
-            self.index[i] = (systems.gfx.add_map(mapdata, 0), i);
+            self.index[i] = (systems.gfx.add_map(mapdata, 0, "Map".into()), i);
         }
         self.map_pos = MapPosition::default();
     }

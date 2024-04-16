@@ -1,3 +1,4 @@
+use crate::info;
 use cosmic_text::Attrs;
 use graphics::*;
 use slab::Slab;
@@ -13,6 +14,7 @@ pub struct Gfx {
     pub gfx: GfxType,
     pub layer: usize,
     pub visible: bool,
+    pub identifier: String,
 }
 
 #[derive(Default)]
@@ -29,38 +31,68 @@ impl GfxCollection {
         self.collection.len()
     }
 
-    pub fn add_image(&mut self, image: Image, layer: usize) -> usize {
+    pub fn print_details(&self) {
+        for data in self.collection.iter() {
+            info!("Data {:?} Type: {:?}", data.0, data.1.identifier);
+        }
+    }
+
+    pub fn add_image(
+        &mut self,
+        image: Image,
+        layer: usize,
+        identifier: String,
+    ) -> usize {
         let gfx = Gfx {
             gfx: GfxType::Image(Box::new(image)),
             layer,
             visible: true,
+            identifier,
         };
         self.collection.insert(gfx)
     }
 
-    pub fn add_rect(&mut self, rect: Rect, layer: usize) -> usize {
+    pub fn add_rect(
+        &mut self,
+        rect: Rect,
+        layer: usize,
+        identifier: String,
+    ) -> usize {
         let gfx = Gfx {
             gfx: GfxType::Rect(Box::new(rect)),
             layer,
             visible: true,
+            identifier,
         };
         self.collection.insert(gfx)
     }
 
-    pub fn add_text(&mut self, text: Text, layer: usize) -> usize {
+    pub fn add_text(
+        &mut self,
+        text: Text,
+        layer: usize,
+        identifier: String,
+    ) -> usize {
         let gfx = Gfx {
             gfx: GfxType::Text(Box::new(text)),
             layer,
             visible: true,
+            identifier,
         };
         self.collection.insert(gfx)
     }
 
-    pub fn add_map(&mut self, map: Map, layer: usize) -> usize {
+    pub fn add_map(
+        &mut self,
+        map: Map,
+        layer: usize,
+        identifier: String,
+    ) -> usize {
         let gfx = Gfx {
             gfx: GfxType::Map(Box::new(map)),
             layer,
             visible: true,
+            identifier,
         };
         self.collection.insert(gfx)
     }

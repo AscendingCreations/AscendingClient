@@ -5,6 +5,7 @@ pub mod game_content;
 pub mod menu_content;
 
 pub use game_content::*;
+use log::info;
 pub use menu_content::*;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -26,11 +27,8 @@ impl Content {
             menu_content: MenuContent::new(systems),
             game_content: GameContent::new(systems),
         };
-
         content.menu_content.show(systems);
         content.game_content.hide(world, systems)?;
-
-        println!("Gfx Count: {:?}", systems.gfx.count_collection());
 
         Ok(content)
     }
@@ -63,8 +61,7 @@ impl Content {
                 self.menu_content.show(systems);
             }
         }
-
-        println!("Gfx Count: {:?}", systems.gfx.count_collection());
+        info!("GFX Loaded Count: {:?}", systems.gfx.count_collection());
         Ok(())
     }
 }

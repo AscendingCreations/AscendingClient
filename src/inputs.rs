@@ -74,5 +74,14 @@ pub fn handle_key_input(
             );
         }
     }
+
+    if pressed {
+        #[allow(clippy::single_match)]
+        match key {
+            Key::Named(NamedKey::F1) => systems.gfx.print_details(),
+            _ => {}
+        }
+    }
+
     Ok(())
 }

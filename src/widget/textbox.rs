@@ -71,7 +71,7 @@ impl Textbox {
 
         let mut rect = Rect::new(&mut systems.renderer, 0);
         rect.set_color(bg_color).set_position(pos).set_size(size);
-        let bg = systems.gfx.add_rect(rect, 0);
+        let bg = systems.gfx.add_rect(rect, 0, "Textbox BG".into());
         systems.gfx.set_visible(bg, false);
 
         let mut select_rect = Rect::new(&mut systems.renderer, 0);
@@ -79,7 +79,10 @@ impl Textbox {
             .set_color(selection_bg_color)
             .set_position(Vec3::new(pos.x, pos.y, detail_1))
             .set_size(Vec2::new(0.0, size.y));
-        let selection = systems.gfx.add_rect(select_rect, 0);
+        let selection =
+            systems
+                .gfx
+                .add_rect(select_rect, 0, "Textbox Select".into());
         systems.gfx.set_visible(selection, visible);
 
         let mut text_data = create_label(
@@ -90,7 +93,11 @@ impl Textbox {
             text_color,
         );
         text_data.set_wrap(&mut systems.renderer, cosmic_text::Wrap::None);
-        let text_index = systems.gfx.add_text(text_data, render_layer);
+        let text_index = systems.gfx.add_text(
+            text_data,
+            render_layer,
+            "Textbox Text".into(),
+        );
         systems.gfx.set_visible(text_index, visible);
 
         let mut caret_rect = Rect::new(&mut systems.renderer, 0);
@@ -98,7 +105,7 @@ impl Textbox {
             .set_size(Vec2::new(2.0, size.y))
             .set_position(Vec3::new(pos.x, pos.y, detail_2))
             .set_color(text_color);
-        let caret = systems.gfx.add_rect(caret_rect, 0);
+        let caret = systems.gfx.add_rect(caret_rect, 0, "Textbox Caret".into());
         systems.gfx.set_visible(caret, false);
 
         let mut disable_selection = false;

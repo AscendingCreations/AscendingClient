@@ -319,7 +319,7 @@ async fn main() -> Result<()> {
         Bounds::new(txt_pos.x, txt_pos.y, txt_pos.x + 100.0, txt_pos.y + 20.0),
         Color::rgba(255, 255, 255, 255),
     );
-    let text = systems.gfx.add_text(txt, 4);
+    let text = systems.gfx.add_text(txt, 4, "FPS".into());
 
     // Allow the window to be seen. hiding it then making visible speeds up
     // load times.

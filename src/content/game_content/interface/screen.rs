@@ -24,7 +24,7 @@ impl VitalBar {
             .set_color(Color::rgba(180, 180, 180, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let bg = systems.gfx.add_rect(bg_rect, 0);
+        let bg = systems.gfx.add_rect(bg_rect, 0, "Vital Window".into());
 
         let bar_size = size.x - 12.0;
 
@@ -48,7 +48,7 @@ impl VitalBar {
                 .set_color(Color::rgba(100, 100, 100, 255))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(60, 60, 60, 255));
-            bar_bg[i] = systems.gfx.add_rect(bg_rect, 0);
+            bar_bg[i] = systems.gfx.add_rect(bg_rect, 0, "Vital BG".into());
 
             let mut bar_rect = Rect::new(&mut systems.renderer, 0);
             bar_rect
@@ -59,7 +59,7 @@ impl VitalBar {
                 ))
                 .set_size(Vec2::new(size.x - 12.0, height - 2.0))
                 .set_color(color);
-            bar[i] = systems.gfx.add_rect(bar_rect, 0);
+            bar[i] = systems.gfx.add_rect(bar_rect, 0, "Vital Bar".into());
         }
 
         VitalBar {

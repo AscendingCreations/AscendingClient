@@ -45,7 +45,7 @@ impl MapItem {
         );
         image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         image.hw = Vec2::new(20.0, 20.0);
-        let index = systems.gfx.add_image(image, 0);
+        let index = systems.gfx.add_image(image, 0, "Map Item".into());
         systems.gfx.set_visible(index, false);
 
         let component1 = (

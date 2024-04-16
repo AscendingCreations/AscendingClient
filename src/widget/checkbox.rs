@@ -120,7 +120,11 @@ impl Checkbox {
                     rect.set_border_width(1.0)
                         .set_border_color(data.border_color);
                 }
-                systems.gfx.add_rect(rect, render_layer)
+                systems.gfx.add_rect(
+                    rect,
+                    render_layer,
+                    "Checkbox Image".into(),
+                )
             }
             CheckboxType::Image(data) => {
                 let mut img =
@@ -128,7 +132,11 @@ impl Checkbox {
                 img.pos = Vec3::new(pos.x, pos.y, z_order);
                 img.hw = box_size;
                 img.uv = Vec4::new(0.0, 0.0, box_size.x, box_size.y);
-                systems.gfx.add_image(img, render_layer)
+                systems.gfx.add_image(
+                    img,
+                    render_layer,
+                    "Checkbox Image".into(),
+                )
             }
         };
         systems.gfx.set_visible(image, visible);
@@ -148,7 +156,11 @@ impl Checkbox {
                     rect.set_border_width(1.0)
                         .set_border_color(data.border_color);
                 }
-                systems.gfx.add_rect(rect, render_layer)
+                systems.gfx.add_rect(
+                    rect,
+                    render_layer,
+                    "Checkbox Check".into(),
+                )
             }
             CheckType::SetImage(data) => {
                 let mut img =
@@ -161,7 +173,11 @@ impl Checkbox {
                 img.hw = data.size;
                 img.uv =
                     Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
-                systems.gfx.add_image(img, render_layer)
+                systems.gfx.add_image(
+                    img,
+                    render_layer,
+                    "Checkbox Check".into(),
+                )
             }
         };
         systems.gfx.set_visible(check_image, false);
@@ -186,7 +202,11 @@ impl Checkbox {
                 ),
                 data.color,
             );
-            let txt_index = systems.gfx.add_text(txt, data.render_layer);
+            let txt_index = systems.gfx.add_text(
+                txt,
+                data.render_layer,
+                "Checkbox Text".into(),
+            );
             systems
                 .gfx
                 .set_text(&mut systems.renderer, txt_index, &data.text);

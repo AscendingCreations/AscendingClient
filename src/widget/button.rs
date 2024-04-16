@@ -111,7 +111,11 @@ impl Button {
                     rect.set_border_width(1.0)
                         .set_border_color(data.border_color);
                 }
-                let rect_index = systems.gfx.add_rect(rect, render_layer);
+                let rect_index = systems.gfx.add_rect(
+                    rect,
+                    render_layer,
+                    "Button Image".into(),
+                );
                 systems.gfx.set_visible(rect_index, visible);
                 Some(rect_index)
             }
@@ -125,7 +129,11 @@ impl Button {
                 );
                 image.hw = size;
                 image.uv = Vec4::new(0.0, 0.0, size.x, size.y);
-                let image_index = systems.gfx.add_image(image, render_layer);
+                let image_index = systems.gfx.add_image(
+                    image,
+                    render_layer,
+                    "Button Image".into(),
+                );
                 systems.gfx.set_visible(image_index, visible);
                 Some(image_index)
             }
@@ -148,7 +156,11 @@ impl Button {
                 image.hw = data.size;
                 image.uv =
                     Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
-                let image_index = systems.gfx.add_image(image, render_layer);
+                let image_index = systems.gfx.add_image(
+                    image,
+                    render_layer,
+                    "Button Content".into(),
+                );
                 systems.gfx.set_visible(image_index, visible);
                 Some(image_index)
             }
@@ -172,7 +184,11 @@ impl Button {
                     ),
                     data.color,
                 );
-                let index = systems.gfx.add_text(text, data.render_layer);
+                let index = systems.gfx.add_text(
+                    text,
+                    data.render_layer,
+                    "Button Content".into(),
+                );
                 systems
                     .gfx
                     .set_text(&mut systems.renderer, index, &data.text);

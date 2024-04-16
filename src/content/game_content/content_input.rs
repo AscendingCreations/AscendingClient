@@ -111,20 +111,6 @@ impl GameContent {
             }
             _ => {}
         }
-
-        if pressed {
-            #[allow(clippy::single_match)]
-            match key {
-                Key::Named(NamedKey::F1) => {
-                    content.switch_content(
-                        world,
-                        systems,
-                        ContentType::Menu,
-                    )?;
-                }
-                _ => {}
-            }
-        }
         Ok(())
     }
 }

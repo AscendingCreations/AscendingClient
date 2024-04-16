@@ -161,7 +161,10 @@ impl Alert {
         header_text.size =
             Vec2::new(header_text_size.x, header_text_size.y + 4.0);
         header_text.changed = true;
-        let header_text_index = systems.gfx.add_text(header_text, 5);
+        let header_text_index =
+            systems
+                .gfx
+                .add_text(header_text, 5, "Alert Header Text".into());
         if alert_type == AlertType::Input {
             systems.gfx.center_text(header_text_index);
         }
@@ -180,8 +183,13 @@ impl Alert {
             .set_border_color(Color::rgba(40, 40, 40, 255))
             .set_color(Color::rgba(160, 160, 160, 255));
 
-        self.window.push(systems.gfx.add_rect(bg, 3));
-        self.window.push(systems.gfx.add_rect(window, 4));
+        self.window
+            .push(systems.gfx.add_rect(bg, 3, "Alert BG".into()));
+        self.window.push(systems.gfx.add_rect(
+            window,
+            4,
+            "Alert Window".into(),
+        ));
 
         if alert_type != AlertType::Input {
             let pos = Vec2::new(
@@ -197,7 +205,8 @@ impl Alert {
                 )));
             text.size = Vec2::new(text_size.x, text_size.y + 10.0);
             text.changed = true;
-            self.text.push(systems.gfx.add_text(text, 5));
+            self.text
+                .push(systems.gfx.add_text(text, 5, "Alert Text".into()));
 
             let mut header = Rect::new(&mut systems.renderer, 0);
             header
@@ -208,7 +217,11 @@ impl Alert {
                 ))
                 .set_size(Vec2::new(w_size.x, 30.0))
                 .set_color(Color::rgba(100, 100, 100, 255));
-            self.window.push(systems.gfx.add_rect(header, 4));
+            self.window.push(systems.gfx.add_rect(
+                header,
+                4,
+                "Alert Header BG".into(),
+            ));
         }
 
         let button_detail = ButtonRect {
@@ -328,7 +341,11 @@ impl Alert {
                     vec![],
                 );
                 self.input_box = Some(AlertTextbox {
-                    bg: systems.gfx.add_rect(textbox_bg, 4),
+                    bg: systems.gfx.add_rect(
+                        textbox_bg,
+                        4,
+                        "Alert Input BG".into(),
+                    ),
                     textbox,
                     selected: false,
                     numeric_only,
@@ -515,7 +532,7 @@ impl Alert {
         &mut self,
         systems: &mut SystemHolder,
         socket: &mut Socket,
-        elwt: &winit::event_loop::EventLoopWindowTarget<()>,
+        _elwt: &winit::event_loop::EventLoopWindowTarget<()>,
         index: usize,
     ) -> Result<()> {
         match self.alert_type {
