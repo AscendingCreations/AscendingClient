@@ -569,27 +569,43 @@ pub fn update_npc(
 }
 
 pub fn finalize_entity(world: &mut World, systems: &mut SystemHolder) {
-    for (_entity, (worldentitytype, sprite, finalized, hpbar)) in world
-        .query_mut::<(
-            &WorldEntityType,
-            &SpriteIndex,
-            &mut Finalized,
-            Option<&HPBar>,
-        )>()
-        .into_iter()
-        .filter(|(_, (_, _, finalized, _))| !finalized.0)
+    for (_entity, (worldentitytype, sprite, finalized, hpbar, entitynamemap)) in
+        world
+            .query_mut::<(
+                &WorldEntityType,
+                &SpriteIndex,
+                &mut Finalized,
+                Option<&HPBar>,
+                Option<&EntityNameMap>,
+            )>()
+            .into_iter()
+            .filter(|(_, (_, _, finalized, _, _))| !finalized.0)
     {
         match worldentitytype {
             WorldEntityType::Player => {
                 if let Some(hp_bar) = hpbar {
-                    player_finalized_data(systems, sprite.0, hp_bar);
-                    finalized.0 = true;
+                    if let Some(nameindex) = entitynamemap {
+                        player_finalized_data(
+                            systems,
+                            sprite.0,
+                            nameindex.0,
+                            hp_bar,
+                        );
+                        finalized.0 = true;
+                    }
                 }
             }
             WorldEntityType::Npc => {
                 if let Some(hp_bar) = hpbar {
-                    npc_finalized_data(systems, sprite.0, hp_bar);
-                    finalized.0 = true;
+                    if let Some(nameindex) = entitynamemap {
+                        npc_finalized_data(
+                            systems,
+                            sprite.0,
+                            nameindex.0,
+                            hp_bar,
+                        );
+                        finalized.0 = true;
+                    }
                 }
             }
             WorldEntityType::MapItem => {

@@ -350,8 +350,7 @@ impl Checkbox {
         }
         self.in_click = state;
         if self.in_click {
-            self.value = !self.value;
-            systems.gfx.set_visible(self.check_image, self.value);
+            self.set_value(systems, !self.value);
         }
 
         if self.in_click {
@@ -360,6 +359,16 @@ impl Checkbox {
             self.apply_hover(systems);
         } else {
             self.apply_normal(systems);
+        }
+    }
+
+    pub fn set_value(&mut self, systems: &mut SystemHolder, value: bool) {
+        if self.value == value {
+            return;
+        }
+        self.value = value;
+        if self.visible {
+            systems.gfx.set_visible(self.check_image, self.value);
         }
     }
 

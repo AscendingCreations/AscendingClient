@@ -100,6 +100,7 @@ pub struct SystemHolder {
     pub audio: Audio,
     pub caret: TextCaret,
     pub try_once: bool,
+    pub fps: usize,
 }
 
 pub struct State<Controls>

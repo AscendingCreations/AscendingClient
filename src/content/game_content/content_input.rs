@@ -43,6 +43,7 @@ impl GameContent {
             socket,
             alert,
             input_type.clone(),
+            tooltip,
             screen_pos,
         )? {
             return Ok(());

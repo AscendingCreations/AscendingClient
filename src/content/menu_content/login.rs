@@ -246,6 +246,6 @@ pub fn create_login(systems: &mut SystemHolder, content: &mut MenuContent) {
         true,
         None,
     );
-    checkbox.set_click(systems, systems.config.save_password);
+    checkbox.set_value(systems, systems.config.save_password);
     content.checkbox.push(checkbox);
 }

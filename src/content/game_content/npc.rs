@@ -61,6 +61,7 @@ pub fn add_npc(
         Color::rgba(200, 40, 40, 255),
     );
     let name_index = systems.gfx.add_text(entity_name, 1, "Npc Name".into());
+    systems.gfx.set_visible(name_index, false);
     let entitynamemap = EntityNameMap(name_index);
 
     let hpbar = HPBar {
@@ -121,16 +122,19 @@ pub fn npc_finalized(
     }
     let npc_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     let hpbar = world.get_or_err::<HPBar>(entity)?;
-    npc_finalized_data(systems, npc_sprite, &hpbar);
+    let name = world.get_or_err::<EntityNameMap>(entity)?.0;
+    npc_finalized_data(systems, npc_sprite, name, &hpbar);
     Ok(())
 }
 
 pub fn npc_finalized_data(
     systems: &mut SystemHolder,
     sprite: usize,
+    name: usize,
     hpbar: &HPBar,
 ) {
     systems.gfx.set_visible(sprite, true);
+    systems.gfx.set_visible(name, true);
 
     systems.gfx.set_visible(hpbar.bg_index, hpbar.visible);
     systems.gfx.set_visible(hpbar.bar_index, hpbar.visible);

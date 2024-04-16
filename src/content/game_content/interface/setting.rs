@@ -10,6 +10,7 @@ pub struct Setting {
     pub sfx_scroll: Scrollbar,
     pub bgm_scroll: Scrollbar,
     button: Vec<Button>,
+    checkbox: Vec<Checkbox>,
     label: Vec<usize>,
     sfx_label: usize,
     bgm_label: usize,
@@ -23,6 +24,7 @@ pub struct Setting {
     header_pos: Vec2,
     header_size: Vec2,
     pub did_button_click: bool,
+    pub did_checkbox_click: bool,
 
     min_bound: Vec2,
     max_bound: Vec2,
@@ -245,6 +247,52 @@ impl Setting {
         );
         systems.gfx.set_visible(sfx_label, false);
 
+        let mut checkbox = vec![Checkbox::new(
+            systems,
+            CheckboxType::Rect(CheckboxRect {
+                rect_color: Color::rgba(100, 100, 100, 255),
+                got_border: true,
+                border_color: Color::rgba(50, 50, 50, 255),
+                border_radius: 2.0,
+                hover_change: CheckboxChangeType::ColorChange(Color::rgba(
+                    140, 140, 140, 255,
+                )),
+                click_change: CheckboxChangeType::ColorChange(Color::rgba(
+                    70, 70, 70, 255,
+                )),
+            }),
+            CheckType::SetRect(CheckRect {
+                rect_color: Color::rgba(200, 200, 200, 255),
+                got_border: false,
+                border_color: Color::rgba(255, 255, 255, 255),
+                border_radius: 2.0,
+                pos: Vec2::new(5.0, 5.0),
+                size: Vec2::new(14.0, 14.0),
+            }),
+            Vec2::new(w_pos.x, w_pos.y),
+            Vec2::new(10.0, w_size.y - 130.0),
+            detail_1,
+            (0.0001, 4),
+            Vec2::new(24.0, 24.0),
+            0,
+            Some(CheckboxText {
+                text: "Show FPS?".to_string(),
+                offset_pos: Vec2::new(3.0, 2.0),
+                render_layer: 1,
+                label_size: Vec2::new(180.0, 20.0),
+                color: Color::rgba(200, 200, 200, 255),
+                hover_change: CheckboxChangeType::ColorChange(Color::rgba(
+                    240, 240, 240, 255,
+                )),
+                click_change: CheckboxChangeType::ColorChange(Color::rgba(
+                    80, 80, 80, 255,
+                )),
+            }),
+            false,
+            None,
+        )];
+        checkbox[0].set_value(systems, systems.config.show_fps);
+
         Setting {
             visible: false,
             bg,
@@ -253,6 +301,7 @@ impl Setting {
             sfx_scroll,
             bgm_scroll,
             button,
+            checkbox,
             label,
             bgm_label,
             sfx_label,
@@ -266,6 +315,7 @@ impl Setting {
             header_pos,
             header_size,
             did_button_click: false,
+            did_checkbox_click: false,
 
             min_bound: Vec2::new(
                 systems.size.width - w_size.x - 1.0,
@@ -285,6 +335,9 @@ impl Setting {
         self.bgm_scroll.unload(systems);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
+        });
+        self.checkbox.iter_mut().for_each(|checkbox| {
+            checkbox.unload(systems);
         });
         self.label.iter().for_each(|text| {
             systems.gfx.remove_gfx(&mut systems.renderer, *text);
@@ -311,6 +364,9 @@ impl Setting {
         self.bgm_scroll.set_visible(systems, visible);
         self.button.iter_mut().for_each(|button| {
             button.set_visible(systems, visible);
+        });
+        self.checkbox.iter_mut().for_each(|checkbox| {
+            checkbox.set_visible(systems, visible);
         });
         self.label.iter().for_each(|text| {
             systems.gfx.set_visible(*text, visible);
@@ -381,6 +437,10 @@ impl Setting {
             button.set_z_order(systems, detail_2);
         });
 
+        self.checkbox.iter_mut().for_each(|checkbox| {
+            checkbox.set_z_order(systems, detail_1);
+        });
+
         self.label.iter().for_each(|text| {
             let mut pos = systems.gfx.get_pos(*text);
             pos.z = detail_1;
@@ -437,6 +497,10 @@ impl Setting {
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
+        });
+
+        self.checkbox.iter_mut().for_each(|checkbox| {
+            checkbox.set_pos(systems, self.pos);
         });
 
         self.sfx_scroll.set_pos(systems, self.pos);
@@ -562,6 +626,89 @@ impl Setting {
 
         self.button.iter_mut().for_each(|button| {
             button.set_click(systems, false);
+        });
+    }
+
+    pub fn hover_checkbox(
+        &mut self,
+        systems: &mut SystemHolder,
+        tooltip: &mut Tooltip,
+        screen_pos: Vec2,
+    ) {
+        for checkbox in self.checkbox.iter_mut() {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(
+                    checkbox.base_pos.x + checkbox.adjust_pos.x,
+                    checkbox.base_pos.y + checkbox.adjust_pos.y,
+                ),
+                Vec2::new(
+                    checkbox.box_size.x + checkbox.adjust_x,
+                    checkbox.box_size.y,
+                ),
+            ) {
+                checkbox.set_hover(systems, true);
+
+                if let Some(msg) = &checkbox.tooltip {
+                    tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                }
+            } else {
+                checkbox.set_hover(systems, false);
+            }
+        }
+    }
+
+    pub fn click_checkbox(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) -> Option<usize> {
+        let mut checkbox_found = None;
+        for (index, checkbox) in self.checkbox.iter_mut().enumerate() {
+            if is_within_area(
+                screen_pos,
+                Vec2::new(
+                    checkbox.base_pos.x + checkbox.adjust_pos.x,
+                    checkbox.base_pos.y + checkbox.adjust_pos.y,
+                ),
+                Vec2::new(
+                    checkbox.box_size.x + checkbox.adjust_x,
+                    checkbox.box_size.y,
+                ),
+            ) {
+                checkbox.set_click(systems, true);
+                checkbox_found = Some(index)
+            }
+        }
+        checkbox_found
+    }
+
+    pub fn trigger_checkbox(
+        &mut self,
+        systems: &mut SystemHolder,
+        index: usize,
+    ) {
+        #[allow(clippy::single_match)]
+        match index {
+            0 => {
+                systems.config.show_fps = self.checkbox[index].value;
+                systems
+                    .gfx
+                    .set_visible(systems.fps, systems.config.show_fps);
+                systems.config.save_config("settings.toml");
+            }
+            _ => {}
+        }
+    }
+
+    pub fn reset_checkbox(&mut self, systems: &mut SystemHolder) {
+        if !self.did_checkbox_click {
+            return;
+        }
+        self.did_checkbox_click = false;
+
+        self.checkbox.iter_mut().for_each(|checkbox| {
+            checkbox.set_click(systems, false);
         });
     }
 

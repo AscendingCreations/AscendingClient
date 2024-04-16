@@ -69,6 +69,7 @@ pub fn add_player(
         Color::rgba(230, 230, 230, 255),
     );
     let name_index = systems.gfx.add_text(entity_name, 1, "Player Name".into());
+    systems.gfx.set_visible(name_index, false);
     let entitynamemap = EntityNameMap(name_index);
 
     let hpbar = HPBar {
@@ -129,16 +130,19 @@ pub fn player_finalized(
     }
     let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     let hpbar = world.get_or_err::<HPBar>(entity)?;
-    player_finalized_data(systems, player_sprite, &hpbar);
+    let name = world.get_or_err::<EntityNameMap>(entity)?.0;
+    player_finalized_data(systems, player_sprite, name, &hpbar);
     Ok(())
 }
 
 pub fn player_finalized_data(
     systems: &mut SystemHolder,
     sprite: usize,
+    name: usize,
     hpbar: &HPBar,
 ) {
     systems.gfx.set_visible(sprite, true);
+    systems.gfx.set_visible(name, true);
 
     systems.gfx.set_visible(hpbar.bg_index, hpbar.visible);
     systems.gfx.set_visible(hpbar.bar_index, hpbar.visible);

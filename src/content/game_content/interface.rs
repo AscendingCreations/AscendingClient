@@ -146,6 +146,7 @@ impl Interface {
         socket: &mut Socket,
         alert: &mut Alert,
         input_type: MouseInputType,
+        tooltip: &mut Tooltip,
         screen_pos: Vec2,
     ) -> Result<bool> {
         let mut result = false;
@@ -163,6 +164,9 @@ impl Interface {
                 interface.setting.hover_scrollbar(systems, screen_pos);
                 interface.shop.hover_scrollbar(systems, screen_pos);
                 interface.chatbox.hover_scrollbar(systems, screen_pos);
+                interface
+                    .setting
+                    .hover_checkbox(systems, tooltip, screen_pos);
 
                 interface.inventory.hover_data(
                     systems,
@@ -286,6 +290,13 @@ impl Interface {
                             .setting
                             .bgm_scroll
                             .set_hold(systems, true, screen_pos);
+                        result = true;
+                    }
+                    if let Some(index) =
+                        interface.setting.click_checkbox(systems, screen_pos)
+                    {
+                        interface.setting.did_checkbox_click = true;
+                        interface.setting.trigger_checkbox(systems, index);
                         result = true;
                     }
                 }
@@ -530,6 +541,7 @@ impl Interface {
                 interface.storage.reset_buttons(systems);
                 interface.shop.reset_buttons(systems);
                 interface.trade.reset_buttons(systems);
+                interface.setting.reset_checkbox(systems);
             }
         }
         Ok(result)

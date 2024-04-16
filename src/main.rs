@@ -240,6 +240,7 @@ async fn main() -> Result<()> {
             timer: 0.0,
         },
         try_once: true,
+        fps: 0,
     };
     systems.fade.init_setup(
         &mut systems.renderer,
@@ -301,6 +302,7 @@ async fn main() -> Result<()> {
     );
     let text = systems.gfx.add_text(txt, 4, "FPS".into());
     systems.gfx.set_visible(text, systems.config.show_fps);
+    systems.fps = text;
 
     // Allow the window to be seen. hiding it then making visible speeds up
     // load times.
@@ -641,7 +643,7 @@ async fn main() -> Result<()> {
         if time < seconds {
             systems.gfx.set_rich_text(
                 &mut systems.renderer,
-                text,
+                systems.fps,
                 [
                     ("FPS: ", fps_label_color),
                     (&format!("{fps}"), fps_number_color),
