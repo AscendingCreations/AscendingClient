@@ -348,6 +348,12 @@ impl GameContent {
                 self.map.map_pos.group as u64,
                 to,
             ));
+            buffer.add_task(BufferTaskEnum::ApplyMapDirBlock(
+                mx,
+                my,
+                self.map.map_pos.group as u64,
+                to,
+            ));
             buffer.add_task(BufferTaskEnum::UnloadMap(
                 mx,
                 my,
