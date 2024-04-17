@@ -121,7 +121,7 @@ pub struct MapFade {
     show: bool,
     f_image: usize,
     f_tmr: f32,
-    f_alpha: isize,
+    pub f_alpha: isize,
     f_type: FadeType,
     f_end_index: usize,
     f_data: FadeData,
@@ -187,6 +187,23 @@ impl MapFade {
         }
 
         did_end
+    }
+
+    pub fn force_fade(
+        &mut self,
+        gfx_collection: &mut GfxCollection,
+        fade_type: FadeType,
+    ) {
+        match fade_type {
+            FadeType::In => {
+                self.f_alpha = 255;
+            }
+            FadeType::Out => {
+                self.f_alpha = 0;
+            }
+        }
+        gfx_collection
+            .set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
     }
 
     pub fn init_fade(

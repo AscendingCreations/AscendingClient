@@ -151,7 +151,7 @@ impl GameContent {
         Ok(())
     }
 
-    pub fn init_finalized_data(
+    pub fn finalize_entity(
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
@@ -167,6 +167,17 @@ impl GameContent {
             MapItem::finalized(world, systems, entity)?;
         }
         update_camera(world, self, systems, socket)?;
+
+        Ok(())
+    }
+
+    pub fn init_finalized_data(
+        &mut self,
+        world: &mut World,
+        systems: &mut SystemHolder,
+        socket: &mut Socket,
+    ) -> Result<()> {
+        self.finalize_entity(world, systems, socket)?;
 
         self.player_data.inventory.iter().enumerate().for_each(
             |(index, item)| {

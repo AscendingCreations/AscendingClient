@@ -462,6 +462,17 @@ pub fn handle_playerwarp(
             if myentity == entity {
                 if old_pos.map != pos.map {
                     content.game_content.init_map(systems, pos.map)?;
+                    content
+                        .game_content
+                        .finalize_entity(world, systems, socket)?;
+                }
+                if systems.map_fade.f_alpha > 0 {
+                    systems.map_fade.init_fade(
+                        &mut systems.gfx,
+                        FadeType::Out,
+                        0,
+                        FadeData::None,
+                    );
                 }
                 update_camera(
                     world,

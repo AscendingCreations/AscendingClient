@@ -1,9 +1,9 @@
-username = "test@test.com2"
+username = "sherwin@test.com"
 password = "test"
 save_password = true
-bgm_volume = 70
+bgm_volume = 28
 sfx_volume = 70
-reconnect_code = "hbrfVesNMcBpi28ZYgAZEthhr7MO5rkB"
+reconnect_code = "HMwmtLjKAicT993dkF6fAyDGMaujtZei"
 level_filter = "Info"
 enable_backtrace = false
 graphic_backend = "OpenGL|DX12|Vulkan|Metal"
