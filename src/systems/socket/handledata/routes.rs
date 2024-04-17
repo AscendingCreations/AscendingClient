@@ -474,6 +474,13 @@ pub fn handle_playerwarp(
                     socket,
                 )?;
                 content.game_content.target.clear_target(socket, systems)?;
+            } else {
+                let myindex_pos = world.get_or_err::<Position>(&myentity)?;
+
+                if !is_map_connected(pos.map, myindex_pos.map) {
+                    unload_player(world, systems, &entity)?;
+                    content.game_content.players.swap_remove(&entity);
+                }
             }
         }
     }
