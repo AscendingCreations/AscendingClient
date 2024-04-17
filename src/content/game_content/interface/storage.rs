@@ -21,6 +21,23 @@ struct ItemSlot {
     count_data: u16,
 }
 
+impl ItemSlot {
+    pub fn clear_data(&mut self, systems: &mut SystemHolder) {
+        if !self.got_data {
+            return;
+        }
+        systems.gfx.remove_gfx(&mut systems.renderer, self.image);
+        if self.got_count {
+            systems.gfx.remove_gfx(&mut systems.renderer, self.count_bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, self.count);
+        }
+        self.got_data = false;
+        self.got_count = false;
+        self.item_index = 0;
+        self.count_data = 0;
+    }
+}
+
 pub struct Storage {
     pub visible: bool,
     bg: usize,
@@ -223,13 +240,17 @@ impl Storage {
         self.slot.iter().for_each(|slot| {
             systems.gfx.set_visible(*slot, visible);
         });
-        self.item_slot.iter().for_each(|item_slot| {
-            if item_slot.got_data {
-                systems.gfx.set_visible(item_slot.image, visible);
-                if item_slot.got_count {
-                    systems.gfx.set_visible(item_slot.count_bg, visible);
-                    systems.gfx.set_visible(item_slot.count, visible);
+        self.item_slot.iter_mut().for_each(|item_slot| {
+            if visible {
+                if item_slot.got_data {
+                    systems.gfx.set_visible(item_slot.image, visible);
+                    if item_slot.got_count {
+                        systems.gfx.set_visible(item_slot.count_bg, visible);
+                        systems.gfx.set_visible(item_slot.count, visible);
+                    }
                 }
+            } else if item_slot.got_data && !visible {
+                item_slot.clear_data(systems);
             }
         });
         self.hold_slot = None;
@@ -302,23 +323,7 @@ impl Storage {
             {
                 return;
             }
-            systems
-                .gfx
-                .remove_gfx(&mut systems.renderer, self.item_slot[slot].image);
-            if self.item_slot[slot].got_count {
-                systems.gfx.remove_gfx(
-                    &mut systems.renderer,
-                    self.item_slot[slot].count_bg,
-                );
-                systems.gfx.remove_gfx(
-                    &mut systems.renderer,
-                    self.item_slot[slot].count,
-                );
-            }
-            self.item_slot[slot].got_data = false;
-            self.item_slot[slot].got_count = false;
-            self.item_slot[slot].item_index = 0;
-            self.item_slot[slot].count_data = 0;
+            self.item_slot[slot].clear_data(systems);
         }
 
         if data.val == 0 {
@@ -756,7 +761,7 @@ pub fn release_storage_slot(
                             ..Default::default()
                         },
                     );
-                    interface.inventory.update_inv_slot(
+                    interface.storage.update_storage_slot(
                         systems,
                         new_slot,
                         &Item {

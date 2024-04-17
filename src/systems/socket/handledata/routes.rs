@@ -286,13 +286,6 @@ pub fn handle_playerdata(
                 vital.vitalmax = vitalmax;
             }
         }
-
-        let hpbar = world.get_or_err::<HPBar>(&entity)?;
-        let mut size = systems.gfx.get_size(hpbar.bar_index);
-        size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
-        systems.gfx.set_size(hpbar.bar_index, size);
-        systems.gfx.set_visible(hpbar.bar_index, hpbar.visible);
-        systems.gfx.set_visible(hpbar.bg_index, hpbar.visible);
     }
     Ok(())
 }
