@@ -478,6 +478,17 @@ pub fn handle_playerwarp(
                 let myindex_pos = world.get_or_err::<Position>(&myentity)?;
 
                 if !is_map_connected(myindex_pos.map, pos.map) {
+                    if let Some(target_entity) =
+                        content.game_content.target.entity
+                    {
+                        if target_entity == entity {
+                            content
+                                .game_content
+                                .target
+                                .clear_target(socket, systems)?;
+                        }
+                    }
+
                     unload_player(world, systems, &entity)?;
                     content.game_content.players.swap_remove(&entity);
                 }
