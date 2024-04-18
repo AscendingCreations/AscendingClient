@@ -783,3 +783,730 @@ INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor:
 INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
 INFO - 127.0.0.1:7010
 INFO - GFX Loaded Count: 398
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 351
+ERROR - PANIC: panicked at src\content\game_content\interface\trade.rs:835:29:
+index out of bounds: the len is 30 but the index is 40, BACKTRACE:    0: backtrace::backtrace::dbghelp64::trace
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\dbghelp64.rs:99
+      backtrace::backtrace::trace_unsynchronized<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:66
+   1: backtrace::backtrace::trace<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:53
+   2: backtrace::capture::Backtrace::create
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:193
+   3: backtrace::capture::Backtrace::new
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:158
+   4: client::main::async_block$0::closure$0
+             at c:\Sources\AscendingClient\src\main.rs:118
+   5: alloc::boxed::impl$49::call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\boxed.rs:2030
+      std::panicking::rust_panic_with_hook
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:785
+   6: std::panicking::begin_panic_handler::closure$0
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:659
+   7: std::sys_common::backtrace::__rust_end_short_backtrace<std::panicking::begin_panic_handler::closure_env$0,never$>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\sys_common\backtrace.rs:171
+   8: std::panicking::begin_panic_handler
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:647
+   9: core::panicking::panic_fmt
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\panicking.rs:72
+  10: core::panicking::panic_bounds_check
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\panicking.rs:208
+  11: client::content::game_content::interface::trade::Trade::hover_data
+             at c:\Sources\AscendingClient\src\content\game_content\interface\trade.rs:835
+  12: client::content::game_content::interface::Interface::mouse_input
+             at c:\Sources\AscendingClient\src\content\game_content\interface.rs:191
+  13: client::content::game_content::GameContent::mouse_input
+             at c:\Sources\AscendingClient\src\content\game_content\content_input.rs:39
+  14: client::content::inputs::handle_mouse_input
+             at c:\Sources\AscendingClient\src\content\inputs.rs:41
+  15: client::main::async_block$0::closure$2
+             at c:\Sources\AscendingClient\src\main.rs:447
+  16: winit::platform_impl::platform::event_loop::impl$3::run_on_demand::closure$0<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:236
+  17: alloc::boxed::impl$48::call_mut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,dyn$<core::ops::function::FnMut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,assoc$<Output,tuple$<> > > >,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\boxed.rs:2023
+  18: winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure$0<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:250
+  19: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  20: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  21: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  22: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  23: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  24: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  25: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::call_event_handler<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:246
+  26: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:236
+  27: winit::platform_impl::platform::event_loop::WindowData<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:112
+  28: winit::platform_impl::platform::event_loop::public_window_callback_inner::closure$4<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1479
+  29: core::ops::function::FnOnce::call_once<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  30: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  31: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  32: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  33: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  34: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  35: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  36: winit::platform_impl::platform::event_loop::public_window_callback_inner<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:2285
+  37: winit::platform_impl::platform::event_loop::public_window_callback<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:983
+  38: DispatchMessageW
+  39: CallWindowProcW
+  40: wglSwapBuffers
+  41: DispatchMessageW
+  42: DispatchMessageW
+  43: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::dispatch_peeked_messages<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:449
+  44: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run_on_demand<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:247
+  45: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:218
+  46: winit::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\event_loop.rs:249
+  47: client::main::async_block$0
+             at c:\Sources\AscendingClient\src\main.rs:347
+  48: tokio::runtime::park::impl$4::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  49: tokio::runtime::coop::with_budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:107
+      tokio::runtime::coop::budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:73
+      tokio::runtime::park::CachedParkThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  50: tokio::runtime::context::blocking::BlockingRegionGuard::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\blocking.rs:66
+  51: tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:87
+  52: tokio::runtime::context::runtime::enter_runtime<tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure_env$0<enum2$<client::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\runtime.rs:65
+  53: tokio::runtime::scheduler::multi_thread::MultiThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:86
+  54: tokio::runtime::runtime::Runtime::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\runtime.rs:351
+  55: client::main
+             at c:\Sources\AscendingClient\src\main.rs:670
+  56: core::ops::function::FnOnce::call_once<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  57: std::sys_common::backtrace::__rust_begin_short_backtrace<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\sys_common\backtrace.rs:155
+  58: std::rt::lang_start::closure$0<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:166
+  59: std::rt::lang_start_internal::closure$2
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+      std::panicking::try::do_call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:554
+      std::panicking::try
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:518
+      std::panic::catch_unwind
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panic.rs:142
+      std::rt::lang_start_internal
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+  60: std::rt::lang_start<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:165
+  61: main
+  62: invoke_main
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:78
+      __scrt_common_main_seh
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+  63: BaseThreadInitThunk
+  64: RtlUserThreadStart
+
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 379
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 342
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 342
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 338
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 338

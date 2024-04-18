@@ -493,6 +493,7 @@ impl Trade {
             self.button[1].change_text(systems, "Submit".into());
             self.update_my_status(systems, "My Trade: Preparing...".into());
             self.update_their_status(systems, "My Trade: Preparing...".into());
+            self.update_trade_money(systems, 0);
             self.update_status(systems, String::new());
         }
     }
@@ -824,18 +825,27 @@ impl Trade {
 
         if let Some(slot) = self.find_mytrade_slot(screen_pos) {
             let itemindex = self.my_items[slot].item_index;
-            itemdesc.set_visible(systems, true);
-            itemdesc.set_data(systems, itemindex as usize);
-            itemdesc.set_position(systems, screen_pos);
+            if self.their_items[slot].got_data {
+                itemdesc.set_visible(systems, true);
+                itemdesc.set_data(systems, itemindex as usize);
+                itemdesc.set_position(systems, screen_pos);
+            } else {
+                itemdesc.set_visible(systems, false);
+            }
         } else {
             itemdesc.set_visible(systems, false);
         }
 
         if let Some(slot) = self.find_theirtrade_slot(screen_pos) {
-            let itemindex = self.their_items[slot].item_index;
-            itemdesc.set_visible(systems, true);
-            itemdesc.set_data(systems, itemindex as usize);
-            itemdesc.set_position(systems, screen_pos);
+            let data_slot = slot - MAX_TRADE_SLOT;
+            if self.their_items[data_slot].got_data {
+                let itemindex = self.their_items[data_slot].item_index;
+                itemdesc.set_visible(systems, true);
+                itemdesc.set_data(systems, itemindex as usize);
+                itemdesc.set_position(systems, screen_pos);
+            } else {
+                itemdesc.set_visible(systems, false);
+            }
         } else {
             itemdesc.set_visible(systems, false);
         }

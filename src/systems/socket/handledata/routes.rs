@@ -477,7 +477,7 @@ pub fn handle_playerwarp(
             } else {
                 let myindex_pos = world.get_or_err::<Position>(&myentity)?;
 
-                if !is_map_connected(pos.map, myindex_pos.map) {
+                if !is_map_connected(myindex_pos.map, pos.map) {
                     unload_player(world, systems, &entity)?;
                     content.game_content.players.swap_remove(&entity);
                 }
