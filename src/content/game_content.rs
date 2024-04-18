@@ -10,11 +10,10 @@ pub use interface::*;
 
 use crate::{
     content::*, data_types::*, database::*, logic::*, send_attack, send_pickup,
-    systems::*, Direction, Result, Socket, SystemHolder,
+    systems::*, Direction, Result, Socket, SystemHolder, TILE_SIZE,
 };
 use hecs::World;
 
-mod camera;
 pub mod floating_text;
 pub mod map;
 pub mod npc;
@@ -22,7 +21,6 @@ pub mod player;
 pub mod player_data;
 pub mod target;
 
-use camera::*;
 pub use floating_text::*;
 pub use map::*;
 pub use npc::*;
@@ -37,6 +35,15 @@ const KEY_MOVEDOWN: usize = 3;
 const KEY_MOVERIGHT: usize = 4;
 const KEY_PICKUP: usize = 5;
 const MAX_KEY: usize = 6;
+
+#[derive(Clone, Debug)]
+pub struct Camera(pub Vec2);
+
+impl Camera {
+    pub fn new(tile_pos: Vec2) -> Self {
+        Self(tile_pos * TILE_SIZE as f32)
+    }
+}
 
 pub struct GameContent {
     pub players: IndexSet<Entity>,
@@ -658,9 +665,9 @@ pub fn update_camera(
         Vec2::new(0.0, 0.0)
     };
     let adjust_pos = get_screen_center(&systems.size) - player_pos;
-    content.camera.pos = adjust_pos;
+    content.camera.0 = adjust_pos;
 
-    content.map.move_pos(systems, content.camera.pos);
+    content.map.move_pos(systems, content.camera.0);
 
     for (
         entity,

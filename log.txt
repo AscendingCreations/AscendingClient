@@ -1900,3 +1900,135 @@ INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor:
 INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
 INFO - 127.0.0.1:7010
 INFO - GFX Loaded Count: 387
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 351
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 371
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 371
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 347
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 127.0.0.1:7010
+INFO - GFX Loaded Count: 383
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+INFO - Data 0 Type: "Fade Image"
+INFO - Data 1 Type: "Map Fade Image"
+INFO - Data 2 Type: "Menu BG"
+INFO - Data 3 Type: "Menu Server Status"
+INFO - Data 10 Type: "FPS"
+INFO - Data 11 Type: "Tool Tips Text"
+INFO - Data 12 Type: "Tool Tips Window"
+INFO - Data 333 Type: "Login Window"
+INFO - Data 334 Type: "Textbox Text"
+INFO - Data 335 Type: "Login Header"
+INFO - Data 336 Type: "Login Textbox BG"
+INFO - Data 340 Type: "Textbox Select"
+INFO - Data 341 Type: "Login Labelbox"
+INFO - Data 342 Type: "Login Label"
+INFO - Data 343 Type: "Textbox BG"
+INFO - Data 349 Type: "Login Header Text"
+INFO - Data 369 Type: "Checkbox Text"
+INFO - Data 370 Type: "Checkbox Check"
+INFO - Data 371 Type: "Checkbox Image"
+INFO - Data 372 Type: "Button Content"
+INFO - Data 373 Type: "Button Image"
+INFO - Data 374 Type: "Textbox Caret"
+INFO - Data 375 Type: "Textbox Text"
+INFO - Data 376 Type: "Login Label"
+INFO - Data 377 Type: "Textbox Select"
+INFO - Data 378 Type: "Textbox BG"
+INFO - Data 379 Type: "Login Textbox BG"
+INFO - Data 380 Type: "Button Content"
+INFO - Data 381 Type: "Login Labelbox"
+INFO - Data 382 Type: "Textbox Caret"
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 127.0.0.1:7010

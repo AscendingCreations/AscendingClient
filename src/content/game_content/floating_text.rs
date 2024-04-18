@@ -75,7 +75,7 @@ pub fn float_text_loop(
             get_start_map_pos(content.map.map_pos, float_data.pos.map)
                 .unwrap_or_else(|| Vec2::new(0.0, 0.0));
         let cur_pos = systems.gfx.get_pos(float_data.text);
-        let texture_pos = content.camera.pos
+        let texture_pos = content.camera.0
             + (Vec2::new(float_data.pos.x as f32, float_data.pos.y as f32)
                 * TILE_SIZE as f32);
 
@@ -121,7 +121,7 @@ pub fn add_float_text(
 ) {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
         .unwrap_or_else(|| Vec2::new(0.0, 0.0));
-    let texture_pos = content.camera.pos
+    let texture_pos = content.camera.0
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32);
 
     let mut text = create_empty_label(systems);
