@@ -1028,12 +1028,6 @@ pub fn send_chat(
                 let msg = &input_string[1..];
                 match msg {
                     "trade" => {
-                        interface.chatbox.add_chat(
-                            systems,
-                            ("Trade Request Sent".into(), COLOR_WHITE),
-                            None,
-                            crate::MessageChannel::Map,
-                        );
                         send_command(socket, crate::Command::Trade)?;
                     }
                     _ => {
