@@ -1129,10 +1129,6 @@ impl Trade {
         systems: &mut SystemHolder,
         text: String,
     ) {
-        if !self.visible {
-            return;
-        }
-
         systems
             .gfx
             .set_text(&mut systems.renderer, self.my_status_text, &text);
@@ -1143,10 +1139,6 @@ impl Trade {
         systems: &mut SystemHolder,
         text: String,
     ) {
-        if !self.visible {
-            return;
-        }
-
         systems.gfx.set_text(
             &mut systems.renderer,
             self.their_status_text,
@@ -1155,10 +1147,6 @@ impl Trade {
     }
 
     pub fn update_status(&mut self, systems: &mut SystemHolder, text: String) {
-        if !self.visible {
-            return;
-        }
-
         systems
             .gfx
             .set_text(&mut systems.renderer, self.status_text, &text);
