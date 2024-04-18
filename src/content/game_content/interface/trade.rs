@@ -491,10 +491,26 @@ impl Trade {
         if !visible {
             self.trade_status = TradeStatus::default();
             self.button[1].change_text(systems, "Submit".into());
-            self.update_my_status(systems, "My Trade: Preparing...".into());
-            self.update_their_status(systems, "My Trade: Preparing...".into());
-            self.update_trade_money(systems, 0);
-            self.update_status(systems, String::new());
+
+            self.money_input.set_text(systems, "0".into());
+            systems
+                .gfx
+                .set_text(&mut systems.renderer, self.their_money, "0");
+            systems.gfx.set_text(
+                &mut systems.renderer,
+                self.my_status_text,
+                "My Trade: Preparing...",
+            );
+            systems.gfx.set_text(
+                &mut systems.renderer,
+                self.their_status_text,
+                "My Trade: Preparing...",
+            );
+
+            systems
+                .gfx
+                .set_text(&mut systems.renderer, self.status_text, "");
+            systems.gfx.center_text(self.status_text);
         }
     }
 
@@ -1117,6 +1133,10 @@ impl Trade {
         systems: &mut SystemHolder,
         amount: u64,
     ) {
+        if !self.visible {
+            return;
+        }
+
         systems.gfx.set_text(
             &mut systems.renderer,
             self.their_money,
@@ -1129,6 +1149,10 @@ impl Trade {
         systems: &mut SystemHolder,
         text: String,
     ) {
+        if !self.visible {
+            return;
+        }
+
         systems
             .gfx
             .set_text(&mut systems.renderer, self.my_status_text, &text);
@@ -1139,6 +1163,10 @@ impl Trade {
         systems: &mut SystemHolder,
         text: String,
     ) {
+        if !self.visible {
+            return;
+        }
+
         systems.gfx.set_text(
             &mut systems.renderer,
             self.their_status_text,
@@ -1147,6 +1175,10 @@ impl Trade {
     }
 
     pub fn update_status(&mut self, systems: &mut SystemHolder, text: String) {
+        if !self.visible {
+            return;
+        }
+
         systems
             .gfx
             .set_text(&mut systems.renderer, self.status_text, &text);
