@@ -108,10 +108,11 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         content.label.push(textindex);
 
         let tooltip = match index {
-                    0 | 1 => Some("The quick brown fox jumps over the lazy dog, this is a very long message that should wrap around".to_string()),
-                    4 => Some("This is a tip msg for Username".to_string()),
-                    _ => None,
-                };
+            0 | 1 => {
+                Some("This email will be used for password reset".to_string())
+            }
+            _ => None,
+        };
 
         let textbox = Textbox::new(
             systems,
