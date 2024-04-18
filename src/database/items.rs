@@ -29,16 +29,9 @@ pub struct ItemData {
 pub fn get_item() -> Result<Vec<ItemData>> {
     let mut item_data: Vec<ItemData> = Vec::new();
 
-    let mut count = 0;
-    let mut got_data = true;
-
-    while got_data {
-        if let Some(data) = load_file(count)? {
+    for i in 0..MAX_ITEMS {
+        if let Some(data) = load_file(i)? {
             item_data.push(data);
-            count += 1;
-            got_data = true;
-        } else {
-            got_data = false;
         }
     }
 
@@ -61,7 +54,7 @@ fn load_file(id: usize) -> Result<Option<ItemData>> {
             Ok(Some(buf.read::<ItemData>()?))
         }
         Err(e) => {
-            warn!("Item Load File Err: {}", e);
+            warn!("Item Load File Num {} Err: {}", id, e);
             Ok(None)
         }
     }

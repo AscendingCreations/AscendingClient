@@ -57,16 +57,9 @@ pub struct NpcData {
 pub fn get_npc() -> Result<Vec<NpcData>> {
     let mut npc_data: Vec<NpcData> = Vec::new();
 
-    let mut count = 0;
-    let mut got_data = true;
-
-    while got_data {
-        if let Some(data) = load_file(count)? {
+    for i in 0..MAX_NPCS {
+        if let Some(data) = load_file(i)? {
             npc_data.push(data);
-            count += 1;
-            got_data = true;
-        } else {
-            got_data = false;
         }
     }
 
@@ -89,7 +82,7 @@ fn load_file(id: usize) -> Result<Option<NpcData>> {
             Ok(Some(buf.read::<NpcData>()?))
         }
         Err(e) => {
-            warn!("Npc Load File Err: {}", e);
+            warn!("Npc Load File Num {} Err: {}", id, e);
             Ok(None)
         }
     }

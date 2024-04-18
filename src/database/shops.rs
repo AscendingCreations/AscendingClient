@@ -27,16 +27,9 @@ pub struct ShopData {
 pub fn get_shop() -> Result<Vec<ShopData>> {
     let mut shop_data: Vec<ShopData> = Vec::new();
 
-    let mut count = 0;
-    let mut got_data = true;
-
-    while got_data {
-        if let Some(data) = load_file(count)? {
+    for i in 0..MAX_SHOPS {
+        if let Some(data) = load_file(i)? {
             shop_data.push(data);
-            count += 1;
-            got_data = true;
-        } else {
-            got_data = false;
         }
     }
 
@@ -59,7 +52,7 @@ fn load_file(id: usize) -> Result<Option<ShopData>> {
             Ok(Some(buf.read::<ShopData>()?))
         }
         Err(e) => {
-            warn!("Shop Load File Err: {}", e);
+            warn!("Shop Load File Num {} Err: {}", id, e);
             Ok(None)
         }
     }

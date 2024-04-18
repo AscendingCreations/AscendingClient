@@ -172,6 +172,10 @@ pub const MAX_STORAGE: usize = 70;
 pub const MAX_EQPT: usize = 5;
 pub const MAX_SHOP_ITEM: usize = 20;
 
+pub const MAX_NPCS: usize = 1000;
+pub const MAX_ITEMS: usize = 2000;
+pub const MAX_SHOPS: usize = 100;
+
 pub const ORDER_MENU_BG: f32 = 10.9;
 pub const ORDER_MENU_WINDOW: f32 = 10.8;
 pub const ORDER_MENU_WINDOW_CONTENT: f32 = 10.7;
