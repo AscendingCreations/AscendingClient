@@ -1,6 +1,7 @@
 use graphics::*;
 use hecs::World;
 use input::Key;
+use log::error;
 use winit::keyboard::NamedKey;
 
 use crate::{
@@ -90,7 +91,8 @@ fn trigger_button(
                 &systems.config.reconnect_code,
             ) {
                 Ok(_) => {}
-                Err(_) => {
+                Err(e) => {
+                    error!("send_login error: {:?}", e);
                     alert.show_alert(
                         systems,
                         AlertType::Inform,

@@ -343,6 +343,8 @@ async fn main() -> Result<()> {
     let mut mouse_pos: PhysicalPosition<f64> = PhysicalPosition::new(0.0, 0.0);
     let mut mouse_press: bool = false;
 
+    systems.audio.set_music("./audio/caves.ogg")?;
+
     #[allow(deprecated)]
     event_loop.run(move |event, elwt| {
         frame_time.update();

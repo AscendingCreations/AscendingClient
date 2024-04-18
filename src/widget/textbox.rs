@@ -1,6 +1,7 @@
 use arboard::Clipboard;
 use cosmic_text::{Attrs, Metrics};
 use graphics::{cosmic_text::rustybuzz::ttf_parser::name::Name, *};
+use log::warn;
 use std::cmp;
 
 const KEY_CTRL: usize = 0;
@@ -750,11 +751,19 @@ pub fn get_clipboard_text() -> String {
     let mut clipboard = Clipboard::new().unwrap();
     match clipboard.get_text() {
         Ok(data) => data,
-        Err(_) => String::new(),
+        Err(e) => {
+            warn!("Get Clipboard Err: {}", e);
+            String::new()
+        }
     }
 }
 
 pub fn set_clipboard_text(message: String) {
     let mut clipboard = Clipboard::new().unwrap();
-    clipboard.set_text(message).unwrap();
+    match clipboard.set_text(message) {
+        Ok(_) => {}
+        Err(e) => {
+            warn!("Set Clipboard Err: {}", e);
+        }
+    }
 }

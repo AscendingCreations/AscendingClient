@@ -1,6 +1,7 @@
 use graphics::*;
 use hecs::World;
 use input::Key;
+use log::error;
 use regex::Regex;
 use winit::keyboard::NamedKey;
 
@@ -177,7 +178,8 @@ fn trigger_button(
                 (APP_MAJOR, APP_MINOR, APP_REV),
             ) {
                 Ok(_) => {}
-                Err(_) => {
+                Err(e) => {
+                    error!("send_register error: {:?}", e);
                     alert.show_alert(
                         systems,
                         AlertType::Inform,

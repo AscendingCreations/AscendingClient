@@ -1,6 +1,7 @@
 use crate::{data_types::*, Result};
 use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use educe::Educe;
+use log::warn;
 use serde::{Deserialize, Serialize};
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, Read};
@@ -57,6 +58,9 @@ fn load_file(id: usize) -> Result<Option<ShopData>> {
             buf.move_cursor(8)?;
             Ok(Some(buf.read::<ShopData>()?))
         }
-        Err(_) => Ok(None),
+        Err(e) => {
+            warn!("Shop Load File Err: {}", e);
+            Ok(None)
+        }
     }
 }
