@@ -246,7 +246,7 @@ pub fn handle_playerdata(
                 Some(&entity),
                 sprite as usize,
             )?;
-            content.game_content.players.insert(player);
+            content.game_content.players.borrow_mut().insert(player);
             content.game_content.in_game = true;
         }
 
@@ -334,7 +334,7 @@ pub fn handle_playerspawn(
                     Some(&entity),
                     sprite as usize,
                 )?;
-                content.game_content.players.insert(player);
+                content.game_content.players.borrow_mut().insert(player);
 
                 let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
                 systems.gfx.set_text(
@@ -414,7 +414,11 @@ pub fn handle_playermove(
                     }
                 } else {
                     unload_player(world, systems, &entity)?;
-                    content.game_content.players.swap_remove(&entity);
+                    content
+                        .game_content
+                        .players
+                        .borrow_mut()
+                        .swap_remove(&entity);
                 }
             }
         }
@@ -493,7 +497,11 @@ pub fn handle_playerwarp(
                     }
 
                     unload_player(world, systems, &entity)?;
-                    content.game_content.players.swap_remove(&entity);
+                    content
+                        .game_content
+                        .players
+                        .borrow_mut()
+                        .swap_remove(&entity);
                 }
             }
         }
@@ -532,7 +540,11 @@ pub fn handle_dataremovelist(
         match world_entity_type {
             WorldEntityType::Player => {
                 unload_player(world, systems, entity)?;
-                content.game_content.players.swap_remove(entity);
+                content
+                    .game_content
+                    .players
+                    .borrow_mut()
+                    .swap_remove(entity);
             }
             WorldEntityType::Npc => {
                 unload_npc(world, systems, entity)?;
@@ -1394,7 +1406,11 @@ pub fn handle_entityunload(
             match world_entity_type {
                 WorldEntityType::Player => {
                     unload_player(world, systems, &entity)?;
-                    content.game_content.players.swap_remove(&entity);
+                    content
+                        .game_content
+                        .players
+                        .borrow_mut()
+                        .swap_remove(&entity);
                 }
                 WorldEntityType::Npc => {
                     unload_npc(world, systems, &entity)?;

@@ -152,47 +152,106 @@ impl Interface {
         let mut result = false;
         match input_type {
             MouseInputType::MouseMove => {
-                Interface::hover_buttons(interface, systems, screen_pos);
-                interface.chatbox.hover_buttons(systems, screen_pos);
-                interface.chatbox.hover_msg(systems, screen_pos);
-                interface.profile.hover_buttons(systems, screen_pos);
-                interface.inventory.hover_buttons(systems, screen_pos);
-                interface.setting.hover_buttons(systems, screen_pos);
-                interface.storage.hover_buttons(systems, screen_pos);
-                interface.shop.hover_buttons(systems, screen_pos);
-                interface.trade.hover_buttons(systems, screen_pos);
-                interface.setting.hover_scrollbar(systems, screen_pos);
-                interface.shop.hover_scrollbar(systems, screen_pos);
-                interface.chatbox.hover_scrollbar(systems, screen_pos);
-                interface
-                    .setting
-                    .hover_checkbox(systems, tooltip, screen_pos);
+                let mut can_hover: bool = true;
+                for window in interface.window_order.iter() {
+                    if can_hover {
+                        match window.0 {
+                            Window::Chatbox => {
+                                interface
+                                    .chatbox
+                                    .hover_buttons(systems, screen_pos);
+                                interface
+                                    .chatbox
+                                    .hover_msg(systems, screen_pos);
+                                interface
+                                    .chatbox
+                                    .hover_scrollbar(systems, screen_pos);
+                                can_hover =
+                                    !interface.chatbox.in_window(screen_pos);
+                            }
+                            Window::Inventory => {
+                                interface
+                                    .inventory
+                                    .hover_buttons(systems, screen_pos);
+                                interface.inventory.hover_data(
+                                    systems,
+                                    screen_pos,
+                                    &mut interface.item_desc,
+                                );
+                                can_hover =
+                                    !interface.inventory.in_window(screen_pos);
+                            }
+                            Window::Profile => {
+                                interface
+                                    .profile
+                                    .hover_buttons(systems, screen_pos);
+                                interface.profile.hover_data(
+                                    systems,
+                                    screen_pos,
+                                    &mut interface.item_desc,
+                                );
+                                can_hover =
+                                    !interface.profile.in_window(screen_pos);
+                            }
+                            Window::Setting => {
+                                interface
+                                    .setting
+                                    .hover_buttons(systems, screen_pos);
+                                interface
+                                    .setting
+                                    .hover_scrollbar(systems, screen_pos);
+                                interface.setting.hover_checkbox(
+                                    systems, tooltip, screen_pos,
+                                );
+                                can_hover =
+                                    !interface.setting.in_window(screen_pos);
+                            }
+                            Window::Shop => {
+                                interface
+                                    .shop
+                                    .hover_buttons(systems, screen_pos);
+                                interface
+                                    .shop
+                                    .hover_scrollbar(systems, screen_pos);
+                                interface.shop.hover_data(
+                                    systems,
+                                    screen_pos,
+                                    &mut interface.item_desc,
+                                );
+                                can_hover =
+                                    !interface.shop.in_window(screen_pos);
+                            }
+                            Window::Storage => {
+                                interface
+                                    .storage
+                                    .hover_buttons(systems, screen_pos);
+                                interface.storage.hover_data(
+                                    systems,
+                                    screen_pos,
+                                    &mut interface.item_desc,
+                                );
+                                can_hover =
+                                    !interface.storage.in_window(screen_pos);
+                            }
+                            Window::Trade => {
+                                interface
+                                    .trade
+                                    .hover_buttons(systems, screen_pos);
+                                interface.trade.hover_data(
+                                    systems,
+                                    screen_pos,
+                                    &mut interface.item_desc,
+                                );
+                                can_hover =
+                                    !interface.trade.in_window(screen_pos);
+                            }
+                        }
+                    }
+                }
 
-                interface.inventory.hover_data(
-                    systems,
-                    screen_pos,
-                    &mut interface.item_desc,
-                );
-                interface.profile.hover_data(
-                    systems,
-                    screen_pos,
-                    &mut interface.item_desc,
-                );
-                interface.shop.hover_data(
-                    systems,
-                    screen_pos,
-                    &mut interface.item_desc,
-                );
-                interface.storage.hover_data(
-                    systems,
-                    screen_pos,
-                    &mut interface.item_desc,
-                );
-                interface.trade.hover_data(
-                    systems,
-                    screen_pos,
-                    &mut interface.item_desc,
-                );
+                if can_hover {
+                    Interface::hover_buttons(interface, systems, screen_pos);
+                }
             }
             MouseInputType::MouseDoubleLeftDown => {
                 if interface.inventory.visible

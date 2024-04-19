@@ -497,6 +497,7 @@ impl Textbox {
                 .min(self.data_text.len());
             (start, self.caret_pos)
         };
+        // ToDo crash when pasting ascii keys ☺↨♦♣♠☺↓
         let size = measure_string(systems, self.text[start..end].to_string()).x;
 
         if move_left {

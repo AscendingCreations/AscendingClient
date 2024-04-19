@@ -104,7 +104,12 @@ impl Socket {
         let tls_config = build_tls_config()?;
 
         Ok(Socket {
-            client: Client::new("127.0.0.1", 7010, mio::Token(0), tls_config)?,
+            client: Client::new(
+                "212.47.238.107",
+                7010,
+                mio::Token(0),
+                tls_config,
+            )?,
             poll: Poll::new()?,
             buffer: ByteBuffer::new_packet_with(8192)?,
             encrypt_state: EncryptionState::ReadWrite,
@@ -114,7 +119,7 @@ impl Socket {
     pub fn reconnect(&mut self) -> Result<()> {
         let tls_config = build_tls_config()?;
         self.client =
-            Client::new("127.0.0.1", 7010, mio::Token(0), tls_config)?;
+            Client::new("212.47.238.107", 7010, mio::Token(0), tls_config)?;
         self.encrypt_state = EncryptionState::ReadWrite;
         self.buffer.truncate(0)?;
         Ok(())
@@ -189,6 +194,7 @@ impl Socket {
                     return Ok(());
                 }
                 Ok(0) => {
+                    log::info!("Disconnected on read tls ok(0)");
                     self.client.state = ClientState::Closing;
                     return Ok(());
                 }
@@ -207,17 +213,20 @@ impl Socket {
             if io_state.plaintext_bytes_to_read() > 0 {
                 let mut buf = vec![0u8; io_state.plaintext_bytes_to_read()];
                 if self.client.tls.reader().read_exact(&mut buf).is_err() {
+                    log::error!("Disconnected on tls plaintext_bytes_to_read read exact");
                     self.client.state = ClientState::Closing;
                     return Ok(());
                 }
 
                 if self.buffer.write_slice(&buf).is_err() {
+                    log::error!("Disconnected on tls plaintext_bytes_to_read write slice");
                     self.client.state = ClientState::Closing;
                     return Ok(());
                 }
             }
 
             if io_state.peer_has_closed() {
+                log::error!("Disconnected on peer_has_closed");
                 self.client.state = ClientState::Closing;
             }
 
@@ -242,11 +251,15 @@ impl Socket {
                     continue
                 }
                 Ok(0) | Err(_) => {
+                    log::error!("Disconnected on Socket read");
                     self.client.state = ClientState::Closing;
                     return Ok(());
                 }
                 Ok(n) => {
                     if self.buffer.write_slice(&buf[0..n]).is_err() {
+                        log::error!(
+                            "Disconnected on Socket buffer write slice"
+                        );
                         self.client.state = ClientState::Closing;
                         return Ok(());
                     }
@@ -276,6 +289,7 @@ impl Socket {
                     break;
                 }
                 Err(_) => {
+                    log::error!("Disconnected on Socket tls writer Write All");
                     self.client.state = ClientState::Closing;
                     return;
                 }
@@ -295,6 +309,7 @@ impl Socket {
                         continue;
                     }
                     Err(_) => {
+                        log::error!("Disconnected on Socket tls Wants Write");
                         self.client.state = ClientState::Closing;
                         return;
                     }
@@ -333,6 +348,7 @@ impl Socket {
                     break;
                 }
                 Err(_) => {
+                    log::error!("Disconnected on Socket Write All");
                     self.client.state = ClientState::Closing;
                     return;
                 }
@@ -516,7 +532,8 @@ pub fn get_length(socket: &mut Socket) -> Option<u64> {
     if socket.buffer.length() - socket.buffer.cursor() >= 8 {
         let length = socket.buffer.read::<u64>().ok()?;
 
-        if !(4..=8192).contains(&length) {
+        if !(2..=8192).contains(&length) {
+            log::error!("Disconnected on packet get_length");
             socket.set_to_closing();
         }
 
@@ -553,6 +570,7 @@ pub fn process_packets(
             {
                 Ok(n) => n,
                 Err(_) => {
+                    log::error!("Disconnected on packet read to buffer");
                     socket.set_to_closing();
                     break;
                 }
@@ -571,6 +589,7 @@ pub fn process_packets(
             )
             .is_err()
             {
+                log::error!("Disconnected on handle_data");
                 socket.set_to_closing();
                 break;
             }

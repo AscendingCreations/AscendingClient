@@ -509,7 +509,8 @@ impl Chatbox {
     }
 
     pub fn in_window(&mut self, screen_pos: Vec2) -> bool {
-        is_within_area(screen_pos, self.pos, self.size)
+        let chatbox_size = self.size + Vec2::new(0.0, 24.0);
+        is_within_area(screen_pos, self.pos, chatbox_size)
     }
 
     pub fn hold_window(&mut self, screen_pos: Vec2) {

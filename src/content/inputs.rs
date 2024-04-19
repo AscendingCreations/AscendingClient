@@ -79,6 +79,9 @@ pub fn handle_key_input(
         #[allow(clippy::single_match)]
         match key {
             Key::Named(NamedKey::F1) => systems.gfx.print_details(),
+            Key::Named(NamedKey::F2) => {
+                info!("Gfx Count: {}", systems.gfx.count_collection())
+            }
             _ => {}
         }
     }

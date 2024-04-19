@@ -91,6 +91,15 @@ impl GameContent {
             pressed,
         );
 
+        if content.game_content.interface.inventory.hold_slot.is_some()
+            || content.game_content.interface.storage.hold_slot.is_some()
+        {
+            content.game_content.keyinput.iter_mut().for_each(|key| {
+                *key = false;
+            });
+            return Ok(());
+        }
+
         match key {
             Key::Named(NamedKey::ArrowUp) => {
                 content.game_content.keyinput[KEY_MOVEUP] = pressed;

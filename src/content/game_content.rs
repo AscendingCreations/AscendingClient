@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use graphics::*;
 
 use indexmap::IndexSet;
@@ -46,13 +48,13 @@ impl Camera {
 }
 
 pub struct GameContent {
-    pub players: IndexSet<Entity>,
+    pub players: Rc<RefCell<IndexSet<Entity>>>,
     pub npcs: IndexSet<Entity>,
     pub mapitems: IndexSet<Entity>,
     pub map: MapContent,
     camera: Camera,
     pub interface: Interface,
-    keyinput: [bool; MAX_KEY],
+    pub keyinput: [bool; MAX_KEY],
     pub myentity: Option<Entity>,
     pub in_game: bool,
     pub player_data: PlayerData,
@@ -66,7 +68,7 @@ pub struct GameContent {
 impl GameContent {
     pub fn new(systems: &mut SystemHolder) -> Self {
         GameContent {
-            players: IndexSet::default(),
+            players: Rc::new(RefCell::new(IndexSet::default())),
             npcs: IndexSet::default(),
             mapitems: IndexSet::default(),
             map: MapContent::new(systems),
@@ -100,7 +102,7 @@ impl GameContent {
         world: &mut World,
         systems: &mut SystemHolder,
     ) -> Result<()> {
-        for entity in self.players.iter() {
+        for entity in self.players.borrow().iter() {
             unload_player(world, systems, entity)?;
         }
         for entity in self.npcs.iter() {
@@ -109,7 +111,7 @@ impl GameContent {
         for entity in self.mapitems.iter() {
             unload_mapitems(world, systems, entity)?;
         }
-        self.players.clear();
+        self.players.borrow_mut().clear();
         self.npcs.clear();
         self.mapitems.clear();
         self.finalized = false;
@@ -164,7 +166,7 @@ impl GameContent {
         systems: &mut SystemHolder,
         socket: &mut Socket,
     ) -> Result<()> {
-        for entity in self.players.iter() {
+        for entity in self.players.borrow().iter() {
             player_finalized(world, systems, entity)?;
         }
         for entity in self.npcs.iter() {
@@ -318,6 +320,8 @@ impl GameContent {
             self.map.music[from].1 = to;
         }
 
+        buffer.clear_buffer();
+
         let load_maps = match dir {
             Direction::Up => [(1, 6), (2, 7), (3, 8)],
             Direction::Left => [(3, 1), (5, 4), (8, 6)],
@@ -456,6 +460,12 @@ impl GameContent {
         dir: &Direction,
     ) -> Result<()> {
         if let Some(myentity) = self.myentity {
+            match self.player_data.is_using_type {
+                IsUsingType::Bank => send_closestorage(socket)?,
+                IsUsingType::Store(_) => send_closeshop(socket)?,
+                _ => {}
+            }
+
             move_player(
                 world,
                 systems,
@@ -559,7 +569,7 @@ pub fn update_player(
     seconds: f32,
 ) -> Result<()> {
     let players = content.players.clone();
-    for entity in players.iter() {
+    for entity in players.borrow().iter() {
         if let Some(myentity) = content.myentity {
             if entity != &myentity {
                 move_player(
@@ -668,7 +678,7 @@ pub fn finalize_entity(
         match worldentitytype {
             WorldEntityType::Player => {
                 unload_player(world, systems, &Entity(entity))?;
-                content.players.swap_remove(&Entity(entity));
+                content.players.borrow_mut().swap_remove(&Entity(entity));
             }
             WorldEntityType::Npc => {
                 unload_npc(world, systems, &Entity(entity))?;

@@ -44,6 +44,11 @@ impl BufferTask {
         BufferTask::default()
     }
 
+    pub fn clear_buffer(&mut self) {
+        self.task.clear();
+        self.storage.map_data.clear();
+    }
+
     pub fn process_buffer(
         &mut self,
         systems: &mut SystemHolder,

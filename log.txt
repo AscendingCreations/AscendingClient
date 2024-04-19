@@ -2212,3 +2212,1742 @@ INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor:
 INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
 INFO - 212.47.238.107:7010
 INFO - GFX Loaded Count: 342
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 351
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 355
+INFO - Gfx Count: 360
+INFO - Gfx Count: 388
+INFO - Gfx Count: 399
+INFO - Gfx Count: 399
+INFO - Gfx Count: 387
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 382
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 383
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 359
+ERROR - PANIC: panicked at src\widget\textbox.rs:500:53:
+byte index 5 is not a char boundary; it is inside '↨' (bytes 3..6) of `☺↨♦♣♠☺↓`, BACKTRACE:    0: backtrace::backtrace::dbghelp64::trace
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\dbghelp64.rs:99
+      backtrace::backtrace::trace_unsynchronized<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:66
+   1: backtrace::backtrace::trace<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:53
+   2: backtrace::capture::Backtrace::create
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:193
+   3: backtrace::capture::Backtrace::new
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:158
+   4: client::main::async_block$0::closure$0
+             at c:\Sources\AscendingClient\src\main.rs:118
+   5: alloc::boxed::impl$49::call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\boxed.rs:2030
+      std::panicking::rust_panic_with_hook
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:785
+   6: std::panicking::begin_panic_handler::closure$0
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:659
+   7: std::sys_common::backtrace::__rust_end_short_backtrace<std::panicking::begin_panic_handler::closure_env$0,never$>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\sys_common\backtrace.rs:171
+   8: std::panicking::begin_panic_handler
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:647
+   9: core::panicking::panic_fmt
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\panicking.rs:72
+  10: core::str::slice_error_fail_rt
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\str\mod.rs:136
+  11: core::str::slice_error_fail
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\str\mod.rs:88
+  12: alloc::string::impl$26::index
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\string.rs:2437
+  13: client::widget::textbox::Textbox::move_caret_pos
+             at c:\Sources\AscendingClient\src\widget\textbox.rs:500
+  14: client::widget::textbox::Textbox::hold_move
+             at c:\Sources\AscendingClient\src\widget\textbox.rs:698
+  15: client::content::game_content::interface::Interface::hold_move_textbox
+             at c:\Sources\AscendingClient\src\content\game_content\interface.rs:819
+  16: client::content::game_content::interface::Interface::mouse_input
+             at c:\Sources\AscendingClient\src\content\game_content\interface.rs:469
+  17: client::content::game_content::GameContent::mouse_input
+             at c:\Sources\AscendingClient\src\content\game_content\content_input.rs:39
+  18: client::content::inputs::handle_mouse_input
+             at c:\Sources\AscendingClient\src\content\inputs.rs:41
+  19: client::main::async_block$0::closure$2
+             at c:\Sources\AscendingClient\src\main.rs:433
+  20: winit::platform_impl::platform::event_loop::impl$3::run_on_demand::closure$0<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:236
+  21: alloc::boxed::impl$48::call_mut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,dyn$<core::ops::function::FnMut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,assoc$<Output,tuple$<> > > >,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\boxed.rs:2023
+  22: winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure$0<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:250
+  23: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  24: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  25: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  26: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  27: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  28: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  29: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::call_event_handler<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:246
+  30: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:236
+  31: winit::platform_impl::platform::event_loop::WindowData<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:112
+  32: winit::platform_impl::platform::event_loop::public_window_callback_inner::closure$4<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1479
+  33: core::ops::function::FnOnce::call_once<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  34: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  35: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  36: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  37: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  38: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  39: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  40: winit::platform_impl::platform::event_loop::public_window_callback_inner<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:2285
+  41: winit::platform_impl::platform::event_loop::public_window_callback<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:983
+  42: DispatchMessageW
+  43: CallWindowProcW
+  44: wglSwapBuffers
+  45: DispatchMessageW
+  46: DispatchMessageW
+  47: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::dispatch_peeked_messages<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:449
+  48: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run_on_demand<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:247
+  49: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:218
+  50: winit::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\event_loop.rs:249
+  51: client::main::async_block$0
+             at c:\Sources\AscendingClient\src\main.rs:349
+  52: tokio::runtime::park::impl$4::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  53: tokio::runtime::coop::with_budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:107
+      tokio::runtime::coop::budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:73
+      tokio::runtime::park::CachedParkThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  54: tokio::runtime::context::blocking::BlockingRegionGuard::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\blocking.rs:66
+  55: tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:87
+  56: tokio::runtime::context::runtime::enter_runtime<tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure_env$0<enum2$<client::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\runtime.rs:65
+  57: tokio::runtime::scheduler::multi_thread::MultiThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:86
+  58: tokio::runtime::runtime::Runtime::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\runtime.rs:351
+  59: client::main
+             at c:\Sources\AscendingClient\src\main.rs:672
+  60: core::ops::function::FnOnce::call_once<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  61: std::sys_common::backtrace::__rust_begin_short_backtrace<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\sys_common\backtrace.rs:155
+  62: std::rt::lang_start::closure$0<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:166
+  63: std::rt::lang_start_internal::closure$2
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+      std::panicking::try::do_call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:554
+      std::panicking::try
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:518
+      std::panic::catch_unwind
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panic.rs:142
+      std::rt::lang_start_internal
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+  64: std::rt::lang_start<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:165
+  65: main
+  66: invoke_main
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:78
+      __scrt_common_main_seh
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+  67: BaseThreadInitThunk
+  68: RtlUserThreadStart
+
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 359
+ERROR - PANIC: panicked at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\vec\mod.rs:1519:21:
+insertion index (is 3) should be <= len (is 1), BACKTRACE:    0: backtrace::backtrace::dbghelp64::trace
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\dbghelp64.rs:99
+      backtrace::backtrace::trace_unsynchronized<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:66
+   1: backtrace::backtrace::trace<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:53
+   2: backtrace::capture::Backtrace::create
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:193
+   3: backtrace::capture::Backtrace::new
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:158
+   4: client::main::async_block$0::closure$0
+             at c:\Sources\AscendingClient\src\main.rs:118
+   5: alloc::boxed::impl$49::call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\boxed.rs:2030
+      std::panicking::rust_panic_with_hook
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:785
+   6: std::panicking::begin_panic_handler::closure$0
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:659
+   7: std::sys_common::backtrace::__rust_end_short_backtrace<std::panicking::begin_panic_handler::closure_env$0,never$>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\sys_common\backtrace.rs:171
+   8: std::panicking::begin_panic_handler
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:647
+   9: core::panicking::panic_fmt
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\panicking.rs:72
+  10: alloc::vec::impl$1::insert::assert_failed
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\vec\mod.rs:1497
+  11: alloc::vec::Vec<f32,alloc::alloc::Global>::insert<f32,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\vec\mod.rs:1519
+  12: client::widget::textbox::Textbox::enter_text
+             at c:\Sources\AscendingClient\src\widget\textbox.rs:365
+  13: client::content::game_content::interface::Interface::key_input
+             at c:\Sources\AscendingClient\src\content\game_content\interface.rs:558
+  14: client::content::game_content::GameContent::key_input
+             at c:\Sources\AscendingClient\src\content\game_content\content_input.rs:86
+  15: client::content::inputs::handle_key_input
+             at c:\Sources\AscendingClient\src\content\inputs.rs:67
+  16: client::main::async_block$0::closure$2
+             at c:\Sources\AscendingClient\src\main.rs:376
+  17: winit::platform_impl::platform::event_loop::impl$3::run_on_demand::closure$0<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:236
+  18: alloc::boxed::impl$48::call_mut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,dyn$<core::ops::function::FnMut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,assoc$<Output,tuple$<> > > >,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\boxed.rs:2023
+  19: winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure$0<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:250
+  20: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  21: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  22: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  23: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  24: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  25: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  26: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::call_event_handler<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:246
+  27: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:236
+  28: winit::platform_impl::platform::event_loop::WindowData<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:112
+  29: winit::platform_impl::platform::event_loop::public_window_callback_inner::closure$2<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1028
+  30: core::ops::function::FnOnce::call_once<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  31: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  32: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  33: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  34: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  35: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  36: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  37: winit::platform_impl::platform::event_loop::public_window_callback_inner<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1038
+  38: winit::platform_impl::platform::event_loop::public_window_callback<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:983
+  39: DispatchMessageW
+  40: CallWindowProcW
+  41: wglSwapBuffers
+  42: DispatchMessageW
+  43: DispatchMessageW
+  44: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::dispatch_peeked_messages<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:449
+  45: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run_on_demand<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:247
+  46: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:218
+  47: winit::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\event_loop.rs:249
+  48: client::main::async_block$0
+             at c:\Sources\AscendingClient\src\main.rs:349
+  49: tokio::runtime::park::impl$4::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  50: tokio::runtime::coop::with_budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:107
+      tokio::runtime::coop::budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:73
+      tokio::runtime::park::CachedParkThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  51: tokio::runtime::context::blocking::BlockingRegionGuard::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\blocking.rs:66
+  52: tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:87
+  53: tokio::runtime::context::runtime::enter_runtime<tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure_env$0<enum2$<client::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\runtime.rs:65
+  54: tokio::runtime::scheduler::multi_thread::MultiThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:86
+  55: tokio::runtime::runtime::Runtime::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\runtime.rs:351
+  56: client::main
+             at c:\Sources\AscendingClient\src\main.rs:672
+  57: core::ops::function::FnOnce::call_once<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  58: std::sys_common::backtrace::__rust_begin_short_backtrace<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\sys_common\backtrace.rs:155
+  59: std::rt::lang_start::closure$0<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:166
+  60: std::rt::lang_start_internal::closure$2
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+      std::panicking::try::do_call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:554
+      std::panicking::try
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:518
+      std::panic::catch_unwind
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panic.rs:142
+      std::rt::lang_start_internal
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+  61: std::rt::lang_start<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:165
+  62: main
+  63: invoke_main
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:78
+      __scrt_common_main_seh
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+  64: BaseThreadInitThunk
+  65: RtlUserThreadStart
+
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+ERROR - PANIC: panicked at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\vec\mod.rs:1519:21:
+insertion index (is 3) should be <= len (is 1), BACKTRACE:    0: backtrace::backtrace::dbghelp64::trace
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\dbghelp64.rs:99
+      backtrace::backtrace::trace_unsynchronized<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:66
+   1: backtrace::backtrace::trace<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:53
+   2: backtrace::capture::Backtrace::create
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:193
+   3: backtrace::capture::Backtrace::new
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:158
+   4: client::main::async_block$0::closure$0
+             at c:\Sources\AscendingClient\src\main.rs:118
+   5: alloc::boxed::impl$49::call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\boxed.rs:2030
+      std::panicking::rust_panic_with_hook
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:785
+   6: std::panicking::begin_panic_handler::closure$0
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:659
+   7: std::sys_common::backtrace::__rust_end_short_backtrace<std::panicking::begin_panic_handler::closure_env$0,never$>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\sys_common\backtrace.rs:171
+   8: std::panicking::begin_panic_handler
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:647
+   9: core::panicking::panic_fmt
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\panicking.rs:72
+  10: alloc::vec::impl$1::insert::assert_failed
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\vec\mod.rs:1497
+  11: alloc::vec::Vec<f32,alloc::alloc::Global>::insert<f32,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\vec\mod.rs:1519
+  12: client::widget::textbox::Textbox::enter_text
+             at c:\Sources\AscendingClient\src\widget\textbox.rs:365
+  13: client::content::menu_content::content_input::register_input::register_key_input
+             at c:\Sources\AscendingClient\src\content\menu_content\content_input\register_input.rs:66
+  14: client::content::menu_content::MenuContent::key_input
+             at c:\Sources\AscendingClient\src\content\menu_content\content_input.rs:82
+  15: client::content::inputs::handle_key_input
+             at c:\Sources\AscendingClient\src\content\inputs.rs:72
+  16: client::main::async_block$0::closure$2
+             at c:\Sources\AscendingClient\src\main.rs:376
+  17: winit::platform_impl::platform::event_loop::impl$3::run_on_demand::closure$0<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:236
+  18: alloc::boxed::impl$48::call_mut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,dyn$<core::ops::function::FnMut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,assoc$<Output,tuple$<> > > >,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\boxed.rs:2023
+  19: winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure$0<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:250
+  20: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  21: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  22: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  23: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  24: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  25: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  26: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::call_event_handler<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:246
+  27: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:236
+  28: winit::platform_impl::platform::event_loop::WindowData<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:112
+  29: winit::platform_impl::platform::event_loop::public_window_callback_inner::closure$2<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1028
+  30: core::ops::function::FnOnce::call_once<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  31: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  32: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  33: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  34: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  35: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  36: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  37: winit::platform_impl::platform::event_loop::public_window_callback_inner<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1038
+  38: winit::platform_impl::platform::event_loop::public_window_callback<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:983
+  39: DispatchMessageW
+  40: CallWindowProcW
+  41: wglSwapBuffers
+  42: DispatchMessageW
+  43: DispatchMessageW
+  44: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::dispatch_peeked_messages<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:449
+  45: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run_on_demand<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:247
+  46: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:218
+  47: winit::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\event_loop.rs:249
+  48: client::main::async_block$0
+             at c:\Sources\AscendingClient\src\main.rs:349
+  49: tokio::runtime::park::impl$4::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  50: tokio::runtime::coop::with_budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:107
+      tokio::runtime::coop::budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:73
+      tokio::runtime::park::CachedParkThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  51: tokio::runtime::context::blocking::BlockingRegionGuard::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\blocking.rs:66
+  52: tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:87
+  53: tokio::runtime::context::runtime::enter_runtime<tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure_env$0<enum2$<client::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\runtime.rs:65
+  54: tokio::runtime::scheduler::multi_thread::MultiThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:86
+  55: tokio::runtime::runtime::Runtime::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\runtime.rs:351
+  56: client::main
+             at c:\Sources\AscendingClient\src\main.rs:672
+  57: core::ops::function::FnOnce::call_once<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  58: std::sys_common::backtrace::__rust_begin_short_backtrace<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\sys_common\backtrace.rs:155
+  59: std::rt::lang_start::closure$0<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:166
+  60: std::rt::lang_start_internal::closure$2
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+      std::panicking::try::do_call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:554
+      std::panicking::try
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:518
+      std::panic::catch_unwind
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panic.rs:142
+      std::rt::lang_start_internal
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+  61: std::rt::lang_start<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:165
+  62: main
+  63: invoke_main
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:78
+      __scrt_common_main_seh
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+  64: BaseThreadInitThunk
+  65: RtlUserThreadStart
+
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+ERROR - PANIC: panicked at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\vec\mod.rs:1519:21:
+insertion index (is 3) should be <= len (is 1), BACKTRACE:    0: backtrace::backtrace::dbghelp64::trace
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\dbghelp64.rs:99
+      backtrace::backtrace::trace_unsynchronized<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:66
+   1: backtrace::backtrace::trace<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:53
+   2: backtrace::capture::Backtrace::create
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:193
+   3: backtrace::capture::Backtrace::new
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:158
+   4: client::main::async_block$0::closure$0
+             at c:\Sources\AscendingClient\src\main.rs:118
+   5: alloc::boxed::impl$49::call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\boxed.rs:2030
+      std::panicking::rust_panic_with_hook
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:785
+   6: std::panicking::begin_panic_handler::closure$0
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:659
+   7: std::sys_common::backtrace::__rust_end_short_backtrace<std::panicking::begin_panic_handler::closure_env$0,never$>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\sys_common\backtrace.rs:171
+   8: std::panicking::begin_panic_handler
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:647
+   9: core::panicking::panic_fmt
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\panicking.rs:72
+  10: alloc::vec::impl$1::insert::assert_failed
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\vec\mod.rs:1497
+  11: alloc::vec::Vec<f32,alloc::alloc::Global>::insert<f32,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\vec\mod.rs:1519
+  12: client::widget::textbox::Textbox::enter_text
+             at c:\Sources\AscendingClient\src\widget\textbox.rs:365
+  13: client::content::menu_content::content_input::register_input::register_key_input
+             at c:\Sources\AscendingClient\src\content\menu_content\content_input\register_input.rs:66
+  14: client::content::menu_content::MenuContent::key_input
+             at c:\Sources\AscendingClient\src\content\menu_content\content_input.rs:82
+  15: client::content::inputs::handle_key_input
+             at c:\Sources\AscendingClient\src\content\inputs.rs:72
+  16: client::main::async_block$0::closure$2
+             at c:\Sources\AscendingClient\src\main.rs:376
+  17: winit::platform_impl::platform::event_loop::impl$3::run_on_demand::closure$0<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:236
+  18: alloc::boxed::impl$48::call_mut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,dyn$<core::ops::function::FnMut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,assoc$<Output,tuple$<> > > >,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\boxed.rs:2023
+  19: winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure$0<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:250
+  20: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  21: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  22: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  23: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  24: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  25: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  26: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::call_event_handler<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:246
+  27: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:236
+  28: winit::platform_impl::platform::event_loop::WindowData<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:112
+  29: winit::platform_impl::platform::event_loop::public_window_callback_inner::closure$2<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1028
+  30: core::ops::function::FnOnce::call_once<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  31: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  32: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  33: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  34: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  35: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  36: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  37: winit::platform_impl::platform::event_loop::public_window_callback_inner<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1038
+  38: winit::platform_impl::platform::event_loop::public_window_callback<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:983
+  39: DispatchMessageW
+  40: CallWindowProcW
+  41: wglSwapBuffers
+  42: DispatchMessageW
+  43: DispatchMessageW
+  44: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::dispatch_peeked_messages<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:449
+  45: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run_on_demand<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:247
+  46: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:218
+  47: winit::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\event_loop.rs:249
+  48: client::main::async_block$0
+             at c:\Sources\AscendingClient\src\main.rs:349
+  49: tokio::runtime::park::impl$4::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  50: tokio::runtime::coop::with_budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:107
+      tokio::runtime::coop::budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:73
+      tokio::runtime::park::CachedParkThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  51: tokio::runtime::context::blocking::BlockingRegionGuard::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\blocking.rs:66
+  52: tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:87
+  53: tokio::runtime::context::runtime::enter_runtime<tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure_env$0<enum2$<client::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\runtime.rs:65
+  54: tokio::runtime::scheduler::multi_thread::MultiThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:86
+  55: tokio::runtime::runtime::Runtime::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\runtime.rs:351
+  56: client::main
+             at c:\Sources\AscendingClient\src\main.rs:672
+  57: core::ops::function::FnOnce::call_once<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  58: std::sys_common::backtrace::__rust_begin_short_backtrace<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\sys_common\backtrace.rs:155
+  59: std::rt::lang_start::closure$0<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:166
+  60: std::rt::lang_start_internal::closure$2
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+      std::panicking::try::do_call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:554
+      std::panicking::try
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:518
+      std::panic::catch_unwind
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panic.rs:142
+      std::rt::lang_start_internal
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+  61: std::rt::lang_start<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:165
+  62: main
+  63: invoke_main
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:78
+      __scrt_common_main_seh
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+  64: BaseThreadInitThunk
+  65: RtlUserThreadStart
+
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 355
+ERROR - PANIC: panicked at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\vec\mod.rs:1519:21:
+insertion index (is 3) should be <= len (is 1), BACKTRACE:    0: backtrace::backtrace::dbghelp64::trace
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\dbghelp64.rs:99
+      backtrace::backtrace::trace_unsynchronized<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:66
+   1: backtrace::backtrace::trace<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:53
+   2: backtrace::capture::Backtrace::create
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:193
+   3: backtrace::capture::Backtrace::new
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:158
+   4: client::main::async_block$0::closure$0
+             at c:\Sources\AscendingClient\src\main.rs:118
+   5: alloc::boxed::impl$49::call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\boxed.rs:2030
+      std::panicking::rust_panic_with_hook
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:785
+   6: std::panicking::begin_panic_handler::closure$0
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:659
+   7: std::sys_common::backtrace::__rust_end_short_backtrace<std::panicking::begin_panic_handler::closure_env$0,never$>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\sys_common\backtrace.rs:171
+   8: std::panicking::begin_panic_handler
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:647
+   9: core::panicking::panic_fmt
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\core\src\panicking.rs:72
+  10: alloc::vec::impl$1::insert::assert_failed
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\alloc\src\vec\mod.rs:1497
+  11: alloc::vec::Vec<f32,alloc::alloc::Global>::insert<f32,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\vec\mod.rs:1519
+  12: client::widget::textbox::Textbox::enter_text
+             at c:\Sources\AscendingClient\src\widget\textbox.rs:365
+  13: client::content::game_content::interface::Interface::key_input
+             at c:\Sources\AscendingClient\src\content\game_content\interface.rs:558
+  14: client::content::game_content::GameContent::key_input
+             at c:\Sources\AscendingClient\src\content\game_content\content_input.rs:86
+  15: client::content::inputs::handle_key_input
+             at c:\Sources\AscendingClient\src\content\inputs.rs:67
+  16: client::main::async_block$0::closure$2
+             at c:\Sources\AscendingClient\src\main.rs:376
+  17: winit::platform_impl::platform::event_loop::impl$3::run_on_demand::closure$0<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:236
+  18: alloc::boxed::impl$48::call_mut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,dyn$<core::ops::function::FnMut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,assoc$<Output,tuple$<> > > >,alloc::alloc::Global>
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\alloc\src\boxed.rs:2023
+  19: winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure$0<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:250
+  20: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  21: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  22: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  23: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  24: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  25: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  26: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::call_event_handler<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:246
+  27: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:236
+  28: winit::platform_impl::platform::event_loop::WindowData<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:112
+  29: winit::platform_impl::platform::event_loop::public_window_callback_inner::closure$2<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1028
+  30: core::ops::function::FnOnce::call_once<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  31: core::panic::unwind_safe::impl$23::call_once<tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\panic\unwind_safe.rs:272
+  32: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:554
+  33: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+  34: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panicking.rs:518
+  35: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >,tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\panic.rs:142
+  36: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$2<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  37: winit::platform_impl::platform::event_loop::public_window_callback_inner<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1038
+  38: winit::platform_impl::platform::event_loop::public_window_callback<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:983
+  39: DispatchMessageW
+  40: CallWindowProcW
+  41: wglSwapBuffers
+  42: DispatchMessageW
+  43: DispatchMessageW
+  44: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::dispatch_peeked_messages<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:449
+  45: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run_on_demand<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:247
+  46: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:218
+  47: winit::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\event_loop.rs:249
+  48: client::main::async_block$0
+             at c:\Sources\AscendingClient\src\main.rs:349
+  49: tokio::runtime::park::impl$4::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  50: tokio::runtime::coop::with_budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:107
+      tokio::runtime::coop::budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:73
+      tokio::runtime::park::CachedParkThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  51: tokio::runtime::context::blocking::BlockingRegionGuard::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\blocking.rs:66
+  52: tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:87
+  53: tokio::runtime::context::runtime::enter_runtime<tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure_env$0<enum2$<client::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\runtime.rs:65
+  54: tokio::runtime::scheduler::multi_thread::MultiThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:86
+  55: tokio::runtime::runtime::Runtime::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\runtime.rs:351
+  56: client::main
+             at c:\Sources\AscendingClient\src\main.rs:672
+  57: core::ops::function::FnOnce::call_once<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),tuple$<> >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\core\src\ops\function.rs:250
+  58: std::sys_common::backtrace::__rust_begin_short_backtrace<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\sys_common\backtrace.rs:155
+  59: std::rt::lang_start::closure$0<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:166
+  60: std::rt::lang_start_internal::closure$2
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+      std::panicking::try::do_call
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:554
+      std::panicking::try
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panicking.rs:518
+      std::panic::catch_unwind
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\panic.rs:142
+      std::rt::lang_start_internal
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10/library\std\src\rt.rs:148
+  61: std::rt::lang_start<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/30dfb9e046aeb878db04332c74de76e52fb7db10\library\std\src\rt.rs:165
+  62: main
+  63: invoke_main
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:78
+      __scrt_common_main_seh
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+  64: BaseThreadInitThunk
+  65: RtlUserThreadStart
+
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 382
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 380
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 380
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 380
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 376
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 355
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 383
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 363
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 383
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 359
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 383
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 351
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 383
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 379
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 379
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 359
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 383
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 355
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 371
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 371
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 386
+WARN - Disconnected
+INFO - GFX Loaded Count: 42
+INFO - 212.47.238.107:7010
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 391
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 390
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 371
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 383
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 374
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 366
+INFO - Gfx Count: 376
+INFO - Gfx Count: 376
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 381
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 385
+INFO - Data 0 Type: "Fade Image"
+INFO - Data 1 Type: "Map Fade Image"
+INFO - Data 2 Type: "Menu BG"
+INFO - Data 3 Type: "Menu Server Status"
+INFO - Data 4 Type: "Trade Slot BG"
+INFO - Data 5 Type: "Inv Item"
+INFO - Data 7 Type: "Npc Name"
+INFO - Data 9 Type: "Button Content"
+INFO - Data 10 Type: "FPS"
+INFO - Data 11 Type: "Tool Tips Text"
+INFO - Data 12 Type: "Tool Tips Window"
+INFO - Data 14 Type: "Trade Slot BG"
+INFO - Data 17 Type: "Button Image"
+INFO - Data 18 Type: "Trade Slot BG"
+INFO - Data 19 Type: "Floating Text Shadow"
+INFO - Data 20 Type: "Npc HP Bar"
+INFO - Data 21 Type: "Trade Slot BG"
+INFO - Data 22 Type: "Npc Sprite"
+INFO - Data 23 Type: "Trade Slot BG"
+INFO - Data 24 Type: "Npc Name"
+INFO - Data 26 Type: "Npc HP BG"
+INFO - Data 27 Type: "Npc HP Bar"
+INFO - Data 28 Type: "Player HP BG"
+INFO - Data 29 Type: "Map"
+INFO - Data 30 Type: "Player Sprite"
+INFO - Data 31 Type: "Button Image"
+INFO - Data 32 Type: "Trade Slot BG"
+INFO - Data 33 Type: "Npc Sprite"
+INFO - Data 34 Type: "Button Content"
+INFO - Data 35 Type: "Npc Name"
+INFO - Data 36 Type: "Npc Sprite"
+INFO - Data 37 Type: "Floating Text Shadow"
+INFO - Data 38 Type: "Trade Slot BG"
+INFO - Data 39 Type: "Map"
+INFO - Data 40 Type: "Trade Slot BG"
+INFO - Data 41 Type: "Npc HP Bar"
+INFO - Data 42 Type: "Npc Name"
+INFO - Data 43 Type: "Npc HP BG"
+INFO - Data 44 Type: "Npc Sprite"
+INFO - Data 45 Type: "Trade Slot BG"
+INFO - Data 46 Type: "Map"
+INFO - Data 47 Type: "Trade Slot BG"
+INFO - Data 48 Type: "Trade Slot BG"
+INFO - Data 49 Type: "Npc HP Bar"
+INFO - Data 50 Type: "Trade Slot BG"
+INFO - Data 51 Type: "Npc Sprite"
+INFO - Data 58 Type: "Inv Header"
+INFO - Data 59 Type: "Inv Header Text"
+INFO - Data 60 Type: "Inv Slot BG"
+INFO - Data 61 Type: "Profile Label"
+INFO - Data 62 Type: "Profile Label Value"
+INFO - Data 63 Type: "Chatbox Chat Area"
+INFO - Data 64 Type: "Settings BGM Label"
+INFO - Data 65 Type: "Profile Label"
+INFO - Data 66 Type: "Profile Label Value"
+INFO - Data 67 Type: "Button Image"
+INFO - Data 68 Type: "Settings SFX Label"
+INFO - Data 69 Type: "Button Content"
+INFO - Data 70 Type: "Checkbox Image"
+INFO - Data 71 Type: "Settings Header"
+INFO - Data 72 Type: "Scrollbar BG"
+INFO - Data 73 Type: "Button Image"
+INFO - Data 74 Type: "Button Content"
+INFO - Data 75 Type: "Button Image"
+INFO - Data 76 Type: "Button Content"
+INFO - Data 77 Type: "ChatTab BG"
+INFO - Data 78 Type: "ChatTab Text"
+INFO - Data 79 Type: "ChatTab BG"
+INFO - Data 80 Type: "ChatTab Text"
+INFO - Data 81 Type: "ChatTab BG"
+INFO - Data 82 Type: "ChatTab Text"
+INFO - Data 83 Type: "Chatbox Selection"
+INFO - Data 84 Type: "Storage BG"
+INFO - Data 85 Type: "Storage Header"
+INFO - Data 86 Type: "Storage Header Text"
+INFO - Data 87 Type: "Storage Slot BG"
+INFO - Data 88 Type: "Storage Slot BG"
+INFO - Data 89 Type: "Storage Slot BG"
+INFO - Data 90 Type: "Storage Slot BG"
+INFO - Data 91 Type: "Storage Slot BG"
+INFO - Data 92 Type: "Storage Slot BG"
+INFO - Data 93 Type: "Storage Slot BG"
+INFO - Data 94 Type: "Storage Slot BG"
+INFO - Data 95 Type: "Storage Slot BG"
+INFO - Data 96 Type: "Storage Slot BG"
+INFO - Data 97 Type: "Storage Slot BG"
+INFO - Data 98 Type: "Storage Slot BG"
+INFO - Data 99 Type: "Storage Slot BG"
+INFO - Data 100 Type: "Storage Slot BG"
+INFO - Data 101 Type: "Storage Slot BG"
+INFO - Data 102 Type: "Storage Slot BG"
+INFO - Data 103 Type: "Storage Slot BG"
+INFO - Data 104 Type: "Storage Slot BG"
+INFO - Data 105 Type: "Storage Slot BG"
+INFO - Data 106 Type: "Storage Slot BG"
+INFO - Data 107 Type: "Storage Slot BG"
+INFO - Data 108 Type: "Storage Slot BG"
+INFO - Data 109 Type: "Storage Slot BG"
+INFO - Data 110 Type: "Storage Slot BG"
+INFO - Data 111 Type: "Storage Slot BG"
+INFO - Data 112 Type: "Storage Slot BG"
+INFO - Data 113 Type: "Storage Slot BG"
+INFO - Data 114 Type: "Storage Slot BG"
+INFO - Data 115 Type: "Storage Slot BG"
+INFO - Data 116 Type: "Storage Slot BG"
+INFO - Data 117 Type: "Storage Slot BG"
+INFO - Data 118 Type: "Storage Slot BG"
+INFO - Data 119 Type: "Storage Slot BG"
+INFO - Data 120 Type: "Storage Slot BG"
+INFO - Data 121 Type: "Storage Slot BG"
+INFO - Data 122 Type: "Storage Slot BG"
+INFO - Data 123 Type: "Storage Slot BG"
+INFO - Data 124 Type: "Storage Slot BG"
+INFO - Data 125 Type: "Storage Slot BG"
+INFO - Data 126 Type: "Storage Slot BG"
+INFO - Data 127 Type: "Storage Slot BG"
+INFO - Data 128 Type: "Storage Slot BG"
+INFO - Data 129 Type: "Storage Slot BG"
+INFO - Data 130 Type: "Storage Slot BG"
+INFO - Data 131 Type: "Storage Slot BG"
+INFO - Data 132 Type: "Storage Slot BG"
+INFO - Data 133 Type: "Storage Slot BG"
+INFO - Data 134 Type: "Storage Slot BG"
+INFO - Data 135 Type: "Storage Slot BG"
+INFO - Data 136 Type: "Storage Slot BG"
+INFO - Data 137 Type: "Storage Slot BG"
+INFO - Data 138 Type: "Storage Slot BG"
+INFO - Data 139 Type: "Storage Slot BG"
+INFO - Data 140 Type: "Storage Slot BG"
+INFO - Data 141 Type: "Storage Slot BG"
+INFO - Data 142 Type: "Storage Slot BG"
+INFO - Data 143 Type: "Storage Slot BG"
+INFO - Data 144 Type: "Storage Slot BG"
+INFO - Data 145 Type: "Shop Item BG"
+INFO - Data 146 Type: "Shop Item Name"
+INFO - Data 147 Type: "Button Image"
+INFO - Data 148 Type: "Shop Price Icon"
+INFO - Data 149 Type: "Storage Slot BG"
+INFO - Data 150 Type: "Storage Slot BG"
+INFO - Data 151 Type: "Button Image"
+INFO - Data 152 Type: "Shop Item BG"
+INFO - Data 153 Type: "Shop Item Price"
+INFO - Data 154 Type: "Button Content"
+INFO - Data 155 Type: "Shop Price Icon"
+INFO - Data 156 Type: "Shop Item Amount BG"
+INFO - Data 157 Type: "Storage Slot BG"
+INFO - Data 158 Type: "Storage Slot BG"
+INFO - Data 159 Type: "Button Image"
+INFO - Data 160 Type: "Button Content"
+INFO - Data 161 Type: "Button Content"
+INFO - Data 162 Type: "Shop Item Amount"
+INFO - Data 163 Type: "Shop Item Amount BG"
+INFO - Data 164 Type: "Button Content"
+INFO - Data 165 Type: "Storage Slot BG"
+INFO - Data 166 Type: "Storage Slot BG"
+INFO - Data 167 Type: "Button Image"
+INFO - Data 168 Type: "Shop Item Amount BG"
+INFO - Data 169 Type: "Shop Item Amount"
+INFO - Data 170 Type: "Scrollbar Scroll"
+INFO - Data 171 Type: "Trade Header Text"
+INFO - Data 172 Type: "Trade Window"
+INFO - Data 173 Type: "Storage Slot BG"
+INFO - Data 174 Type: "Storage Slot BG"
+INFO - Data 175 Type: "Trade Header"
+INFO - Data 176 Type: "Shop Item Name"
+INFO - Data 177 Type: "Shop Item Amount"
+INFO - Data 178 Type: "Shop Item BG"
+INFO - Data 179 Type: "Button Image"
+INFO - Data 180 Type: "Shop Item BG"
+INFO - Data 181 Type: "Shop Item Amount BG"
+INFO - Data 182 Type: "Shop Item Amount"
+INFO - Data 183 Type: "Button Content"
+INFO - Data 184 Type: "Button Image"
+INFO - Data 185 Type: "Button Content"
+INFO - Data 186 Type: "Button Image"
+INFO - Data 187 Type: "Button Content"
+INFO - Data 188 Type: "Shop Item Name"
+INFO - Data 189 Type: "Shop Item Price"
+INFO - Data 190 Type: "Shop Item Price"
+INFO - Data 191 Type: "Shop Price Icon"
+INFO - Data 192 Type: "Trade Slot BG"
+INFO - Data 193 Type: "Trade Slot BG"
+INFO - Data 194 Type: "Trade Slot BG"
+INFO - Data 195 Type: "Trade Slot BG"
+INFO - Data 196 Type: "Shop Price Icon"
+INFO - Data 197 Type: "Shop Item Amount BG"
+INFO - Data 198 Type: "Trade Slot BG"
+INFO - Data 199 Type: "Trade Slot BG"
+INFO - Data 200 Type: "Trade Slot BG"
+INFO - Data 201 Type: "Trade Slot BG"
+INFO - Data 202 Type: "Trade Slot BG"
+INFO - Data 203 Type: "Trade Slot BG"
+INFO - Data 204 Type: "Trade Slot BG"
+INFO - Data 205 Type: "Trade Slot BG"
+INFO - Data 206 Type: "Trade Slot BG"
+INFO - Data 207 Type: "Trade Slot BG"
+INFO - Data 208 Type: "Trade Slot BG"
+INFO - Data 209 Type: "Trade Slot BG"
+INFO - Data 210 Type: "Trade Slot BG"
+INFO - Data 211 Type: "Trade Slot BG"
+INFO - Data 212 Type: "Trade Slot BG"
+INFO - Data 213 Type: "Trade Slot BG"
+INFO - Data 214 Type: "Trade Slot BG"
+INFO - Data 215 Type: "Trade Slot BG"
+INFO - Data 216 Type: "Trade Slot BG"
+INFO - Data 217 Type: "Trade Slot BG"
+INFO - Data 218 Type: "Trade Slot BG"
+INFO - Data 219 Type: "Trade Slot BG"
+INFO - Data 220 Type: "Trade Slot BG"
+INFO - Data 221 Type: "Trade Slot BG"
+INFO - Data 222 Type: "Trade Slot BG"
+INFO - Data 223 Type: "Trade Slot BG"
+INFO - Data 224 Type: "Trade Slot BG"
+INFO - Data 226 Type: "Inv Amount BG"
+INFO - Data 227 Type: "Target Image"
+INFO - Data 228 Type: "Floating Text"
+INFO - Data 229 Type: "Textbox Select"
+INFO - Data 231 Type: "Button Content"
+INFO - Data 232 Type: "Shop Header"
+INFO - Data 233 Type: "Shop BG"
+INFO - Data 234 Type: "Item Desc Window"
+INFO - Data 235 Type: "Trade Slot BG"
+INFO - Data 236 Type: "Button Image"
+INFO - Data 237 Type: "Button Content"
+INFO - Data 238 Type: "Textbox Text"
+INFO - Data 239 Type: "Trade Main Status"
+INFO - Data 240 Type: "Trade Slot BG"
+INFO - Data 241 Type: "Storage Slot BG"
+INFO - Data 242 Type: "Map"
+INFO - Data 243 Type: "Vital Bar"
+INFO - Data 244 Type: "Textbox Text"
+INFO - Data 246 Type: "Textbox Caret"
+INFO - Data 248 Type: "Npc HP BG"
+INFO - Data 249 Type: "Trade Slot BG"
+INFO - Data 250 Type: "Trade Slot BG"
+INFO - Data 251 Type: "Trade Slot BG"
+INFO - Data 252 Type: "Trade Name"
+INFO - Data 253 Type: "Vital BG"
+INFO - Data 254 Type: "Npc HP Bar"
+INFO - Data 255 Type: "Vital BG"
+INFO - Data 256 Type: "Vital BG"
+INFO - Data 257 Type: "Trade Name"
+INFO - Data 258 Type: "Trade Slot BG"
+INFO - Data 259 Type: "Trade Status"
+INFO - Data 260 Type: "Inv Slot BG"
+INFO - Data 261 Type: "Inv Slot BG"
+INFO - Data 262 Type: "Scrollbar Scroll"
+INFO - Data 263 Type: "Trade Slot BG"
+INFO - Data 264 Type: "Vital Bar"
+INFO - Data 265 Type: "Textbox BG"
+INFO - Data 266 Type: "Trade Slot BG"
+INFO - Data 267 Type: "Inv Slot BG"
+INFO - Data 268 Type: "Inv Slot BG"
+INFO - Data 269 Type: "Inv Slot BG"
+INFO - Data 270 Type: "Inv Slot BG"
+INFO - Data 271 Type: "Inv Slot BG"
+INFO - Data 272 Type: "Inv Slot BG"
+INFO - Data 273 Type: "Inv Slot BG"
+INFO - Data 274 Type: "Inv Slot BG"
+INFO - Data 275 Type: "Inv Slot BG"
+INFO - Data 276 Type: "Inv Slot BG"
+INFO - Data 277 Type: "Inv Slot BG"
+INFO - Data 278 Type: "Inv Slot BG"
+INFO - Data 279 Type: "Inv Slot BG"
+INFO - Data 280 Type: "Inv Slot BG"
+INFO - Data 281 Type: "Inv Slot BG"
+INFO - Data 282 Type: "Inv Slot BG"
+INFO - Data 283 Type: "Inv Slot BG"
+INFO - Data 284 Type: "Inv Slot BG"
+INFO - Data 285 Type: "Inv Slot BG"
+INFO - Data 286 Type: "Profile EQ Slot BG"
+INFO - Data 287 Type: "Chatbox BG"
+INFO - Data 288 Type: "Inv Slot BG"
+INFO - Data 289 Type: "Inv Slot BG"
+INFO - Data 290 Type: "Inv Slot BG"
+INFO - Data 291 Type: "Inv Slot BG"
+INFO - Data 292 Type: "Inv Slot BG"
+INFO - Data 293 Type: "Scrollbar Scroll"
+INFO - Data 294 Type: "Chatbox Textbox BG"
+INFO - Data 295 Type: "Profile Label"
+INFO - Data 296 Type: "Inv Slot BG"
+INFO - Data 297 Type: "Button Image"
+INFO - Data 298 Type: "Button Content"
+INFO - Data 299 Type: "Profile EQ Slot BG"
+INFO - Data 300 Type: "Inv Slot BG"
+INFO - Data 301 Type: "Scrollbar BG"
+INFO - Data 302 Type: "Inv Slot BG"
+INFO - Data 303 Type: "Profile Label"
+INFO - Data 304 Type: "Settings BG"
+INFO - Data 305 Type: "Profile BG"
+INFO - Data 306 Type: "Settings Header Text"
+INFO - Data 307 Type: "Profile Header Text"
+INFO - Data 308 Type: "Button Image"
+INFO - Data 309 Type: "Scrollbar Scroll"
+INFO - Data 310 Type: "Profile Label"
+INFO - Data 311 Type: "Textbox BG"
+INFO - Data 312 Type: "Button Image"
+INFO - Data 313 Type: "Profile Header"
+INFO - Data 314 Type: "Button Content"
+INFO - Data 315 Type: "Checkbox Check"
+INFO - Data 316 Type: "Checkbox Text"
+INFO - Data 317 Type: "Profile EQ Slot BG"
+INFO - Data 318 Type: "Profile Label Value"
+INFO - Data 319 Type: "Profile Label Value"
+INFO - Data 320 Type: "Button Content"
+INFO - Data 321 Type: "Profile EQ Slot BG"
+INFO - Data 322 Type: "Settings Label"
+INFO - Data 323 Type: "Profile EQ Slot BG"
+INFO - Data 324 Type: "Settings Label"
+INFO - Data 325 Type: "Vital Bar"
+INFO - Data 326 Type: "Trade Slot BG"
+INFO - Data 327 Type: "Textbox Caret"
+INFO - Data 328 Type: "Floating Text"
+INFO - Data 329 Type: "Shop Price Icon"
+INFO - Data 332 Type: "Map"
+INFO - Data 333 Type: "Storage Slot BG"
+INFO - Data 334 Type: "Player Name"
+INFO - Data 336 Type: "Button Image"
+INFO - Data 337 Type: "Trade Slot BG"
+INFO - Data 338 Type: "Button Image"
+INFO - Data 339 Type: "Shop Item BG"
+INFO - Data 340 Type: "Shop Header Text"
+INFO - Data 341 Type: "Button Image"
+INFO - Data 342 Type: "Button Content"
+INFO - Data 343 Type: "Player HP Bar"
+INFO - Data 344 Type: "Map"
+INFO - Data 345 Type: "Map"
+INFO - Data 346 Type: "Trade Slot BG"
+INFO - Data 347 Type: "Vital Window"
+INFO - Data 348 Type: "Button Content"
+INFO - Data 349 Type: "Storage Slot BG"
+INFO - Data 350 Type: "Npc Name"
+INFO - Data 351 Type: "Player Sprite"
+INFO - Data 352 Type: "Trade Status"
+INFO - Data 353 Type: "Shop Item Name"
+INFO - Data 355 Type: "Npc Sprite"
+INFO - Data 356 Type: "Npc HP Bar"
+INFO - Data 358 Type: "Npc Sprite"
+INFO - Data 359 Type: "Npc HP BG"
+INFO - Data 360 Type: "Map Item"
+INFO - Data 362 Type: "Trade Slot BG"
+INFO - Data 363 Type: "Npc HP BG"
+INFO - Data 365 Type: "Npc Name"
+INFO - Data 366 Type: "Npc Name"
+INFO - Data 369 Type: "Player HP BG"
+INFO - Data 370 Type: "Trade Money Icon"
+INFO - Data 371 Type: "Scrollbar BG"
+INFO - Data 372 Type: "Shop Item Amount"
+INFO - Data 373 Type: "Trade Slot BG"
+INFO - Data 374 Type: "Button Image"
+INFO - Data 375 Type: "Button Content"
+INFO - Data 376 Type: "Map"
+INFO - Data 378 Type: "Shop Item Price"
+INFO - Data 379 Type: "Trade Slot BG"
+INFO - Data 381 Type: "Player Name"
+INFO - Data 383 Type: "Inv BG"
+INFO - Data 385 Type: "Npc HP BG"
+INFO - Data 386 Type: "Npc HP Bar"
+INFO - Data 387 Type: "Scrollbar BG"
+INFO - Data 388 Type: "Trade Slot BG"
+INFO - Data 389 Type: "Npc HP BG"
+INFO - Data 391 Type: "Shop Item Name"
+INFO - Data 392 Type: "Player HP Bar"
+INFO - Data 393 Type: "Shop Item Price"
+INFO - Data 394 Type: "Trade Money"
+INFO - Data 395 Type: "Trade Money Icon"
+INFO - Data 396 Type: "Textbox Select"
+INFO - Data 397 Type: "Storage Slot BG"
+INFO - Data 398 Type: "Trade Slot BG"
+INFO - Data 399 Type: "Trade Slot BG"
+INFO - Data 401 Type: "Map"
+INFO - Data 402 Type: "Button Content"
+INFO - Data 403 Type: "Inv Amount"
+INFO - Data 406 Type: "Chatbox Text"
+INFO - Data 407 Type: "Button Image"
+INFO - Data 408 Type: "Floating Text"
+INFO - Data 410 Type: "Floating Text Shadow"
+INFO - Data 411 Type: "Inv Amount BG"
+INFO - Data 412 Type: "Inv Item"
+INFO - Data 413 Type: "Inv Amount"
+INFO - Data 414 Type: "Chatbox Text"
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 376
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 378
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 382
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 374
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 382
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 375
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Disconnected on read tls ok(0)
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 402
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 386
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 402
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 394
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 391
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 363
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 379
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 359
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 375
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
