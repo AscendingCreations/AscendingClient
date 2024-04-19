@@ -328,8 +328,9 @@ pub fn end_player_move(
     if let Some(p) = &content.myentity {
         if p == entity && move_map {
             let dir = world.get_or_err::<Movement>(entity)?.move_direction;
+            let new_pos = world.get_or_err::<Position>(entity)?;
             content.move_map(world, systems, socket, dir, buffer)?;
-            finalize_entity(world, systems);
+            finalize_entity(world, systems, content, new_pos)?;
         }
     }
 

@@ -4,8 +4,8 @@ use crate::{
     data_types::*,
     dir_to_enum,
     fade::*,
-    get_percent, get_start_map_pos, init_npc_attack, is_map_connected,
-    npc_finalized, open_interface, player_get_armor_defense,
+    finalize_entity, get_percent, get_start_map_pos, init_npc_attack,
+    is_map_connected, npc_finalized, open_interface, player_get_armor_defense,
     player_get_weapon_damage, send_handshake, set_npc_frame, unload_mapitems,
     unload_npc, update_camera, Alert, AlertIndex, AlertType, BufferTask,
     ChatTask, Content, EncryptionState, EntityType, FtlType, IsUsingType,
@@ -160,7 +160,7 @@ pub fn handle_mapitems(
         let pos = data.read::<Position>()?;
         let item = data.read::<Item>()?;
         let _owner = data.read::<Option<Entity>>()?;
-        let did_spawn = data.read::<bool>()?;
+        let _did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
@@ -183,7 +183,7 @@ pub fn handle_mapitems(
 
                 content.game_content.mapitems.insert(mapitem);
 
-                if did_spawn && content.game_content.finalized {
+                if content.game_content.finalized {
                     MapItem::finalized(world, systems, &entity)?;
                 }
             }
@@ -321,7 +321,7 @@ pub fn handle_playerspawn(
         vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
         let mut vitalmax = [0; VITALS_MAX];
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
-        let did_spawn = data.read::<bool>()?;
+        let _did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
             if myentity != entity && !world.contains(entity.0) {
@@ -369,7 +369,7 @@ pub fn handle_playerspawn(
                     }
                 }
 
-                if did_spawn && content.game_content.finalized {
+                if content.game_content.finalized {
                     player_finalized(world, systems, &entity)?;
                 }
             }
@@ -455,9 +455,12 @@ pub fn handle_playerwarp(
             if myentity == entity {
                 if old_pos.map != pos.map {
                     content.game_content.init_map(systems, pos.map)?;
-                    content
-                        .game_content
-                        .finalize_entity(world, systems, socket)?;
+                    finalize_entity(
+                        world,
+                        systems,
+                        &mut content.game_content,
+                        pos,
+                    )?;
                 }
                 if systems.map_fade.f_alpha > 0 {
                     systems.map_fade.init_fade(
@@ -1054,7 +1057,7 @@ pub fn handle_npcdata(
         vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
         let mut vitalmax = [0; VITALS_MAX];
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
-        let did_spawn = data.read::<bool>()?;
+        let _did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
@@ -1100,7 +1103,7 @@ pub fn handle_npcdata(
                     }
                 }
 
-                if did_spawn && content.game_content.finalized {
+                if content.game_content.finalized {
                     npc_finalized(world, systems, &entity)?;
                 }
             }

@@ -601,53 +601,87 @@ pub fn update_npc(
     Ok(())
 }
 
-pub fn finalize_entity(world: &mut World, systems: &mut SystemHolder) {
-    for (_entity, (worldentitytype, sprite, finalized, hpbar, entitynamemap)) in
-        world
-            .query_mut::<(
-                &WorldEntityType,
-                &SpriteIndex,
-                &mut Finalized,
-                Option<&HPBar>,
-                Option<&EntityNameMap>,
-            )>()
-            .into_iter()
-            .filter(|(_, (_, _, finalized, _, _))| !finalized.0)
+pub fn finalize_entity(
+    world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut GameContent,
+    new_pos: Position,
+) -> Result<()> {
+    let mut entity_to_remove = Vec::new();
+
+    for (
+        entity,
+        (worldentitytype, sprite, finalized, position, hpbar, entitynamemap),
+    ) in world
+        .query_mut::<(
+            &WorldEntityType,
+            &SpriteIndex,
+            &mut Finalized,
+            &Position,
+            Option<&HPBar>,
+            Option<&EntityNameMap>,
+        )>()
+        .into_iter()
     {
+        if !finalized.0 {
+            match worldentitytype {
+                WorldEntityType::Player => {
+                    if let Some(hp_bar) = hpbar {
+                        if let Some(nameindex) = entitynamemap {
+                            player_finalized_data(
+                                systems,
+                                sprite.0,
+                                nameindex.0,
+                                hp_bar,
+                            );
+                            finalized.0 = true;
+                        }
+                    }
+                }
+                WorldEntityType::Npc => {
+                    if let Some(hp_bar) = hpbar {
+                        if let Some(nameindex) = entitynamemap {
+                            npc_finalized_data(
+                                systems,
+                                sprite.0,
+                                nameindex.0,
+                                hp_bar,
+                            );
+                            finalized.0 = true;
+                        }
+                    }
+                }
+                WorldEntityType::MapItem => {
+                    MapItem::finalized_data(systems, sprite.0);
+                    finalized.0 = true;
+                }
+                _ => {}
+            }
+        }
+
+        if !is_map_connected(new_pos.map, position.map) {
+            entity_to_remove.push((entity, *worldentitytype))
+        }
+    }
+
+    for (entity, worldentitytype) in entity_to_remove {
         match worldentitytype {
             WorldEntityType::Player => {
-                if let Some(hp_bar) = hpbar {
-                    if let Some(nameindex) = entitynamemap {
-                        player_finalized_data(
-                            systems,
-                            sprite.0,
-                            nameindex.0,
-                            hp_bar,
-                        );
-                        finalized.0 = true;
-                    }
-                }
+                unload_player(world, systems, &Entity(entity))?;
+                content.players.swap_remove(&Entity(entity));
             }
             WorldEntityType::Npc => {
-                if let Some(hp_bar) = hpbar {
-                    if let Some(nameindex) = entitynamemap {
-                        npc_finalized_data(
-                            systems,
-                            sprite.0,
-                            nameindex.0,
-                            hp_bar,
-                        );
-                        finalized.0 = true;
-                    }
-                }
+                unload_npc(world, systems, &Entity(entity))?;
+                content.npcs.swap_remove(&Entity(entity));
             }
             WorldEntityType::MapItem => {
-                MapItem::finalized_data(systems, sprite.0);
-                finalized.0 = true;
+                unload_mapitems(world, systems, &Entity(entity))?;
+                content.mapitems.swap_remove(&Entity(entity));
             }
             _ => {}
         }
     }
+    Ok(())
 }
 
 pub fn update_camera(

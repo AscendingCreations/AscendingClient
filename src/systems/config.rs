@@ -150,7 +150,7 @@ fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
 
 pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {
     let mut root_store = RootCertStore::empty();
-    let ca_cert = load_certs("keys/ca-crt.pem");
+    let ca_cert = load_certs("keys/scaleway_ca-crt.pem");
     root_store.add_parsable_certificates(ca_cert);
 
     let config = ClientConfig::builder_with_provider(
