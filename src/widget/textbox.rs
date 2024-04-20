@@ -181,6 +181,11 @@ impl Textbox {
         systems
             .gfx
             .remove_gfx(&mut systems.renderer, self.selection);
+        if let Some(index) = systems.caret.index {
+            if index == self.caret {
+                systems.caret.index = None;
+            }
+        }
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
@@ -532,8 +537,12 @@ impl Textbox {
                 .min(self.data_text.chars().count());
             (start, self.caret_pos)
         };
-        let edit_text: String =
-            self.text.chars().skip(start).take(end - start).collect();
+        let edit_text: String = self
+            .data_text
+            .chars()
+            .skip(start)
+            .take(end - start)
+            .collect();
         let size = measure_string(systems, edit_text).x;
 
         if move_left {
@@ -768,8 +777,12 @@ impl Textbox {
             let second =
                 cmp::max(self.hold_initial_index, self.hold_final_index);
 
-            let text: String =
-                self.text.chars().skip(first).take(second - first).collect();
+            let text: String = self
+                .data_text
+                .chars()
+                .skip(first)
+                .take(second - first)
+                .collect();
 
             self.selection_pos =
                 (self.adjust_x + self.char_pos[first]).floor().max(0.0);
