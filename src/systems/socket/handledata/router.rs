@@ -1,4 +1,4 @@
-use log::error;
+use log::{error, trace};
 
 use crate::{data_types::*, fade::*, socket::*, BufferTask};
 
@@ -16,6 +16,7 @@ pub fn handle_data(
 ) -> Result<()> {
     let id: ServerPackets = data.read()?;
 
+    trace!("Server Packet is {:?}", id);
     let fun = match router.0.get(&id) {
         Some(fun) => fun,
         None => return Err(ClientError::InvalidPacket),

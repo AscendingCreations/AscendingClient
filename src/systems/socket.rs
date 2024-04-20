@@ -1,6 +1,6 @@
 use bytey::ByteBuffer;
 use hecs::World;
-use log::{info, warn};
+use log::{info, trace, warn};
 use mio::net::TcpStream;
 use mio::{Events, Interest, Poll};
 use pki_types::ServerName;
@@ -532,6 +532,7 @@ pub fn get_length(socket: &mut Socket) -> Option<u64> {
     if socket.buffer.length() - socket.buffer.cursor() >= 8 {
         let length = socket.buffer.read::<u64>().ok()?;
 
+        trace!("Length is {}", length);
         if !(2..=8192).contains(&length) {
             log::error!("Disconnected on packet get_length");
             socket.set_to_closing();
@@ -609,8 +610,10 @@ pub fn process_packets(
         socket.buffer.truncate(0)?;
     }
 
-    if socket.buffer.capacity() > 25000 {
+    /*if socket.buffer.capacity() > 25000
+        && (socket.buffer.length() - socket.buffer.cursor()) as u64 <= 4096
+    {
         socket.buffer.resize(4096)?;
-    }
+    }*/
     Ok(())
 }
