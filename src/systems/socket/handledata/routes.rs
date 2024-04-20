@@ -459,12 +459,7 @@ pub fn handle_playerwarp(
             if myentity == entity {
                 if old_pos.map != pos.map {
                     content.game_content.init_map(systems, pos.map)?;
-                    finalize_entity(
-                        world,
-                        systems,
-                        &mut content.game_content,
-                        pos,
-                    )?;
+                    finalize_entity(world, systems)?;
                 }
                 if systems.map_fade.f_alpha > 0 {
                     systems.map_fade.init_fade(

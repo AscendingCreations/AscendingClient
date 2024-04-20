@@ -291,7 +291,9 @@ pub fn update_npc_position(
     is_target: bool,
 ) -> Result<()> {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
-        .unwrap_or_else(|| Vec2::new(0.0, 0.0));
+        .unwrap_or_else(|| {
+            Vec2::new(systems.size.width * 2.0, systems.size.height * 2.0)
+        });
     let cur_pos = systems.gfx.get_pos(sprite);
     let texture_pos = content.camera.0
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)

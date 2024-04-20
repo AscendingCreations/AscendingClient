@@ -614,20 +614,12 @@ pub fn update_npc(
 pub fn finalize_entity(
     world: &mut World,
     systems: &mut SystemHolder,
-    content: &mut GameContent,
-    new_pos: Position,
 ) -> Result<()> {
-    let mut entity_to_remove = Vec::new();
-
-    for (
-        entity,
-        (worldentitytype, sprite, finalized, position, hpbar, entitynamemap),
-    ) in world
+    for (_, (worldentitytype, sprite, finalized, hpbar, entitynamemap)) in world
         .query_mut::<(
             &WorldEntityType,
             &SpriteIndex,
             &mut Finalized,
-            &Position,
             Option<&HPBar>,
             Option<&EntityNameMap>,
         )>()
@@ -667,28 +659,6 @@ pub fn finalize_entity(
                 }
                 _ => {}
             }
-        }
-
-        if !is_map_connected(new_pos.map, position.map) {
-            entity_to_remove.push((entity, *worldentitytype))
-        }
-    }
-
-    for (entity, worldentitytype) in entity_to_remove {
-        match worldentitytype {
-            WorldEntityType::Player => {
-                unload_player(world, systems, &Entity(entity))?;
-                content.players.borrow_mut().swap_remove(&Entity(entity));
-            }
-            WorldEntityType::Npc => {
-                unload_npc(world, systems, &Entity(entity))?;
-                content.npcs.swap_remove(&Entity(entity));
-            }
-            WorldEntityType::MapItem => {
-                unload_mapitems(world, systems, &Entity(entity))?;
-                content.mapitems.swap_remove(&Entity(entity));
-            }
-            _ => {}
         }
     }
     Ok(())

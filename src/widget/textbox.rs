@@ -251,6 +251,7 @@ impl Textbox {
         self.text.clear();
         self.data_text.clear();
         self.char_size.clear();
+        self.adjust_x = 0.0;
         self.caret_left = 0.0;
         self.caret_pos = 0;
 
@@ -282,7 +283,12 @@ impl Textbox {
             .gfx
             .set_text(&mut systems.renderer, self.text_index, &msg);
 
-        self.move_caret_pos(systems, false, self.data_text.len(), false);
+        self.move_caret_pos(
+            systems,
+            false,
+            self.data_text.chars().count(),
+            false,
+        );
     }
 
     pub fn enter_text(
@@ -301,6 +307,18 @@ impl Textbox {
         }
 
         if !pressed || !self.is_selected {
+            return;
+        }
+
+        if let Key::Named(NamedKey::F4) = key {
+            println!("Caret Pos {}", self.caret_pos);
+            println!("Text {}", self.text);
+            for char in self.text.chars() {
+                println!("Char {}", char);
+            }
+            for size in self.char_size.iter() {
+                println!("Char Size {}", size);
+            }
             return;
         }
 
@@ -334,7 +352,8 @@ impl Textbox {
                         }
 
                         let clipboard_text = get_clipboard_text();
-                        if self.data_text.len() + clipboard_text.len()
+                        if self.data_text.chars().count()
+                            + clipboard_text.chars().count()
                             >= self.limit
                         {
                             return;
@@ -349,15 +368,21 @@ impl Textbox {
                         if can_proceed {
                             self.remove_selection(systems);
 
-                            self.text
-                                .insert_str(self.caret_pos, &clipboard_text);
+                            self.text = insert_text(
+                                self.text.clone(),
+                                self.caret_pos,
+                                &clipboard_text,
+                            );
                             let clipboard = if self.hide_content {
                                 clipboard_text.chars().map(|_| '*').collect()
                             } else {
                                 clipboard_text.clone()
                             };
-                            self.data_text
-                                .insert_str(self.caret_pos, &clipboard);
+                            self.data_text = insert_text(
+                                self.data_text.clone(),
+                                self.caret_pos,
+                                &clipboard,
+                            );
 
                             for char in clipboard.chars().rev() {
                                 let size =
@@ -367,7 +392,7 @@ impl Textbox {
                             self.move_caret_pos(
                                 systems,
                                 false,
-                                clipboard_text.len(),
+                                clipboard_text.chars().count(),
                                 false,
                             );
 
@@ -382,15 +407,17 @@ impl Textbox {
                 Key::Named(NamedKey::Backspace) => {
                     if self.hold_initial_index != self.hold_final_index {
                         self.remove_selection(systems);
-                    } else if self.caret_pos == self.data_text.len() {
+                    } else if self.caret_pos == self.data_text.chars().count() {
                         self.move_caret_pos(systems, true, 1, true);
                         self.text.pop();
                         self.data_text.pop();
                         self.char_size.pop();
                     } else if self.caret_pos > 0 {
                         self.move_caret_pos(systems, true, 1, true);
-                        self.text.remove(self.caret_pos);
-                        self.data_text.remove(self.caret_pos);
+                        self.text =
+                            remove_text(self.text.clone(), self.caret_pos);
+                        self.data_text =
+                            remove_text(self.data_text.clone(), self.caret_pos);
                         self.char_size.remove(self.caret_pos);
                     }
                     did_edit = true;
@@ -410,7 +437,7 @@ impl Textbox {
                     return;
                 }
                 _ => {
-                    if self.data_text.len() >= self.limit {
+                    if self.data_text.chars().count() >= self.limit {
                         return;
                     }
                     let key_char = if let Key::Character(char) = key {
@@ -433,8 +460,16 @@ impl Textbox {
                             let msg =
                                 if self.hide_content { '*' } else { char };
 
-                            self.text.insert(self.caret_pos, char);
-                            self.data_text.insert(self.caret_pos, msg);
+                            self.text = insert_char(
+                                self.text.clone(),
+                                self.caret_pos,
+                                char,
+                            );
+                            self.data_text = insert_char(
+                                self.data_text.clone(),
+                                self.caret_pos,
+                                msg,
+                            );
                             let size =
                                 measure_string(systems, msg.to_string()).x;
                             self.char_size.insert(self.caret_pos, size);
@@ -472,8 +507,8 @@ impl Textbox {
             self.update_caret_pos(systems);
         }
         for _ in first..first + count {
-            self.text.remove(first);
-            self.data_text.remove(first);
+            self.text = remove_text(self.text.clone(), first);
+            self.data_text = remove_text(self.data_text.clone(), first);
             self.char_size.remove(first);
         }
     }
@@ -494,11 +529,12 @@ impl Textbox {
             self.caret_pos = self
                 .caret_pos
                 .saturating_add(count)
-                .min(self.data_text.len());
+                .min(self.data_text.chars().count());
             (start, self.caret_pos)
         };
-        // ToDo crash when pasting ascii keys ☺↨♦♣♠☺↓
-        let size = measure_string(systems, self.text[start..end].to_string()).x;
+        let edit_text: String =
+            self.text.chars().skip(start).take(end - start).collect();
+        let size = measure_string(systems, edit_text).x;
 
         if move_left {
             self.caret_left -= size;
@@ -521,9 +557,14 @@ impl Textbox {
                     cmp::min(self.hold_initial_index, self.hold_final_index);
                 let second =
                     cmp::max(self.hold_initial_index, self.hold_final_index);
-                text.replace_range(first..second, "");
-            } else if self.caret_pos < text.len() {
-                text.replace_range(self.caret_pos..self.caret_pos + 1, "");
+                text = replace_text(text.clone(), first, second, String::new());
+            } else if self.caret_pos < text.chars().count() {
+                text = replace_text(
+                    text.clone(),
+                    self.caret_pos,
+                    self.caret_pos + 1,
+                    String::new(),
+                );
             };
             let total_size = measure_string(systems, text).x;
             if total_size > self.size.x {
@@ -566,9 +607,14 @@ impl Textbox {
                 cmp::min(self.hold_initial_index, self.hold_final_index);
             let second =
                 cmp::max(self.hold_initial_index, self.hold_final_index);
-            text.replace_range(first..second, "");
-        } else if self.caret_pos < text.len() {
-            text.replace_range(self.caret_pos..self.caret_pos + 1, "");
+            text = replace_text(text.clone(), first, second + 1, String::new());
+        } else if self.caret_pos < text.chars().count() {
+            text = replace_text(
+                text.clone(),
+                self.caret_pos,
+                self.caret_pos + 1,
+                String::new(),
+            );
         };
         let total_size = measure_string(systems, text).x;
         if total_size > self.size.x {
@@ -628,7 +674,7 @@ impl Textbox {
             }
         }
         if found_index.is_none() {
-            found_index = Some(self.data_text.len());
+            found_index = Some(self.data_text.chars().count());
         }
         if let Some(index) = found_index {
             let offset = index as i32 - self.caret_pos as i32;
@@ -686,7 +732,7 @@ impl Textbox {
         }
         if found_index.is_none() {
             if screen_pos.x > self.pos.x + self.size.x {
-                found_index = Some(self.data_text.len());
+                found_index = Some(self.data_text.chars().count());
             } else if screen_pos.x < self.pos.x {
                 found_index = Some(0);
             }
@@ -721,7 +767,9 @@ impl Textbox {
                 cmp::min(self.hold_initial_index, self.hold_final_index);
             let second =
                 cmp::max(self.hold_initial_index, self.hold_final_index);
-            let text = self.text[first..second].to_string();
+
+            let text: String =
+                self.text.chars().skip(first).take(second - first).collect();
 
             self.selection_pos =
                 (self.adjust_x + self.char_pos[first]).floor().max(0.0);
@@ -742,6 +790,63 @@ impl Textbox {
             .gfx
             .set_size(self.selection, Vec2::new(size, self.size.y));
     }
+}
+
+pub fn insert_text(text: String, pos: usize, insert_text: &str) -> String {
+    let mut first_text = String::new();
+    let mut second_text = String::new();
+    for (cur_pos, char) in text.chars().enumerate() {
+        if cur_pos < pos {
+            first_text.push(char);
+        } else {
+            second_text.push(char);
+        }
+    }
+    format!("{}{}{}", first_text, insert_text, second_text)
+}
+
+pub fn insert_char(text: String, pos: usize, insert_text: char) -> String {
+    let mut first_text = String::new();
+    let mut second_text = String::new();
+    for (cur_pos, char) in text.chars().enumerate() {
+        if cur_pos < pos {
+            first_text.push(char);
+        } else {
+            second_text.push(char);
+        }
+    }
+    format!("{}{}{}", first_text, insert_text, second_text)
+}
+
+pub fn replace_text(
+    text: String,
+    from_pos: usize,
+    to_pos: usize,
+    replace_to: String,
+) -> String {
+    let mut first_text = String::new();
+    let mut second_text = String::new();
+    for (cur_pos, char) in text.chars().enumerate() {
+        if cur_pos < from_pos {
+            first_text.push(char);
+        } else if cur_pos >= to_pos {
+            second_text.push(char);
+        }
+    }
+    format!("{}{}{}", first_text, replace_to, second_text)
+}
+
+pub fn remove_text(text: String, pos: usize) -> String {
+    let mut first_text = String::new();
+    let mut second_text = String::new();
+    for (cur_pos, char) in text.chars().enumerate() {
+        match cur_pos.cmp(&pos) {
+            std::cmp::Ordering::Less => first_text.push(char),
+            std::cmp::Ordering::Greater => second_text.push(char),
+            std::cmp::Ordering::Equal => {}
+        }
+    }
+    format!("{}{}", first_text, second_text)
 }
 
 pub fn is_numeric(char: &str) -> bool {
