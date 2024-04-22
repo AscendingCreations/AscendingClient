@@ -1099,12 +1099,14 @@ pub fn close_interface(
                 return;
             }
             interface.inventory.set_visible(systems, false);
+            interface.item_desc.set_visible(systems, false);
         }
         Window::Profile => {
             if !interface.profile.visible {
                 return;
             }
             interface.profile.set_visible(systems, false);
+            interface.item_desc.set_visible(systems, false);
         }
         Window::Setting => {
             if !interface.setting.visible {
@@ -1117,18 +1119,21 @@ pub fn close_interface(
                 return;
             }
             interface.storage.set_visible(systems, false);
+            interface.item_desc.set_visible(systems, false);
         }
         Window::Shop => {
             if !interface.shop.visible {
                 return;
             }
             interface.shop.set_visible(systems, false);
+            interface.item_desc.set_visible(systems, false);
         }
         Window::Trade => {
             if !interface.trade.visible {
                 return;
             }
             interface.trade.set_visible(systems, false);
+            interface.item_desc.set_visible(systems, false);
         }
         _ => {}
     }

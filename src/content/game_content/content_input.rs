@@ -4,8 +4,8 @@ use input::Key;
 use winit::keyboard::NamedKey;
 
 use crate::{
-    content::*, socket::*, Alert, ContentType, MouseInputType, SystemHolder,
-    Tooltip, COLOR_RED,
+    content::*, data_types::*, socket::*, Alert, ContentType, MouseInputType,
+    SystemHolder, Tooltip, COLOR_RED,
 };
 
 use super::{
@@ -56,13 +56,45 @@ impl GameContent {
                 &mut content.game_content,
                 screen_pos,
             );
+
             if let Some(entity) = target_entity {
+                if let Some(t_entity) = content.game_content.target.entity {
+                    if let Ok(mut hpbar) = world.get::<&mut HPBar>(t_entity.0) {
+                        content
+                            .game_content
+                            .target
+                            .clear_target(socket, systems, &mut hpbar)?;
+                    }
+                    if t_entity == entity {
+                        return Ok(());
+                    }
+                }
+
                 content
                     .game_content
                     .target
                     .set_target(socket, systems, &entity)?;
-            } else {
-                content.game_content.target.clear_target(socket, systems)?;
+                match world.get_or_err::<WorldEntityType>(&entity)? {
+                    WorldEntityType::Player => {
+                        update_player_camera(
+                            world,
+                            systems,
+                            socket,
+                            &entity,
+                            &mut content.game_content,
+                        )?;
+                    }
+                    WorldEntityType::Npc => {
+                        update_npc_camera(
+                            world,
+                            systems,
+                            &entity,
+                            socket,
+                            &mut content.game_content,
+                        )?;
+                    }
+                    _ => {}
+                }
             }
         }
 

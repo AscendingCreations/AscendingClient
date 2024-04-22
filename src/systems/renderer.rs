@@ -172,8 +172,6 @@ where
             wgpu::IndexFormat::Uint32,
         );
 
-        pass.render_map(renderer, &self.map_renderer, &self.map_atlas, 0);
-        pass.render_map(renderer, &self.map_renderer, &self.map_atlas, 1);
         for layer in 0..=5 {
             pass.render_map(
                 renderer,

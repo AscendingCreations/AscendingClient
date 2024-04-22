@@ -922,6 +922,9 @@ impl Shop {
 
             let default_index = index - self.shop_start_pos;
 
+            self.item[default_index].item_index =
+                shopdata.item[index].index as usize;
+
             if let Some(sprite_icon) = self.item[default_index].icon {
                 systems.gfx.remove_gfx(&mut systems.renderer, sprite_icon);
             }

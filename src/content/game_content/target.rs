@@ -66,9 +66,15 @@ impl Target {
         &mut self,
         socket: &mut Socket,
         systems: &mut SystemHolder,
+        hpbar: &mut HPBar,
     ) -> Result<()> {
         self.entity = None;
         systems.gfx.set_visible(self.img_index, false);
+
+        hpbar.visible = false;
+        systems.gfx.set_visible(hpbar.bar_index, false);
+        systems.gfx.set_visible(hpbar.bg_index, false);
+
         send_settarget(socket, self.entity)?;
         Ok(())
     }
@@ -78,6 +84,7 @@ impl Target {
         socket: &mut Socket,
         systems: &mut SystemHolder,
         pos: Vec2,
+        hpbar: &mut HPBar,
     ) -> Result<()> {
         let mut image_pos = systems.gfx.get_pos(self.img_index);
         let image_size = systems.gfx.get_size(self.img_index);
@@ -90,7 +97,7 @@ impl Target {
             || image_pos.x > systems.size.width
             || image_pos.y > systems.size.height
         {
-            self.clear_target(socket, systems)?;
+            self.clear_target(socket, systems, hpbar)?;
         }
         Ok(())
     }

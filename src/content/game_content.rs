@@ -549,7 +549,47 @@ impl GameContent {
                 });
 
             if let Some(got_target) = target_entity {
-                self.target.set_target(socket, systems, &got_target)?;
+                let proceed_target = if let Some(t_entity) = self.target.entity
+                {
+                    if t_entity != got_target {
+                        if let Ok(mut hpbar) =
+                            world.get::<&mut HPBar>(t_entity.0)
+                        {
+                            self.target
+                                .clear_target(socket, systems, &mut hpbar)?;
+                        }
+                        true
+                    } else {
+                        false
+                    }
+                } else {
+                    true
+                };
+
+                if proceed_target {
+                    self.target.set_target(socket, systems, &got_target)?;
+                    match world.get_or_err::<WorldEntityType>(&got_target)? {
+                        WorldEntityType::Player => {
+                            update_player_camera(
+                                world,
+                                systems,
+                                socket,
+                                &got_target,
+                                self,
+                            )?;
+                        }
+                        WorldEntityType::Npc => {
+                            update_npc_camera(
+                                world,
+                                systems,
+                                &got_target,
+                                socket,
+                                self,
+                            )?;
+                        }
+                        _ => {}
+                    }
+                }
             }
 
             send_attack(socket, dir, target_entity)?;
@@ -594,13 +634,14 @@ pub fn update_player(
 pub fn update_npc(
     world: &mut World,
     systems: &mut SystemHolder,
+    socket: &mut Socket,
     content: &mut GameContent,
     seconds: f32,
 ) -> Result<()> {
     let npcs = content.npcs.clone();
     for entity in npcs.iter() {
         move_npc(world, systems, entity, MovementType::MovementBuffer)?;
-        process_npc_movement(world, systems, entity)?;
+        process_npc_movement(world, systems, entity, socket, content)?;
         process_npc_attack(world, systems, entity, seconds)?;
     }
     Ok(())
@@ -710,42 +751,56 @@ pub fn update_camera(
             WorldEntityType::Player => {
                 if let Some(hpbar) = hp_bar {
                     if let Some(namemap) = entitynamemap {
+                        update_player_position(
+                            systems, content, sprite.0, pos, pos_offset, hpbar,
+                            namemap,
+                        )?;
                         if is_target {
                             if !hpbar.visible {
                                 hpbar.visible = true;
                                 systems.gfx.set_visible(hpbar.bar_index, true);
                                 systems.gfx.set_visible(hpbar.bg_index, true);
                             }
+                            let spritepos = systems.gfx.get_pos(sprite.0);
+                            content.target.set_target_pos(
+                                socket,
+                                systems,
+                                Vec2::new(spritepos.x, spritepos.y),
+                                hpbar,
+                            )?;
                         } else if hpbar.visible && !is_my_entity {
                             hpbar.visible = false;
                             systems.gfx.set_visible(hpbar.bar_index, false);
                             systems.gfx.set_visible(hpbar.bg_index, false);
                         }
-                        update_player_position(
-                            systems, content, socket, sprite.0, pos,
-                            pos_offset, hpbar, namemap, is_target,
-                        )?;
                     }
                 }
             }
             WorldEntityType::Npc => {
                 if let Some(hpbar) = hp_bar {
                     if let Some(namemap) = entitynamemap {
+                        update_npc_position(
+                            systems, content, sprite.0, pos, pos_offset, hpbar,
+                            namemap,
+                        )?;
                         if is_target {
                             if !hpbar.visible {
                                 hpbar.visible = true;
                                 systems.gfx.set_visible(hpbar.bar_index, true);
                                 systems.gfx.set_visible(hpbar.bg_index, true);
                             }
+                            let spritepos = systems.gfx.get_pos(sprite.0);
+                            content.target.set_target_pos(
+                                socket,
+                                systems,
+                                Vec2::new(spritepos.x, spritepos.y),
+                                hpbar,
+                            )?;
                         } else if hpbar.visible {
                             hpbar.visible = false;
                             systems.gfx.set_visible(hpbar.bar_index, false);
                             systems.gfx.set_visible(hpbar.bg_index, false);
                         }
-                        update_npc_position(
-                            systems, content, socket, sprite.0, pos,
-                            pos_offset, hpbar, namemap, is_target,
-                        )?;
                     }
                 }
             }

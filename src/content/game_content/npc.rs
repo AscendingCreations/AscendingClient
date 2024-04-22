@@ -282,13 +282,11 @@ pub fn end_npc_move(
 pub fn update_npc_position(
     systems: &mut SystemHolder,
     content: &mut GameContent,
-    socket: &mut Socket,
     sprite: usize,
     pos: &Position,
     pos_offset: &PositionOffset,
     hpbar: &HPBar,
     entitynamemap: &EntityNameMap,
-    is_target: bool,
 ) -> Result<()> {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
         .unwrap_or_else(|| {
@@ -302,10 +300,6 @@ pub fn update_npc_position(
 
     let pos =
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
-
-    if is_target {
-        content.target.set_target_pos(socket, systems, pos)?;
-    }
 
     if pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return Ok(());
@@ -432,6 +426,8 @@ pub fn process_npc_movement(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: &Entity,
+    socket: &mut Socket,
+    content: &mut GameContent,
 ) -> Result<()> {
     if !world.contains(entity.0) {
         return Ok(());
@@ -459,7 +455,64 @@ pub fn process_npc_movement(
             world.get::<&mut PositionOffset>(entity.0)?.offset = offset;
         }
     } else {
+        world.get::<&mut PositionOffset>(entity.0)?.offset =
+            Vec2::new(0.0, 0.0);
         end_npc_move(world, systems, entity)?;
+    }
+
+    update_npc_camera(world, systems, entity, socket, content)
+}
+
+pub fn update_npc_camera(
+    world: &mut World,
+    systems: &mut SystemHolder,
+    entity: &Entity,
+    socket: &mut Socket,
+    content: &mut GameContent,
+) -> Result<()> {
+    let mut query = world.query_one::<(
+        &mut HPBar,
+        &SpriteIndex,
+        &Position,
+        &PositionOffset,
+        &EntityNameMap,
+    )>(entity.0)?;
+
+    if let Some((hpbar, spriteindex, position, positionoffset, entitymapname)) =
+        query.get()
+    {
+        let is_target = if let Some(target) = content.target.entity {
+            target.0 == entity.0
+        } else {
+            false
+        };
+        if is_target {
+            if !hpbar.visible {
+                hpbar.visible = true;
+                systems.gfx.set_visible(hpbar.bar_index, true);
+                systems.gfx.set_visible(hpbar.bg_index, true);
+            }
+            let pos = systems.gfx.get_pos(spriteindex.0);
+            content.target.set_target_pos(
+                socket,
+                systems,
+                Vec2::new(pos.x, pos.y),
+                hpbar,
+            )?;
+        } else if hpbar.visible {
+            hpbar.visible = false;
+            systems.gfx.set_visible(hpbar.bar_index, false);
+            systems.gfx.set_visible(hpbar.bg_index, false);
+        }
+        update_npc_position(
+            systems,
+            content,
+            spriteindex.0,
+            position,
+            positionoffset,
+            hpbar,
+            entitymapname,
+        )?;
     }
     Ok(())
 }

@@ -9094,3 +9094,1894 @@ INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098,
 INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
 INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
 INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 343
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 338
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 334
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 410
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 410
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 410
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 410
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 410
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 418
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 423
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 347
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 439
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 435
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 334
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 466
+ERROR - Disconnected on Socket read
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 386
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 398
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Disconnected on read tls ok(0)
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 334
+ERROR - PANIC: panicked at src\content\game_content\interface\shop.rs:732:49:
+index out of bounds: the len is 5 but the index is 10, BACKTRACE:    0: backtrace::backtrace::dbghelp64::trace
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\dbghelp64.rs:99
+      backtrace::backtrace::trace_unsynchronized<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:66
+   1: backtrace::backtrace::trace<backtrace::capture::impl$1::create::closure_env$0>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\backtrace\mod.rs:53
+   2: backtrace::capture::Backtrace::create
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:193
+   3: backtrace::capture::Backtrace::new
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\backtrace-0.3.71\src\capture.rs:158
+   4: client::main::async_block$0::closure$0
+             at c:\Sources\AscendingClient\src\main.rs:118
+   5: alloc::boxed::impl$50::call
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc/library\alloc\src\boxed.rs:2036
+      std::panicking::rust_panic_with_hook
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc/library\std\src\panicking.rs:799
+   6: std::panicking::begin_panic_handler::closure$0
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc/library\std\src\panicking.rs:664
+   7: std::sys_common::backtrace::__rust_end_short_backtrace<std::panicking::begin_panic_handler::closure_env$0,never$>
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc/library\std\src\sys_common\backtrace.rs:171
+   8: std::panicking::begin_panic_handler
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc/library\std\src\panicking.rs:652
+   9: core::panicking::panic_fmt
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc/library\core\src\panicking.rs:72
+  10: core::panicking::panic_bounds_check
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc/library\core\src\panicking.rs:268
+  11: core::slice::index::impl$2::index<client::content::game_content::interface::shop::ShopItem>
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\core\src\slice\index.rs:249
+  12: alloc::vec::impl$13::index<client::content::game_content::interface::shop::ShopItem,usize,alloc::alloc::Global>
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\alloc\src\vec\mod.rs:2907
+  13: client::content::game_content::interface::shop::Shop::hover_data
+             at c:\Sources\AscendingClient\src\content\game_content\interface\shop.rs:732
+  14: client::content::game_content::interface::Interface::mouse_input
+             at c:\Sources\AscendingClient\src\content\game_content\interface.rs:216
+  15: client::content::game_content::GameContent::mouse_input
+             at c:\Sources\AscendingClient\src\content\game_content\content_input.rs:39
+  16: client::content::inputs::handle_mouse_input
+             at c:\Sources\AscendingClient\src\content\inputs.rs:41
+  17: client::main::async_block$0::closure$2
+             at c:\Sources\AscendingClient\src\main.rs:457
+  18: winit::platform_impl::platform::event_loop::impl$3::run_on_demand::closure$0<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:236
+  19: alloc::boxed::impl$49::call_mut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,dyn$<core::ops::function::FnMut<tuple$<enum2$<winit::event::Event<tuple$<> > > >,assoc$<Output,tuple$<> > > >,alloc::alloc::Global>
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\alloc\src\boxed.rs:2029
+  20: winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure$0<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:250
+  21: core::panic::unwind_safe::impl$25::call_once<tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\core\src\panic\unwind_safe.rs:272
+  22: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\panicking.rs:559
+  23: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$0<tuple$<> > >,tuple$<> >
+  24: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > > >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\panicking.rs:523
+  25: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >,tuple$<> >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\panic.rs:149
+  26: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::runner::impl$3::call_event_handler::closure_env$0<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  27: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::call_event_handler<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:246
+  28: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:236
+  29: winit::platform_impl::platform::event_loop::WindowData<tuple$<> >::send_event<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:112
+  30: winit::platform_impl::platform::event_loop::public_window_callback_inner::closure$4<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:1479
+  31: core::ops::function::FnOnce::call_once<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> >,tuple$<> >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\core\src\ops\function.rs:250
+  32: core::panic::unwind_safe::impl$25::call_once<tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\core\src\panic\unwind_safe.rs:272
+  33: std::panicking::try::do_call<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >,tuple$<> >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\panicking.rs:559
+  34: std::panicking::try::do_catch<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$0<tuple$<> > >,tuple$<> >
+  35: std::panicking::try<tuple$<>,core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > > >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\panicking.rs:523
+  36: std::panic::catch_unwind<core::panic::unwind_safe::AssertUnwindSafe<winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >,tuple$<> >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\panic.rs:149
+  37: winit::platform_impl::platform::event_loop::runner::EventLoopRunner<tuple$<> >::catch_unwind<tuple$<>,tuple$<>,winit::platform_impl::platform::event_loop::public_window_callback_inner::closure_env$4<tuple$<> > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop\runner.rs:183
+  38: winit::platform_impl::platform::event_loop::public_window_callback_inner<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:2285
+  39: winit::platform_impl::platform::event_loop::public_window_callback<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:983
+  40: DispatchMessageW
+  41: CallWindowProcW
+  42: wglSwapBuffers
+  43: DispatchMessageW
+  44: DispatchMessageW
+  45: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::dispatch_peeked_messages<tuple$<> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:449
+  46: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run_on_demand<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:247
+  47: winit::platform_impl::platform::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\platform_impl\windows\event_loop.rs:218
+  48: winit::event_loop::EventLoop<tuple$<> >::run<tuple$<>,client::main::async_block$0::closure_env$2>
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winit-0.29.15\src\event_loop.rs:249
+  49: client::main::async_block$0
+             at c:\Sources\AscendingClient\src\main.rs:349
+  50: tokio::runtime::park::impl$4::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  51: tokio::runtime::coop::with_budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:107
+      tokio::runtime::coop::budget
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\coop.rs:73
+      tokio::runtime::park::CachedParkThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\park.rs:281
+  52: tokio::runtime::context::blocking::BlockingRegionGuard::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\blocking.rs:66
+  53: tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure$0<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:87
+  54: tokio::runtime::context::runtime::enter_runtime<tokio::runtime::scheduler::multi_thread::impl$0::block_on::closure_env$0<enum2$<client::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\context\runtime.rs:65
+  55: tokio::runtime::scheduler::multi_thread::MultiThread::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\scheduler\multi_thread\mod.rs:86
+  56: tokio::runtime::runtime::Runtime::block_on<enum2$<client::main::async_block_env$0> >
+             at C:\Users\Sherwin\.cargo\registry\src\index.crates.io-6f17d22bba15001f\tokio-1.37.0\src\runtime\runtime.rs:351
+  57: client::main
+             at c:\Sources\AscendingClient\src\main.rs:680
+  58: core::ops::function::FnOnce::call_once<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),tuple$<> >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\core\src\ops\function.rs:250
+  59: std::sys_common::backtrace::__rust_begin_short_backtrace<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > (*)(),enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\sys_common\backtrace.rs:155
+  60: std::rt::lang_start::closure$0<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\rt.rs:159
+  61: std::rt::lang_start_internal
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc/library\std\src\rt.rs:141
+  62: std::rt::lang_start<enum2$<core::result::Result<tuple$<>,enum2$<client::data_types::error::ClientError> > > >
+             at /rustc/fb898629a26e4acec59c928ce3ec00a62675d1cc\library\std\src\rt.rs:158
+  63: main
+  64: invoke_main
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:78
+      __scrt_common_main_seh
+             at D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+  65: BaseThreadInitThunk
+  66: RtlUserThreadStart
+
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 382
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 370
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 398
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 411
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 549
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 583
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 658
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 644
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 449
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 1014
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 499
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 1157
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 1184
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 1215
+INFO - Data 0 Type: "Fade Image"
+INFO - Data 1 Type: "Map Fade Image"
+INFO - Data 2 Type: "Menu BG"
+INFO - Data 3 Type: "Menu Server Status"
+INFO - Data 4 Type: "Npc Name"
+INFO - Data 5 Type: "Npc HP Bar"
+INFO - Data 6 Type: "Player Name"
+INFO - Data 7 Type: "Player HP Bar"
+INFO - Data 8 Type: "Player HP BG"
+INFO - Data 9 Type: "Player Sprite"
+INFO - Data 10 Type: "FPS"
+INFO - Data 11 Type: "Tool Tips Text"
+INFO - Data 12 Type: "Tool Tips Window"
+INFO - Data 13 Type: "Map Item"
+INFO - Data 14 Type: "Map Item"
+INFO - Data 15 Type: "Map Item"
+INFO - Data 16 Type: "Map Item"
+INFO - Data 17 Type: "Map Item"
+INFO - Data 18 Type: "Map Item"
+INFO - Data 19 Type: "Map Item"
+INFO - Data 20 Type: "Map Item"
+INFO - Data 21 Type: "Map Item"
+INFO - Data 22 Type: "Map Item"
+INFO - Data 23 Type: "Map Item"
+INFO - Data 24 Type: "Map Item"
+INFO - Data 25 Type: "Map Item"
+INFO - Data 26 Type: "Map Item"
+INFO - Data 27 Type: "Map Item"
+INFO - Data 28 Type: "Map Item"
+INFO - Data 29 Type: "Map Item"
+INFO - Data 30 Type: "Map Item"
+INFO - Data 31 Type: "Map Item"
+INFO - Data 32 Type: "Map Item"
+INFO - Data 33 Type: "Map Item"
+INFO - Data 34 Type: "Map Item"
+INFO - Data 35 Type: "Map Item"
+INFO - Data 36 Type: "Map Item"
+INFO - Data 37 Type: "Map Item"
+INFO - Data 38 Type: "Map Item"
+INFO - Data 39 Type: "Map Item"
+INFO - Data 40 Type: "Map Item"
+INFO - Data 41 Type: "Map Item"
+INFO - Data 42 Type: "Map Item"
+INFO - Data 43 Type: "Map Item"
+INFO - Data 44 Type: "Map Item"
+INFO - Data 45 Type: "Map Item"
+INFO - Data 46 Type: "Map Item"
+INFO - Data 47 Type: "Map Item"
+INFO - Data 48 Type: "Map Item"
+INFO - Data 49 Type: "Map Item"
+INFO - Data 50 Type: "Map Item"
+INFO - Data 51 Type: "Map Item"
+INFO - Data 52 Type: "Map Item"
+INFO - Data 53 Type: "Map Item"
+INFO - Data 54 Type: "Map Item"
+INFO - Data 55 Type: "Map Item"
+INFO - Data 56 Type: "Map Item"
+INFO - Data 57 Type: "Map Item"
+INFO - Data 58 Type: "Map Item"
+INFO - Data 59 Type: "Map Item"
+INFO - Data 60 Type: "Map Item"
+INFO - Data 61 Type: "Map Item"
+INFO - Data 62 Type: "Map Item"
+INFO - Data 63 Type: "Map Item"
+INFO - Data 64 Type: "Map Item"
+INFO - Data 65 Type: "Map Item"
+INFO - Data 66 Type: "Map Item"
+INFO - Data 67 Type: "Map Item"
+INFO - Data 68 Type: "Map Item"
+INFO - Data 69 Type: "Map Item"
+INFO - Data 70 Type: "Map Item"
+INFO - Data 71 Type: "Map Item"
+INFO - Data 72 Type: "Map Item"
+INFO - Data 73 Type: "Map Item"
+INFO - Data 74 Type: "Map Item"
+INFO - Data 75 Type: "Map Item"
+INFO - Data 76 Type: "Map Item"
+INFO - Data 77 Type: "Map Item"
+INFO - Data 78 Type: "Map Item"
+INFO - Data 79 Type: "Map Item"
+INFO - Data 80 Type: "Map Item"
+INFO - Data 81 Type: "Map Item"
+INFO - Data 82 Type: "Map Item"
+INFO - Data 83 Type: "Map Item"
+INFO - Data 84 Type: "Map Item"
+INFO - Data 85 Type: "Map Item"
+INFO - Data 86 Type: "Map Item"
+INFO - Data 87 Type: "Map Item"
+INFO - Data 88 Type: "Map Item"
+INFO - Data 89 Type: "Map Item"
+INFO - Data 90 Type: "Map Item"
+INFO - Data 91 Type: "Map Item"
+INFO - Data 92 Type: "Map Item"
+INFO - Data 93 Type: "Map Item"
+INFO - Data 94 Type: "Map Item"
+INFO - Data 95 Type: "Map Item"
+INFO - Data 96 Type: "Map Item"
+INFO - Data 97 Type: "Map Item"
+INFO - Data 98 Type: "Map Item"
+INFO - Data 99 Type: "Map Item"
+INFO - Data 100 Type: "Map Item"
+INFO - Data 101 Type: "Map Item"
+INFO - Data 102 Type: "Map Item"
+INFO - Data 103 Type: "Map Item"
+INFO - Data 104 Type: "Map Item"
+INFO - Data 105 Type: "Map Item"
+INFO - Data 106 Type: "Map Item"
+INFO - Data 107 Type: "Map Item"
+INFO - Data 108 Type: "Map Item"
+INFO - Data 109 Type: "Map Item"
+INFO - Data 110 Type: "Map Item"
+INFO - Data 111 Type: "Map Item"
+INFO - Data 112 Type: "Map Item"
+INFO - Data 113 Type: "Map Item"
+INFO - Data 114 Type: "Map Item"
+INFO - Data 115 Type: "Map Item"
+INFO - Data 116 Type: "Map Item"
+INFO - Data 117 Type: "Map Item"
+INFO - Data 118 Type: "Map Item"
+INFO - Data 119 Type: "Map Item"
+INFO - Data 120 Type: "Map Item"
+INFO - Data 121 Type: "Map Item"
+INFO - Data 122 Type: "Map Item"
+INFO - Data 123 Type: "Map Item"
+INFO - Data 124 Type: "Map Item"
+INFO - Data 125 Type: "Map Item"
+INFO - Data 126 Type: "Map Item"
+INFO - Data 127 Type: "Map Item"
+INFO - Data 128 Type: "Map Item"
+INFO - Data 129 Type: "Map Item"
+INFO - Data 130 Type: "Map Item"
+INFO - Data 131 Type: "Map Item"
+INFO - Data 132 Type: "Map Item"
+INFO - Data 133 Type: "Map Item"
+INFO - Data 134 Type: "Map Item"
+INFO - Data 135 Type: "Map Item"
+INFO - Data 136 Type: "Map Item"
+INFO - Data 137 Type: "Map Item"
+INFO - Data 138 Type: "Map Item"
+INFO - Data 139 Type: "Map Item"
+INFO - Data 140 Type: "Map Item"
+INFO - Data 141 Type: "Map Item"
+INFO - Data 142 Type: "Map Item"
+INFO - Data 143 Type: "Map Item"
+INFO - Data 144 Type: "Map Item"
+INFO - Data 145 Type: "Map Item"
+INFO - Data 146 Type: "Map Item"
+INFO - Data 147 Type: "Map Item"
+INFO - Data 148 Type: "Map Item"
+INFO - Data 149 Type: "Map Item"
+INFO - Data 150 Type: "Map Item"
+INFO - Data 151 Type: "Map Item"
+INFO - Data 152 Type: "Map Item"
+INFO - Data 153 Type: "Map Item"
+INFO - Data 154 Type: "Map Item"
+INFO - Data 155 Type: "Map Item"
+INFO - Data 156 Type: "Map Item"
+INFO - Data 157 Type: "Map Item"
+INFO - Data 158 Type: "Map Item"
+INFO - Data 159 Type: "Map Item"
+INFO - Data 160 Type: "Map Item"
+INFO - Data 161 Type: "Map Item"
+INFO - Data 162 Type: "Map Item"
+INFO - Data 164 Type: "Map Item"
+INFO - Data 165 Type: "Map Item"
+INFO - Data 166 Type: "Map Item"
+INFO - Data 170 Type: "Npc HP BG"
+INFO - Data 171 Type: "Map Item"
+INFO - Data 172 Type: "Map Item"
+INFO - Data 173 Type: "Map Item"
+INFO - Data 174 Type: "Map Item"
+INFO - Data 175 Type: "Map Item"
+INFO - Data 176 Type: "Map Item"
+INFO - Data 177 Type: "Map Item"
+INFO - Data 178 Type: "Map Item"
+INFO - Data 179 Type: "Map Item"
+INFO - Data 180 Type: "Map Item"
+INFO - Data 181 Type: "Map Item"
+INFO - Data 182 Type: "Map Item"
+INFO - Data 183 Type: "Map Item"
+INFO - Data 184 Type: "Map Item"
+INFO - Data 185 Type: "Map Item"
+INFO - Data 186 Type: "Map Item"
+INFO - Data 187 Type: "Map Item"
+INFO - Data 188 Type: "Map Item"
+INFO - Data 189 Type: "Map Item"
+INFO - Data 190 Type: "Map Item"
+INFO - Data 191 Type: "Map Item"
+INFO - Data 192 Type: "Map Item"
+INFO - Data 193 Type: "Map Item"
+INFO - Data 194 Type: "Map Item"
+INFO - Data 195 Type: "Map Item"
+INFO - Data 196 Type: "Map Item"
+INFO - Data 197 Type: "Map Item"
+INFO - Data 198 Type: "Map Item"
+INFO - Data 199 Type: "Map Item"
+INFO - Data 200 Type: "Map Item"
+INFO - Data 201 Type: "Map Item"
+INFO - Data 202 Type: "Map Item"
+INFO - Data 203 Type: "Map Item"
+INFO - Data 204 Type: "Map Item"
+INFO - Data 205 Type: "Map Item"
+INFO - Data 206 Type: "Map Item"
+INFO - Data 207 Type: "Map Item"
+INFO - Data 208 Type: "Map Item"
+INFO - Data 209 Type: "Map Item"
+INFO - Data 210 Type: "Map Item"
+INFO - Data 211 Type: "Map Item"
+INFO - Data 212 Type: "Map Item"
+INFO - Data 213 Type: "Map Item"
+INFO - Data 214 Type: "Map Item"
+INFO - Data 215 Type: "Map Item"
+INFO - Data 216 Type: "Map Item"
+INFO - Data 217 Type: "Map Item"
+INFO - Data 218 Type: "Map Item"
+INFO - Data 219 Type: "Map Item"
+INFO - Data 220 Type: "Map Item"
+INFO - Data 221 Type: "Map Item"
+INFO - Data 222 Type: "Map Item"
+INFO - Data 223 Type: "Map Item"
+INFO - Data 226 Type: "Player Name"
+INFO - Data 227 Type: "Player HP Bar"
+INFO - Data 228 Type: "Player HP BG"
+INFO - Data 229 Type: "Player Sprite"
+INFO - Data 234 Type: "Npc Name"
+INFO - Data 235 Type: "Npc HP Bar"
+INFO - Data 236 Type: "Npc HP BG"
+INFO - Data 237 Type: "Npc Sprite"
+INFO - Data 238 Type: "Npc Name"
+INFO - Data 239 Type: "Npc HP Bar"
+INFO - Data 240 Type: "Npc HP BG"
+INFO - Data 241 Type: "Npc Sprite"
+INFO - Data 242 Type: "Npc Name"
+INFO - Data 243 Type: "Npc HP Bar"
+INFO - Data 244 Type: "Npc HP BG"
+INFO - Data 245 Type: "Npc Sprite"
+INFO - Data 246 Type: "Npc Name"
+INFO - Data 247 Type: "Npc HP Bar"
+INFO - Data 248 Type: "Npc HP BG"
+INFO - Data 249 Type: "Npc Sprite"
+INFO - Data 254 Type: "Npc Name"
+INFO - Data 255 Type: "Npc HP Bar"
+INFO - Data 256 Type: "Npc HP BG"
+INFO - Data 257 Type: "Npc Sprite"
+INFO - Data 258 Type: "Npc Name"
+INFO - Data 259 Type: "Npc HP Bar"
+INFO - Data 260 Type: "Npc Sprite"
+INFO - Data 261 Type: "Npc Name"
+INFO - Data 262 Type: "Npc HP Bar"
+INFO - Data 263 Type: "Npc Name"
+INFO - Data 264 Type: "Npc HP BG"
+INFO - Data 265 Type: "Npc Sprite"
+INFO - Data 266 Type: "Npc HP Bar"
+INFO - Data 267 Type: "Npc HP BG"
+INFO - Data 268 Type: "Map Item"
+INFO - Data 269 Type: "Map Item"
+INFO - Data 270 Type: "Map Item"
+INFO - Data 271 Type: "Map Item"
+INFO - Data 272 Type: "Map Item"
+INFO - Data 273 Type: "Map Item"
+INFO - Data 274 Type: "Map Item"
+INFO - Data 275 Type: "Map Item"
+INFO - Data 276 Type: "Map Item"
+INFO - Data 277 Type: "Map Item"
+INFO - Data 278 Type: "Map Item"
+INFO - Data 279 Type: "Map Item"
+INFO - Data 280 Type: "Map Item"
+INFO - Data 281 Type: "Map Item"
+INFO - Data 282 Type: "Map Item"
+INFO - Data 283 Type: "Map Item"
+INFO - Data 284 Type: "Map Item"
+INFO - Data 285 Type: "Map Item"
+INFO - Data 286 Type: "Map Item"
+INFO - Data 287 Type: "Map Item"
+INFO - Data 288 Type: "Map Item"
+INFO - Data 289 Type: "Map Item"
+INFO - Data 290 Type: "Map Item"
+INFO - Data 291 Type: "Map Item"
+INFO - Data 292 Type: "Map Item"
+INFO - Data 293 Type: "Map Item"
+INFO - Data 294 Type: "Map Item"
+INFO - Data 295 Type: "Map Item"
+INFO - Data 296 Type: "Map Item"
+INFO - Data 297 Type: "Map Item"
+INFO - Data 298 Type: "Map Item"
+INFO - Data 299 Type: "Map Item"
+INFO - Data 300 Type: "Map Item"
+INFO - Data 301 Type: "Map Item"
+INFO - Data 302 Type: "Map Item"
+INFO - Data 303 Type: "Map Item"
+INFO - Data 304 Type: "Map Item"
+INFO - Data 305 Type: "Map Item"
+INFO - Data 306 Type: "Map Item"
+INFO - Data 307 Type: "Map Item"
+INFO - Data 308 Type: "Map Item"
+INFO - Data 309 Type: "Map Item"
+INFO - Data 310 Type: "Map Item"
+INFO - Data 311 Type: "Map Item"
+INFO - Data 312 Type: "Map Item"
+INFO - Data 313 Type: "Map Item"
+INFO - Data 314 Type: "Map Item"
+INFO - Data 315 Type: "Map Item"
+INFO - Data 316 Type: "Map Item"
+INFO - Data 317 Type: "Map Item"
+INFO - Data 318 Type: "Map Item"
+INFO - Data 319 Type: "Map Item"
+INFO - Data 320 Type: "Map Item"
+INFO - Data 321 Type: "Map Item"
+INFO - Data 322 Type: "Map Item"
+INFO - Data 323 Type: "Map Item"
+INFO - Data 324 Type: "Map Item"
+INFO - Data 325 Type: "Npc HP BG"
+INFO - Data 326 Type: "Npc Sprite"
+INFO - Data 327 Type: "Inv BG"
+INFO - Data 328 Type: "Vital Bar"
+INFO - Data 329 Type: "Vital BG"
+INFO - Data 330 Type: "Vital BG"
+INFO - Data 331 Type: "Vital Bar"
+INFO - Data 332 Type: "Vital Window"
+INFO - Data 333 Type: "Map"
+INFO - Data 334 Type: "Map"
+INFO - Data 335 Type: "Map"
+INFO - Data 336 Type: "Map"
+INFO - Data 337 Type: "Vital BG"
+INFO - Data 338 Type: "Vital Bar"
+INFO - Data 339 Type: "Button Content"
+INFO - Data 340 Type: "Map"
+INFO - Data 341 Type: "Map"
+INFO - Data 342 Type: "Map"
+INFO - Data 343 Type: "Map"
+INFO - Data 344 Type: "Button Image"
+INFO - Data 345 Type: "Button Content"
+INFO - Data 346 Type: "Button Image"
+INFO - Data 347 Type: "Button Content"
+INFO - Data 348 Type: "Button Image"
+INFO - Data 349 Type: "Map"
+INFO - Data 350 Type: "Map Item"
+INFO - Data 351 Type: "Map Item"
+INFO - Data 352 Type: "Map Item"
+INFO - Data 353 Type: "Map Item"
+INFO - Data 354 Type: "Map Item"
+INFO - Data 355 Type: "Map Item"
+INFO - Data 356 Type: "Map Item"
+INFO - Data 357 Type: "Map Item"
+INFO - Data 358 Type: "Map Item"
+INFO - Data 359 Type: "Map Item"
+INFO - Data 360 Type: "Map Item"
+INFO - Data 361 Type: "Map Item"
+INFO - Data 362 Type: "Map Item"
+INFO - Data 363 Type: "Map Item"
+INFO - Data 364 Type: "Map Item"
+INFO - Data 365 Type: "Map Item"
+INFO - Data 366 Type: "Map Item"
+INFO - Data 367 Type: "Map Item"
+INFO - Data 368 Type: "Map Item"
+INFO - Data 369 Type: "Map Item"
+INFO - Data 370 Type: "Map Item"
+INFO - Data 371 Type: "Map Item"
+INFO - Data 372 Type: "Map Item"
+INFO - Data 373 Type: "Map Item"
+INFO - Data 374 Type: "Map Item"
+INFO - Data 375 Type: "Map Item"
+INFO - Data 376 Type: "Map Item"
+INFO - Data 377 Type: "Map Item"
+INFO - Data 378 Type: "Map Item"
+INFO - Data 379 Type: "Map Item"
+INFO - Data 380 Type: "Map Item"
+INFO - Data 381 Type: "Map Item"
+INFO - Data 382 Type: "Map Item"
+INFO - Data 383 Type: "Map Item"
+INFO - Data 384 Type: "Map Item"
+INFO - Data 385 Type: "Map Item"
+INFO - Data 386 Type: "Map Item"
+INFO - Data 387 Type: "Map Item"
+INFO - Data 388 Type: "Map Item"
+INFO - Data 389 Type: "Map Item"
+INFO - Data 390 Type: "Map Item"
+INFO - Data 391 Type: "Map Item"
+INFO - Data 392 Type: "Map Item"
+INFO - Data 393 Type: "Map Item"
+INFO - Data 394 Type: "Map Item"
+INFO - Data 395 Type: "Map Item"
+INFO - Data 396 Type: "Map Item"
+INFO - Data 397 Type: "Map Item"
+INFO - Data 398 Type: "Map Item"
+INFO - Data 399 Type: "Map Item"
+INFO - Data 400 Type: "Map Item"
+INFO - Data 401 Type: "Map Item"
+INFO - Data 402 Type: "Map Item"
+INFO - Data 403 Type: "Map Item"
+INFO - Data 404 Type: "Map Item"
+INFO - Data 405 Type: "Map Item"
+INFO - Data 406 Type: "Map Item"
+INFO - Data 407 Type: "Map Item"
+INFO - Data 408 Type: "Map Item"
+INFO - Data 409 Type: "Map Item"
+INFO - Data 410 Type: "Map Item"
+INFO - Data 411 Type: "Map Item"
+INFO - Data 412 Type: "Map Item"
+INFO - Data 413 Type: "Map Item"
+INFO - Data 414 Type: "Map Item"
+INFO - Data 415 Type: "Map Item"
+INFO - Data 416 Type: "Map Item"
+INFO - Data 417 Type: "Map Item"
+INFO - Data 418 Type: "Map Item"
+INFO - Data 419 Type: "Map Item"
+INFO - Data 420 Type: "Map Item"
+INFO - Data 421 Type: "Map Item"
+INFO - Data 422 Type: "Map Item"
+INFO - Data 423 Type: "Map Item"
+INFO - Data 424 Type: "Map Item"
+INFO - Data 425 Type: "Map Item"
+INFO - Data 426 Type: "Map Item"
+INFO - Data 427 Type: "Map Item"
+INFO - Data 428 Type: "Map Item"
+INFO - Data 429 Type: "Map Item"
+INFO - Data 430 Type: "Map Item"
+INFO - Data 431 Type: "Map Item"
+INFO - Data 432 Type: "Map Item"
+INFO - Data 433 Type: "Map Item"
+INFO - Data 434 Type: "Map Item"
+INFO - Data 435 Type: "Map Item"
+INFO - Data 436 Type: "Map Item"
+INFO - Data 437 Type: "Map Item"
+INFO - Data 438 Type: "Map Item"
+INFO - Data 439 Type: "Map Item"
+INFO - Data 440 Type: "Map Item"
+INFO - Data 441 Type: "Map Item"
+INFO - Data 442 Type: "Map Item"
+INFO - Data 443 Type: "Map Item"
+INFO - Data 444 Type: "Map Item"
+INFO - Data 445 Type: "Map Item"
+INFO - Data 446 Type: "Map Item"
+INFO - Data 447 Type: "Map Item"
+INFO - Data 448 Type: "Map Item"
+INFO - Data 449 Type: "Map Item"
+INFO - Data 450 Type: "Map Item"
+INFO - Data 451 Type: "Map Item"
+INFO - Data 452 Type: "Map Item"
+INFO - Data 453 Type: "Map Item"
+INFO - Data 454 Type: "Map Item"
+INFO - Data 455 Type: "Map Item"
+INFO - Data 456 Type: "Map Item"
+INFO - Data 457 Type: "Map Item"
+INFO - Data 458 Type: "Map Item"
+INFO - Data 459 Type: "Map Item"
+INFO - Data 460 Type: "Map Item"
+INFO - Data 461 Type: "Map Item"
+INFO - Data 462 Type: "Map Item"
+INFO - Data 463 Type: "Map Item"
+INFO - Data 464 Type: "Map Item"
+INFO - Data 465 Type: "Map Item"
+INFO - Data 466 Type: "Map Item"
+INFO - Data 467 Type: "Map Item"
+INFO - Data 468 Type: "Map Item"
+INFO - Data 469 Type: "Map Item"
+INFO - Data 470 Type: "Map Item"
+INFO - Data 471 Type: "Map Item"
+INFO - Data 472 Type: "Map Item"
+INFO - Data 473 Type: "Map Item"
+INFO - Data 474 Type: "Map Item"
+INFO - Data 475 Type: "Map Item"
+INFO - Data 476 Type: "Map Item"
+INFO - Data 477 Type: "Map Item"
+INFO - Data 478 Type: "Map Item"
+INFO - Data 479 Type: "Map Item"
+INFO - Data 480 Type: "Map Item"
+INFO - Data 481 Type: "Map Item"
+INFO - Data 482 Type: "Map Item"
+INFO - Data 483 Type: "Map Item"
+INFO - Data 484 Type: "Map Item"
+INFO - Data 485 Type: "Map Item"
+INFO - Data 486 Type: "Map Item"
+INFO - Data 487 Type: "Map Item"
+INFO - Data 488 Type: "Map Item"
+INFO - Data 489 Type: "Map Item"
+INFO - Data 490 Type: "Map Item"
+INFO - Data 491 Type: "Map Item"
+INFO - Data 492 Type: "Map Item"
+INFO - Data 493 Type: "Map Item"
+INFO - Data 494 Type: "Map Item"
+INFO - Data 495 Type: "Map Item"
+INFO - Data 496 Type: "Map Item"
+INFO - Data 497 Type: "Map Item"
+INFO - Data 498 Type: "Map Item"
+INFO - Data 499 Type: "Map Item"
+INFO - Data 500 Type: "Map Item"
+INFO - Data 501 Type: "Map Item"
+INFO - Data 502 Type: "Map Item"
+INFO - Data 503 Type: "Map Item"
+INFO - Data 504 Type: "Map Item"
+INFO - Data 505 Type: "Map Item"
+INFO - Data 506 Type: "Map Item"
+INFO - Data 507 Type: "Map Item"
+INFO - Data 508 Type: "Map Item"
+INFO - Data 509 Type: "Map Item"
+INFO - Data 510 Type: "Map Item"
+INFO - Data 511 Type: "Map Item"
+INFO - Data 512 Type: "Map Item"
+INFO - Data 513 Type: "Map Item"
+INFO - Data 514 Type: "Map Item"
+INFO - Data 515 Type: "Map Item"
+INFO - Data 516 Type: "Map Item"
+INFO - Data 517 Type: "Map Item"
+INFO - Data 518 Type: "Map Item"
+INFO - Data 519 Type: "Map Item"
+INFO - Data 520 Type: "Map Item"
+INFO - Data 521 Type: "Map Item"
+INFO - Data 522 Type: "Map Item"
+INFO - Data 523 Type: "Map Item"
+INFO - Data 524 Type: "Map Item"
+INFO - Data 525 Type: "Map Item"
+INFO - Data 526 Type: "Map Item"
+INFO - Data 527 Type: "Map Item"
+INFO - Data 528 Type: "Map Item"
+INFO - Data 529 Type: "Map Item"
+INFO - Data 530 Type: "Map Item"
+INFO - Data 531 Type: "Map Item"
+INFO - Data 532 Type: "Map Item"
+INFO - Data 533 Type: "Map Item"
+INFO - Data 534 Type: "Map Item"
+INFO - Data 535 Type: "Map Item"
+INFO - Data 536 Type: "Map Item"
+INFO - Data 537 Type: "Map Item"
+INFO - Data 538 Type: "Map Item"
+INFO - Data 539 Type: "Map Item"
+INFO - Data 540 Type: "Map Item"
+INFO - Data 541 Type: "Map Item"
+INFO - Data 542 Type: "Map Item"
+INFO - Data 543 Type: "Map Item"
+INFO - Data 544 Type: "Map Item"
+INFO - Data 545 Type: "Map Item"
+INFO - Data 546 Type: "Map Item"
+INFO - Data 547 Type: "Map Item"
+INFO - Data 548 Type: "Map Item"
+INFO - Data 549 Type: "Map Item"
+INFO - Data 550 Type: "Map Item"
+INFO - Data 551 Type: "Map Item"
+INFO - Data 552 Type: "Map Item"
+INFO - Data 553 Type: "Map Item"
+INFO - Data 554 Type: "Map Item"
+INFO - Data 555 Type: "Map Item"
+INFO - Data 556 Type: "Map Item"
+INFO - Data 557 Type: "Map Item"
+INFO - Data 558 Type: "Map Item"
+INFO - Data 559 Type: "Map Item"
+INFO - Data 560 Type: "Map Item"
+INFO - Data 561 Type: "Map Item"
+INFO - Data 562 Type: "Map Item"
+INFO - Data 563 Type: "Map Item"
+INFO - Data 564 Type: "Map Item"
+INFO - Data 565 Type: "Map Item"
+INFO - Data 566 Type: "Map Item"
+INFO - Data 567 Type: "Map Item"
+INFO - Data 568 Type: "Map Item"
+INFO - Data 569 Type: "Map Item"
+INFO - Data 570 Type: "Map Item"
+INFO - Data 571 Type: "Map Item"
+INFO - Data 572 Type: "Map Item"
+INFO - Data 573 Type: "Map Item"
+INFO - Data 574 Type: "Map Item"
+INFO - Data 575 Type: "Map Item"
+INFO - Data 576 Type: "Map Item"
+INFO - Data 577 Type: "Map Item"
+INFO - Data 578 Type: "Map Item"
+INFO - Data 579 Type: "Map Item"
+INFO - Data 580 Type: "Map Item"
+INFO - Data 581 Type: "Map Item"
+INFO - Data 582 Type: "Map Item"
+INFO - Data 583 Type: "Map Item"
+INFO - Data 584 Type: "Map Item"
+INFO - Data 585 Type: "Map Item"
+INFO - Data 586 Type: "Map Item"
+INFO - Data 587 Type: "Map Item"
+INFO - Data 588 Type: "Map Item"
+INFO - Data 589 Type: "Map Item"
+INFO - Data 590 Type: "Map Item"
+INFO - Data 591 Type: "Map Item"
+INFO - Data 592 Type: "Map Item"
+INFO - Data 593 Type: "Map Item"
+INFO - Data 594 Type: "Map Item"
+INFO - Data 595 Type: "Map Item"
+INFO - Data 596 Type: "Map Item"
+INFO - Data 597 Type: "Map Item"
+INFO - Data 598 Type: "Map Item"
+INFO - Data 599 Type: "Map Item"
+INFO - Data 600 Type: "Map Item"
+INFO - Data 601 Type: "Map Item"
+INFO - Data 602 Type: "Map Item"
+INFO - Data 603 Type: "Map Item"
+INFO - Data 604 Type: "Map Item"
+INFO - Data 605 Type: "Map Item"
+INFO - Data 606 Type: "Map Item"
+INFO - Data 607 Type: "Map Item"
+INFO - Data 608 Type: "Map Item"
+INFO - Data 609 Type: "Map Item"
+INFO - Data 610 Type: "Map Item"
+INFO - Data 611 Type: "Map Item"
+INFO - Data 612 Type: "Map Item"
+INFO - Data 613 Type: "Map Item"
+INFO - Data 614 Type: "Map Item"
+INFO - Data 615 Type: "Map Item"
+INFO - Data 616 Type: "Map Item"
+INFO - Data 617 Type: "Map Item"
+INFO - Data 618 Type: "Map Item"
+INFO - Data 619 Type: "Map Item"
+INFO - Data 620 Type: "Map Item"
+INFO - Data 621 Type: "Map Item"
+INFO - Data 622 Type: "Map Item"
+INFO - Data 623 Type: "Map Item"
+INFO - Data 624 Type: "Map Item"
+INFO - Data 625 Type: "Map Item"
+INFO - Data 626 Type: "Map Item"
+INFO - Data 627 Type: "Map Item"
+INFO - Data 628 Type: "Map Item"
+INFO - Data 629 Type: "Map Item"
+INFO - Data 630 Type: "Map Item"
+INFO - Data 631 Type: "Map Item"
+INFO - Data 632 Type: "Map Item"
+INFO - Data 633 Type: "Map Item"
+INFO - Data 634 Type: "Map Item"
+INFO - Data 635 Type: "Map Item"
+INFO - Data 636 Type: "Map Item"
+INFO - Data 637 Type: "Map Item"
+INFO - Data 638 Type: "Map Item"
+INFO - Data 639 Type: "Map Item"
+INFO - Data 640 Type: "Map Item"
+INFO - Data 641 Type: "Map Item"
+INFO - Data 642 Type: "Map Item"
+INFO - Data 643 Type: "Map Item"
+INFO - Data 644 Type: "Map Item"
+INFO - Data 645 Type: "Map Item"
+INFO - Data 646 Type: "Map Item"
+INFO - Data 647 Type: "Map Item"
+INFO - Data 648 Type: "Map Item"
+INFO - Data 649 Type: "Map Item"
+INFO - Data 650 Type: "Map Item"
+INFO - Data 651 Type: "Map Item"
+INFO - Data 652 Type: "Map Item"
+INFO - Data 653 Type: "Map Item"
+INFO - Data 654 Type: "Map Item"
+INFO - Data 655 Type: "Map Item"
+INFO - Data 656 Type: "Map Item"
+INFO - Data 657 Type: "Map Item"
+INFO - Data 658 Type: "Map Item"
+INFO - Data 659 Type: "Map Item"
+INFO - Data 660 Type: "Map Item"
+INFO - Data 661 Type: "Map Item"
+INFO - Data 662 Type: "Map Item"
+INFO - Data 663 Type: "Map Item"
+INFO - Data 664 Type: "Map Item"
+INFO - Data 665 Type: "Map Item"
+INFO - Data 666 Type: "Map Item"
+INFO - Data 667 Type: "Map Item"
+INFO - Data 668 Type: "Map Item"
+INFO - Data 669 Type: "Map Item"
+INFO - Data 670 Type: "Map Item"
+INFO - Data 671 Type: "Map Item"
+INFO - Data 672 Type: "Map Item"
+INFO - Data 673 Type: "Map Item"
+INFO - Data 674 Type: "Map Item"
+INFO - Data 675 Type: "Map Item"
+INFO - Data 676 Type: "Map Item"
+INFO - Data 677 Type: "Map Item"
+INFO - Data 678 Type: "Map Item"
+INFO - Data 679 Type: "Map Item"
+INFO - Data 680 Type: "Map Item"
+INFO - Data 681 Type: "Map Item"
+INFO - Data 682 Type: "Map Item"
+INFO - Data 683 Type: "Map Item"
+INFO - Data 684 Type: "Map Item"
+INFO - Data 685 Type: "Map Item"
+INFO - Data 686 Type: "Map Item"
+INFO - Data 687 Type: "Map Item"
+INFO - Data 688 Type: "Map Item"
+INFO - Data 689 Type: "Map Item"
+INFO - Data 690 Type: "Map Item"
+INFO - Data 691 Type: "Map Item"
+INFO - Data 692 Type: "Map Item"
+INFO - Data 693 Type: "Map Item"
+INFO - Data 694 Type: "Map Item"
+INFO - Data 695 Type: "Map Item"
+INFO - Data 696 Type: "Map Item"
+INFO - Data 697 Type: "Map Item"
+INFO - Data 698 Type: "Map Item"
+INFO - Data 699 Type: "Map Item"
+INFO - Data 700 Type: "Map Item"
+INFO - Data 701 Type: "Map Item"
+INFO - Data 702 Type: "Map Item"
+INFO - Data 703 Type: "Map Item"
+INFO - Data 704 Type: "Map Item"
+INFO - Data 705 Type: "Map Item"
+INFO - Data 706 Type: "Map Item"
+INFO - Data 707 Type: "Map Item"
+INFO - Data 708 Type: "Map Item"
+INFO - Data 709 Type: "Map Item"
+INFO - Data 710 Type: "Map Item"
+INFO - Data 711 Type: "Map Item"
+INFO - Data 712 Type: "Map Item"
+INFO - Data 713 Type: "Map Item"
+INFO - Data 714 Type: "Map Item"
+INFO - Data 715 Type: "Map Item"
+INFO - Data 716 Type: "Map Item"
+INFO - Data 717 Type: "Map Item"
+INFO - Data 718 Type: "Map Item"
+INFO - Data 719 Type: "Map Item"
+INFO - Data 720 Type: "Map Item"
+INFO - Data 721 Type: "Map Item"
+INFO - Data 722 Type: "Map Item"
+INFO - Data 723 Type: "Map Item"
+INFO - Data 724 Type: "Map Item"
+INFO - Data 725 Type: "Map Item"
+INFO - Data 726 Type: "Map Item"
+INFO - Data 727 Type: "Map Item"
+INFO - Data 728 Type: "Map Item"
+INFO - Data 729 Type: "Map Item"
+INFO - Data 730 Type: "Map Item"
+INFO - Data 731 Type: "Map Item"
+INFO - Data 732 Type: "Map Item"
+INFO - Data 733 Type: "Map Item"
+INFO - Data 734 Type: "Map Item"
+INFO - Data 735 Type: "Map Item"
+INFO - Data 736 Type: "Map Item"
+INFO - Data 737 Type: "Map Item"
+INFO - Data 738 Type: "Map Item"
+INFO - Data 739 Type: "Map Item"
+INFO - Data 740 Type: "Map Item"
+INFO - Data 741 Type: "Map Item"
+INFO - Data 742 Type: "Map Item"
+INFO - Data 743 Type: "Map Item"
+INFO - Data 744 Type: "Map Item"
+INFO - Data 745 Type: "Map Item"
+INFO - Data 746 Type: "Map Item"
+INFO - Data 747 Type: "Map Item"
+INFO - Data 748 Type: "Map Item"
+INFO - Data 749 Type: "Map Item"
+INFO - Data 750 Type: "Map Item"
+INFO - Data 751 Type: "Map Item"
+INFO - Data 752 Type: "Map Item"
+INFO - Data 753 Type: "Map Item"
+INFO - Data 754 Type: "Map Item"
+INFO - Data 755 Type: "Map Item"
+INFO - Data 756 Type: "Map Item"
+INFO - Data 757 Type: "Map Item"
+INFO - Data 758 Type: "Map Item"
+INFO - Data 759 Type: "Map Item"
+INFO - Data 760 Type: "Map Item"
+INFO - Data 761 Type: "Map Item"
+INFO - Data 762 Type: "Map Item"
+INFO - Data 763 Type: "Map Item"
+INFO - Data 764 Type: "Map Item"
+INFO - Data 765 Type: "Map Item"
+INFO - Data 766 Type: "Map Item"
+INFO - Data 767 Type: "Map Item"
+INFO - Data 768 Type: "Map Item"
+INFO - Data 769 Type: "Map Item"
+INFO - Data 770 Type: "Map Item"
+INFO - Data 771 Type: "Map Item"
+INFO - Data 772 Type: "Map Item"
+INFO - Data 773 Type: "Map Item"
+INFO - Data 774 Type: "Map Item"
+INFO - Data 775 Type: "Map Item"
+INFO - Data 776 Type: "Map Item"
+INFO - Data 777 Type: "Map Item"
+INFO - Data 778 Type: "Map Item"
+INFO - Data 779 Type: "Map Item"
+INFO - Data 780 Type: "Map Item"
+INFO - Data 781 Type: "Map Item"
+INFO - Data 782 Type: "Map Item"
+INFO - Data 783 Type: "Map Item"
+INFO - Data 784 Type: "Map Item"
+INFO - Data 785 Type: "Map Item"
+INFO - Data 786 Type: "Map Item"
+INFO - Data 787 Type: "Map Item"
+INFO - Data 788 Type: "Map Item"
+INFO - Data 789 Type: "Map Item"
+INFO - Data 790 Type: "Map Item"
+INFO - Data 791 Type: "Map Item"
+INFO - Data 792 Type: "Map Item"
+INFO - Data 793 Type: "Map Item"
+INFO - Data 794 Type: "Map Item"
+INFO - Data 795 Type: "Map Item"
+INFO - Data 796 Type: "Map Item"
+INFO - Data 797 Type: "Map Item"
+INFO - Data 798 Type: "Map Item"
+INFO - Data 799 Type: "Map Item"
+INFO - Data 800 Type: "Map Item"
+INFO - Data 801 Type: "Map Item"
+INFO - Data 802 Type: "Map Item"
+INFO - Data 803 Type: "Map Item"
+INFO - Data 804 Type: "Map Item"
+INFO - Data 805 Type: "Map Item"
+INFO - Data 806 Type: "Map Item"
+INFO - Data 807 Type: "Map Item"
+INFO - Data 808 Type: "Map Item"
+INFO - Data 809 Type: "Map Item"
+INFO - Data 810 Type: "Map Item"
+INFO - Data 811 Type: "Map Item"
+INFO - Data 812 Type: "Map Item"
+INFO - Data 813 Type: "Map Item"
+INFO - Data 814 Type: "Map Item"
+INFO - Data 815 Type: "Map Item"
+INFO - Data 816 Type: "Map Item"
+INFO - Data 817 Type: "Map Item"
+INFO - Data 818 Type: "Map Item"
+INFO - Data 819 Type: "Map Item"
+INFO - Data 820 Type: "Map Item"
+INFO - Data 821 Type: "Map Item"
+INFO - Data 822 Type: "Map Item"
+INFO - Data 823 Type: "Map Item"
+INFO - Data 824 Type: "Map Item"
+INFO - Data 825 Type: "Map Item"
+INFO - Data 826 Type: "Map Item"
+INFO - Data 827 Type: "Map Item"
+INFO - Data 828 Type: "Map Item"
+INFO - Data 829 Type: "Map Item"
+INFO - Data 830 Type: "Map Item"
+INFO - Data 831 Type: "Map Item"
+INFO - Data 832 Type: "Map Item"
+INFO - Data 833 Type: "Map Item"
+INFO - Data 834 Type: "Map Item"
+INFO - Data 835 Type: "Map Item"
+INFO - Data 836 Type: "Map Item"
+INFO - Data 837 Type: "Map Item"
+INFO - Data 838 Type: "Map Item"
+INFO - Data 839 Type: "Map Item"
+INFO - Data 840 Type: "Map Item"
+INFO - Data 841 Type: "Map Item"
+INFO - Data 842 Type: "Map Item"
+INFO - Data 843 Type: "Map Item"
+INFO - Data 844 Type: "Map Item"
+INFO - Data 845 Type: "Map Item"
+INFO - Data 846 Type: "Map Item"
+INFO - Data 847 Type: "Map Item"
+INFO - Data 848 Type: "Map Item"
+INFO - Data 849 Type: "Map Item"
+INFO - Data 850 Type: "Map Item"
+INFO - Data 851 Type: "Map Item"
+INFO - Data 852 Type: "Map Item"
+INFO - Data 853 Type: "Map Item"
+INFO - Data 854 Type: "Map Item"
+INFO - Data 855 Type: "Map Item"
+INFO - Data 856 Type: "Map Item"
+INFO - Data 857 Type: "Map Item"
+INFO - Data 858 Type: "Map Item"
+INFO - Data 867 Type: "Map Item"
+INFO - Data 868 Type: "Map Item"
+INFO - Data 869 Type: "Map Item"
+INFO - Data 870 Type: "Map Item"
+INFO - Data 871 Type: "Map Item"
+INFO - Data 872 Type: "Map Item"
+INFO - Data 873 Type: "Map Item"
+INFO - Data 874 Type: "Map Item"
+INFO - Data 875 Type: "Map Item"
+INFO - Data 876 Type: "Map Item"
+INFO - Data 877 Type: "Map Item"
+INFO - Data 878 Type: "Map Item"
+INFO - Data 879 Type: "Map Item"
+INFO - Data 880 Type: "Map Item"
+INFO - Data 881 Type: "Map Item"
+INFO - Data 882 Type: "Map Item"
+INFO - Data 883 Type: "Map Item"
+INFO - Data 884 Type: "Map Item"
+INFO - Data 885 Type: "Map Item"
+INFO - Data 886 Type: "Map Item"
+INFO - Data 887 Type: "Map Item"
+INFO - Data 888 Type: "Map Item"
+INFO - Data 889 Type: "Map Item"
+INFO - Data 890 Type: "Map Item"
+INFO - Data 895 Type: "Map Item"
+INFO - Data 896 Type: "Map Item"
+INFO - Data 897 Type: "Map Item"
+INFO - Data 898 Type: "Map Item"
+INFO - Data 899 Type: "Map Item"
+INFO - Data 903 Type: "Map Item"
+INFO - Data 904 Type: "Map Item"
+INFO - Data 905 Type: "Map Item"
+INFO - Data 906 Type: "Map Item"
+INFO - Data 907 Type: "Map Item"
+INFO - Data 908 Type: "Map Item"
+INFO - Data 909 Type: "Map Item"
+INFO - Data 910 Type: "Map Item"
+INFO - Data 911 Type: "Map Item"
+INFO - Data 912 Type: "Map Item"
+INFO - Data 913 Type: "Map Item"
+INFO - Data 914 Type: "Map Item"
+INFO - Data 915 Type: "Inv Header"
+INFO - Data 916 Type: "Inv Header Text"
+INFO - Data 917 Type: "Inv Slot BG"
+INFO - Data 918 Type: "Inv Slot BG"
+INFO - Data 919 Type: "Inv Slot BG"
+INFO - Data 920 Type: "Inv Slot BG"
+INFO - Data 921 Type: "Inv Slot BG"
+INFO - Data 922 Type: "Inv Slot BG"
+INFO - Data 923 Type: "Inv Slot BG"
+INFO - Data 924 Type: "Inv Slot BG"
+INFO - Data 925 Type: "Inv Slot BG"
+INFO - Data 926 Type: "Inv Slot BG"
+INFO - Data 927 Type: "Inv Slot BG"
+INFO - Data 928 Type: "Inv Slot BG"
+INFO - Data 929 Type: "Inv Slot BG"
+INFO - Data 930 Type: "Inv Slot BG"
+INFO - Data 931 Type: "Inv Slot BG"
+INFO - Data 932 Type: "Inv Slot BG"
+INFO - Data 933 Type: "Inv Slot BG"
+INFO - Data 934 Type: "Inv Slot BG"
+INFO - Data 935 Type: "Inv Slot BG"
+INFO - Data 936 Type: "Inv Slot BG"
+INFO - Data 937 Type: "Inv Slot BG"
+INFO - Data 938 Type: "Inv Slot BG"
+INFO - Data 939 Type: "Inv Slot BG"
+INFO - Data 940 Type: "Inv Slot BG"
+INFO - Data 941 Type: "Inv Slot BG"
+INFO - Data 942 Type: "Inv Slot BG"
+INFO - Data 943 Type: "Inv Slot BG"
+INFO - Data 944 Type: "Inv Slot BG"
+INFO - Data 945 Type: "Inv Slot BG"
+INFO - Data 946 Type: "Inv Slot BG"
+INFO - Data 947 Type: "Button Image"
+INFO - Data 948 Type: "Button Content"
+INFO - Data 949 Type: "Profile BG"
+INFO - Data 950 Type: "Profile Header"
+INFO - Data 951 Type: "Profile Header Text"
+INFO - Data 952 Type: "Button Image"
+INFO - Data 953 Type: "Button Content"
+INFO - Data 954 Type: "Profile EQ Slot BG"
+INFO - Data 955 Type: "Profile EQ Slot BG"
+INFO - Data 956 Type: "Profile EQ Slot BG"
+INFO - Data 957 Type: "Profile EQ Slot BG"
+INFO - Data 958 Type: "Profile EQ Slot BG"
+INFO - Data 959 Type: "Profile Label"
+INFO - Data 960 Type: "Profile Label"
+INFO - Data 961 Type: "Profile Label"
+INFO - Data 962 Type: "Profile Label"
+INFO - Data 963 Type: "Profile Label"
+INFO - Data 964 Type: "Profile Label Value"
+INFO - Data 965 Type: "Profile Label Value"
+INFO - Data 966 Type: "Profile Label Value"
+INFO - Data 967 Type: "Profile Label Value"
+INFO - Data 968 Type: "Settings BG"
+INFO - Data 969 Type: "Settings Header"
+INFO - Data 970 Type: "Settings Header Text"
+INFO - Data 971 Type: "Scrollbar BG"
+INFO - Data 972 Type: "Scrollbar Scroll"
+INFO - Data 973 Type: "Scrollbar BG"
+INFO - Data 974 Type: "Scrollbar Scroll"
+INFO - Data 975 Type: "Button Image"
+INFO - Data 976 Type: "Button Content"
+INFO - Data 977 Type: "Settings Label"
+INFO - Data 978 Type: "Settings Label"
+INFO - Data 979 Type: "Settings BGM Label"
+INFO - Data 980 Type: "Settings SFX Label"
+INFO - Data 981 Type: "Checkbox Image"
+INFO - Data 982 Type: "Checkbox Check"
+INFO - Data 983 Type: "Checkbox Text"
+INFO - Data 984 Type: "Chatbox BG"
+INFO - Data 985 Type: "Chatbox Textbox BG"
+INFO - Data 986 Type: "Chatbox Chat Area"
+INFO - Data 987 Type: "Textbox BG"
+INFO - Data 988 Type: "Textbox Select"
+INFO - Data 989 Type: "Textbox Text"
+INFO - Data 990 Type: "Textbox Caret"
+INFO - Data 991 Type: "Button Image"
+INFO - Data 992 Type: "Button Content"
+INFO - Data 993 Type: "Button Image"
+INFO - Data 994 Type: "Button Content"
+INFO - Data 995 Type: "Button Image"
+INFO - Data 996 Type: "Button Content"
+INFO - Data 997 Type: "Scrollbar BG"
+INFO - Data 998 Type: "Scrollbar Scroll"
+INFO - Data 999 Type: "ChatTab BG"
+INFO - Data 1000 Type: "ChatTab Text"
+INFO - Data 1001 Type: "ChatTab BG"
+INFO - Data 1002 Type: "ChatTab Text"
+INFO - Data 1003 Type: "ChatTab BG"
+INFO - Data 1004 Type: "ChatTab Text"
+INFO - Data 1005 Type: "Chatbox Selection"
+INFO - Data 1006 Type: "Storage BG"
+INFO - Data 1007 Type: "Storage Header"
+INFO - Data 1008 Type: "Storage Header Text"
+INFO - Data 1009 Type: "Storage Slot BG"
+INFO - Data 1010 Type: "Storage Slot BG"
+INFO - Data 1011 Type: "Storage Slot BG"
+INFO - Data 1012 Type: "Storage Slot BG"
+INFO - Data 1013 Type: "Storage Slot BG"
+INFO - Data 1014 Type: "Storage Slot BG"
+INFO - Data 1015 Type: "Storage Slot BG"
+INFO - Data 1016 Type: "Storage Slot BG"
+INFO - Data 1017 Type: "Storage Slot BG"
+INFO - Data 1018 Type: "Storage Slot BG"
+INFO - Data 1019 Type: "Storage Slot BG"
+INFO - Data 1020 Type: "Storage Slot BG"
+INFO - Data 1021 Type: "Storage Slot BG"
+INFO - Data 1022 Type: "Storage Slot BG"
+INFO - Data 1023 Type: "Storage Slot BG"
+INFO - Data 1024 Type: "Storage Slot BG"
+INFO - Data 1025 Type: "Storage Slot BG"
+INFO - Data 1026 Type: "Storage Slot BG"
+INFO - Data 1027 Type: "Storage Slot BG"
+INFO - Data 1028 Type: "Storage Slot BG"
+INFO - Data 1029 Type: "Storage Slot BG"
+INFO - Data 1030 Type: "Storage Slot BG"
+INFO - Data 1031 Type: "Storage Slot BG"
+INFO - Data 1032 Type: "Storage Slot BG"
+INFO - Data 1033 Type: "Storage Slot BG"
+INFO - Data 1034 Type: "Storage Slot BG"
+INFO - Data 1035 Type: "Storage Slot BG"
+INFO - Data 1036 Type: "Storage Slot BG"
+INFO - Data 1037 Type: "Storage Slot BG"
+INFO - Data 1038 Type: "Storage Slot BG"
+INFO - Data 1039 Type: "Storage Slot BG"
+INFO - Data 1040 Type: "Storage Slot BG"
+INFO - Data 1041 Type: "Storage Slot BG"
+INFO - Data 1042 Type: "Storage Slot BG"
+INFO - Data 1043 Type: "Storage Slot BG"
+INFO - Data 1044 Type: "Storage Slot BG"
+INFO - Data 1045 Type: "Storage Slot BG"
+INFO - Data 1046 Type: "Storage Slot BG"
+INFO - Data 1047 Type: "Storage Slot BG"
+INFO - Data 1048 Type: "Storage Slot BG"
+INFO - Data 1049 Type: "Storage Slot BG"
+INFO - Data 1050 Type: "Storage Slot BG"
+INFO - Data 1051 Type: "Storage Slot BG"
+INFO - Data 1052 Type: "Storage Slot BG"
+INFO - Data 1053 Type: "Storage Slot BG"
+INFO - Data 1054 Type: "Storage Slot BG"
+INFO - Data 1055 Type: "Storage Slot BG"
+INFO - Data 1056 Type: "Storage Slot BG"
+INFO - Data 1057 Type: "Storage Slot BG"
+INFO - Data 1058 Type: "Storage Slot BG"
+INFO - Data 1059 Type: "Storage Slot BG"
+INFO - Data 1060 Type: "Storage Slot BG"
+INFO - Data 1061 Type: "Storage Slot BG"
+INFO - Data 1062 Type: "Storage Slot BG"
+INFO - Data 1063 Type: "Storage Slot BG"
+INFO - Data 1064 Type: "Storage Slot BG"
+INFO - Data 1065 Type: "Storage Slot BG"
+INFO - Data 1066 Type: "Storage Slot BG"
+INFO - Data 1067 Type: "Storage Slot BG"
+INFO - Data 1068 Type: "Storage Slot BG"
+INFO - Data 1069 Type: "Storage Slot BG"
+INFO - Data 1070 Type: "Storage Slot BG"
+INFO - Data 1071 Type: "Storage Slot BG"
+INFO - Data 1072 Type: "Storage Slot BG"
+INFO - Data 1073 Type: "Storage Slot BG"
+INFO - Data 1074 Type: "Storage Slot BG"
+INFO - Data 1075 Type: "Storage Slot BG"
+INFO - Data 1076 Type: "Storage Slot BG"
+INFO - Data 1077 Type: "Storage Slot BG"
+INFO - Data 1078 Type: "Storage Slot BG"
+INFO - Data 1079 Type: "Button Image"
+INFO - Data 1080 Type: "Button Content"
+INFO - Data 1081 Type: "Shop BG"
+INFO - Data 1082 Type: "Shop Header"
+INFO - Data 1083 Type: "Shop Header Text"
+INFO - Data 1084 Type: "Button Image"
+INFO - Data 1085 Type: "Button Content"
+INFO - Data 1086 Type: "Button Image"
+INFO - Data 1087 Type: "Button Content"
+INFO - Data 1088 Type: "Button Image"
+INFO - Data 1089 Type: "Button Content"
+INFO - Data 1090 Type: "Shop Item BG"
+INFO - Data 1091 Type: "Shop Item Name"
+INFO - Data 1092 Type: "Shop Item Price"
+INFO - Data 1093 Type: "Shop Price Icon"
+INFO - Data 1094 Type: "Button Image"
+INFO - Data 1095 Type: "Button Content"
+INFO - Data 1096 Type: "Shop Item Amount BG"
+INFO - Data 1097 Type: "Shop Item Amount"
+INFO - Data 1098 Type: "Shop Item BG"
+INFO - Data 1099 Type: "Shop Item Name"
+INFO - Data 1100 Type: "Shop Item Price"
+INFO - Data 1101 Type: "Shop Price Icon"
+INFO - Data 1102 Type: "Button Image"
+INFO - Data 1103 Type: "Button Content"
+INFO - Data 1104 Type: "Shop Item Amount BG"
+INFO - Data 1105 Type: "Shop Item Amount"
+INFO - Data 1106 Type: "Shop Item BG"
+INFO - Data 1107 Type: "Shop Item Name"
+INFO - Data 1108 Type: "Shop Item Price"
+INFO - Data 1109 Type: "Shop Price Icon"
+INFO - Data 1110 Type: "Button Image"
+INFO - Data 1111 Type: "Button Content"
+INFO - Data 1112 Type: "Shop Item Amount BG"
+INFO - Data 1113 Type: "Shop Item Amount"
+INFO - Data 1114 Type: "Shop Item BG"
+INFO - Data 1115 Type: "Shop Item Name"
+INFO - Data 1116 Type: "Shop Item Price"
+INFO - Data 1117 Type: "Shop Price Icon"
+INFO - Data 1118 Type: "Button Image"
+INFO - Data 1119 Type: "Button Content"
+INFO - Data 1120 Type: "Shop Item Amount BG"
+INFO - Data 1121 Type: "Shop Item Amount"
+INFO - Data 1122 Type: "Shop Item BG"
+INFO - Data 1123 Type: "Shop Item Name"
+INFO - Data 1124 Type: "Shop Item Price"
+INFO - Data 1125 Type: "Shop Price Icon"
+INFO - Data 1126 Type: "Button Image"
+INFO - Data 1127 Type: "Button Content"
+INFO - Data 1128 Type: "Shop Item Amount BG"
+INFO - Data 1129 Type: "Shop Item Amount"
+INFO - Data 1130 Type: "Scrollbar BG"
+INFO - Data 1131 Type: "Scrollbar Scroll"
+INFO - Data 1132 Type: "Trade Window"
+INFO - Data 1133 Type: "Trade Header"
+INFO - Data 1134 Type: "Trade Header Text"
+INFO - Data 1135 Type: "Button Image"
+INFO - Data 1136 Type: "Button Content"
+INFO - Data 1137 Type: "Button Image"
+INFO - Data 1138 Type: "Button Content"
+INFO - Data 1139 Type: "Button Image"
+INFO - Data 1140 Type: "Button Content"
+INFO - Data 1141 Type: "Trade Slot BG"
+INFO - Data 1142 Type: "Trade Slot BG"
+INFO - Data 1143 Type: "Trade Slot BG"
+INFO - Data 1144 Type: "Trade Slot BG"
+INFO - Data 1145 Type: "Trade Slot BG"
+INFO - Data 1146 Type: "Trade Slot BG"
+INFO - Data 1147 Type: "Trade Slot BG"
+INFO - Data 1148 Type: "Trade Slot BG"
+INFO - Data 1149 Type: "Trade Slot BG"
+INFO - Data 1150 Type: "Trade Slot BG"
+INFO - Data 1151 Type: "Trade Slot BG"
+INFO - Data 1152 Type: "Trade Slot BG"
+INFO - Data 1153 Type: "Trade Slot BG"
+INFO - Data 1154 Type: "Trade Slot BG"
+INFO - Data 1155 Type: "Trade Slot BG"
+INFO - Data 1156 Type: "Trade Slot BG"
+INFO - Data 1157 Type: "Trade Slot BG"
+INFO - Data 1158 Type: "Trade Slot BG"
+INFO - Data 1159 Type: "Trade Slot BG"
+INFO - Data 1160 Type: "Trade Slot BG"
+INFO - Data 1161 Type: "Trade Slot BG"
+INFO - Data 1162 Type: "Trade Slot BG"
+INFO - Data 1163 Type: "Trade Slot BG"
+INFO - Data 1164 Type: "Trade Slot BG"
+INFO - Data 1165 Type: "Trade Slot BG"
+INFO - Data 1166 Type: "Trade Slot BG"
+INFO - Data 1167 Type: "Trade Slot BG"
+INFO - Data 1168 Type: "Trade Slot BG"
+INFO - Data 1169 Type: "Trade Slot BG"
+INFO - Data 1170 Type: "Trade Slot BG"
+INFO - Data 1171 Type: "Trade Slot BG"
+INFO - Data 1172 Type: "Trade Slot BG"
+INFO - Data 1173 Type: "Trade Slot BG"
+INFO - Data 1174 Type: "Trade Slot BG"
+INFO - Data 1175 Type: "Trade Slot BG"
+INFO - Data 1176 Type: "Trade Slot BG"
+INFO - Data 1177 Type: "Trade Slot BG"
+INFO - Data 1178 Type: "Trade Slot BG"
+INFO - Data 1179 Type: "Trade Slot BG"
+INFO - Data 1180 Type: "Trade Slot BG"
+INFO - Data 1181 Type: "Trade Slot BG"
+INFO - Data 1182 Type: "Trade Slot BG"
+INFO - Data 1183 Type: "Trade Slot BG"
+INFO - Data 1184 Type: "Trade Slot BG"
+INFO - Data 1185 Type: "Trade Slot BG"
+INFO - Data 1186 Type: "Trade Slot BG"
+INFO - Data 1187 Type: "Trade Slot BG"
+INFO - Data 1188 Type: "Trade Slot BG"
+INFO - Data 1189 Type: "Trade Slot BG"
+INFO - Data 1190 Type: "Trade Slot BG"
+INFO - Data 1191 Type: "Trade Slot BG"
+INFO - Data 1192 Type: "Trade Slot BG"
+INFO - Data 1193 Type: "Trade Slot BG"
+INFO - Data 1194 Type: "Trade Slot BG"
+INFO - Data 1195 Type: "Trade Slot BG"
+INFO - Data 1196 Type: "Trade Slot BG"
+INFO - Data 1197 Type: "Trade Slot BG"
+INFO - Data 1198 Type: "Trade Slot BG"
+INFO - Data 1199 Type: "Trade Slot BG"
+INFO - Data 1200 Type: "Trade Slot BG"
+INFO - Data 1201 Type: "Trade Name"
+INFO - Data 1202 Type: "Trade Name"
+INFO - Data 1203 Type: "Trade Status"
+INFO - Data 1204 Type: "Trade Status"
+INFO - Data 1205 Type: "Trade Money Icon"
+INFO - Data 1206 Type: "Trade Money Icon"
+INFO - Data 1207 Type: "Textbox BG"
+INFO - Data 1208 Type: "Textbox Select"
+INFO - Data 1209 Type: "Textbox Text"
+INFO - Data 1210 Type: "Textbox Caret"
+INFO - Data 1211 Type: "Trade Money"
+INFO - Data 1212 Type: "Trade Main Status"
+INFO - Data 1213 Type: "Item Desc Window"
+INFO - Data 1214 Type: "Target Image"
+INFO - Data 1215 Type: "Inv Item"
+INFO - Data 1216 Type: "Inv Amount BG"
+INFO - Data 1217 Type: "Inv Amount"
+INFO - Data 1218 Type: "Inv Item"
+INFO - Data 1219 Type: "Inv Amount BG"
+INFO - Data 1220 Type: "Inv Amount"
+INFO - Data 1221 Type: "Inv Item"
+INFO - Data 1222 Type: "Inv Amount BG"
+INFO - Data 1223 Type: "Inv Amount"
+INFO - Data 1224 Type: "Inv Item"
+INFO - Data 1225 Type: "Inv Item"
+INFO - Data 1226 Type: "Inv Item"
+INFO - Data 1227 Type: "Inv Item"
+INFO - Data 1228 Type: "Inv Amount BG"
+INFO - Data 1229 Type: "Inv Amount"
+INFO - Data 1230 Type: "Inv Item"
+INFO - Data 1231 Type: "Inv Item"
+INFO - Data 1232 Type: "Inv Item"
+INFO - Data 1233 Type: "Inv Item"
+INFO - Data 1234 Type: "Inv Amount BG"
+INFO - Data 1235 Type: "Inv Amount"
+INFO - Data 1236 Type: "Inv Item"
+INFO - Data 1237 Type: "Inv Item"
+INFO - Data 1238 Type: "Inv Item"
+INFO - Data 1239 Type: "Inv Item"
+INFO - Data 1240 Type: "Inv Item"
+INFO - Data 1241 Type: "Inv Item"
+INFO - Data 1242 Type: "Inv Item"
+INFO - Data 1243 Type: "Profile EQ Image"
+INFO - Data 1244 Type: "Chatbox Text"
+INFO - Data 1245 Type: "Chatbox Text"
+INFO - Data 1246 Type: "Chatbox Text"
+INFO - Data 1247 Type: "Map Item"
+INFO - Data 1248 Type: "Map Item"
+INFO - Data 1249 Type: "Map Item"
+INFO - Data 1250 Type: "Map Item"
+INFO - Data 1251 Type: "Map Item"
+INFO - Data 1252 Type: "Map Item"
+INFO - Data 1253 Type: "Map Item"
+INFO - Data 1254 Type: "Map Item"
+INFO - Data 1255 Type: "Map Item"
+INFO - Data 1256 Type: "Npc Sprite"
+INFO - Data 1258 Type: "Map Item"
+INFO - Data 1259 Type: "Map Item"
+INFO - Data 1260 Type: "Map Item"
+INFO - Data 1292 Type: "Map Item"
+INFO - Data 1293 Type: "Map Item"
+INFO - Data 1294 Type: "Map Item"
+INFO - Data 1295 Type: "Map Item"
+INFO - Data 1296 Type: "Map Item"
+INFO - Data 1297 Type: "Map Item"
+INFO - Data 1298 Type: "Map Item"
+INFO - Data 1299 Type: "Map Item"
+INFO - Data 1300 Type: "Map Item"
+INFO - Data 1301 Type: "Map Item"
+INFO - Data 1302 Type: "Map Item"
+INFO - Data 1303 Type: "Map Item"
+INFO - Data 1304 Type: "Map Item"
+ERROR - Disconnected on Socket read
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
