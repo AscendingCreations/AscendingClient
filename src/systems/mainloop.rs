@@ -47,7 +47,7 @@ pub fn game_loop(
                     seconds,
                 )?;
 
-                loop_timer.entity_tmr = seconds + 0.01;
+                loop_timer.entity_tmr = seconds + 0.025;
             }
 
             update_camera(world, &mut content.game_content, systems, socket)?;
