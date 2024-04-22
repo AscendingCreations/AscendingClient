@@ -7,8 +7,7 @@ use crate::{
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct LoopTimer {
-    player_tmr: f32,
-    npc_tmr: f32,
+    entity_tmr: f32,
     input_tmr: f32,
     maprefresh_tmr: f32,
 }
@@ -24,10 +23,14 @@ pub fn game_loop(
 ) -> Result<()> {
     match content.content_type {
         ContentType::Game => {
-            update_camera(world, &mut content.game_content, systems, socket)?;
             float_text_loop(systems, &mut content.game_content, seconds);
 
-            if seconds > loop_timer.player_tmr {
+            if seconds > loop_timer.maprefresh_tmr {
+                update_map_refresh(world, systems, content)?;
+                loop_timer.maprefresh_tmr = seconds + 0.5;
+            }
+
+            if seconds > loop_timer.entity_tmr {
                 update_player(
                     world,
                     systems,
@@ -36,18 +39,12 @@ pub fn game_loop(
                     buffer,
                     seconds,
                 )?;
-                loop_timer.player_tmr = seconds + 0.01;
-            }
-
-            if seconds > loop_timer.npc_tmr {
                 update_npc(world, systems, &mut content.game_content, seconds)?;
-                loop_timer.npc_tmr = seconds + 0.01;
+
+                loop_timer.entity_tmr = seconds + 0.025;
             }
 
-            if seconds > loop_timer.maprefresh_tmr {
-                update_map_refresh(world, systems, content)?;
-                loop_timer.maprefresh_tmr = seconds + 0.5;
-            }
+            update_camera(world, &mut content.game_content, systems, socket)?;
 
             if seconds > loop_timer.input_tmr {
                 content

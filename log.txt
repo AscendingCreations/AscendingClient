@@ -8062,3 +8062,1035 @@ INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098,
 INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
 INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
 INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 552
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 552
+WARN - Get Clipboard Err: The clipboard contents were not available in the requested format or the clipboard is empty.
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 601
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 697
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 826
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 372
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 372
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 890
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+ERROR - Disconnected on packet get_length
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 890
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Disconnected on read tls ok(0)
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - Disconnected on read tls ok(0)
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 347
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 355
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 365
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 1031
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 347
+ERROR - Disconnected on Socket read
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 350
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 382
+ERROR - Disconnected on Socket read
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 342
+ERROR - Disconnected on Socket read
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 358
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 382
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 394
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 604
+ERROR - Disconnected on Socket read
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 669
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 668
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 668
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 668
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 668
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - GFX Loaded Count: 705
+ERROR - Disconnected on Socket read
+WARN - Disconnected
+INFO - GFX Loaded Count: 37
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+ERROR - TLS read error: Os { code: 10057, kind: NotConnected, message: "A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied." }
+ERROR - Disconnected on Socket tls Wants Write
+WARN - Disconnected
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010
+INFO - Debug utils not enabled: debug_utils_user_data not passed to Instance::from_raw
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (AMD Radeon(TM) Graphics)
+WARN - Adapter is not Vulkan compliant, hiding adapter: Microsoft Direct3D12 (Microsoft Basic Render Driver)
+INFO - Adapter Vulkan AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "AMD proprietary driver", driver_info: "24.3.1 (AMD proprietary shader compiler)", backend: Vulkan }
+INFO - Adapter Dx12 AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 4098, device: 5688, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Dx12 AdapterInfo { name: "Microsoft Basic Render Driver", vendor: 5140, device: 140, device_type: Cpu, driver: "", driver_info: "", backend: Dx12 }
+INFO - Adapter Gl AdapterInfo { name: "AMD Radeon(TM) Graphics", vendor: 0, device: 0, device_type: Other, driver: "", driver_info: "", backend: Gl }
+INFO - 212.47.238.107:7010

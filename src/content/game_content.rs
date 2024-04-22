@@ -599,12 +599,7 @@ pub fn update_npc(
 ) -> Result<()> {
     let npcs = content.npcs.clone();
     for entity in npcs.iter() {
-        if let Some(myentity) = content.myentity {
-            if entity != &myentity {
-                move_npc(world, systems, entity, MovementType::MovementBuffer)?;
-            }
-        }
-
+        move_npc(world, systems, entity, MovementType::MovementBuffer)?;
         process_npc_movement(world, systems, entity)?;
         process_npc_attack(world, systems, entity, seconds)?;
     }
@@ -679,6 +674,10 @@ pub fn update_camera(
         Vec2::new(0.0, 0.0)
     };
     let adjust_pos = get_screen_center(&systems.size) - player_pos;
+    if content.camera.0 == adjust_pos {
+        return Ok(());
+    }
+
     content.camera.0 = adjust_pos;
 
     content.map.move_pos(systems, content.camera.0);

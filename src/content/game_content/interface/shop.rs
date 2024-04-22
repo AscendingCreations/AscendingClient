@@ -402,6 +402,9 @@ impl Shop {
         });
         self.button.clear();
         self.item.iter_mut().for_each(|item| {
+            if let Some(sprite) = item.icon {
+                systems.gfx.remove_gfx(&mut systems.renderer, sprite)
+            }
             systems.gfx.remove_gfx(&mut systems.renderer, item.icon_bg);
             systems.gfx.remove_gfx(&mut systems.renderer, item.name);
             systems

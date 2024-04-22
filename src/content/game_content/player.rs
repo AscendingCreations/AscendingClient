@@ -511,7 +511,7 @@ pub fn process_player_movement(
         return Ok(());
     };
 
-    let add_offset = 2.0;
+    let add_offset = 4.0;
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         {

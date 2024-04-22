@@ -7,10 +7,11 @@ use crate::{
     finalize_entity, get_percent, get_start_map_pos, init_npc_attack,
     is_map_connected, npc_finalized, open_interface, player_get_armor_defense,
     player_get_weapon_damage, send_handshake, set_npc_frame, unload_mapitems,
-    unload_npc, update_camera, Alert, AlertIndex, AlertType, BufferTask,
-    ChatTask, Content, EncryptionState, EntityType, FtlType, IsUsingType,
-    MapItem, MessageChannel, ProfileLabel, Result, Socket, SystemHolder,
-    TradeStatus, Window, MAX_EQPT, NPC_SPRITE_FRAME_X, VITALS_MAX,
+    unload_npc, update_camera, update_mapitem_position, update_npc_position,
+    update_player, Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
+    EncryptionState, EntityType, FtlType, IsUsingType, MapItem, MessageChannel,
+    ProfileLabel, Result, Socket, SystemHolder, TradeStatus, Window, MAX_EQPT,
+    NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
 use bytey::ByteBuffer;
 use graphics::*;
@@ -160,7 +161,7 @@ pub fn handle_mapitems(
         let pos = data.read::<Position>()?;
         let item = data.read::<Item>()?;
         let _owner = data.read::<Option<Entity>>()?;
-        let _did_spawn = data.read::<bool>()?;
+        let did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
@@ -185,6 +186,15 @@ pub fn handle_mapitems(
 
                 if content.game_content.finalized {
                     MapItem::finalized(world, systems, &entity)?;
+                    if did_spawn {
+                        update_mapitem_position(
+                            systems,
+                            &content.game_content,
+                            world.get_or_err::<SpriteIndex>(&entity)?.0,
+                            &pos,
+                            &world.get_or_err::<PositionOffset>(&entity)?,
+                        );
+                    }
                 }
             }
         }
@@ -291,7 +301,7 @@ pub fn handle_playerdata(
 }
 
 pub fn handle_playerspawn(
-    _socket: &mut Socket,
+    socket: &mut Socket,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -321,7 +331,7 @@ pub fn handle_playerspawn(
         vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
         let mut vitalmax = [0; VITALS_MAX];
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
-        let _did_spawn = data.read::<bool>()?;
+        let did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
             if myentity != entity && !world.contains(entity.0) {
@@ -371,6 +381,19 @@ pub fn handle_playerspawn(
 
                 if content.game_content.finalized {
                     player_finalized(world, systems, &entity)?;
+                    if did_spawn {
+                        update_player_position(
+                            systems,
+                            &mut content.game_content,
+                            socket,
+                            world.get_or_err::<SpriteIndex>(&entity)?.0,
+                            &pos,
+                            &world.get_or_err::<PositionOffset>(&entity)?,
+                            &world.get_or_err::<HPBar>(&entity)?,
+                            &world.get_or_err::<EntityNameMap>(&entity)?,
+                            false,
+                        )?;
+                    }
                 }
             }
         }
@@ -1037,7 +1060,7 @@ pub fn handle_playeremail(
 }
 
 pub fn handle_npcdata(
-    _socket: &mut Socket,
+    socket: &mut Socket,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1064,7 +1087,7 @@ pub fn handle_npcdata(
         vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
         let mut vitalmax = [0; VITALS_MAX];
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
-        let _did_spawn = data.read::<bool>()?;
+        let did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
             if !world.contains(entity.0) {
@@ -1112,6 +1135,19 @@ pub fn handle_npcdata(
 
                 if content.game_content.finalized {
                     npc_finalized(world, systems, &entity)?;
+                    if did_spawn {
+                        update_npc_position(
+                            systems,
+                            &mut content.game_content,
+                            socket,
+                            world.get_or_err::<SpriteIndex>(&entity)?.0,
+                            &pos,
+                            &world.get_or_err::<PositionOffset>(&entity)?,
+                            &world.get_or_err::<HPBar>(&entity)?,
+                            &world.get_or_err::<EntityNameMap>(&entity)?,
+                            false,
+                        )?;
+                    }
                 }
             }
         }
