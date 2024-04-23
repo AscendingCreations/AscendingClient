@@ -344,7 +344,7 @@ async fn main() -> Result<()> {
     let mut mouse_press: bool = false;
 
     systems.audio.set_music("./audio/caves.ogg")?;
-
+    content.game_content.current_music = "caves.ogg".to_string();
     #[allow(deprecated)]
     event_loop.run(move |event, elwt| {
         frame_time.update();

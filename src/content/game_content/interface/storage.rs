@@ -794,12 +794,12 @@ pub fn release_storage_slot(
                     true,
                 );
             } else {
-                return send_withdrawitem(
+                send_withdrawitem(
                     socket,
                     inv_slot as u16,
                     slot as u16,
                     interface.storage.item_slot[slot].count_data,
-                );
+                )?;
             }
         }
     }

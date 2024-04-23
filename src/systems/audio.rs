@@ -29,12 +29,16 @@ impl Audio {
     }
 
     pub fn set_music(&mut self, source: impl AsRef<Path>) -> Result<()> {
-        self.music.clear();
-
         let file = BufReader::new(File::open(source)?);
         let source = Decoder::new(file)?;
+        //self.music.clear();
 
-        self.music.append(source.repeat_infinite());
+        self.music.append(source.fade_in(Duration::from_secs(1)).repeat_infinite().skippable());
+        
+        if self.music.len() > 1 {
+            self.music.skip_one()
+        } 
+
         self.music.play();
         Ok(())
     }

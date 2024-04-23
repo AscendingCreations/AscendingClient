@@ -781,12 +781,12 @@ pub fn release_inv_slot(
                     true,
                 );
             } else {
-                return send_deposititem(
+                send_deposititem(
                     socket,
                     slot as u16,
                     bank_slot as u16,
                     interface.inventory.item_slot[slot].count_data,
-                );
+                )?;
             }
         }
     } else if interface.shop.in_window(screen_pos)

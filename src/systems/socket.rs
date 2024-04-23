@@ -602,7 +602,9 @@ pub fn process_packets(
 
     if socket.buffer.cursor() == socket.buffer.length() {
         socket.buffer.truncate(0)?;
-        socket.buffer.resize(4096)?;
+        if socket.buffer.capacity() > 25000 {
+            socket.buffer.resize(4096)?;
+        }
     } else if socket.buffer.capacity() > 25000
         && (socket.buffer.length() - socket.buffer.cursor()) as u64 <= 10000
     {
