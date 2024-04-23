@@ -1,6 +1,7 @@
 **/target
 *.lock
 log.txt
+*.txt
 *.7z
 *.exe
 *.zip

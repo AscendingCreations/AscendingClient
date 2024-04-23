@@ -144,11 +144,9 @@ pub fn load_file(x: i32, y: i32, group: u64) -> Result<MapData> {
             let mut data = Vec::new();
             file.read_to_end(&mut data)?;
 
-            let mut buf = ByteBuffer::new()?;
-            buf.write(data)?;
+            let mut buf = ByteBuffer::with_capacity(data.len())?;
+            buf.write_slice(&data)?;
             buf.move_cursor_to_start();
-
-            buf.move_cursor(8)?;
             Ok(buf.read::<MapData>()?)
         }
         Err(e) => {

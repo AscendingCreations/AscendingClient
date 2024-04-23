@@ -554,19 +554,19 @@ pub fn process_packets(
     seconds: f32,
     buffertask: &mut BufferTask,
 ) -> Result<()> {
-    let mut count: usize = 0;
-    let mut length: u64;
-
     loop {
-        length = match get_length(socket) {
+        let length = match get_length(socket) {
             Some(n) => n,
             None => return Ok(()),
         };
 
-        if length > 0
-            && length
-                <= (socket.buffer.length() - socket.buffer.cursor()) as u64
-        {
+        if length == 0 {
+            log::error!("Length was Zero. Bad or malformed packet.");
+            socket.set_to_closing();
+            break;
+        }
+
+        if length <= (socket.buffer.length() - socket.buffer.cursor()) as u64 {
             let mut buffer = match socket.buffer.read_to_buffer(length as usize)
             {
                 Ok(n) => n,
@@ -594,26 +594,29 @@ pub fn process_packets(
                 socket.set_to_closing();
                 break;
             }
-
-            count += 1
         } else {
             socket.buffer.move_cursor(socket.buffer.cursor() - 8)?;
-            break;
-        }
-
-        if count == 25 {
             break;
         }
     }
 
     if socket.buffer.cursor() == socket.buffer.length() {
         socket.buffer.truncate(0)?;
+        socket.buffer.resize(4096)?;
+    } else if socket.buffer.capacity() > 25000
+        && (socket.buffer.length() - socket.buffer.cursor()) as u64 <= 10000
+    {
+        let mut replacement = ByteBuffer::with_capacity(
+            socket.buffer.length() - socket.buffer.cursor(),
+        )?;
+        replacement.write_slice(
+            socket
+                .buffer
+                .read_slice(socket.buffer.length() - socket.buffer.cursor())?,
+        )?;
+        replacement.move_cursor_to_start();
+        socket.buffer = replacement;
     }
 
-    /*if socket.buffer.capacity() > 25000
-        && (socket.buffer.length() - socket.buffer.cursor()) as u64 <= 4096
-    {
-        socket.buffer.resize(4096)?;
-    }*/
     Ok(())
 }
