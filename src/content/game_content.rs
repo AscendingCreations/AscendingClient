@@ -49,8 +49,8 @@ impl Camera {
 
 pub struct GameContent {
     pub players: Rc<RefCell<IndexSet<Entity>>>,
-    pub npcs: IndexSet<Entity>,
-    pub mapitems: IndexSet<Entity>,
+    pub npcs: Rc<RefCell<IndexSet<Entity>>>,
+    pub mapitems: Rc<RefCell<IndexSet<Entity>>>,
     pub map: MapContent,
     camera: Camera,
     pub interface: Interface,
@@ -69,8 +69,8 @@ impl GameContent {
     pub fn new(systems: &mut SystemHolder) -> Self {
         GameContent {
             players: Rc::new(RefCell::new(IndexSet::default())),
-            npcs: IndexSet::default(),
-            mapitems: IndexSet::default(),
+            npcs: Rc::new(RefCell::new(IndexSet::default())),
+            mapitems: Rc::new(RefCell::new(IndexSet::default())),
             map: MapContent::new(systems),
             camera: Camera::new(Vec2::new(0.0, 0.0)),
             interface: Interface::new(systems),
@@ -105,15 +105,15 @@ impl GameContent {
         for entity in self.players.borrow().iter() {
             unload_player(world, systems, entity)?;
         }
-        for entity in self.npcs.iter() {
+        for entity in self.npcs.borrow().iter() {
             unload_npc(world, systems, entity)?;
         }
-        for entity in self.mapitems.iter() {
+        for entity in self.mapitems.borrow().iter() {
             unload_mapitems(world, systems, entity)?;
         }
         self.players.borrow_mut().clear();
-        self.npcs.clear();
-        self.mapitems.clear();
+        self.npcs.borrow_mut().clear();
+        self.mapitems.borrow_mut().clear();
         self.finalized = false;
         self.myentity = None;
         self.interface.unload(systems);
@@ -169,10 +169,10 @@ impl GameContent {
         for entity in self.players.borrow().iter() {
             player_finalized(world, systems, entity)?;
         }
-        for entity in self.npcs.iter() {
+        for entity in self.npcs.borrow().iter() {
             npc_finalized(world, systems, entity)?;
         }
-        for entity in self.mapitems.iter() {
+        for entity in self.mapitems.borrow().iter() {
             MapItem::finalized(world, systems, entity)?;
         }
         update_camera(world, self, systems, socket)?;
@@ -448,7 +448,7 @@ impl GameContent {
     ) -> Result<()> {
         let entity =
             MapItem::create(world, systems, sprite, pos, cur_map, None)?;
-        self.mapitems.insert(entity);
+        self.mapitems.borrow_mut().insert(entity);
         Ok(())
     }
 
@@ -639,7 +639,7 @@ pub fn update_npc(
     seconds: f32,
 ) -> Result<()> {
     let npcs = content.npcs.clone();
-    for entity in npcs.iter() {
+    for entity in npcs.borrow().iter() {
         move_npc(world, systems, entity, MovementType::MovementBuffer)?;
         process_npc_movement(world, systems, entity, socket, content)?;
         process_npc_attack(world, systems, entity, seconds)?;

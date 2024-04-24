@@ -182,7 +182,7 @@ pub fn handle_mapitems(
                     Some(&entity),
                 )?;
 
-                content.game_content.mapitems.insert(mapitem);
+                content.game_content.mapitems.borrow_mut().insert(mapitem);
 
                 if content.game_content.finalized {
                     MapItem::finalized(world, systems, &entity)?;
@@ -571,11 +571,15 @@ pub fn handle_dataremovelist(
             }
             WorldEntityType::Npc => {
                 unload_npc(world, systems, entity)?;
-                content.game_content.npcs.swap_remove(entity);
+                content.game_content.npcs.borrow_mut().swap_remove(entity);
             }
             WorldEntityType::MapItem => {
                 unload_mapitems(world, systems, entity)?;
-                content.game_content.mapitems.swap_remove(entity);
+                content
+                    .game_content
+                    .mapitems
+                    .borrow_mut()
+                    .swap_remove(entity);
             }
             _ => {}
         }
@@ -1105,7 +1109,7 @@ pub fn handle_npcdata(
                     Some(&entity),
                     num as usize,
                 )?;
-                content.game_content.npcs.insert(npc);
+                content.game_content.npcs.borrow_mut().insert(npc);
 
                 if let Some(npc_data) = systems.base.npc.get(num as usize) {
                     let entity_name =
@@ -1191,7 +1195,7 @@ pub fn handle_npcmove(
                     }
                 } else {
                     unload_npc(world, systems, &entity)?;
-                    content.game_content.npcs.swap_remove(&entity);
+                    content.game_content.npcs.borrow_mut().swap_remove(&entity);
                 }
             }
         }
@@ -1449,11 +1453,15 @@ pub fn handle_entityunload(
                 }
                 WorldEntityType::Npc => {
                     unload_npc(world, systems, &entity)?;
-                    content.game_content.npcs.swap_remove(&entity);
+                    content.game_content.npcs.borrow_mut().swap_remove(&entity);
                 }
                 WorldEntityType::MapItem => {
                     unload_mapitems(world, systems, &entity)?;
-                    content.game_content.mapitems.swap_remove(&entity);
+                    content
+                        .game_content
+                        .mapitems
+                        .borrow_mut()
+                        .swap_remove(&entity);
                 }
                 _ => {}
             }

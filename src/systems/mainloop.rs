@@ -69,7 +69,7 @@ pub fn update_map_refresh(
     systems: &mut SystemHolder,
     content: &mut Content,
 ) -> Result<()> {
-    let mut entity_to_remove = Vec::new();
+    let mut entity_to_remove = Vec::with_capacity(1000);
 
     for (entity, (_, worldentitytype)) in world
         .query::<(&Position, &WorldEntityType)>()
@@ -93,11 +93,19 @@ pub fn update_map_refresh(
             }
             WorldEntityType::Npc => {
                 unload_npc(world, systems, &Entity(entity))?;
-                content.game_content.npcs.swap_remove(&Entity(entity));
+                content
+                    .game_content
+                    .npcs
+                    .borrow_mut()
+                    .swap_remove(&Entity(entity));
             }
             WorldEntityType::MapItem => {
                 unload_mapitems(world, systems, &Entity(entity))?;
-                content.game_content.mapitems.swap_remove(&Entity(entity));
+                content
+                    .game_content
+                    .mapitems
+                    .borrow_mut()
+                    .swap_remove(&Entity(entity));
             }
             _ => {}
         }

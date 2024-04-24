@@ -671,8 +671,17 @@ async fn main() -> Result<()> {
         //Can be used later to auto unload things not used anymore if ram/gpu ram becomes a issue.
         if fps == 1 {
             graphics.image_atlas.trim();
+        }
+
+        if fps == 2 {
             graphics.map_atlas.trim();
+        }
+
+        if fps == 3 {
             graphics.text_atlas.trim();
+        }
+
+        if fps == 4 {
             systems.renderer.font_sys.shape_run_cache.trim(1024);
         }
     })?;
