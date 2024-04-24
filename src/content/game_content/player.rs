@@ -261,6 +261,11 @@ pub fn move_player(
                 systems.map_fade.force_fade(&mut systems.gfx, FadeType::In);
             }
 
+            let end_pos = world.get_or_err::<EndMovement>(entity)?.0;
+            if pos.map != end_pos.map {
+                content.refresh_map = false;
+            }
+
             send_move(socket, dir_u8, pos)?;
         }
     }
@@ -330,6 +335,7 @@ pub fn end_player_move(
             let dir = world.get_or_err::<Movement>(entity)?.move_direction;
             content.move_map(world, systems, socket, dir, buffer)?;
             finalize_entity(world, systems)?;
+            content.refresh_map = true;
         }
     }
 

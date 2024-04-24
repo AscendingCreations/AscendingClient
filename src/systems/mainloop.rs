@@ -1,4 +1,5 @@
 use hecs::World;
+use log::info;
 
 use crate::{
     content::*, dir_to_enum, BufferTask, Entity, Position, Result, Socket,
@@ -23,10 +24,8 @@ pub fn game_loop(
 ) -> Result<()> {
     match content.content_type {
         ContentType::Game => {
-            float_text_loop(systems, &mut content.game_content, seconds);
-
             if seconds > loop_timer.maprefresh_tmr {
-                update_map_refresh(world, systems, content)?;
+                update_map_refresh(world, systems, &mut content.game_content)?;
                 loop_timer.maprefresh_tmr = seconds + 0.5;
             }
 
@@ -46,6 +45,7 @@ pub fn game_loop(
                     &mut content.game_content,
                     seconds,
                 )?;
+                float_text_loop(systems, &mut content.game_content, seconds);
 
                 loop_timer.entity_tmr = seconds + 0.025;
             }
@@ -67,16 +67,19 @@ pub fn game_loop(
 pub fn update_map_refresh(
     world: &mut World,
     systems: &mut SystemHolder,
-    content: &mut Content,
+    content: &mut GameContent,
 ) -> Result<()> {
+    if !content.refresh_map {
+        return Ok(());
+    }
+    content.refresh_map = false;
+
     let mut entity_to_remove = Vec::with_capacity(1000);
 
     for (entity, (_, worldentitytype)) in world
         .query::<(&Position, &WorldEntityType)>()
         .iter()
-        .filter(|(_, (pos, _))| {
-            !is_map_connected(content.game_content.map.map_pos, pos.map)
-        })
+        .filter(|(_, (pos, _))| content.map.map_pos.checkdistance(pos.map) > 1)
     {
         entity_to_remove.push((entity, *worldentitytype));
     }
@@ -85,27 +88,15 @@ pub fn update_map_refresh(
         match worldtype {
             WorldEntityType::Player => {
                 unload_player(world, systems, &Entity(entity))?;
-                content
-                    .game_content
-                    .players
-                    .borrow_mut()
-                    .swap_remove(&Entity(entity));
+                content.players.borrow_mut().swap_remove(&Entity(entity));
             }
             WorldEntityType::Npc => {
                 unload_npc(world, systems, &Entity(entity))?;
-                content
-                    .game_content
-                    .npcs
-                    .borrow_mut()
-                    .swap_remove(&Entity(entity));
+                content.npcs.borrow_mut().swap_remove(&Entity(entity));
             }
             WorldEntityType::MapItem => {
                 unload_mapitems(world, systems, &Entity(entity))?;
-                content
-                    .game_content
-                    .mapitems
-                    .borrow_mut()
-                    .swap_remove(&Entity(entity));
+                content.mapitems.borrow_mut().swap_remove(&Entity(entity));
             }
             _ => {}
         }

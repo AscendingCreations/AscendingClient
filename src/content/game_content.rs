@@ -63,6 +63,7 @@ pub struct GameContent {
     pub pick_up_timer: f32,
     pub current_music: String,
     pub float_text: FloatingText,
+    pub refresh_map: bool,
 }
 
 impl GameContent {
@@ -83,6 +84,7 @@ impl GameContent {
             pick_up_timer: 0.0,
             current_music: String::new(),
             float_text: FloatingText::new(),
+            refresh_map: false,
         }
     }
 

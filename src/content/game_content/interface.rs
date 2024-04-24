@@ -85,7 +85,7 @@ impl Interface {
             setting: Setting::new(systems),
             chatbox: Chatbox::new(systems),
             item_desc: ItemDescription::new(systems),
-            window_order: Vec::new(),
+            window_order: Vec::with_capacity(7),
             drag_window: None,
             selected_textbox: SelectedTextbox::None,
         };

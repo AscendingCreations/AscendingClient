@@ -39,6 +39,22 @@ pub struct MapPosition {
 }
 
 impl MapPosition {
+    pub fn checkdistance(&self, target: MapPosition) -> i32 {
+        let x = self.x - target.x;
+        let y = self.y - target.y;
+
+        if x == 0 {
+            return y.abs();
+        }
+        if y == 0 {
+            return x.abs();
+        }
+
+        x.abs() + y.abs() - 1
+    }
+}
+
+impl MapPosition {
     pub fn new(x: i32, y: i32, group: i32) -> Self {
         MapPosition { x, y, group }
     }

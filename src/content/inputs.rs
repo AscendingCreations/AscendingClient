@@ -6,7 +6,7 @@ use winit::keyboard::NamedKey;
 use crate::{
     content::{menu_content::content_input::*, *},
     socket::*,
-    Alert, Direction, Result, SystemHolder, Tooltip,
+    Alert, Direction, Result, SystemHolder, Tooltip, WorldEntityType,
 };
 
 #[derive(Clone, Debug)]
@@ -82,9 +82,64 @@ pub fn handle_key_input(
             Key::Named(NamedKey::F2) => {
                 info!("Gfx Count: {}", systems.gfx.count_collection())
             }
+            Key::Named(NamedKey::F3) => {
+                info!("World NPC Count: {}", count_npc(world));
+                info!("World Player Count: {}", count_player(world));
+                info!("World MapItems Count: {}", count_mapitems(world));
+            }
+            Key::Named(NamedKey::F4) => {
+                info!(
+                    "Storage Len Size NPC Count: {}",
+                    content.game_content.npcs.borrow().len()
+                );
+                info!(
+                    "Storage Len Size Player Count: {}",
+                    content.game_content.players.borrow().len()
+                );
+                info!(
+                    "Storage Len Size MapItems Count: {}",
+                    content.game_content.mapitems.borrow().len()
+                );
+            }
             _ => {}
         }
     }
 
     Ok(())
+}
+
+fn count_npc(world: &mut World) -> usize {
+    let mut count = 0;
+    for (_, _) in world
+        .query_mut::<&WorldEntityType>()
+        .into_iter()
+        .filter(|(_, worldtype)| **worldtype == WorldEntityType::Npc)
+    {
+        count += 1
+    }
+    count
+}
+
+fn count_player(world: &mut World) -> usize {
+    let mut count = 0;
+    for (_, _) in world
+        .query_mut::<&WorldEntityType>()
+        .into_iter()
+        .filter(|(_, worldtype)| **worldtype == WorldEntityType::Player)
+    {
+        count += 1
+    }
+    count
+}
+
+fn count_mapitems(world: &mut World) -> usize {
+    let mut count = 0;
+    for (_, _) in world
+        .query_mut::<&WorldEntityType>()
+        .into_iter()
+        .filter(|(_, worldtype)| **worldtype == WorldEntityType::MapItem)
+    {
+        count += 1
+    }
+    count
 }

@@ -15,9 +15,9 @@ pub struct PlayerData {
 impl PlayerData {
     pub fn new() -> Self {
         PlayerData {
-            inventory: Vec::new(),
-            storage: Vec::new(),
-            equipment: Vec::new(),
+            inventory: Vec::with_capacity(MAX_INV),
+            storage: Vec::with_capacity(MAX_STORAGE),
+            equipment: Vec::with_capacity(MAX_EQPT),
             player_money: 0,
             levelexp: 0,
             is_using_type: IsUsingType::None,

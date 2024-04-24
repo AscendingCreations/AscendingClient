@@ -16,6 +16,7 @@ use crate::{
 use bytey::ByteBuffer;
 use graphics::*;
 use hecs::World;
+use log::info;
 
 pub fn handle_ping(
     _socket: &mut Socket,
@@ -475,6 +476,7 @@ pub fn handle_playerwarp(
                 if old_pos.map != pos.map {
                     content.game_content.init_map(systems, pos.map)?;
                     finalize_entity(world, systems)?;
+                    content.game_content.refresh_map = true;
                 }
                 if systems.map_fade.f_alpha > 0 {
                     systems.map_fade.init_fade(
