@@ -56,18 +56,18 @@ bit_op = "0.1.1"
 
 [dependencies.camera]
 package = "ascending_camera"
-#path = "./camera"
+#path = "../AscendingLibraries/camera"
 version = "0.1.1"
 
 [dependencies.input]
 package = "ascending_input"
-#path = "./input"
+#path = "../AscendingLibraries/input"
 version = "0.2.1"
 
 [dependencies.graphics]
 package = "ascending_graphics"
-#path = "./graphics"
-version = "0.4.2"
+#path = "../AscendingLibraries/graphics"
+version = "0.5.0"
 
 [profile.dev]
 opt-level = 0
