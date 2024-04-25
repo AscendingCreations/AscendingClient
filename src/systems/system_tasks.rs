@@ -70,6 +70,12 @@ impl BufferTask {
                             mapdata,
                             content.game_content.map.index[map_index].0,
                         );
+                        content.game_content.map.map_id[map_index].0 =
+                            MapPosition {
+                                x: mx,
+                                y: my,
+                                group: mg as i32,
+                            }
                     }
                 }
                 BufferTaskEnum::ApplyMapAttribute(mx, my, mg, map_index) => {

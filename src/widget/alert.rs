@@ -335,6 +335,7 @@ impl Alert {
                         textbox_pos.y + 2.0,
                         ORDER_ALERT_TEXTBOX,
                     ),
+                    Vec2::new(0.0, 0.0),
                     (0.001, 3),
                     Vec2::new(100.0, 20.0),
                     Color::rgba(200, 200, 200, 255),
@@ -664,7 +665,10 @@ impl Alert {
         if let Some(textbox) = &mut self.input_box {
             if is_within_area(
                 screen_pos,
-                Vec2::new(textbox.textbox.pos.x, textbox.textbox.pos.y),
+                Vec2::new(
+                    textbox.textbox.base_pos.x,
+                    textbox.textbox.base_pos.y,
+                ) + textbox.textbox.adjust_pos,
                 Vec2::new(textbox.textbox.size.x, textbox.textbox.size.y),
             ) {
                 if let Some(msg) = &textbox.textbox.tooltip {
@@ -682,7 +686,10 @@ impl Alert {
         if let Some(textbox) = &mut self.input_box {
             if is_within_area(
                 screen_pos,
-                Vec2::new(textbox.textbox.pos.x, textbox.textbox.pos.y),
+                Vec2::new(
+                    textbox.textbox.base_pos.x,
+                    textbox.textbox.base_pos.y,
+                ) + textbox.textbox.adjust_pos,
                 textbox.textbox.size,
             ) {
                 textbox.textbox.set_select(systems, true);

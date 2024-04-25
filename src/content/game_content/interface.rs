@@ -811,7 +811,10 @@ impl Interface {
     ) -> Result<()> {
         if is_within_area(
             screen_pos,
-            Vec2::new(self.chatbox.textbox.pos.x, self.chatbox.textbox.pos.y),
+            Vec2::new(
+                self.chatbox.textbox.base_pos.x,
+                self.chatbox.textbox.base_pos.y,
+            ),
             self.chatbox.textbox.size,
         ) {
             self.chatbox.textbox.set_select(systems, true);
@@ -825,8 +828,8 @@ impl Interface {
             & is_within_area(
                 screen_pos,
                 Vec2::new(
-                    self.trade.money_input.pos.x,
-                    self.trade.money_input.pos.y,
+                    self.trade.money_input.base_pos.x,
+                    self.trade.money_input.base_pos.y,
                 ),
                 self.trade.money_input.size,
             )

@@ -29,7 +29,8 @@ pub struct Textbox {
     bg: usize,
     limit: usize,
     pub size: Vec2,
-    pub pos: Vec3,
+    pub base_pos: Vec3,
+    pub adjust_pos: Vec2,
     adjust_x: f32,
     is_selected: bool,
     caret: usize,
@@ -54,7 +55,8 @@ impl Textbox {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         systems: &mut SystemHolder,
-        pos: Vec3,
+        base_pos: Vec3,
+        adjust_pos: Vec2,
         z_step: (f32, i32),
         size: Vec2,
         text_color: Color,
@@ -67,19 +69,24 @@ impl Textbox {
         tooltip: Option<String>,
         disable_option: Vec<TextDisable>,
     ) -> Self {
-        let detail_1 = pos.z.sub_f32(z_step.0, z_step.1);
+        let detail_1 = base_pos.z.sub_f32(z_step.0, z_step.1);
         let detail_2 = detail_1.sub_f32(z_step.0, z_step.1);
 
+        let b_pos = Vec2::new(base_pos.x, base_pos.y)
+            + (adjust_pos * systems.scale as f32).floor();
+
         let mut rect = Rect::new(&mut systems.renderer, 0);
-        rect.set_color(bg_color).set_position(pos).set_size(size);
+        rect.set_color(bg_color)
+            .set_position(Vec3::new(b_pos.x, b_pos.y, base_pos.z))
+            .set_size((size * systems.scale as f32).floor());
         let bg = systems.gfx.add_rect(rect, 0, "Textbox BG".into());
         systems.gfx.set_visible(bg, false);
 
         let mut select_rect = Rect::new(&mut systems.renderer, 0);
         select_rect
             .set_color(selection_bg_color)
-            .set_position(Vec3::new(pos.x, pos.y, detail_1))
-            .set_size(Vec2::new(0.0, size.y));
+            .set_position(Vec3::new(b_pos.x, b_pos.y, detail_1))
+            .set_size(Vec2::new(0.0, size.y * systems.scale as f32).floor());
         let selection =
             systems
                 .gfx
@@ -88,9 +95,14 @@ impl Textbox {
 
         let mut text_data = create_label(
             systems,
-            Vec3::new(pos.x, pos.y, detail_2),
-            size,
-            Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+            Vec3::new(b_pos.x, b_pos.y, detail_2),
+            size * systems.scale as f32,
+            Bounds::new(
+                b_pos.x,
+                b_pos.y,
+                b_pos.x + (size.x * systems.scale as f32),
+                b_pos.y + (size.y * systems.scale as f32),
+            ),
             text_color,
         );
         text_data.set_wrap(&mut systems.renderer, cosmic_text::Wrap::None);
@@ -103,8 +115,8 @@ impl Textbox {
 
         let mut caret_rect = Rect::new(&mut systems.renderer, 0);
         caret_rect
-            .set_size(Vec2::new(2.0, size.y))
-            .set_position(Vec3::new(pos.x, pos.y, detail_2))
+            .set_size((Vec2::new(2.0, size.y) * systems.scale as f32).floor())
+            .set_position(Vec3::new(b_pos.x, b_pos.y, detail_2))
             .set_color(text_color);
         let caret = systems.gfx.add_rect(caret_rect, 0, "Textbox Caret".into());
         systems.gfx.set_visible(caret, false);
@@ -131,7 +143,8 @@ impl Textbox {
             selection,
             limit,
             size,
-            pos,
+            base_pos,
+            adjust_pos,
             z_step,
             adjust_x: 0.0,
             is_selected: false,
@@ -202,53 +215,62 @@ impl Textbox {
     }
 
     pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
-        self.pos.z = z_order;
+        self.base_pos.z = z_order;
 
-        let detail_1 = self.pos.z.sub_f32(self.z_step.0, self.z_step.1);
+        let detail_1 = self.base_pos.z.sub_f32(self.z_step.0, self.z_step.1);
         let detail_2 = detail_1.sub_f32(self.z_step.0, self.z_step.1);
 
-        systems.gfx.set_pos(self.bg, self.pos);
+        let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
+            + (self.adjust_pos * systems.scale as f32).floor();
+
+        systems.gfx.set_pos(self.bg, self.base_pos);
         systems.gfx.set_pos(
             self.text_index,
-            Vec3::new(self.pos.x + self.adjust_x, self.pos.y, detail_2),
+            Vec3::new(b_pos.x + self.adjust_x, b_pos.y, detail_2),
         );
         systems.gfx.set_pos(
             self.caret,
-            Vec3::new(self.pos.x + self.caret_left, self.pos.y, detail_2),
+            Vec3::new(b_pos.x + self.caret_left, b_pos.y, detail_2),
         );
         systems.gfx.set_pos(
             self.selection,
-            Vec3::new(self.pos.x + self.selection_pos, self.pos.y, detail_1),
+            Vec3::new(b_pos.x + self.selection_pos, b_pos.y, detail_1),
         );
     }
 
     pub fn set_pos(&mut self, systems: &mut SystemHolder, new_pos: Vec2) {
-        let detail_1 = self.pos.z.sub_f32(self.z_step.0, self.z_step.1);
+        let detail_1 = self.base_pos.z.sub_f32(self.z_step.0, self.z_step.1);
         let detail_2 = detail_1.sub_f32(self.z_step.0, self.z_step.1);
 
-        self.pos.x = new_pos.x;
-        self.pos.y = new_pos.y;
-        systems.gfx.set_pos(self.bg, self.pos);
+        self.base_pos.x = new_pos.x;
+        self.base_pos.y = new_pos.y;
+
+        let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
+            + (self.adjust_pos * systems.scale as f32).floor();
+
+        systems
+            .gfx
+            .set_pos(self.bg, Vec3::new(b_pos.x, b_pos.y, self.base_pos.z));
         systems.gfx.set_pos(
             self.text_index,
-            Vec3::new(self.pos.x + self.adjust_x, self.pos.y, detail_2),
+            Vec3::new(b_pos.x + self.adjust_x, b_pos.y, detail_2),
         );
         systems.gfx.set_bound(
             self.text_index,
             Bounds::new(
-                self.pos.x + self.adjust_x,
-                self.pos.y,
-                self.pos.x + self.size.x,
-                self.pos.y + self.size.y,
+                b_pos.x + self.adjust_x,
+                b_pos.y,
+                b_pos.x + (self.size.x * systems.scale as f32).floor(),
+                b_pos.y + (self.size.y * systems.scale as f32).floor(),
             ),
         );
         systems.gfx.set_pos(
             self.caret,
-            Vec3::new(self.pos.x + self.caret_left, self.pos.y, detail_2),
+            Vec3::new(b_pos.x + self.caret_left, b_pos.y, detail_2),
         );
         systems.gfx.set_pos(
             self.selection,
-            Vec3::new(self.pos.x + self.selection_pos, self.pos.y, detail_1),
+            Vec3::new(b_pos.x + self.selection_pos, b_pos.y, detail_1),
         );
     }
 
@@ -260,6 +282,9 @@ impl Textbox {
         self.caret_left = 0.0;
         self.caret_pos = 0;
 
+        let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
+            + (self.adjust_pos * systems.scale as f32).floor();
+
         if text.is_empty() {
             systems
                 .gfx
@@ -267,7 +292,7 @@ impl Textbox {
             let pos = systems.gfx.get_pos(self.caret);
             systems
                 .gfx
-                .set_pos(self.caret, Vec3::new(self.pos.x, self.pos.y, pos.z));
+                .set_pos(self.caret, Vec3::new(b_pos.x, b_pos.y, pos.z));
             return;
         }
 
@@ -312,18 +337,6 @@ impl Textbox {
         }
 
         if !pressed || !self.is_selected {
-            return;
-        }
-
-        if let Key::Named(NamedKey::F4) = key {
-            println!("Caret Pos {}", self.caret_pos);
-            println!("Text {}", self.text);
-            for char in self.text.chars() {
-                println!("Char {}", char);
-            }
-            for size in self.char_size.iter() {
-                println!("Char Size {}", size);
-            }
             return;
         }
 
@@ -554,9 +567,12 @@ impl Textbox {
         if self.caret_left < 0.0 {
             self.adjust_x += (self.caret_left * -1.0).max(0.0);
             self.caret_left = 0.0;
-        } else if self.caret_left > self.size.x {
-            self.adjust_x -= (self.caret_left - self.size.x).max(0.0);
-            self.caret_left = self.size.x;
+        } else if self.caret_left > (self.size.x * systems.scale as f32).floor()
+        {
+            self.adjust_x -= (self.caret_left
+                - (self.size.x * systems.scale as f32).floor())
+            .max(0.0);
+            self.caret_left = (self.size.x * systems.scale as f32).floor();
         }
 
         if remove_content {
@@ -576,10 +592,11 @@ impl Textbox {
                 );
             };
             let total_size = measure_string(systems, text).x;
-            if total_size > self.size.x {
+            if total_size > (self.size.x * systems.scale as f32).floor() {
                 let visible_size = total_size + self.adjust_x;
                 if visible_size > 0.0 {
-                    let leftover = self.size.x - visible_size;
+                    let leftover = (self.size.x * systems.scale as f32).floor()
+                        - visible_size;
                     if leftover > 0.0 {
                         self.caret_left += leftover;
                         self.adjust_x += leftover;
@@ -591,20 +608,23 @@ impl Textbox {
             }
         }
 
+        let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
+            + (self.adjust_pos * systems.scale as f32).floor();
+
         systems.gfx.set_pos(
             self.text_index,
             Vec3::new(
-                self.pos.x + self.adjust_x,
-                self.pos.y,
-                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+                b_pos.x + self.adjust_x,
+                b_pos.y,
+                self.base_pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
         );
         systems.gfx.set_pos(
             self.caret,
             Vec3::new(
-                self.pos.x + self.caret_left,
-                self.pos.y,
-                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+                b_pos.x + self.caret_left,
+                b_pos.y,
+                self.base_pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
         );
     }
@@ -640,20 +660,23 @@ impl Textbox {
             self.adjust_x = 0.0;
         }
 
+        let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
+            + (self.adjust_pos * systems.scale as f32).floor();
+
         systems.gfx.set_pos(
             self.text_index,
             Vec3::new(
-                self.pos.x + self.adjust_x,
-                self.pos.y,
-                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+                b_pos.x + self.adjust_x,
+                b_pos.y,
+                self.base_pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
         );
         systems.gfx.set_pos(
             self.caret,
             Vec3::new(
-                self.pos.x + self.caret_left,
-                self.pos.y,
-                self.pos.z.sub_f32(self.z_step.0, self.z_step.1),
+                b_pos.x + self.caret_left,
+                b_pos.y,
+                self.base_pos.z.sub_f32(self.z_step.0, self.z_step.1),
             ),
         );
     }
@@ -663,10 +686,13 @@ impl Textbox {
         systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) {
+        let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
+            + (self.adjust_pos * systems.scale as f32).floor();
+
         if !is_within_area(
             screen_pos,
-            Vec2::new(self.pos.x, self.pos.y),
-            self.size,
+            Vec2::new(b_pos.x, b_pos.y),
+            (self.size * systems.scale as f32).floor(),
         ) {
             return;
         }
@@ -675,7 +701,7 @@ impl Textbox {
         for (index, pos) in self.char_pos.iter().enumerate() {
             if is_within_area(
                 screen_pos,
-                Vec2::new(self.pos.x + pos + self.adjust_x, self.pos.y),
+                Vec2::new(b_pos.x + pos + self.adjust_x, b_pos.y),
                 Vec2::new(self.char_size[index], self.size.y),
             ) {
                 found_index = Some(index);
@@ -728,11 +754,14 @@ impl Textbox {
             return;
         }
 
+        let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
+            + (self.adjust_pos * systems.scale as f32).floor();
+
         let mut found_index = None;
         for (index, pos) in self.char_pos.iter().enumerate() {
             if is_within_area(
                 screen_pos,
-                Vec2::new(self.pos.x + pos + self.adjust_x, 0.0),
+                Vec2::new(b_pos.x + pos + self.adjust_x, 0.0),
                 Vec2::new(self.char_size[index], systems.size.height),
             ) {
                 found_index = Some(index);
@@ -740,9 +769,9 @@ impl Textbox {
             }
         }
         if found_index.is_none() {
-            if screen_pos.x > self.pos.x + self.size.x {
+            if screen_pos.x > b_pos.x + self.size.x {
                 found_index = Some(self.data_text.chars().count());
-            } else if screen_pos.x < self.pos.x {
+            } else if screen_pos.x < b_pos.x {
                 found_index = Some(0);
             }
         }
@@ -794,14 +823,18 @@ impl Textbox {
             0.0
         };
 
+        let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
+            + (self.adjust_pos * systems.scale as f32).floor();
+
         let pos = systems.gfx.get_pos(self.selection);
         systems.gfx.set_pos(
             self.selection,
-            Vec3::new(self.pos.x + self.selection_pos, pos.y, pos.z),
+            Vec3::new(b_pos.x + self.selection_pos, pos.y, pos.z),
         );
-        systems
-            .gfx
-            .set_size(self.selection, Vec2::new(size, self.size.y));
+        systems.gfx.set_size(
+            self.selection,
+            Vec2::new(size, (self.size.y * systems.scale as f32).floor()),
+        );
     }
 }
 

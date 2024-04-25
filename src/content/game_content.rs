@@ -320,6 +320,7 @@ impl GameContent {
             self.map.map_attribute[from].1 = to;
             self.map.dir_block[from].1 = to;
             self.map.music[from].1 = to;
+            self.map.map_id[from].1 = to;
         }
 
         buffer.clear_buffer();
@@ -337,6 +338,7 @@ impl GameContent {
             self.map.map_attribute[from].1 = to;
             self.map.dir_block[from].1 = to;
             self.map.music[from].1 = to;
+            self.map.map_id[from].1 = to;
 
             buffer.add_task(BufferTaskEnum::LoadMap(
                 mx,

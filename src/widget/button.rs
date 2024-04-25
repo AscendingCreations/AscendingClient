@@ -95,18 +95,16 @@ impl Button {
         visible: bool,
         tooltip: Option<String>,
     ) -> Self {
+        let pos = base_pos + (adjust_pos * systems.scale as f32).floor();
+
         let buttontype = button_type.clone();
         let index = match buttontype {
             ButtonType::Rect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
-                rect.set_position(Vec3::new(
-                    base_pos.x + adjust_pos.x,
-                    base_pos.y + adjust_pos.y,
-                    z_order,
-                ))
-                .set_size(size)
-                .set_color(data.rect_color)
-                .set_radius(data.border_radius);
+                rect.set_position(Vec3::new(pos.x, pos.y, z_order))
+                    .set_size((size * systems.scale as f32).floor())
+                    .set_color(data.rect_color)
+                    .set_radius(data.border_radius);
                 if data.got_border {
                     rect.set_border_width(1.0)
                         .set_border_color(data.border_color);
@@ -122,12 +120,8 @@ impl Button {
             ButtonType::Image(data) => {
                 let mut image =
                     Image::new(Some(data.res), &mut systems.renderer, 0);
-                image.pos = Vec3::new(
-                    base_pos.x + adjust_pos.x,
-                    base_pos.y + adjust_pos.y,
-                    z_order,
-                );
-                image.hw = size;
+                image.pos = Vec3::new(pos.x, pos.y, z_order);
+                image.hw = (size * systems.scale as f32).floor();
                 image.uv = Vec4::new(0.0, 0.0, size.x, size.y);
                 let image_index = systems.gfx.add_image(
                     image,
@@ -146,14 +140,17 @@ impl Button {
             ButtonContentType::Image(data) => {
                 let mut image =
                     Image::new(Some(data.res), &mut systems.renderer, 0);
-                let pos = Vec3::new(
-                    base_pos.x + adjust_pos.x,
-                    base_pos.y + adjust_pos.y,
+                let spos = Vec3::new(
+                    pos.x,
+                    pos.y,
                     z_order.sub_f32(z_step.0, z_step.1),
                 );
-                image.pos =
-                    Vec3::new(pos.x + data.pos.x, pos.y + data.pos.y, pos.z);
-                image.hw = data.size;
+                image.pos = Vec3::new(
+                    spos.x + (data.pos.x * systems.scale as f32).floor(),
+                    spos.y + (data.pos.y * systems.scale as f32).floor(),
+                    spos.z,
+                );
+                image.hw = (data.size * systems.scale as f32).floor();
                 image.uv =
                     Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
                 let image_index = systems.gfx.add_image(
@@ -165,22 +162,24 @@ impl Button {
                 Some(image_index)
             }
             ButtonContentType::Text(data) => {
-                let pos = Vec3::new(
-                    base_pos.x + adjust_pos.x,
-                    base_pos.y + adjust_pos.y,
+                let spos = Vec3::new(
+                    pos.x,
+                    pos.y,
                     z_order.sub_f32(z_step.0, z_step.1),
                 );
-                let text_pos =
-                    Vec2::new(pos.x + data.pos.x, pos.y + data.pos.y);
+                let text_pos = Vec2::new(
+                    spos.x + (data.pos.x * systems.scale as f32).floor(),
+                    spos.y + (data.pos.y * systems.scale as f32).floor(),
+                );
                 let text = create_label(
                     systems,
-                    Vec3::new(text_pos.x, text_pos.y, pos.z),
-                    Vec2::new(size.x, 20.0),
+                    Vec3::new(text_pos.x, text_pos.y, spos.z),
+                    (Vec2::new(size.x, 20.0) * systems.scale as f32).floor(),
                     Bounds::new(
                         text_pos.x,
                         text_pos.y,
-                        text_pos.x + size.x,
-                        text_pos.y + 20.0,
+                        text_pos.x + (size.x * systems.scale as f32).floor(),
+                        text_pos.y + (20.0 * systems.scale as f32).floor(),
                     ),
                     data.color,
                 );
@@ -266,8 +265,10 @@ impl Button {
         self.base_pos = new_pos;
         if let Some(index) = self.index {
             let pos = Vec3::new(
-                self.base_pos.x + self.adjust_pos.x,
-                self.base_pos.y + self.adjust_pos.y,
+                self.base_pos.x
+                    + (self.adjust_pos.x * systems.scale as f32).floor(),
+                self.base_pos.y
+                    + (self.adjust_pos.y * systems.scale as f32).floor(),
                 self.z_order,
             );
             systems.gfx.set_pos(index, pos);
@@ -277,16 +278,28 @@ impl Button {
             match contenttype {
                 ButtonContentType::Image(data) => {
                     let pos = Vec3::new(
-                        self.base_pos.x + self.adjust_pos.x + data.pos.x,
-                        self.base_pos.y + self.adjust_pos.y + data.pos.y,
+                        self.base_pos.x
+                            + ((self.adjust_pos.x + data.pos.x)
+                                * systems.scale as f32)
+                                .floor(),
+                        self.base_pos.y
+                            + ((self.adjust_pos.y + data.pos.y)
+                                * systems.scale as f32)
+                                .floor(),
                         self.z_order.sub_f32(self.z_step.0, self.z_step.1),
                     );
                     systems.gfx.set_pos(content_index, pos);
                 }
                 ButtonContentType::Text(data) => {
                     let pos = Vec3::new(
-                        self.base_pos.x + self.adjust_pos.x + data.pos.x,
-                        self.base_pos.y + self.adjust_pos.y + data.pos.y,
+                        self.base_pos.x
+                            + ((self.adjust_pos.x + data.pos.x)
+                                * systems.scale as f32)
+                                .floor(),
+                        self.base_pos.y
+                            + ((self.adjust_pos.y + data.pos.y)
+                                * systems.scale as f32)
+                                .floor(),
                         self.z_order.sub_f32(self.z_step.0, self.z_step.1),
                     );
                     systems.gfx.set_pos(content_index, pos);
@@ -348,7 +361,8 @@ impl Button {
     }
 
     fn apply_click(&mut self, systems: &mut SystemHolder) {
-        let pos = self.base_pos + self.adjust_pos;
+        let pos =
+            self.base_pos + (self.adjust_pos * systems.scale as f32).floor();
         if let Some(index) = self.index {
             let buttontype = self.button_type.clone();
             match buttontype {
@@ -358,7 +372,9 @@ impl Button {
                             index,
                             Vec3::new(
                                 pos.x,
-                                pos.y + adjusty as f32,
+                                pos.y
+                                    + (adjusty as f32 * systems.scale as f32)
+                                        .floor(),
                                 self.z_order,
                             ),
                         );
@@ -374,7 +390,9 @@ impl Button {
                             index,
                             Vec3::new(
                                 pos.x,
-                                pos.y + adjusty as f32,
+                                pos.y
+                                    + (adjusty as f32 * systems.scale as f32)
+                                        .floor(),
                                 self.z_order,
                             ),
                         );
@@ -404,8 +422,13 @@ impl Button {
                         systems.gfx.set_pos(
                             content_data,
                             Vec3::new(
-                                pos.x + data.pos.x,
-                                pos.y + data.pos.y + adjusty as f32,
+                                pos.x
+                                    + (data.pos.x * systems.scale as f32)
+                                        .floor(),
+                                pos.y
+                                    + ((data.pos.y + adjusty as f32)
+                                        * systems.scale as f32)
+                                        .floor(),
                                 self.z_order
                                     .sub_f32(self.z_step.0, self.z_step.1),
                             ),
@@ -422,8 +445,13 @@ impl Button {
                         systems.gfx.set_pos(
                             content_data,
                             Vec3::new(
-                                pos.x + data.pos.x,
-                                pos.y + data.pos.y + adjusty as f32,
+                                pos.x
+                                    + (data.pos.x * systems.scale as f32)
+                                        .floor(),
+                                pos.y
+                                    + ((data.pos.y + adjusty as f32)
+                                        * systems.scale as f32)
+                                        .floor(),
                                 self.z_order
                                     .sub_f32(self.z_step.0, self.z_step.1),
                             ),
@@ -448,7 +476,8 @@ impl Button {
     }
 
     fn apply_hover(&mut self, systems: &mut SystemHolder) {
-        let pos = self.base_pos + self.adjust_pos;
+        let pos =
+            self.base_pos + (self.adjust_pos * systems.scale as f32).floor();
         if let Some(index) = self.index {
             let buttontype = self.button_type.clone();
             match buttontype {
@@ -458,7 +487,9 @@ impl Button {
                             index,
                             Vec3::new(
                                 pos.x,
-                                pos.y + adjusty as f32,
+                                pos.y
+                                    + (adjusty as f32 * systems.scale as f32)
+                                        .floor(),
                                 self.z_order,
                             ),
                         );
@@ -474,7 +505,9 @@ impl Button {
                             index,
                             Vec3::new(
                                 pos.x,
-                                pos.y + adjusty as f32,
+                                pos.y
+                                    + (adjusty as f32 * systems.scale as f32)
+                                        .floor(),
                                 self.z_order,
                             ),
                         );
@@ -504,8 +537,13 @@ impl Button {
                         systems.gfx.set_pos(
                             content_data,
                             Vec3::new(
-                                pos.x + data.pos.x,
-                                pos.y + data.pos.y + adjusty as f32,
+                                pos.x
+                                    + (data.pos.x * systems.scale as f32)
+                                        .floor(),
+                                pos.y
+                                    + ((data.pos.y + adjusty as f32)
+                                        * systems.scale as f32)
+                                        .floor(),
                                 self.z_order
                                     .sub_f32(self.z_step.0, self.z_step.1),
                             ),
@@ -522,8 +560,13 @@ impl Button {
                         systems.gfx.set_pos(
                             content_data,
                             Vec3::new(
-                                pos.x + data.pos.x,
-                                pos.y + data.pos.y + adjusty as f32,
+                                pos.x
+                                    + (data.pos.x * systems.scale as f32)
+                                        .floor(),
+                                pos.y
+                                    + ((data.pos.y + adjusty as f32)
+                                        * systems.scale as f32)
+                                        .floor(),
                                 self.z_order
                                     .sub_f32(self.z_step.0, self.z_step.1),
                             ),
@@ -548,7 +591,8 @@ impl Button {
     }
 
     fn apply_normal(&mut self, systems: &mut SystemHolder) {
-        let pos = self.base_pos + self.adjust_pos;
+        let pos =
+            self.base_pos + (self.adjust_pos * systems.scale as f32).floor();
         if let Some(index) = self.index {
             let buttontype = self.button_type.clone();
             systems
@@ -575,8 +619,8 @@ impl Button {
                     systems.gfx.set_pos(
                         content_data,
                         Vec3::new(
-                            pos.x + data.pos.x,
-                            pos.y + data.pos.y,
+                            pos.x + (data.pos.x * systems.scale as f32).floor(),
+                            pos.y + (data.pos.y * systems.scale as f32).floor(),
                             self.z_order.sub_f32(self.z_step.0, self.z_step.1),
                         ),
                     );
@@ -587,8 +631,8 @@ impl Button {
                     systems.gfx.set_pos(
                         content_data,
                         Vec3::new(
-                            pos.x + data.pos.x,
-                            pos.y + data.pos.y,
+                            pos.x + (data.pos.x * systems.scale as f32).floor(),
+                            pos.y + (data.pos.y * systems.scale as f32).floor(),
                             self.z_order.sub_f32(self.z_step.0, self.z_step.1),
                         ),
                     );

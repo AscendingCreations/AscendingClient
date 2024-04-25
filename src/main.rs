@@ -187,7 +187,7 @@ async fn main() -> Result<()> {
     let size = renderer.size();
 
     // get the Scale factor the pc currently is using for upscaling or downscaling the rendering.
-    let scale = 1.0; //renderer.window().current_monitor().unwrap().scale_factor();
+    let scale = 2.0; //renderer.window().current_monitor().unwrap().scale_factor();
 
     // We generate Texture atlases to use with out types.
     let mut atlases: Vec<AtlasSet> = iter::from_fn(|| {
@@ -289,13 +289,21 @@ async fn main() -> Result<()> {
     );
 
     // create a Text rendering object.
-    let txt_pos =
-        Vec2::new(systems.size.width - 80.0, systems.size.height - 25.0);
+    let text_scale = systems.scale as f32;
+    let txt_pos = Vec2::new(
+        systems.size.width - (80.0 * text_scale).floor(),
+        systems.size.height - (25.0 * text_scale).floor(),
+    );
     let txt = create_label(
         &mut systems,
         Vec3::new(txt_pos.x, txt_pos.y, 0.0),
-        Vec2::new(100.0, 20.0),
-        Bounds::new(txt_pos.x, txt_pos.y, txt_pos.x + 100.0, txt_pos.y + 20.0),
+        (Vec2::new(100.0, 20.0) * text_scale).floor(),
+        Bounds::new(
+            txt_pos.x,
+            txt_pos.y,
+            txt_pos.x + (100.0 * text_scale).floor(),
+            txt_pos.y + (20.0 * text_scale).floor(),
+        ),
         Color::rgba(255, 255, 255, 255),
     );
     let text = systems.gfx.add_text(txt, 4, "FPS".into());

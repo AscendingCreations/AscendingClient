@@ -121,6 +121,7 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
                 pos.y + addy + 2.0,
                 ORDER_MENU_WINDOW_CONTENT_DETAIL,
             ),
+            Vec2::new(0.0, 0.0),
             (0.01, 2),
             Vec2::new(180.0, 20.0),
             Color::rgba(240, 240, 240, 255),

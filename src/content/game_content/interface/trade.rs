@@ -335,7 +335,8 @@ impl Trade {
 
         let mut money_input = Textbox::new(
             systems,
-            Vec3::new(w_pos.x + 32.0, w_pos.y + 77.0, detail_1),
+            Vec3::new(w_pos.x, w_pos.y, detail_1),
+            Vec2::new(32.0, 77.0),
             (0.0001, 4),
             Vec2::new(158.0, 20.0),
             Color::rgba(200, 200, 200, 255),
@@ -504,7 +505,7 @@ impl Trade {
             systems.gfx.set_text(
                 &mut systems.renderer,
                 self.their_status_text,
-                "My Trade: Preparing...",
+                "Their Trade: Preparing...",
             );
 
             systems
@@ -794,8 +795,7 @@ impl Trade {
             Vec3::new(self.pos.x + 210.0, self.pos.y + 77.0, pos.z),
         );
 
-        let pos = Vec2::new(self.pos.x + 32.0, self.pos.y + 77.0);
-        self.money_input.set_pos(systems, pos);
+        self.money_input.set_pos(systems, self.pos);
 
         let pos = systems.gfx.get_pos(self.their_money);
         systems.gfx.set_pos(

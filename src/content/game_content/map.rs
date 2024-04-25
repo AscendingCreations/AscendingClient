@@ -34,6 +34,7 @@ impl MapAttributes {
 #[derive(Clone, Debug)]
 pub struct MapContent {
     pub map_pos: MapPosition,
+    pub map_id: [(MapPosition, usize); 9],
     pub index: [(usize, usize); 9], // (MapIndex, Order)
     pub dir_block: Vec<(MapDirBlock, usize)>,
     pub map_attribute: Vec<(MapAttributes, usize)>,
@@ -53,6 +54,7 @@ impl MapContent {
 
         Self {
             map_pos: MapPosition::default(),
+            map_id: [(MapPosition::default(), 0); 9],
             index,
             dir_block: Vec::with_capacity(9),
             map_attribute: Vec::with_capacity(9),

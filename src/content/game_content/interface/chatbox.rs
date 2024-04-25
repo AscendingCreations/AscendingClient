@@ -243,7 +243,8 @@ impl Chatbox {
 
         let textbox = Textbox::new(
             systems,
-            Vec3::new(w_pos.x + 7.0, w_pos.y + 7.0, detail_2),
+            Vec3::new(w_pos.x, w_pos.y, detail_2),
+            Vec2::new(7.0, 7.0),
             (0.0001, 5),
             Vec2::new(w_size.x - 79.0, 20.0),
             Color::rgba(200, 200, 200, 255),
@@ -497,7 +498,8 @@ impl Chatbox {
         }
         if is_within_area(
             screen_pos,
-            Vec2::new(self.textbox.pos.x, self.textbox.pos.y),
+            Vec2::new(self.textbox.base_pos.x, self.textbox.base_pos.y)
+                + self.textbox.adjust_pos,
             self.textbox.size,
         ) {
             return false;
@@ -611,8 +613,7 @@ impl Chatbox {
             self.chatarea_bg,
             Vec3::new(chat_area_pos.x, chat_area_pos.y, pos.z),
         );
-        self.textbox
-            .set_pos(systems, Vec2::new(self.pos.x + 7.0, self.pos.y + 7.0));
+        self.textbox.set_pos(systems, self.pos);
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
         });

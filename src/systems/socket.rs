@@ -326,38 +326,35 @@ impl Socket {
     }
 
     pub fn write(&mut self) {
-        let mut count: usize = 0;
+        //let mut count: usize = 0;
 
         //make sure the player exists before we send anything.
-        while count < 25 {
-            let mut packet = match self.client.sends.pop_front() {
-                Some(packet) => packet,
-                None => {
-                    if self.client.sends.capacity() > 100 {
-                        self.client.sends.shrink_to_fit();
-                    }
-                    break;
-                }
-            };
 
-            match self.client.socket.write_all(packet.as_slice()) {
-                Ok(()) => count += 1,
-                Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
-                    //Operation would block so we insert it back in to try again later.
-                    self.client.sends.push_front(packet);
-                    break;
+        let mut packet = match self.client.sends.pop_front() {
+            Some(packet) => packet,
+            None => {
+                if self.client.sends.capacity() > 100 {
+                    self.client.sends.shrink_to_fit();
                 }
-                Err(_) => {
-                    log::error!("Disconnected on Socket Write All");
-                    self.client.state = ClientState::Closing;
-                    return;
-                }
+                return;
+            }
+        };
+
+        match self.client.socket.write_all(packet.as_slice()) {
+            Ok(()) => {}
+            Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
+                //Operation would block so we insert it back in to try again later.
+                self.client.sends.push_front(packet);
+            }
+            Err(_) => {
+                log::error!("Disconnected on Socket Write All");
+                self.client.state = ClientState::Closing;
             }
         }
 
-        if !self.client.sends.is_empty() {
+        /*if !self.client.sends.is_empty() {
             self.client.poll_state.add(SocketPollState::Write);
-        }
+        }*/
     }
 
     #[inline]

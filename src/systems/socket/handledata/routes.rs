@@ -451,7 +451,7 @@ pub fn handle_playerwarp(
     _alert: &mut Alert,
     data: &mut ByteBuffer,
     _seconds: f32,
-    _buffer: &mut BufferTask,
+    buffer: &mut BufferTask,
 ) -> Result<()> {
     let count = data.read::<u32>()?;
 
@@ -462,8 +462,8 @@ pub fn handle_playerwarp(
         let old_pos = world.get_or_err::<Position>(&entity)?;
 
         if world.contains(entity.0) {
-            *world.get::<&mut Position>(entity.0)? = pos;
             world.get::<&mut Movement>(entity.0)?.is_moving = false;
+            *world.get::<&mut Position>(entity.0)? = pos;
             world.get::<&mut PositionOffset>(entity.0)?.offset =
                 Vec2::new(0.0, 0.0);
 
@@ -473,7 +473,11 @@ pub fn handle_playerwarp(
         }
         if let Some(myentity) = content.game_content.myentity {
             if myentity == entity {
+                socket.client.sends.clear();
+
                 if old_pos.map != pos.map {
+                    info!("he was outside of map");
+                    buffer.clear_buffer();
                     content.game_content.init_map(systems, pos.map)?;
                     finalize_entity(world, systems)?;
                     content.game_content.refresh_map = true;
@@ -486,6 +490,7 @@ pub fn handle_playerwarp(
                         FadeData::None,
                     );
                 }
+
                 update_camera(
                     world,
                     &mut content.game_content,

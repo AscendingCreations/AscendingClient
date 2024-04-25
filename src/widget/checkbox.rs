@@ -108,13 +108,13 @@ impl Checkbox {
         let boxtype = box_type.clone();
         let checktype = check_type.clone();
 
-        let pos = base_pos + adjust_pos;
+        let pos = base_pos + (adjust_pos * systems.scale as f32);
         let image = match boxtype {
             CheckboxType::Rect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
                 rect.set_color(data.rect_color)
                     .set_position(Vec3::new(pos.x, pos.y, z_order))
-                    .set_size(box_size)
+                    .set_size(box_size * systems.scale as f32)
                     .set_radius(data.border_radius);
                 if data.got_border {
                     rect.set_border_width(1.0)
@@ -130,8 +130,13 @@ impl Checkbox {
                 let mut img =
                     Image::new(Some(data.res), &mut systems.renderer, 0);
                 img.pos = Vec3::new(pos.x, pos.y, z_order);
-                img.hw = box_size;
-                img.uv = Vec4::new(0.0, 0.0, box_size.x, box_size.y);
+                img.hw = box_size * systems.scale as f32;
+                img.uv = Vec4::new(
+                    0.0,
+                    0.0,
+                    box_size.x * systems.scale as f32,
+                    box_size.y * systems.scale as f32,
+                );
                 systems.gfx.add_image(
                     img,
                     render_layer,
@@ -145,11 +150,11 @@ impl Checkbox {
             CheckType::SetRect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
                 rect.set_position(Vec3::new(
-                    pos.x + data.pos.x,
-                    pos.y + data.pos.y,
+                    pos.x + (data.pos.x * systems.scale as f32),
+                    pos.y + (data.pos.y * systems.scale as f32),
                     z_order.sub_f32(z_step.0, z_step.1),
                 ))
-                .set_size(data.size)
+                .set_size(data.size * systems.scale as f32)
                 .set_color(data.rect_color)
                 .set_radius(data.border_radius);
                 if data.got_border {
@@ -166,11 +171,11 @@ impl Checkbox {
                 let mut img =
                     Image::new(Some(data.res), &mut systems.renderer, 0);
                 img.pos = Vec3::new(
-                    pos.x + data.pos.x,
-                    pos.y + data.pos.y,
+                    pos.x + (data.pos.x * systems.scale as f32),
+                    pos.y + (data.pos.y * systems.scale as f32),
                     z_order.sub_f32(z_step.0, z_step.1),
                 );
-                img.hw = data.size;
+                img.hw = data.size * systems.scale as f32;
                 img.uv =
                     Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
                 systems.gfx.add_image(
@@ -186,19 +191,20 @@ impl Checkbox {
         let text_type = if let Some(data) = text_data {
             let data_copy = data.clone();
             let tpos = Vec3::new(
-                pos.x + box_size.x + data.offset_pos.x,
-                pos.y + data.offset_pos.y,
+                pos.x
+                    + ((box_size.x + data.offset_pos.x) * systems.scale as f32),
+                pos.y + (data.offset_pos.y * systems.scale as f32),
                 z_order,
             );
             let txt = create_label(
                 systems,
                 tpos,
-                data.label_size,
+                data.label_size * systems.scale as f32,
                 Bounds::new(
                     tpos.x,
                     tpos.y,
-                    tpos.x + data.label_size.x,
-                    tpos.y + data.label_size.y,
+                    tpos.x + (data.label_size.x * systems.scale as f32),
+                    tpos.y + (data.label_size.y * systems.scale as f32),
                 ),
                 data.color,
             );
@@ -290,20 +296,24 @@ impl Checkbox {
         self.base_pos = new_pos;
 
         let pos = Vec3::new(
-            self.base_pos.x + self.adjust_pos.x,
-            self.base_pos.y + self.adjust_pos.y,
+            self.base_pos.x + (self.adjust_pos.x * systems.scale as f32),
+            self.base_pos.y + (self.adjust_pos.y * systems.scale as f32),
             self.z_order,
         );
         systems.gfx.set_pos(self.image, pos);
 
         let contenttype = self.check_type.clone();
         let extra_pos = match contenttype {
-            CheckType::SetRect(data) => data.pos,
-            CheckType::SetImage(data) => data.pos,
+            CheckType::SetRect(data) => data.pos * systems.scale as f32,
+            CheckType::SetImage(data) => data.pos * systems.scale as f32,
         };
         let pos = Vec3::new(
-            self.base_pos.x + self.adjust_pos.x + extra_pos.x,
-            self.base_pos.y + self.adjust_pos.y + extra_pos.y,
+            self.base_pos.x
+                + (self.adjust_pos.x * systems.scale as f32)
+                + extra_pos.x,
+            self.base_pos.y
+                + (self.adjust_pos.y * systems.scale as f32)
+                + extra_pos.y,
             self.z_order,
         );
         systems.gfx.set_pos(self.check_image, pos);
@@ -311,10 +321,13 @@ impl Checkbox {
         if let Some(data) = &mut self.text_type {
             let pos = Vec3::new(
                 self.base_pos.x
-                    + self.adjust_pos.x
-                    + self.box_size.x
-                    + data.1.offset_pos.x,
-                self.base_pos.y + self.adjust_pos.y + data.1.offset_pos.y,
+                    + ((self.adjust_pos.x
+                        + self.box_size.x
+                        + data.1.offset_pos.x)
+                        * systems.scale as f32),
+                self.base_pos.y
+                    + ((self.adjust_pos.y + data.1.offset_pos.y)
+                        * systems.scale as f32),
                 self.z_order,
             );
             systems.gfx.set_pos(data.0, pos);
@@ -323,8 +336,8 @@ impl Checkbox {
                 Bounds::new(
                     pos.x,
                     pos.y,
-                    pos.x + data.1.label_size.x,
-                    pos.y + data.1.label_size.y,
+                    pos.x + (data.1.label_size.x * systems.scale as f32),
+                    pos.y + (data.1.label_size.y * systems.scale as f32),
                 ),
             );
         }

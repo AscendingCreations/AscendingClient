@@ -50,11 +50,16 @@ impl MenuContent {
         bg_image.uv = Vec4::new(0.0, 0.0, 800.0, 600.0);
         let bg = systems.gfx.add_image(bg_image, 0, "Menu BG".into());
 
+        let label_size = Vec2::new(
+            200.0 * systems.scale as f32,
+            20.0 * systems.scale as f32,
+        )
+        .floor();
         let text = create_label(
             systems,
             Vec3::new(10.0, 10.0, ORDER_SERVER_STATUS),
-            Vec2::new(200.0, 20.0),
-            Bounds::new(10.0, 10.0, 210.0, 30.0),
+            label_size,
+            Bounds::new(10.0, 10.0, label_size.x + 10.0, label_size.y + 10.0),
             Color::rgba(220, 220, 220, 255),
         );
         let server_status =
@@ -163,10 +168,12 @@ pub fn hover_buttons(
         if is_within_area(
             screen_pos,
             Vec2::new(
-                button.base_pos.x + button.adjust_pos.x,
-                button.base_pos.y + button.adjust_pos.y,
+                button.base_pos.x
+                    + (button.adjust_pos.x * systems.scale as f32).floor(),
+                button.base_pos.y
+                    + (button.adjust_pos.y * systems.scale as f32).floor(),
             ),
-            button.size,
+            (button.size * systems.scale as f32).floor(),
         ) {
             button.set_hover(systems, true);
 
@@ -189,10 +196,12 @@ pub fn click_buttons(
         if is_within_area(
             screen_pos,
             Vec2::new(
-                button.base_pos.x + button.adjust_pos.x,
-                button.base_pos.y + button.adjust_pos.y,
+                button.base_pos.x
+                    + (button.adjust_pos.x * systems.scale as f32).floor(),
+                button.base_pos.y
+                    + (button.adjust_pos.y * systems.scale as f32).floor(),
             ),
-            button.size,
+            (button.size * systems.scale as f32).floor(),
         ) {
             button.set_click(systems, true);
             button_found = Some(index)
@@ -225,13 +234,16 @@ pub fn hover_checkbox(
         if is_within_area(
             screen_pos,
             Vec2::new(
-                checkbox.base_pos.x + checkbox.adjust_pos.x,
-                checkbox.base_pos.y + checkbox.adjust_pos.y,
+                checkbox.base_pos.x
+                    + (checkbox.adjust_pos.x * systems.scale as f32).floor(),
+                checkbox.base_pos.y
+                    + (checkbox.adjust_pos.y * systems.scale as f32).floor(),
             ),
-            Vec2::new(
+            (Vec2::new(
                 checkbox.box_size.x + checkbox.adjust_x,
                 checkbox.box_size.y,
-            ),
+            ) * systems.scale as f32)
+                .floor(),
         ) {
             checkbox.set_hover(systems, true);
 
@@ -254,13 +266,16 @@ pub fn click_checkbox(
         if is_within_area(
             screen_pos,
             Vec2::new(
-                checkbox.base_pos.x + checkbox.adjust_pos.x,
-                checkbox.base_pos.y + checkbox.adjust_pos.y,
+                checkbox.base_pos.x
+                    + (checkbox.adjust_pos.x * systems.scale as f32).floor(),
+                checkbox.base_pos.y
+                    + (checkbox.adjust_pos.y * systems.scale as f32).floor(),
             ),
-            Vec2::new(
+            (Vec2::new(
                 checkbox.box_size.x + checkbox.adjust_x,
                 checkbox.box_size.y,
-            ),
+            ) * systems.scale as f32)
+                .floor(),
         ) {
             checkbox.set_click(systems, true);
             checkbox_found = Some(index)
@@ -292,8 +307,9 @@ pub fn click_textbox(
     for (index, textbox) in menu_content.textbox.iter_mut().enumerate() {
         if is_within_area(
             screen_pos,
-            Vec2::new(textbox.pos.x, textbox.pos.y),
-            textbox.size,
+            Vec2::new(textbox.base_pos.x, textbox.base_pos.y)
+                + (textbox.adjust_pos * systems.scale as f32).floor(),
+            (textbox.size * systems.scale as f32).floor(),
         ) {
             textbox_found = Some(index)
         }
@@ -334,7 +350,7 @@ pub fn hover_textbox(
     for textbox in menu_content.textbox.iter_mut() {
         if is_within_area(
             screen_pos,
-            Vec2::new(textbox.pos.x, textbox.pos.y),
+            Vec2::new(textbox.base_pos.x, textbox.base_pos.y),
             Vec2::new(textbox.size.x, textbox.size.y),
         ) {
             if let Some(msg) = &textbox.tooltip {
