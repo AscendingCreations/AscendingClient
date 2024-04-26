@@ -459,30 +459,33 @@ pub fn handle_warp(
         let entity = data.read::<Entity>()?;
         let pos = data.read::<Position>()?;
 
+        if !world.contains(entity.0) {
+            continue;
+        }
+
         let old_pos = world.get_or_err::<Position>(&entity)?;
 
-        if world.contains(entity.0) {
-            {
-                world.get::<&mut Movement>(entity.0)?.is_moving = false;
-                *world.get::<&mut Position>(entity.0)? = pos;
-                world.get::<&mut PositionOffset>(entity.0)?.offset =
-                    Vec2::new(0.0, 0.0);
-            }
-
-            if world.get_or_err::<WorldEntityType>(&entity)?
-                == WorldEntityType::Player
-            {
-                let frame = world.get_or_err::<Dir>(&entity)?.0
-                    * PLAYER_SPRITE_FRAME_X as u8;
-                set_player_frame(world, systems, &entity, frame as usize)?;
-            } else if world.get_or_err::<WorldEntityType>(&entity)?
-                == WorldEntityType::Npc
-            {
-                let frame = world.get_or_err::<Dir>(&entity)?.0
-                    * NPC_SPRITE_FRAME_X as u8;
-                set_npc_frame(world, systems, &entity, frame as usize)?;
-            }
+        {
+            world.get::<&mut Movement>(entity.0)?.is_moving = false;
+            *world.get::<&mut Position>(entity.0)? = pos;
+            world.get::<&mut PositionOffset>(entity.0)?.offset =
+                Vec2::new(0.0, 0.0);
         }
+
+        if world.get_or_err::<WorldEntityType>(&entity)?
+            == WorldEntityType::Player
+        {
+            let frame = world.get_or_err::<Dir>(&entity)?.0
+                * PLAYER_SPRITE_FRAME_X as u8;
+            set_player_frame(world, systems, &entity, frame as usize)?;
+        } else if world.get_or_err::<WorldEntityType>(&entity)?
+            == WorldEntityType::Npc
+        {
+            let frame =
+                world.get_or_err::<Dir>(&entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+            set_npc_frame(world, systems, &entity, frame as usize)?;
+        }
+
         if world.get_or_err::<WorldEntityType>(&entity)?
             == WorldEntityType::Player
         {
