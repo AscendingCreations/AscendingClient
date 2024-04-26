@@ -4,7 +4,7 @@ use crate::{content::*, data_types::*, widget::*, SystemHolder, SCREEN_WIDTH};
 
 pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
     let size = (Vec2::new(348.0, 375.0) * systems.scale as f32).floor();
-    let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 20.0);
+    let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 20.0).floor();
 
     let mut menu_rect = Rect::new(&mut systems.renderer, 0);
     menu_rect

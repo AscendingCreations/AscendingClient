@@ -202,8 +202,9 @@ impl Interface {
                                 interface
                                     .chatbox
                                     .hover_scrollbar(systems, screen_pos);
-                                can_hover =
-                                    !interface.chatbox.in_window(screen_pos);
+                                can_hover = !interface
+                                    .chatbox
+                                    .in_window(screen_pos, systems);
                             }
                             Window::Inventory => {
                                 interface
@@ -330,7 +331,8 @@ impl Interface {
                 }
 
                 if interface.drag_window.is_none() {
-                    let window = find_window(interface, screen_pos, None);
+                    let window =
+                        find_window(systems, interface, screen_pos, None);
                     if let Some(result_window) = window {
                         hold_interface(
                             interface,
@@ -436,7 +438,8 @@ impl Interface {
                         .inventory
                         .move_inv_slot(systems, slot, screen_pos);
 
-                    let window = find_window(interface, screen_pos, None);
+                    let window =
+                        find_window(systems, interface, screen_pos, None);
                     if let Some(result_window) = window {
                         match result_window {
                             Window::Storage
@@ -463,7 +466,8 @@ impl Interface {
                         .storage
                         .move_storage_slot(systems, slot, screen_pos);
 
-                    let window = find_window(interface, screen_pos, None);
+                    let window =
+                        find_window(systems, interface, screen_pos, None);
                     if let Some(result_window) = window {
                         match result_window {
                             Window::Storage
@@ -680,10 +684,12 @@ impl Interface {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_hover(systems, true);
             } else {
@@ -820,10 +826,12 @@ impl Interface {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_click(systems, true);
                 button_found = Some(index)
@@ -852,10 +860,16 @@ impl Interface {
         if is_within_area(
             screen_pos,
             Vec2::new(
-                self.chatbox.textbox.base_pos.x,
-                self.chatbox.textbox.base_pos.y,
+                self.chatbox.textbox.base_pos.x
+                    + (self.chatbox.textbox.adjust_pos.x
+                        * systems.scale as f32)
+                        .floor(),
+                self.chatbox.textbox.base_pos.y
+                    + (self.chatbox.textbox.adjust_pos.y
+                        * systems.scale as f32)
+                        .floor(),
             ),
-            self.chatbox.textbox.size,
+            (self.chatbox.textbox.size * systems.scale as f32).floor(),
         ) {
             self.chatbox.textbox.set_select(systems, true);
             self.chatbox.textbox.set_hold(true);
@@ -868,8 +882,14 @@ impl Interface {
             & is_within_area(
                 screen_pos,
                 Vec2::new(
-                    self.trade.money_input.base_pos.x,
-                    self.trade.money_input.base_pos.y,
+                    self.trade.money_input.base_pos.x
+                        + (self.trade.money_input.adjust_pos.x
+                            * systems.scale as f32)
+                            .floor(),
+                    self.trade.money_input.base_pos.y
+                        + (self.trade.money_input.adjust_pos.y
+                            * systems.scale as f32)
+                            .floor(),
                 ),
                 self.trade.money_input.size,
             )
@@ -1014,6 +1034,7 @@ fn can_find_window(window: Window, exception: Option<Window>) -> bool {
 }
 
 fn find_window(
+    systems: &mut SystemHolder,
     interface: &mut Interface,
     screen_pos: Vec2,
     exception: Option<Window>,
@@ -1045,7 +1066,7 @@ fn find_window(
             selected_window = Some(Window::Setting);
         }
     }
-    if interface.chatbox.in_window(screen_pos)
+    if interface.chatbox.in_window(screen_pos, systems)
         && can_find_window(Window::Chatbox, exception)
     {
         let z_order = interface.chatbox.z_order;

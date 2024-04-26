@@ -8,7 +8,7 @@ pub fn create_login(systems: &mut SystemHolder, content: &mut MenuContent) {
     let size =
         Vec2::new(348.0 * systems.scale as f32, 226.0 * systems.scale as f32)
             .floor();
-    let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 80.0);
+    let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 80.0).floor();
 
     let mut menu_rect = Rect::new(&mut systems.renderer, 0);
     menu_rect

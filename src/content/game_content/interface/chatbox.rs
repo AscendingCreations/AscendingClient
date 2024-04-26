@@ -39,12 +39,12 @@ impl ChatTab {
         z_order: [f32; 2],
         msg: String,
     ) -> Self {
-        let pos = base_pos + adjust_pos;
+        let pos = base_pos + (adjust_pos * systems.scale as f32).floor();
 
         let mut bg_rect = Rect::new(&mut systems.renderer, 0);
         bg_rect
             .set_position(Vec3::new(pos.x, pos.y, z_order[0]))
-            .set_size(size)
+            .set_size((size * systems.scale as f32).floor())
             .set_border_width(1.0)
             .set_color(Color::rgba(100, 100, 100, 255))
             .set_border_color(Color::rgba(40, 40, 40, 255));
@@ -54,8 +54,13 @@ impl ChatTab {
         let text_data = create_label(
             systems,
             Vec3::new(pos.x, pos.y, z_order[1]),
-            Vec2::new(size.x, 20.0),
-            Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + 20.0),
+            (Vec2::new(size.x, 20.0) * systems.scale as f32).floor(),
+            Bounds::new(
+                pos.x,
+                pos.y,
+                pos.x + (size.x * systems.scale as f32).floor(),
+                pos.y + (20.0 * systems.scale as f32).floor(),
+            ),
             Color::rgba(255, 255, 255, 255),
         );
         let text = systems.gfx.add_text(text_data, 1, "ChatTab Text".into());
@@ -74,8 +79,16 @@ impl ChatTab {
         }
     }
 
-    fn in_area(&mut self, screen_pos: Vec2) -> bool {
-        is_within_area(screen_pos, self.base_pos + self.adjust_pos, self.size)
+    fn in_area(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) -> bool {
+        is_within_area(
+            screen_pos,
+            self.base_pos + (self.adjust_pos * systems.scale as f32).floor(),
+            (self.size * systems.scale as f32).floor(),
+        )
     }
 
     fn set_hover(&mut self, systems: &mut SystemHolder, in_hover: bool) {
@@ -133,7 +146,7 @@ impl ChatTab {
 
     fn move_pos(&mut self, systems: &mut SystemHolder, newpos: Vec2) {
         self.base_pos = newpos;
-        let set_pos = newpos + self.adjust_pos;
+        let set_pos = newpos + (self.adjust_pos * systems.scale as f32).floor();
 
         let pos = systems.gfx.get_pos(self.bg);
         systems
@@ -149,8 +162,8 @@ impl ChatTab {
             Bounds::new(
                 set_pos.x,
                 set_pos.y,
-                set_pos.x + self.size.x,
-                set_pos.y + 20.0,
+                set_pos.x + (self.size.x * systems.scale as f32).floor(),
+                set_pos.y + (20.0 * systems.scale as f32).floor(),
             ),
         );
         systems.gfx.center_text(self.text);
@@ -191,7 +204,8 @@ pub struct Chatbox {
 impl Chatbox {
     pub fn new(systems: &mut SystemHolder) -> Self {
         let w_pos = Vec3::new(10.0, 10.0, ORDER_GUI_WINDOW);
-        let w_size = Vec2::new(350.0, 200.0);
+        let o_size = Vec2::new(350.0, 200.0);
+        let w_size = (o_size * systems.scale as f32).floor();
 
         let detail_1 = w_pos.z.sub_f32(0.001, 3);
         let detail_2 = w_pos.z.sub_f32(0.002, 3);
@@ -209,8 +223,15 @@ impl Chatbox {
         let mut textbox_rect = Rect::new(&mut systems.renderer, 0);
         let textbox_zpos = detail_1;
         textbox_rect
-            .set_position(Vec3::new(w_pos.x + 5.0, w_pos.y + 5.0, textbox_zpos))
-            .set_size(Vec2::new(w_size.x - 75.0, 24.0))
+            .set_position(Vec3::new(
+                w_pos.x + (5.0 * systems.scale as f32).floor(),
+                w_pos.y + (5.0 * systems.scale as f32).floor(),
+                textbox_zpos,
+            ))
+            .set_size(Vec2::new(
+                w_size.x - (75.0 * systems.scale as f32).floor(),
+                (24.0 * systems.scale as f32).floor(),
+            ))
             .set_color(Color::rgba(80, 80, 80, 255));
         let textbox_bg =
             systems
@@ -219,8 +240,14 @@ impl Chatbox {
 
         let mut chatarea_rect = Rect::new(&mut systems.renderer, 0);
         let chatarea_zorder = detail_1;
-        let chat_area_pos = Vec2::new(w_pos.x + 5.0, w_pos.y + 34.0);
-        let chat_areasize = Vec2::new(w_size.x - 39.0, w_size.y - 39.0);
+        let chat_area_pos = Vec2::new(
+            w_pos.x + (5.0 * systems.scale as f32).floor(),
+            w_pos.y + (34.0 * systems.scale as f32).floor(),
+        );
+        let chat_areasize = Vec2::new(
+            w_size.x - (39.0 * systems.scale as f32).floor(),
+            w_size.y - (39.0 * systems.scale as f32).floor(),
+        );
         chatarea_rect
             .set_position(Vec3::new(
                 chat_area_pos.x,
@@ -246,7 +273,7 @@ impl Chatbox {
             Vec3::new(w_pos.x, w_pos.y, detail_2),
             Vec2::new(7.0, 7.0),
             (0.0001, 5),
-            Vec2::new(w_size.x - 79.0, 20.0),
+            Vec2::new(o_size.x - 79.0, 20.0),
             Color::rgba(200, 200, 200, 255),
             1,
             255,
@@ -282,7 +309,7 @@ impl Chatbox {
                     click_change: ButtonChangeType::None,
                 }),
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(w_size.x - 29.0, w_size.y - 29.0),
+                Vec2::new(o_size.x - 29.0, o_size.y - 29.0),
                 detail_1,
                 (0.0001, 5),
                 Vec2::new(24.0, 24.0),
@@ -313,7 +340,7 @@ impl Chatbox {
                     click_change: ButtonChangeType::None,
                 }),
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(w_size.x - 29.0, 34.0),
+                Vec2::new(o_size.x - 29.0, 34.0),
                 detail_1,
                 (0.0001, 5),
                 Vec2::new(24.0, 24.0),
@@ -348,7 +375,7 @@ impl Chatbox {
                     )),
                 }),
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(w_size.x - 65.0, 5.0),
+                Vec2::new(o_size.x - 65.0, 5.0),
                 detail_1,
                 (0.0001, 5),
                 Vec2::new(60.0, 24.0),
@@ -361,8 +388,8 @@ impl Chatbox {
         let scrollbar = Scrollbar::new(
             systems,
             Vec2::new(w_pos.x, w_pos.y),
-            Vec2::new(w_size.x - 28.0, 63.0),
-            w_size.y - 97.0,
+            Vec2::new(o_size.x - 28.0, 63.0),
+            o_size.y - 97.0,
             22.0,
             true,
             detail_1,
@@ -394,7 +421,7 @@ impl Chatbox {
             ChatTab::new(
                 systems,
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(0.0, w_size.y - 1.0),
+                Vec2::new(0.0, o_size.y - 1.0),
                 Vec2::new(70.0, 24.0),
                 [w_pos.z, detail_1],
                 "All".into(),
@@ -402,7 +429,7 @@ impl Chatbox {
             ChatTab::new(
                 systems,
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(69.0, w_size.y - 1.0),
+                Vec2::new(69.0, o_size.y - 1.0),
                 Vec2::new(70.0, 24.0),
                 [w_pos.z, detail_1],
                 "Map".into(),
@@ -410,7 +437,7 @@ impl Chatbox {
             ChatTab::new(
                 systems,
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(138.0, w_size.y - 1.0),
+                Vec2::new(138.0, o_size.y - 1.0),
                 Vec2::new(70.0, 24.0),
                 [w_pos.z, detail_1],
                 "Global".into(),
@@ -510,8 +537,13 @@ impl Chatbox {
         true
     }
 
-    pub fn in_window(&mut self, screen_pos: Vec2) -> bool {
-        let chatbox_size = self.size + Vec2::new(0.0, 24.0);
+    pub fn in_window(
+        &mut self,
+        screen_pos: Vec2,
+        systems: &mut SystemHolder,
+    ) -> bool {
+        let chatbox_size =
+            self.size + (Vec2::new(0.0, 24.0) * systems.scale as f32).floor();
         is_within_area(screen_pos, self.pos, chatbox_size)
     }
 
@@ -599,10 +631,17 @@ impl Chatbox {
         let pos = systems.gfx.get_pos(self.textbox_bg);
         systems.gfx.set_pos(
             self.textbox_bg,
-            Vec3::new(self.pos.x + 5.0, self.pos.y + 5.0, pos.z),
+            Vec3::new(
+                self.pos.x + (5.0 * systems.scale as f32).floor(),
+                self.pos.y + (5.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         let pos = systems.gfx.get_pos(self.chatarea_bg);
-        let chat_area_pos = Vec2::new(self.pos.x + 5.0, self.pos.y + 34.0);
+        let chat_area_pos = Vec2::new(
+            self.pos.x + (5.0 * systems.scale as f32).floor(),
+            self.pos.y + (34.0 * systems.scale as f32).floor(),
+        );
         self.chat_bounds = Bounds::new(
             chat_area_pos.x,
             chat_area_pos.y,
@@ -619,7 +658,8 @@ impl Chatbox {
         });
         self.scrollbar.set_pos(systems, self.pos);
 
-        let scroll_y = self.chat_scroll_value * 16;
+        let scroll_y = self.chat_scroll_value
+            * (16.0 * systems.scale as f32).floor() as usize;
         for data in self.chat.iter_mut() {
             let start_pos = Vec2::new(
                 self.chat_bounds.left,
@@ -629,7 +669,10 @@ impl Chatbox {
                 data.text,
                 Vec3::new(
                     start_pos.x,
-                    (start_pos.y + 2.0 + data.adjust_y) - scroll_y as f32,
+                    (start_pos.y
+                        + (2.0 * systems.scale as f32).floor()
+                        + data.adjust_y)
+                        - scroll_y as f32,
                     self.chat_zorder,
                 ),
             );
@@ -672,10 +715,12 @@ impl Chatbox {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_hover(systems, true);
             } else {
@@ -684,7 +729,7 @@ impl Chatbox {
         }
 
         for tab in self.chat_tab.iter_mut() {
-            let in_area = tab.in_area(screen_pos);
+            let in_area = tab.in_area(systems, screen_pos);
             tab.set_hover(systems, in_area);
         }
     }
@@ -699,14 +744,18 @@ impl Chatbox {
                     self.chat_areasize,
                 )
             {
-                let scroll_y = self.chat_scroll_value * 16;
+                let scroll_y = self.chat_scroll_value
+                    * (16.0 * systems.scale as f32).floor() as usize;
                 let start_pos = Vec2::new(
                     self.chat_bounds.left,
                     self.chat_bounds.bottom - chat.size.y,
                 );
                 let pos = Vec2::new(
                     start_pos.x,
-                    (start_pos.y + 2.0 + chat.adjust_y) - scroll_y as f32,
+                    (start_pos.y
+                        + (2.0 * systems.scale as f32).floor()
+                        + chat.adjust_y)
+                        - scroll_y as f32,
                 );
                 if is_within_area(screen_pos, pos, chat.size) {
                     got_index = Some((index, pos));
@@ -762,10 +811,12 @@ impl Chatbox {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_click(systems, true);
                 button_found = Some(index)
@@ -781,7 +832,7 @@ impl Chatbox {
     ) {
         let mut selected_tab = self.selected_tab;
         for (index, tab) in self.chat_tab.iter_mut().enumerate() {
-            if tab.in_area(screen_pos) {
+            if tab.in_area(systems, screen_pos) {
                 selected_tab = index;
                 break;
             }
@@ -817,7 +868,8 @@ impl Chatbox {
             return;
         }
         self.chat_scroll_value = self.scrollbar.value;
-        let scroll_y = self.chat_scroll_value * 16;
+        let scroll_y = self.chat_scroll_value
+            * (16.0 * systems.scale as f32).floor() as usize;
 
         for data in self.chat.iter_mut() {
             let start_pos = Vec2::new(
@@ -828,7 +880,10 @@ impl Chatbox {
                 data.text,
                 Vec3::new(
                     start_pos.x,
-                    (start_pos.y + 2.0 + data.adjust_y) - scroll_y as f32,
+                    (start_pos.y
+                        + (2.0 * systems.scale as f32).floor()
+                        + data.adjust_y)
+                        - scroll_y as f32,
                     self.chat_zorder,
                 ),
             );
@@ -911,7 +966,7 @@ impl Chatbox {
                 text,
                 Vec3::new(
                     start_pos.x,
-                    start_pos.y + 2.0 + size.y,
+                    start_pos.y + (2.0 * systems.scale as f32).floor() + size.y,
                     self.chat_zorder,
                 ),
             );
@@ -923,7 +978,9 @@ impl Chatbox {
                         data.text,
                         Vec3::new(
                             start_pos.x,
-                            start_pos.y + 2.0 + data.adjust_y,
+                            start_pos.y
+                                + (2.0 * systems.scale as f32).floor()
+                                + data.adjust_y,
                             self.chat_zorder,
                         ),
                     );
@@ -935,10 +992,14 @@ impl Chatbox {
 
         if can_channel_show(channel, self.selected_tab) {
             self.chat_line_size += size.y;
-            let leftover = self.chat_line_size - VISIBLE_SIZE;
+            let leftover = self.chat_line_size
+                - (VISIBLE_SIZE * systems.scale as f32).floor();
             if leftover > 0.0 {
-                self.scrollbar
-                    .set_max_value(systems, (leftover / 16.0).floor() as usize);
+                self.scrollbar.set_max_value(
+                    systems,
+                    (leftover / (16.0 * systems.scale as f32).floor()).floor()
+                        as usize,
+                );
                 self.scrollbar.set_value(systems, 0);
             }
         }
@@ -962,7 +1023,9 @@ impl Chatbox {
                     data.text,
                     Vec3::new(
                         start_pos.x,
-                        start_pos.y + 2.0 + data.adjust_y,
+                        start_pos.y
+                            + (2.0 * systems.scale as f32).floor()
+                            + data.adjust_y,
                         self.chat_zorder,
                     ),
                 );
@@ -974,10 +1037,14 @@ impl Chatbox {
             }
         }
         self.chat_line_size = chat_line_size;
-        let leftover = self.chat_line_size - VISIBLE_SIZE;
+        let leftover =
+            self.chat_line_size - (VISIBLE_SIZE * systems.scale as f32).floor();
         if leftover > 0.0 {
-            self.scrollbar
-                .set_max_value(systems, (leftover / 16.0).floor() as usize);
+            self.scrollbar.set_max_value(
+                systems,
+                (leftover / (16.0 * systems.scale as f32).floor()).floor()
+                    as usize,
+            );
             self.scrollbar.set_value(systems, 0);
         } else if self.scrollbar.max_value > 0 {
             self.scrollbar.set_value(systems, 0);

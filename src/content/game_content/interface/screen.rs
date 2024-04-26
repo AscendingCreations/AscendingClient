@@ -10,7 +10,7 @@ pub struct VitalBar {
 
 impl VitalBar {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let size = Vec2::new(200.0, 68.0);
+        let size = (Vec2::new(200.0, 68.0) * systems.scale as f32).floor();
         let pos = Vec3::new(
             10.0,
             systems.size.height - (size.y + 10.0),
@@ -26,7 +26,7 @@ impl VitalBar {
             .set_border_color(Color::rgba(40, 40, 40, 255));
         let bg = systems.gfx.add_rect(bg_rect, 0, "Vital Window".into());
 
-        let bar_size = size.x - 12.0;
+        let bar_size = size.x - (12.0 * systems.scale as f32).floor();
 
         let mut bar_bg = [0; 3];
         let mut bar = [0; 3];
@@ -40,11 +40,14 @@ impl VitalBar {
             let mut bg_rect = Rect::new(&mut systems.renderer, 0);
             bg_rect
                 .set_position(Vec3::new(
-                    pos.x + 5.0,
-                    pos.y + 5.0 + add_y,
+                    pos.x + (5.0 * systems.scale as f32).floor(),
+                    pos.y + ((5.0 + add_y) * systems.scale as f32).floor(),
                     ORDER_VITAL_HPBG,
                 ))
-                .set_size(Vec2::new(size.x - 10.0, height))
+                .set_size(Vec2::new(
+                    size.x - (10.0 * systems.scale as f32).floor(),
+                    (height * systems.scale as f32).floor(),
+                ))
                 .set_color(Color::rgba(100, 100, 100, 255))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(60, 60, 60, 255));
@@ -53,11 +56,14 @@ impl VitalBar {
             let mut bar_rect = Rect::new(&mut systems.renderer, 0);
             bar_rect
                 .set_position(Vec3::new(
-                    pos.x + 6.0,
-                    pos.y + 6.0 + add_y,
+                    pos.x + (6.0 * systems.scale as f32).floor(),
+                    pos.y + ((6.0 + add_y) * systems.scale as f32).floor(),
                     ORDER_VITAL_HP,
                 ))
-                .set_size(Vec2::new(size.x - 12.0, height - 2.0))
+                .set_size(Vec2::new(
+                    size.x - (12.0 * systems.scale as f32).floor(),
+                    ((height - 2.0) * systems.scale as f32).floor(),
+                ))
                 .set_color(color);
             bar[i] = systems.gfx.add_rect(bar_rect, 0, "Vital Bar".into());
         }
@@ -119,8 +125,8 @@ pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
         systems,
         ButtonType::Rect(button_properties.clone()),
         ButtonContentType::Image(image_properties.clone()),
-        Vec2::new(systems.size.width - 140.0, 10.0),
-        Vec2::new(0.0, 0.0),
+        Vec2::new(systems.size.width, 10.0),
+        Vec2::new(-140.0, 0.0),
         ORDER_GUI_BUTTON,
         (0.01, 2),
         Vec2::new(40.0, 40.0),
@@ -133,8 +139,8 @@ pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
         systems,
         ButtonType::Rect(button_properties.clone()),
         ButtonContentType::Image(image_properties.clone()),
-        Vec2::new(systems.size.width - 95.0, 10.0),
-        Vec2::new(0.0, 0.0),
+        Vec2::new(systems.size.width, 10.0),
+        Vec2::new(-95.0, 0.0),
         ORDER_GUI_BUTTON,
         (0.01, 2),
         Vec2::new(40.0, 40.0),
@@ -147,8 +153,8 @@ pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
         systems,
         ButtonType::Rect(button_properties.clone()),
         ButtonContentType::Image(image_properties.clone()),
-        Vec2::new(systems.size.width - 50.0, 10.0),
-        Vec2::new(0.0, 0.0),
+        Vec2::new(systems.size.width, 10.0),
+        Vec2::new(-50.0, 0.0),
         ORDER_GUI_BUTTON,
         (0.01, 2),
         Vec2::new(40.0, 40.0),

@@ -462,10 +462,12 @@ pub fn handle_warp(
         let old_pos = world.get_or_err::<Position>(&entity)?;
 
         if world.contains(entity.0) {
-            world.get::<&mut Movement>(entity.0)?.is_moving = false;
-            *world.get::<&mut Position>(entity.0)? = pos;
-            world.get::<&mut PositionOffset>(entity.0)?.offset =
-                Vec2::new(0.0, 0.0);
+            {
+                world.get::<&mut Movement>(entity.0)?.is_moving = false;
+                *world.get::<&mut Position>(entity.0)? = pos;
+                world.get::<&mut PositionOffset>(entity.0)?.offset =
+                    Vec2::new(0.0, 0.0);
+            }
 
             if world.get_or_err::<WorldEntityType>(&entity)?
                 == WorldEntityType::Player
@@ -493,8 +495,9 @@ pub fn handle_warp(
                         content.game_content.init_map(systems, pos.map)?;
                         finalize_entity(world, systems)?;
                         content.game_content.refresh_map = true;
-                        content.game_content.can_move = true;
                     }
+                    content.game_content.can_move = true;
+
                     if systems.map_fade.f_alpha > 0 {
                         systems.map_fade.init_fade(
                             &mut systems.gfx,
@@ -573,7 +576,9 @@ pub fn handle_dir(
         let dir = data.read::<u8>()?;
 
         if world.contains(entity.0) {
-            world.get::<&mut Dir>(entity.0)?.0 = dir;
+            {
+                world.get::<&mut Dir>(entity.0)?.0 = dir;
+            }
 
             if world.get_or_err::<WorldEntityType>(&entity)?
                 == WorldEntityType::Player
@@ -625,7 +630,7 @@ pub fn handle_vitals(
             systems.gfx.set_size(hpbar.bar_index, size);
 
             if world.get_or_err::<WorldEntityType>(&entity)?
-                == WorldEntityType::Npc
+                == WorldEntityType::Player
             {
                 if let Some(myentity) = content.game_content.myentity {
                     if entity == myentity {

@@ -308,8 +308,10 @@ impl Button {
                         Bounds::new(
                             pos.x,
                             pos.y,
-                            pos.x + self.size.x,
-                            pos.y + self.size.y,
+                            pos.x
+                                + (self.size.x * systems.scale as f32).floor(),
+                            pos.y
+                                + (self.size.y * systems.scale as f32).floor(),
                         ),
                     );
                     systems.gfx.center_text(content_index);

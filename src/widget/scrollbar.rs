@@ -134,13 +134,25 @@ impl Scrollbar {
         let mut scroll_rect = Rect::new(&mut systems.renderer, 0);
         let (pos, size) = if is_vertical {
             (
-                Vec2::new(adjust_pos.x, start_pos as f32),
-                Vec2::new(thickness, scrollbar_size),
+                Vec2::new(
+                    (adjust_pos.x * systems.scale as f32).floor(),
+                    start_pos as f32,
+                ),
+                Vec2::new(
+                    (thickness * systems.scale as f32).floor(),
+                    scrollbar_size,
+                ),
             )
         } else {
             (
-                Vec2::new(start_pos as f32, adjust_pos.y),
-                Vec2::new(scrollbar_size, thickness),
+                Vec2::new(
+                    start_pos as f32,
+                    (adjust_pos.y * systems.scale as f32).floor(),
+                ),
+                Vec2::new(
+                    scrollbar_size,
+                    (thickness * systems.scale as f32).floor(),
+                ),
             )
         };
         scroll_rect
@@ -313,8 +325,12 @@ impl Scrollbar {
             systems.gfx.set_pos(
                 index,
                 Vec3::new(
-                    new_pos.x + self.adjust_pos.x - 1.0,
-                    new_pos.y + self.adjust_pos.y - 1.0,
+                    new_pos.x
+                        + ((self.adjust_pos.x - 1.0) * systems.scale as f32)
+                            .floor(),
+                    new_pos.y
+                        + ((self.adjust_pos.y - 1.0) * systems.scale as f32)
+                            .floor(),
                     pos.z,
                 ),
             );
@@ -341,7 +357,8 @@ impl Scrollbar {
         self.value = value;
         let pos = systems.gfx.get_pos(self.scroll);
         if self.is_vertical {
-            self.pos.y = self.adjust_pos.y + (self.length as f32 - new_pos);
+            self.pos.y = (self.adjust_pos.y * systems.scale as f32).floor()
+                + (self.length as f32 - new_pos);
             systems.gfx.set_pos(
                 self.scroll,
                 Vec3::new(
@@ -351,7 +368,8 @@ impl Scrollbar {
                 ),
             );
         } else {
-            self.pos.x = self.adjust_pos.x + new_pos;
+            self.pos.x =
+                (self.adjust_pos.x * systems.scale as f32).floor() + new_pos;
             systems.gfx.set_pos(
                 self.scroll,
                 Vec3::new(
@@ -379,14 +397,14 @@ impl Scrollbar {
 
         (self.start_pos, self.end_pos) = if self.is_vertical {
             (
-                self.adjust_pos.y as usize
+                (self.adjust_pos.y * systems.scale as f32).floor() as usize
                     + (self.bar_size as usize - scrollbar_size as usize),
-                self.adjust_pos.y as usize,
+                (self.adjust_pos.y * systems.scale as f32).floor() as usize,
             )
         } else {
             (
-                self.adjust_pos.x as usize,
-                self.adjust_pos.x as usize
+                (self.adjust_pos.x * systems.scale as f32).floor() as usize,
+                (self.adjust_pos.x * systems.scale as f32).floor() as usize
                     + (self.bar_size as usize - scrollbar_size as usize),
             )
         };
@@ -398,12 +416,18 @@ impl Scrollbar {
 
         (self.pos, self.size) = if self.is_vertical {
             (
-                Vec2::new(self.adjust_pos.x, self.start_pos as f32),
+                Vec2::new(
+                    (self.adjust_pos.x * systems.scale as f32).floor(),
+                    self.start_pos as f32,
+                ),
                 Vec2::new(self.size.x, scrollbar_size),
             )
         } else {
             (
-                Vec2::new(self.start_pos as f32, self.adjust_pos.y),
+                Vec2::new(
+                    self.start_pos as f32,
+                    (self.adjust_pos.y * systems.scale as f32).floor(),
+                ),
                 Vec2::new(scrollbar_size, self.size.y),
             )
         };

@@ -66,7 +66,6 @@ pub enum ServerPackets {
     PlayItemSfx,
     Damage,
     Ping,
-    ServerPacketCount,
 }
 
 pub struct PacketRouter(pub HashMap<ServerPackets, PacketFunction>);
