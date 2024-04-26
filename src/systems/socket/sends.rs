@@ -14,7 +14,7 @@ pub enum Command {
     Copy, Clone, Debug, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
 )]
 enum ClientPacket {
-    Ping,
+    OnlineCheck,
     Register,
     Login,
     HandShake,
@@ -45,6 +45,7 @@ enum ClientPacket {
     SubmitTrade,
     AcceptTrade,
     DeclineTrade,
+    Ping,
 }
 
 pub fn send_register(
@@ -431,7 +432,7 @@ pub fn send_declinetrade(socket: &mut Socket) -> Result<()> {
 pub fn send_ping(socket: &mut Socket) -> Result<()> {
     let mut buf = ByteBuffer::new_packet_with(10)?;
 
-    buf.write(ClientPacket::Ping)?;
+    buf.write(ClientPacket::OnlineCheck)?;
     buf.write(0u64)?;
     buf.finish()?;
 
