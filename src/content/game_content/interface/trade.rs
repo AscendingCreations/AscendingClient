@@ -490,7 +490,6 @@ impl Trade {
         self.money_input.set_visible(systems, visible);
         systems.gfx.set_visible(self.their_money, visible);
         if !visible {
-            self.trade_status = TradeStatus::default();
             self.button[1].change_text(systems, "Submit".into());
 
             self.money_input.set_text(systems, "0".into());
@@ -513,6 +512,7 @@ impl Trade {
                 .set_text(&mut systems.renderer, self.status_text, "");
             systems.gfx.center_text(self.status_text);
         }
+        self.trade_status = TradeStatus::default();
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
