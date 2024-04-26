@@ -28,7 +28,7 @@ type PacketFunction = fn(
     Hash,
 )]
 pub enum ServerPackets {
-    Ping,
+    OnlineCheck,
     Status,
     AlertMsg,
     FltAlert,
@@ -41,6 +41,7 @@ pub enum ServerPackets {
     PlayerData,
     PlayerSpawn,
     PlayerMove,
+    MoveOk,
     PlayerWarp,
     PlayerMapSwap,
     Dataremovelist,
@@ -97,7 +98,6 @@ pub struct PacketRouter(pub HashMap<ServerPackets, PacketFunction>);
 impl PacketRouter {
     pub fn init() -> Self {
         Self(HashMap::from([
-            (ServerPackets::Ping, routes::handle_ping as PacketFunction),
             (
                 ServerPackets::Status,
                 routes::handle_status as PacketFunction,
@@ -141,6 +141,10 @@ impl PacketRouter {
             (
                 ServerPackets::PlayerMove,
                 routes::handle_playermove as PacketFunction,
+            ),
+            (
+                ServerPackets::MoveOk,
+                routes::handle_move_ok as PacketFunction,
             ),
             (
                 ServerPackets::PlayerWarp,

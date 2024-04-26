@@ -267,6 +267,7 @@ pub fn move_player(
             }
 
             send_move(socket, dir_u8, pos)?;
+            content.can_move = false;
         }
     }
 

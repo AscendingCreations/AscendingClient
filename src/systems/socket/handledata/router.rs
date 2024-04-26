@@ -17,6 +17,11 @@ pub fn handle_data(
     let id: ServerPackets = data.read()?;
 
     trace!("Server Packet is {:?}", id);
+
+    if id == ServerPackets::OnlineCheck {
+        return Ok(());
+    }
+
     let fun = match router.0.get(&id) {
         Some(fun) => fun,
         None => return Err(ClientError::InvalidPacket),

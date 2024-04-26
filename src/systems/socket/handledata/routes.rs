@@ -217,6 +217,24 @@ pub fn handle_myindex(
     Ok(())
 }
 
+pub fn handle_move_ok(
+    _socket: &mut Socket,
+    _world: &mut World,
+    _systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut ByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    // TODO use this to reset players position, reload stuff etc.
+    let _move_ok = data.read::<bool>()?;
+    content.game_content.can_move = true;
+    //info!("move allowed: {move_ok}");
+    //content.game_content.myentity = Some(entity);
+    Ok(())
+}
+
 pub fn handle_playerdata(
     _socket: &mut Socket,
     world: &mut World,
@@ -476,11 +494,11 @@ pub fn handle_playerwarp(
                 socket.client.sends.clear();
 
                 if old_pos.map != pos.map {
-                    info!("he was outside of map");
                     buffer.clear_buffer();
                     content.game_content.init_map(systems, pos.map)?;
                     finalize_entity(world, systems)?;
                     content.game_content.refresh_map = true;
+                    content.game_content.can_move = true;
                 }
                 if systems.map_fade.f_alpha > 0 {
                     systems.map_fade.init_fade(

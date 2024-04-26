@@ -64,6 +64,7 @@ pub struct GameContent {
     pub current_music: String,
     pub float_text: FloatingText,
     pub refresh_map: bool,
+    pub can_move: bool,
 }
 
 impl GameContent {
@@ -85,6 +86,7 @@ impl GameContent {
             current_music: String::new(),
             float_text: FloatingText::new(),
             refresh_map: false,
+            can_move: true,
         }
     }
 

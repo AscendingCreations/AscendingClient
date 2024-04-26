@@ -254,6 +254,10 @@ pub fn can_move(
     content: &mut GameContent,
     direction: &Direction,
 ) -> Result<bool> {
+    if !content.can_move {
+        return Ok(true);
+    }
+
     let pos = world.get_or_err::<Position>(entity)?;
     {
         world.get::<&mut Dir>(entity.0)?.0 = match direction {
