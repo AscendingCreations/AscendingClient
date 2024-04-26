@@ -67,13 +67,19 @@ pub fn float_text_loop(
         let interval = seconds - float_data.timer;
         if interval > 1.5 {
             remove_list.push(index);
+            continue;
         }
 
         float_data.float_y += 0.2;
 
         let start_pos =
-            get_start_map_pos(content.map.map_pos, float_data.pos.map)
-                .unwrap_or_else(|| Vec2::new(0.0, 0.0));
+            match get_start_map_pos(content.map.map_pos, float_data.pos.map) {
+                Some(data) => data,
+                None => {
+                    remove_list.push(index);
+                    continue;
+                }
+            };
         let cur_pos = systems.gfx.get_pos(float_data.text);
         let texture_pos = content.camera.0
             + (Vec2::new(float_data.pos.x as f32, float_data.pos.y as f32)
