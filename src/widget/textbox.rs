@@ -818,7 +818,7 @@ impl Textbox {
             measure_string(systems, text)
                 .x
                 .floor()
-                .min(self.size.x - self.selection_pos)
+                .min((self.size.x * systems.scale as f32) - self.selection_pos)
         } else {
             0.0
         };

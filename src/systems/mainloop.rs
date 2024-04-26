@@ -2,8 +2,8 @@ use hecs::World;
 use log::info;
 
 use crate::{
-    content::*, dir_to_enum, BufferTask, Entity, Position, Result, Socket,
-    SystemHolder, WorldEntityType,
+    content::*, dir_to_enum, send_gameping, BufferTask, Entity, MyInstant,
+    Position, Result, Socket, SystemHolder, WorldEntityType,
 };
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -11,6 +11,7 @@ pub struct LoopTimer {
     entity_tmr: f32,
     input_tmr: f32,
     maprefresh_tmr: f32,
+    ping_tmr: f32,
 }
 
 pub fn game_loop(
@@ -57,6 +58,12 @@ pub fn game_loop(
                     .game_content
                     .handle_key_input(world, systems, socket, seconds)?;
                 loop_timer.input_tmr = seconds + 0.032;
+            }
+
+            if seconds > loop_timer.ping_tmr && systems.config.show_ping {
+                send_gameping(socket)?;
+                content.ping_start = MyInstant::now();
+                loop_timer.ping_tmr = seconds + 5.0;
             }
         }
         ContentType::Menu => {}

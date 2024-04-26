@@ -1,4 +1,4 @@
-use crate::{database::*, Config, Result, SystemHolder};
+use crate::{data_types::*, database::*, Config, Result, SystemHolder};
 use hecs::World;
 
 pub mod game_content;
@@ -22,6 +22,7 @@ pub struct Content {
     pub menu_content: MenuContent,
     pub game_content: GameContent,
     pub content_type: ContentType,
+    pub ping_start: MyInstant,
 }
 
 impl Content {
@@ -30,6 +31,7 @@ impl Content {
             content_type: ContentType::Menu,
             menu_content: MenuContent::new(systems),
             game_content: GameContent::new(systems),
+            ping_start: MyInstant::now(),
         };
         content.menu_content.show(systems);
         content.game_content.hide(world, systems)?;

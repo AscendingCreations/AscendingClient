@@ -53,6 +53,7 @@ pub enum SelectedTextbox {
 }
 
 pub struct Interface {
+    pub ping_text: usize,
     menu_button: [Button; 3],
     pub vitalbar: VitalBar,
     did_button_click: bool,
@@ -73,8 +74,39 @@ impl Interface {
     pub fn new(systems: &mut SystemHolder) -> Self {
         let menu_button = create_menu_button(systems);
 
+        let size = (Vec2::new(85.0, 20.0) * systems.scale as f32).floor();
+        let addy = if systems.config.show_fps {
+            30.0 * systems.scale as f32
+        } else {
+            5.0 * systems.scale as f32
+        }
+        .floor();
+        let ping_pos = Vec3::new(
+            systems.size.width - size.x,
+            systems.size.height - size.y - addy,
+            0.0,
+        );
+        let ping = create_label(
+            systems,
+            ping_pos,
+            size,
+            Bounds::new(
+                ping_pos.x,
+                ping_pos.y,
+                ping_pos.x + size.x,
+                ping_pos.y + size.y,
+            ),
+            Color::rgba(200, 200, 200, 255),
+        );
+        let ping_text = systems.gfx.add_text(ping, 5, "Ping".to_string());
+        systems.gfx.set_visible(ping_text, systems.config.show_ping);
+        systems
+            .gfx
+            .set_text(&mut systems.renderer, ping_text, "Ping: 0");
+
         let mut interface = Interface {
             menu_button,
+            ping_text,
             vitalbar: VitalBar::new(systems),
             did_button_click: false,
             inventory: Inventory::new(systems),
@@ -121,6 +153,9 @@ impl Interface {
         self.did_button_click = false;
         self.drag_window = None;
         self.selected_textbox = SelectedTextbox::None;
+        systems
+            .gfx
+            .set_visible(self.ping_text, systems.config.show_ping);
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
@@ -137,6 +172,7 @@ impl Interface {
         self.trade.unload(systems);
         self.window_order.clear();
         self.item_desc.unload(systems);
+        systems.gfx.set_visible(self.ping_text, false);
     }
 
     pub fn mouse_input(
@@ -354,7 +390,11 @@ impl Interface {
                         interface.setting.click_checkbox(systems, screen_pos)
                     {
                         interface.setting.did_checkbox_click = true;
-                        interface.setting.trigger_checkbox(systems, index);
+                        interface.setting.trigger_checkbox(
+                            systems,
+                            index,
+                            interface.ping_text,
+                        );
                         result = true;
                     }
                 }

@@ -70,7 +70,7 @@ impl Scrollbar {
     ) -> Self {
         let bg = if let Some(data) = background {
             let mut scrollbg_rect = Rect::new(&mut systems.renderer, 0);
-            let pos = base_pos + adjust_pos;
+            let pos = base_pos + (adjust_pos * systems.scale as f32).floor();
             let bg_pos = Vec3::new(pos.x - 1.0, pos.y - 1.0, z_pos);
             scrollbg_rect
                 .set_position(bg_pos)
@@ -82,11 +82,17 @@ impl Scrollbar {
                     .set_border_color(data.border_color);
             }
             if is_vertical {
-                scrollbg_rect
-                    .set_size(Vec2::new(thickness + 2.0, bar_size + 2.0));
+                scrollbg_rect.set_size(
+                    (Vec2::new(thickness + 2.0, bar_size + 2.0)
+                        * systems.scale as f32)
+                        .floor(),
+                );
             } else {
-                scrollbg_rect
-                    .set_size(Vec2::new(bar_size + 2.0, thickness + 2.0));
+                scrollbg_rect.set_size(
+                    (Vec2::new(bar_size + 2.0, thickness + 2.0)
+                        * systems.scale as f32)
+                        .floor(),
+                );
             }
             let bg = systems.gfx.add_rect(
                 scrollbg_rect,
@@ -99,20 +105,24 @@ impl Scrollbar {
             None
         };
 
-        let scrollbar_size =
-            (bar_size - (min_bar_size * max_value as f32)).max(min_bar_size);
+        let scrollbar_size = ((bar_size - (min_bar_size * max_value as f32))
+            .max(min_bar_size)
+            * systems.scale as f32)
+            .floor();
 
         let (start_pos, end_pos) = if is_vertical {
             (
-                adjust_pos.y as usize
-                    + (bar_size as usize - scrollbar_size as usize),
-                adjust_pos.y as usize,
+                (adjust_pos.y * systems.scale as f32).floor() as usize
+                    + ((bar_size * systems.scale as f32).floor() as usize
+                        - scrollbar_size as usize),
+                (adjust_pos.y * systems.scale as f32).floor() as usize,
             )
         } else {
             (
-                adjust_pos.x as usize,
-                adjust_pos.x as usize
-                    + (bar_size as usize - scrollbar_size as usize),
+                (adjust_pos.x * systems.scale as f32).floor() as usize,
+                (adjust_pos.x * systems.scale as f32).floor() as usize
+                    + ((bar_size * systems.scale as f32).floor() as usize
+                        - scrollbar_size as usize),
             )
         };
         let length = if is_vertical {

@@ -21,15 +21,23 @@ use log::info;
 pub fn handle_ping(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
+    systems: &mut SystemHolder,
+    content: &mut Content,
     _alert: &mut Alert,
     _data: &mut ByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    //Leave this Empty as server will send these to test if they are still connected or not.
-    //we dont need to actually handle these packets. This is to logout stuck accounts mostly.
+    let end_time = MyInstant::now();
+
+    let elapse_time = end_time.duration_since(content.ping_start.0).as_millis();
+
+    systems.gfx.set_text(
+        &mut systems.renderer,
+        content.game_content.interface.ping_text,
+        &format!("Ping: {:?}", elapse_time),
+    );
+
     Ok(())
 }
 

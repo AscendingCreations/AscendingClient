@@ -255,7 +255,7 @@ pub fn can_move(
     direction: &Direction,
 ) -> Result<bool> {
     if !content.can_move {
-        return Ok(true);
+        return Ok(false);
     }
 
     let pos = world.get_or_err::<Position>(entity)?;

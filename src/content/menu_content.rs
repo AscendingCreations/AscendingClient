@@ -350,8 +350,14 @@ pub fn hover_textbox(
     for textbox in menu_content.textbox.iter_mut() {
         if is_within_area(
             screen_pos,
-            Vec2::new(textbox.base_pos.x, textbox.base_pos.y),
-            Vec2::new(textbox.size.x, textbox.size.y),
+            Vec2::new(
+                textbox.base_pos.x
+                    + (textbox.adjust_pos.x * systems.scale as f32).floor(),
+                textbox.base_pos.y
+                    + (textbox.adjust_pos.y * systems.scale as f32).floor(),
+            ),
+            (Vec2::new(textbox.size.x, textbox.size.y) * systems.scale as f32)
+                .floor(),
         ) {
             if let Some(msg) = &textbox.tooltip {
                 tooltip.init_tooltip(systems, screen_pos, msg.clone());

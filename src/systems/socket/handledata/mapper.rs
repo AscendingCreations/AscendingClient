@@ -90,6 +90,7 @@ pub enum ServerPackets {
     PlayItemSfx,
     FloatTextDamage,
     FloatTextHeal,
+    Ping,
     ServerPacketCount,
 }
 
@@ -339,6 +340,7 @@ impl PacketRouter {
                 ServerPackets::FloatTextHeal,
                 routes::handle_floattextheal as PacketFunction,
             ),
+            (ServerPackets::Ping, routes::handle_ping as PacketFunction),
         ]))
     }
 }

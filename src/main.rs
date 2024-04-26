@@ -291,22 +291,22 @@ async fn main() -> Result<()> {
     // create a Text rendering object.
     let text_scale = systems.scale as f32;
     let txt_pos = Vec2::new(
-        systems.size.width - (80.0 * text_scale).floor(),
+        systems.size.width - (85.0 * text_scale).floor(),
         systems.size.height - (25.0 * text_scale).floor(),
     );
     let txt = create_label(
         &mut systems,
         Vec3::new(txt_pos.x, txt_pos.y, 0.0),
-        (Vec2::new(100.0, 20.0) * text_scale).floor(),
+        (Vec2::new(85.0, 20.0) * text_scale).floor(),
         Bounds::new(
             txt_pos.x,
             txt_pos.y,
-            txt_pos.x + (100.0 * text_scale).floor(),
+            txt_pos.x + (85.0 * text_scale).floor(),
             txt_pos.y + (20.0 * text_scale).floor(),
         ),
         Color::rgba(255, 255, 255, 255),
     );
-    let text = systems.gfx.add_text(txt, 4, "FPS".into());
+    let text = systems.gfx.add_text(txt, 5, "FPS".into());
     systems.gfx.set_visible(text, systems.config.show_fps);
     systems.fps = text;
 

@@ -443,3 +443,18 @@ pub fn send_ping(socket: &mut Socket) -> Result<()> {
         }
     }
 }
+
+pub fn send_gameping(socket: &mut Socket) -> Result<()> {
+    let mut buf = ByteBuffer::new_packet_with(10)?;
+
+    buf.write(ClientPacket::Ping)?;
+    buf.write(0u64)?;
+    buf.finish()?;
+
+    match socket.encrypt_state {
+        EncryptionState::None => socket.send(buf),
+        EncryptionState::ReadWrite | EncryptionState::WriteTransfering => {
+            socket.tls_send(buf)
+        }
+    }
+}

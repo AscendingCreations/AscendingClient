@@ -3,7 +3,7 @@ use graphics::*;
 use crate::{content::*, data_types::*, widget::*, SystemHolder, SCREEN_WIDTH};
 
 pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
-    let size = Vec2::new(348.0, 375.0);
+    let size = (Vec2::new(348.0, 375.0) * systems.scale as f32).floor();
     let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 20.0);
 
     let mut menu_rect = Rect::new(&mut systems.renderer, 0);
@@ -23,10 +23,10 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
     header_rect
         .set_position(Vec3::new(
             pos.x,
-            pos.y + 345.0,
+            pos.y + (345.0 * systems.scale as f32).floor(),
             ORDER_MENU_WINDOW_CONTENT,
         ))
-        .set_size(Vec2::new(size.x, 30.0))
+        .set_size(Vec2::new(size.x, (30.0 * systems.scale as f32).floor()))
         .set_color(Color::rgba(120, 120, 120, 255));
     content.window.push(systems.gfx.add_rect(
         header_rect,
@@ -36,9 +36,18 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
 
     let header_text = create_label(
         systems,
-        Vec3::new(pos.x, pos.y + 348.0, ORDER_MENU_WINDOW_CONTENT_DETAIL),
-        Vec2::new(size.x, 20.0),
-        Bounds::new(pos.x, pos.y + 348.0, pos.x + size.x, pos.y + 368.0),
+        Vec3::new(
+            pos.x,
+            pos.y + (348.0 * systems.scale as f32).floor(),
+            ORDER_MENU_WINDOW_CONTENT_DETAIL,
+        ),
+        Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
+        Bounds::new(
+            pos.x,
+            pos.y + (348.0 * systems.scale as f32).floor(),
+            pos.x + size.x,
+            pos.y + (368.0 * systems.scale as f32).floor(),
+        ),
         Color::rgba(240, 240, 240, 255),
     );
     let text_index =
@@ -63,19 +72,19 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         };
         labelbox
             .set_position(Vec3::new(
-                pos.x + 24.0,
-                pos.y + addy,
+                pos.x + (24.0 * systems.scale as f32).floor(),
+                pos.y + (addy * systems.scale as f32).floor(),
                 ORDER_MENU_WINDOW_CONTENT,
             ))
-            .set_size(Vec2::new(116.0, 24.0))
+            .set_size((Vec2::new(116.0, 24.0) * systems.scale as f32).floor())
             .set_color(Color::rgba(208, 208, 208, 255));
         textbox_bg
             .set_position(Vec3::new(
-                pos.x + 140.0,
-                pos.y + addy,
+                pos.x + (140.0 * systems.scale as f32).floor(),
+                pos.y + (addy * systems.scale as f32).floor(),
                 ORDER_MENU_WINDOW_CONTENT,
             ))
-            .set_size(Vec2::new(184.0, 24.0))
+            .set_size((Vec2::new(184.0, 24.0) * systems.scale as f32).floor())
             .set_color(Color::rgba(90, 90, 90, 255));
         content.window.push(systems.gfx.add_rect(
             labelbox,
@@ -88,12 +97,20 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
             "Register Textbox BG".into(),
         ));
 
-        let tpos = Vec2::new(pos.x + 27.0, pos.y + addy + 2.0);
+        let tpos = Vec2::new(
+            pos.x + (27.0 * systems.scale as f32).floor(),
+            pos.y + ((addy + 2.0) * systems.scale as f32).floor(),
+        );
         let text = create_label(
             systems,
             Vec3::new(tpos.x, tpos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
-            Vec2::new(110.0, 20.0),
-            Bounds::new(tpos.x, tpos.y, tpos.x + 110.0, tpos.y + 20.0),
+            (Vec2::new(110.0, 20.0) * systems.scale as f32).floor(),
+            Bounds::new(
+                tpos.x,
+                tpos.y,
+                tpos.x + (110.0 * systems.scale as f32).floor(),
+                tpos.y + (20.0 * systems.scale as f32).floor(),
+            ),
             Color::rgba(100, 100, 100, 255),
         );
         let textindex = systems.gfx.add_text(text, 1, "Register Label".into());
@@ -116,12 +133,8 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
 
         let textbox = Textbox::new(
             systems,
-            Vec3::new(
-                pos.x + 142.0,
-                pos.y + addy + 2.0,
-                ORDER_MENU_WINDOW_CONTENT_DETAIL,
-            ),
-            Vec2::new(0.0, 0.0),
+            Vec3::new(pos.x, pos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
+            Vec2::new(142.0, addy + 2.0),
             (0.01, 2),
             Vec2::new(180.0, 20.0),
             Color::rgba(240, 240, 240, 255),
@@ -141,11 +154,11 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
     let mut sprite_bg = Rect::new(&mut systems.renderer, 0);
     sprite_bg
         .set_position(Vec3::new(
-            pos.x + 34.0,
-            pos.y + 98.0,
+            pos.x + (34.0 * systems.scale as f32).floor(),
+            pos.y + (98.0 * systems.scale as f32).floor(),
             ORDER_MENU_WINDOW_CONTENT,
         ))
-        .set_size(Vec2::new(80.0, 80.0))
+        .set_size((Vec2::new(80.0, 80.0) * systems.scale as f32).floor())
         .set_color(Color::rgba(120, 120, 120, 255));
     content.window.push(systems.gfx.add_rect(
         sprite_bg,
@@ -158,9 +171,12 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
         &mut systems.renderer,
         0,
     );
-    image.hw = Vec2::new(80.0, 80.0);
-    image.pos =
-        Vec3::new(pos.x + 34.0, pos.y + 98.0, ORDER_MENU_WINDOW_CONTENT_DETAIL);
+    image.hw = (Vec2::new(80.0, 80.0) * systems.scale as f32).floor();
+    image.pos = Vec3::new(
+        pos.x + (34.0 * systems.scale as f32).floor(),
+        pos.y + (98.0 * systems.scale as f32).floor(),
+        ORDER_MENU_WINDOW_CONTENT_DETAIL,
+    );
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
     content.image.push(systems.gfx.add_image(
         image,
@@ -171,12 +187,17 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
     let sprite_label = create_label(
         systems,
         Vec3::new(
-            pos.x + 142.0,
-            pos.y + 148.0,
+            pos.x + (142.0 * systems.scale as f32).floor(),
+            pos.y + (148.0 * systems.scale as f32).floor(),
             ORDER_MENU_WINDOW_CONTENT_DETAIL,
         ),
-        Vec2::new(size.x, 20.0),
-        Bounds::new(pos.x + 142.0, pos.y + 148.0, pos.x + 306.0, pos.y + 168.0),
+        Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
+        Bounds::new(
+            pos.x + (142.0 * systems.scale as f32).floor(),
+            pos.y + (148.0 * systems.scale as f32).floor(),
+            pos.x + (306.0 * systems.scale as f32).floor(),
+            pos.y + (168.0 * systems.scale as f32).floor(),
+        ),
         Color::rgba(80, 80, 80, 255),
     );
     let sprite_index =
@@ -323,12 +344,17 @@ pub fn create_register(systems: &mut SystemHolder, content: &mut MenuContent) {
     let sprite_number_text = create_label(
         systems,
         Vec3::new(
-            pos.x + 170.0,
-            pos.y + 120.0,
+            pos.x + (170.0 * systems.scale as f32).floor(),
+            pos.y + (120.0 * systems.scale as f32).floor(),
             ORDER_MENU_WINDOW_CONTENT_DETAIL,
         ),
-        Vec2::new(size.x, 20.0),
-        Bounds::new(pos.x + 170.0, pos.y + 120.0, pos.x + 278.0, pos.y + 140.0),
+        Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
+        Bounds::new(
+            pos.x + (170.0 * systems.scale as f32).floor(),
+            pos.y + (120.0 * systems.scale as f32).floor(),
+            pos.x + (278.0 * systems.scale as f32).floor(),
+            pos.y + (140.0 * systems.scale as f32).floor(),
+        ),
         Color::rgba(80, 80, 80, 255),
     );
     let sprite_number = systems.gfx.add_text(
