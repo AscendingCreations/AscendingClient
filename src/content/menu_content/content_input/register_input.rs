@@ -23,33 +23,29 @@ pub fn register_mouse_input(
 ) {
     match input_type {
         MouseInputType::MouseMove => {
-            hover_buttons(menu_content, systems, tooltip, screen_pos);
-            hover_checkbox(menu_content, systems, tooltip, screen_pos);
-            hover_textbox(menu_content, systems, tooltip, screen_pos);
+            menu_content
+                .register
+                .hover_buttons(systems, tooltip, screen_pos);
+            menu_content
+                .register
+                .hover_textbox(systems, tooltip, screen_pos);
         }
         MouseInputType::MouseLeftDown => {
-            let button_index = click_buttons(menu_content, systems, screen_pos);
+            let button_index =
+                menu_content.register.click_buttons(systems, screen_pos);
             if let Some(index) = button_index {
                 menu_content.did_button_click = true;
                 trigger_button(menu_content, systems, socket, alert, index);
             }
 
-            let checkbox_index =
-                click_checkbox(menu_content, systems, screen_pos);
-            if let Some(index) = checkbox_index {
-                menu_content.did_checkbox_click = true;
-                trigger_checkbox(menu_content, systems, index);
-            }
-
-            click_textbox(menu_content, systems, screen_pos);
+            click_register_textbox(menu_content, systems, screen_pos);
         }
         MouseInputType::MouseLeftDownMove => {
-            hold_move_textbox(menu_content, systems, screen_pos);
+            hold_move_register_textbox(menu_content, systems, screen_pos);
         }
         MouseInputType::MouseRelease => {
-            reset_buttons(menu_content, systems);
-            reset_checkbox(menu_content, systems);
-            release_textbox(menu_content);
+            reset_register_buttons(menu_content, systems);
+            release_register_textbox(menu_content);
         }
         _ => {}
     }
@@ -63,7 +59,7 @@ pub fn register_key_input(
     pressed: bool,
 ) {
     if let Some(textbox_index) = menu_content.selected_textbox {
-        menu_content.textbox[textbox_index]
+        menu_content.register.textbox[textbox_index]
             .enter_text(systems, key, pressed, false);
     }
 }
@@ -82,7 +78,9 @@ fn trigger_button(
                 r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})",
             ).unwrap();
 
-            if menu_content.textbox[0].text != menu_content.textbox[1].text {
+            if menu_content.register.textbox[0].text
+                != menu_content.register.textbox[1].text
+            {
                 alert.show_alert(
                     systems,
                     AlertType::Inform,
@@ -95,7 +93,9 @@ fn trigger_button(
                 return;
             }
 
-            if menu_content.textbox[2].text != menu_content.textbox[3].text {
+            if menu_content.register.textbox[2].text
+                != menu_content.register.textbox[3].text
+            {
                 alert.show_alert(
                     systems,
                     AlertType::Inform,
@@ -108,9 +108,9 @@ fn trigger_button(
                 return;
             }
 
-            let email = menu_content.textbox[0].text.clone();
-            let password = menu_content.textbox[2].text.clone();
-            let username = menu_content.textbox[4].text.clone();
+            let email = menu_content.register.textbox[0].text.clone();
+            let password = menu_content.register.textbox[2].text.clone();
+            let username = menu_content.register.textbox[4].text.clone();
 
             if !username.chars().all(is_name_acceptable)
                 || !password.chars().all(is_password_acceptable)
@@ -201,12 +201,12 @@ fn trigger_button(
             menu_content.content_data =
                 menu_content.content_data.saturating_sub(1).max(0);
             systems.gfx.set_image(
-                menu_content.image[0],
+                menu_content.register.image,
                 systems.resource.players[menu_content.content_data].allocation,
             );
             systems.gfx.set_text(
                 &mut systems.renderer,
-                menu_content.unique_label[0],
+                menu_content.register.unique_label,
                 &format!("{}", menu_content.content_data),
             );
         }
@@ -215,25 +215,15 @@ fn trigger_button(
             menu_content.content_data =
                 menu_content.content_data.saturating_add(1).min(2);
             systems.gfx.set_image(
-                menu_content.image[0],
+                menu_content.register.image,
                 systems.resource.players[menu_content.content_data].allocation,
             );
             systems.gfx.set_text(
                 &mut systems.renderer,
-                menu_content.unique_label[0],
+                menu_content.register.unique_label,
                 &format!("{}", menu_content.content_data),
             );
         }
         _ => {}
     }
-}
-
-fn trigger_checkbox(
-    _menu_content: &mut MenuContent,
-    _systems: &mut SystemHolder,
-    _index: usize,
-) {
-    /*match index {
-        _ => {}
-    }*/
 }

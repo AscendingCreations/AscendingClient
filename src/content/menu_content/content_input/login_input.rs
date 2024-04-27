@@ -22,32 +22,35 @@ pub fn login_mouse_input(
 ) {
     match input_type {
         MouseInputType::MouseMove => {
-            hover_buttons(menu_content, systems, tooltip, screen_pos);
-            hover_checkbox(menu_content, systems, tooltip, screen_pos);
+            menu_content
+                .login
+                .hover_buttons(systems, tooltip, screen_pos);
+            menu_content
+                .login
+                .hover_checkbox(systems, tooltip, screen_pos);
         }
         MouseInputType::MouseLeftDown => {
-            let button_index = click_buttons(menu_content, systems, screen_pos);
+            let button_index =
+                menu_content.login.click_buttons(systems, screen_pos);
             if let Some(index) = button_index {
                 menu_content.did_button_click = true;
                 trigger_button(menu_content, systems, socket, alert, index);
             }
 
-            let checkbox_index =
-                click_checkbox(menu_content, systems, screen_pos);
-            if let Some(index) = checkbox_index {
+            if menu_content.login.click_checkbox(systems, screen_pos) {
                 menu_content.did_checkbox_click = true;
-                trigger_checkbox(menu_content, systems, index);
+                trigger_checkbox(menu_content, systems, 0);
             }
 
-            click_textbox(menu_content, systems, screen_pos);
+            click_login_textbox(menu_content, systems, screen_pos);
         }
         MouseInputType::MouseLeftDownMove => {
-            hold_move_textbox(menu_content, systems, screen_pos);
+            hold_move_login_textbox(menu_content, systems, screen_pos);
         }
         MouseInputType::MouseRelease => {
-            reset_buttons(menu_content, systems);
-            reset_checkbox(menu_content, systems);
-            release_textbox(menu_content);
+            reset_login_buttons(menu_content, systems);
+            reset_login_checkbox(menu_content, systems);
+            release_login_textbox(menu_content);
         }
         _ => {}
     }
@@ -61,7 +64,7 @@ pub fn login_key_input(
     pressed: bool,
 ) {
     if let Some(textbox_index) = menu_content.selected_textbox {
-        menu_content.textbox[textbox_index]
+        menu_content.login.textbox[textbox_index]
             .enter_text(systems, key, pressed, false);
     }
 }
@@ -76,8 +79,8 @@ fn trigger_button(
     match index {
         0 => {
             // Login
-            let username = menu_content.textbox[0].text.clone();
-            let password = menu_content.textbox[1].text.clone();
+            let username = menu_content.login.textbox[0].text.clone();
+            let password = menu_content.login.textbox[1].text.clone();
 
             systems.config.username.clone_from(&username);
             systems.config.password.clone_from(&password);
@@ -122,7 +125,7 @@ fn trigger_checkbox(
     match index {
         0 => {
             // Remember Account
-            systems.config.save_password = menu_content.checkbox[index].value;
+            systems.config.save_password = menu_content.login.checkbox.value;
         }
         _ => {}
     }
