@@ -13,14 +13,9 @@ pub use item::*;
 
 const MAX_MAP_ITEMS: usize = 30;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct MapAttributes {
     pub attribute: Vec<MapAttribute>,
-}
-
-#[derive(Clone, Debug)]
-pub struct MapDirBlock {
-    pub dir: Vec<u8>,
 }
 
 impl MapAttributes {
@@ -32,10 +27,22 @@ impl MapAttributes {
 }
 
 #[derive(Clone, Debug)]
+pub struct MapDirBlock {
+    pub dir: Vec<u8>,
+}
+
+impl MapDirBlock {
+    pub fn default() -> Self {
+        MapDirBlock { dir: Vec::new() }
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct MapContent {
     pub map_pos: MapPosition,
-    pub map_id: [(MapPosition, usize); 9],
+    pub initiated: bool,
     pub index: [(usize, usize); 9], // (MapIndex, Order)
+    pub mappos: [(MapPosition, usize); 9],
     pub dir_block: Vec<(MapDirBlock, usize)>,
     pub map_attribute: Vec<(MapAttributes, usize)>,
     pub music: Vec<(Option<String>, usize)>,
@@ -54,8 +61,9 @@ impl MapContent {
 
         Self {
             map_pos: MapPosition::default(),
-            map_id: [(MapPosition::default(), 0); 9],
+            initiated: false,
             index,
+            mappos: [(MapPosition::default(), 0); 9],
             dir_block: Vec::with_capacity(9),
             map_attribute: Vec::with_capacity(9),
             music: Vec::with_capacity(9),
@@ -86,6 +94,7 @@ impl MapContent {
         self.dir_block.sort_by(|a, b| a.1.cmp(&b.1));
         self.map_attribute.sort_by(|a, b| a.1.cmp(&b.1));
         self.music.sort_by(|a, b| a.1.cmp(&b.1));
+        self.mappos.sort_by(|a, b| a.1.cmp(&b.1));
     }
 
     pub fn move_pos(&mut self, systems: &mut SystemHolder, pos: Vec2) {

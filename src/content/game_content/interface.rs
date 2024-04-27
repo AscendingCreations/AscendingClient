@@ -304,8 +304,9 @@ impl Interface {
                 if interface.profile.visible
                     && interface.profile.order_index == 0
                 {
-                    if let Some(slot) =
-                        interface.profile.find_eq_slot(screen_pos, false)
+                    if let Some(slot) = interface
+                        .profile
+                        .find_eq_slot(systems, screen_pos, false)
                     {
                         send_unequip(socket, slot as u16)?;
                     }

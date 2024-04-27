@@ -136,6 +136,90 @@ impl GameContent {
     ) -> Result<()> {
         self.map.map_pos = map;
 
+        if self.map.initiated {
+            let mut map_to_load = Vec::with_capacity(9);
+
+            let mut array_used = [false; 9];
+            (0..9).for_each(|i| {
+                let mut got_result = false;
+
+                let (mx, my) = get_map_loc(map.x, map.y, i);
+                let map_pos = MapPosition {
+                    x: mx,
+                    y: my,
+                    group: map.group,
+                };
+
+                for (z, inused) in array_used.iter_mut().enumerate() {
+                    if self.map.mappos[z].0 == map_pos {
+                        // Swap Position
+                        *inused = true;
+                        self.map.mappos[z].1 = i;
+                        self.map.map_attribute[z].1 = i;
+                        self.map.dir_block[z].1 = i;
+                        self.map.music[z].1 = i;
+                        self.map.index[z].1 = i;
+                        got_result = true;
+                        break;
+                    }
+                }
+
+                if !got_result {
+                    map_to_load.push(i);
+                }
+            });
+            let mut check_index = 0;
+            for (arr_index, inused) in array_used.iter_mut().enumerate() {
+                if !*inused {
+                    let index = map_to_load[check_index];
+                    self.map.mappos[arr_index].1 = index;
+                    self.map.map_attribute[arr_index].1 = index;
+                    self.map.dir_block[arr_index].1 = index;
+                    self.map.music[arr_index].1 = index;
+                    self.map.index[arr_index].1 = index;
+                    check_index += 1;
+                    *inused = true;
+                }
+            }
+
+            self.map.sort_map();
+
+            for i in map_to_load.iter() {
+                let (mx, my) = get_map_loc(map.x, map.y, *i);
+                let mapdata = load_file(mx, my, map.group as u64)?;
+                load_map_data(systems, &mapdata, self.map.index[*i].0);
+
+                self.map.mappos[*i] = (
+                    MapPosition {
+                        x: mx,
+                        y: my,
+                        group: map.group,
+                    },
+                    *i,
+                );
+
+                self.map.map_attribute[*i] = (
+                    MapAttributes {
+                        attribute: mapdata.attribute.clone(),
+                    },
+                    *i,
+                );
+
+                self.map.music[*i] = (mapdata.music.clone(), *i);
+
+                self.map.dir_block[*i] = (
+                    MapDirBlock {
+                        dir: mapdata.dir_block.clone(),
+                    },
+                    *i,
+                );
+            }
+
+            info!("Map Loaded {:?}", map_to_load.len());
+
+            return Ok(());
+        }
+
         self.map.map_attribute.clear();
         self.map.dir_block.clear();
         self.map.music.clear();
@@ -144,6 +228,15 @@ impl GameContent {
             let (mx, my) = get_map_loc(map.x, map.y, i);
             let mapdata = load_file(mx, my, map.group as u64)?;
             load_map_data(systems, &mapdata, self.map.index[i].0);
+
+            self.map.mappos[i] = (
+                MapPosition {
+                    x: mx,
+                    y: my,
+                    group: map.group,
+                },
+                i,
+            );
 
             self.map.map_attribute.push((
                 MapAttributes {
@@ -161,6 +254,9 @@ impl GameContent {
                 i,
             ));
         }
+
+        self.map.initiated = true;
+
         Ok(())
     }
 
@@ -322,7 +418,7 @@ impl GameContent {
             self.map.map_attribute[from].1 = to;
             self.map.dir_block[from].1 = to;
             self.map.music[from].1 = to;
-            self.map.map_id[from].1 = to;
+            self.map.mappos[from].1 = to;
         }
 
         buffer.clear_buffer();
@@ -340,7 +436,7 @@ impl GameContent {
             self.map.map_attribute[from].1 = to;
             self.map.dir_block[from].1 = to;
             self.map.music[from].1 = to;
-            self.map.map_id[from].1 = to;
+            self.map.mappos[from].1 = to;
 
             buffer.add_task(BufferTaskEnum::LoadMap(
                 mx,

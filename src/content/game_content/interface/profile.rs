@@ -44,7 +44,8 @@ pub struct Profile {
 
 impl Profile {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let w_size = Vec2::new(200.0, 267.0);
+        let orig_size = Vec2::new(200.0, 267.0);
+        let w_size = (orig_size * systems.scale as f32).floor();
         let w_pos = Vec3::new(
             systems.size.width - w_size.x - 10.0,
             60.0,
@@ -65,12 +66,18 @@ impl Profile {
         systems.gfx.set_visible(bg, false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
-        let header_pos = Vec2::new(w_pos.x, w_pos.y + 237.0);
-        let header_size = Vec2::new(w_size.x, 30.0);
+        let header_pos = Vec2::new(
+            w_pos.x,
+            w_pos.y + (237.0 * systems.scale as f32).floor(),
+        );
+        let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
         header_rect
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
-            .set_size(header_size)
+            .set_size(Vec2::new(
+                (header_size.x * systems.scale as f32).floor(),
+                (header_size.y * systems.scale as f32).floor(),
+            ))
             .set_color(Color::rgba(70, 70, 70, 255));
         let header =
             systems
@@ -80,13 +87,17 @@ impl Profile {
 
         let text = create_label(
             systems,
-            Vec3::new(w_pos.x, w_pos.y + 242.0, detail_2),
-            Vec2::new(w_size.x, 20.0),
+            Vec3::new(
+                w_pos.x,
+                w_pos.y + (242.0 * systems.scale as f32).floor(),
+                detail_2,
+            ),
+            Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
             Bounds::new(
                 w_pos.x,
-                w_pos.y + 242.0,
+                w_pos.y + (242.0 * systems.scale as f32).floor(),
                 w_pos.x + w_size.x,
-                w_pos.y + 262.0,
+                w_pos.y + (262.0 * systems.scale as f32).floor(),
             ),
             Color::rgba(200, 200, 200, 255),
         );
@@ -137,11 +148,15 @@ impl Profile {
             let mut box_rect = Rect::new(&mut systems.renderer, 0);
             box_rect
                 .set_position(Vec3::new(
-                    w_pos.x + 10.0 + (37.0 * i as f32),
-                    w_pos.y + 10.0,
+                    w_pos.x
+                        + ((10.0 + (37.0 * i as f32)) * systems.scale as f32)
+                            .floor(),
+                    w_pos.y + (10.0 * systems.scale as f32).floor(),
                     detail_1,
                 ))
-                .set_size(Vec2::new(32.0, 32.0))
+                .set_size(
+                    (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                )
                 .set_color(Color::rgba(200, 200, 200, 255));
             *slot =
                 systems
@@ -155,43 +170,51 @@ impl Profile {
             let (pos, size, msg) = match index {
                 0 => (
                     Vec3::new(
-                        w_pos.x + 10.0,
-                        w_pos.y + w_size.y - 55.0,
+                        w_pos.x + (10.0 * systems.scale as f32).floor(),
+                        w_pos.y + w_size.y
+                            - (55.0 * systems.scale as f32).floor(),
                         detail_1,
                     ),
-                    Vec2::new(100.0, 20.0),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                     "Level",
                 ),
                 1 => (
                     Vec3::new(
-                        w_pos.x + 10.0,
-                        w_pos.y + w_size.y - 80.0,
+                        w_pos.x + (10.0 * systems.scale as f32).floor(),
+                        w_pos.y + w_size.y
+                            - (80.0 * systems.scale as f32).floor(),
                         detail_1,
                     ),
-                    Vec2::new(100.0, 20.0),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                     "Money",
                 ),
                 2 => (
                     Vec3::new(
-                        w_pos.x + 10.0,
-                        w_pos.y + w_size.y - 105.0,
+                        w_pos.x + (10.0 * systems.scale as f32).floor(),
+                        w_pos.y + w_size.y
+                            - (105.0 * systems.scale as f32).floor(),
                         detail_1,
                     ),
-                    Vec2::new(100.0, 20.0),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                     "Damage",
                 ),
                 3 => (
                     Vec3::new(
-                        w_pos.x + 10.0,
-                        w_pos.y + w_size.y - 130.0,
+                        w_pos.x + (10.0 * systems.scale as f32).floor(),
+                        w_pos.y + w_size.y
+                            - (130.0 * systems.scale as f32).floor(),
                         detail_1,
                     ),
-                    Vec2::new(100.0, 20.0),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                     "Defense",
                 ),
                 _ => (
-                    Vec3::new(w_pos.x + 10.0, w_pos.y + 47.0, detail_1),
-                    Vec2::new(100.0, 20.0),
+                    Vec3::new(
+                        w_pos.x + (10.0 * systems.scale as f32).floor(),
+                        w_pos.y + (47.0 * systems.scale as f32).floor(),
+                        detail_1,
+                    ),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                     "Equipment",
                 ),
             };
@@ -212,11 +235,14 @@ impl Profile {
         for index in 0..4 {
             let (pos, size) = (
                 Vec3::new(
-                    w_pos.x + 90.0,
-                    w_pos.y + w_size.y - (55.0 + (25.0 * index as f32)),
+                    w_pos.x + (90.0 * systems.scale as f32).floor(),
+                    w_pos.y + w_size.y
+                        - ((55.0 + (25.0 * index as f32))
+                            * systems.scale as f32)
+                            .floor(),
                     detail_1,
                 ),
-                Vec2::new(100.0, 20.0),
+                (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
             );
             let text = create_label(
                 systems,
@@ -417,23 +443,34 @@ impl Profile {
             Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z),
         );
         let pos = systems.gfx.get_pos(self.header);
-        self.header_pos = Vec2::new(self.pos.x, self.pos.y + 237.0);
+        self.header_pos = Vec2::new(
+            self.pos.x,
+            self.pos.y + (237.0 * systems.scale as f32).floor(),
+        );
         systems.gfx.set_pos(
             self.header,
-            Vec3::new(self.pos.x, self.pos.y + 237.0, pos.z),
+            Vec3::new(
+                self.pos.x,
+                self.pos.y + (237.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         let pos = systems.gfx.get_pos(self.header_text);
         systems.gfx.set_pos(
             self.header_text,
-            Vec3::new(self.pos.x, self.pos.y + 242.0, pos.z),
+            Vec3::new(
+                self.pos.x,
+                self.pos.y + (242.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         systems.gfx.set_bound(
             self.header_text,
             Bounds::new(
                 self.pos.x,
-                self.pos.y + 242.0,
+                self.pos.y + (242.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
-                self.pos.y + 262.0,
+                self.pos.y + (262.0 * systems.scale as f32).floor(),
             ),
         );
         systems.gfx.center_text(self.header_text);
@@ -444,8 +481,10 @@ impl Profile {
 
         for i in 0..MAX_EQPT {
             let slot_pos = Vec2::new(
-                self.pos.x + 10.0 + (37.0 * i as f32),
-                self.pos.y + 10.0,
+                self.pos.x
+                    + ((10.0 + (37.0 * i as f32)) * systems.scale as f32)
+                        .floor(),
+                self.pos.y + (10.0 * systems.scale as f32).floor(),
             );
 
             let pos = systems.gfx.get_pos(self.slot[i]);
@@ -458,7 +497,11 @@ impl Profile {
                 let pos = systems.gfx.get_pos(data.img);
                 systems.gfx.set_pos(
                     data.img,
-                    Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, pos.z),
+                    Vec3::new(
+                        slot_pos.x + (6.0 * systems.scale as f32).floor(),
+                        slot_pos.y + (6.0 * systems.scale as f32).floor(),
+                        pos.z,
+                    ),
                 );
             }
         }
@@ -468,39 +511,47 @@ impl Profile {
             let (pos, size) = match index {
                 0 => (
                     Vec3::new(
-                        self.pos.x + 10.0,
-                        self.pos.y + self.size.y - 55.0,
+                        self.pos.x + (10.0 * systems.scale as f32).floor(),
+                        self.pos.y + self.size.y
+                            - (55.0 * systems.scale as f32).floor(),
                         spos.z,
                     ),
-                    Vec2::new(100.0, 20.0),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                 ),
                 1 => (
                     Vec3::new(
-                        self.pos.x + 10.0,
-                        self.pos.y + self.size.y - 80.0,
+                        self.pos.x + (10.0 * systems.scale as f32).floor(),
+                        self.pos.y + self.size.y
+                            - (80.0 * systems.scale as f32).floor(),
                         spos.z,
                     ),
-                    Vec2::new(100.0, 20.0),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                 ),
                 2 => (
                     Vec3::new(
-                        self.pos.x + 10.0,
-                        self.pos.y + self.size.y - 105.0,
+                        self.pos.x + (10.0 * systems.scale as f32).floor(),
+                        self.pos.y + self.size.y
+                            - (105.0 * systems.scale as f32).floor(),
                         spos.z,
                     ),
-                    Vec2::new(100.0, 20.0),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                 ),
                 3 => (
                     Vec3::new(
-                        self.pos.x + 10.0,
-                        self.pos.y + self.size.y - 130.0,
+                        self.pos.x + (10.0 * systems.scale as f32).floor(),
+                        self.pos.y + self.size.y
+                            - (130.0 * systems.scale as f32).floor(),
                         spos.z,
                     ),
-                    Vec2::new(100.0, 20.0),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                 ),
                 _ => (
-                    Vec3::new(self.pos.x + 10.0, self.pos.y + 47.0, spos.z),
-                    Vec2::new(100.0, 20.0),
+                    Vec3::new(
+                        self.pos.x + (10.0 * systems.scale as f32).floor(),
+                        self.pos.y + (47.0 * systems.scale as f32).floor(),
+                        spos.z,
+                    ),
+                    (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
                 ),
             };
             systems.gfx.set_pos(
@@ -517,11 +568,14 @@ impl Profile {
             let spos = systems.gfx.get_pos(self.value_label[index]);
             let (pos, size) = (
                 Vec3::new(
-                    self.pos.x + 90.0,
-                    self.pos.y + self.size.y - (55.0 + (25.0 * index as f32)),
+                    self.pos.x + (90.0 * systems.scale as f32).floor(),
+                    self.pos.y + self.size.y
+                        - ((55.0 + (25.0 * index as f32))
+                            * systems.scale as f32)
+                            .floor(),
                     spos.z,
                 ),
-                Vec2::new(100.0, 20.0),
+                (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
             );
             systems.gfx.set_pos(
                 self.value_label[index],
@@ -544,7 +598,7 @@ impl Profile {
             return;
         }
 
-        if let Some(slot) = self.find_eq_slot(screen_pos, false) {
+        if let Some(slot) = self.find_eq_slot(systems, screen_pos, false) {
             if let Some(data) = self.eq_data[slot] {
                 itemdesc.set_visible(systems, true);
                 itemdesc.set_data(systems, data.index);
@@ -568,10 +622,12 @@ impl Profile {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_hover(systems, true);
             } else {
@@ -594,10 +650,12 @@ impl Profile {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_click(systems, true);
                 button_found = Some(index)
@@ -619,6 +677,7 @@ impl Profile {
 
     pub fn find_eq_slot(
         &mut self,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
         check_empty: bool,
     ) -> Option<usize> {
@@ -630,14 +689,19 @@ impl Profile {
             };
             if can_proceed {
                 let slot_pos = Vec2::new(
-                    self.pos.x + 10.0 + (37.0 * slot as f32),
-                    self.pos.y + 10.0,
+                    self.pos.x
+                        + ((10.0 + (37.0 * slot as f32))
+                            * systems.scale as f32)
+                            .floor(),
+                    self.pos.y + (10.0 * systems.scale as f32).floor(),
                 );
 
                 if screen_pos.x >= slot_pos.x
-                    && screen_pos.x <= slot_pos.x + 32.0
+                    && screen_pos.x
+                        <= slot_pos.x + (32.0 * systems.scale as f32).floor()
                     && screen_pos.y >= slot_pos.y
-                    && screen_pos.y <= slot_pos.y + 32.0
+                    && screen_pos.y
+                        <= slot_pos.y + (32.0 * systems.scale as f32).floor()
                 {
                     return Some(slot);
                 }
@@ -684,8 +748,10 @@ impl Profile {
         let z_order = detail_origin.sub_f32(0.002, 3);
 
         let slot_pos = Vec2::new(
-            self.pos.x + 10.0 + (37.0 * slot as f32),
-            self.pos.y + 10.0,
+            self.pos.x
+                + ((10.0 + (37.0 * slot as f32)) * systems.scale as f32)
+                    .floor(),
+            self.pos.y + (10.0 * systems.scale as f32).floor(),
         );
 
         let item_sprite = systems.base.item[item.num as usize].sprite;
@@ -695,9 +761,13 @@ impl Profile {
             &mut systems.renderer,
             0,
         );
-        img.hw = Vec2::new(20.0, 20.0);
+        img.hw = (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
         img.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-        img.pos = Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, z_order);
+        img.pos = Vec3::new(
+            slot_pos.x + (6.0 * systems.scale as f32).floor(),
+            slot_pos.y + (6.0 * systems.scale as f32).floor(),
+            z_order,
+        );
         let eq_img = systems.gfx.add_image(img, 0, "Profile EQ Image".into());
         systems.gfx.set_visible(eq_img, self.visible);
 

@@ -391,21 +391,25 @@ impl Scrollbar {
         }
         self.max_value = max_value;
 
-        let scrollbar_size = (self.bar_size
+        let scrollbar_size = ((self.bar_size
             - (self.min_bar_size * self.max_value as f32))
-            .max(self.min_bar_size);
+            .max(self.min_bar_size)
+            * systems.scale as f32)
+            .floor();
 
         (self.start_pos, self.end_pos) = if self.is_vertical {
             (
                 (self.adjust_pos.y * systems.scale as f32).floor() as usize
-                    + (self.bar_size as usize - scrollbar_size as usize),
+                    + ((self.bar_size * systems.scale as f32).floor() as usize
+                        - scrollbar_size as usize),
                 (self.adjust_pos.y * systems.scale as f32).floor() as usize,
             )
         } else {
             (
                 (self.adjust_pos.x * systems.scale as f32).floor() as usize,
                 (self.adjust_pos.x * systems.scale as f32).floor() as usize
-                    + (self.bar_size as usize - scrollbar_size as usize),
+                    + ((self.bar_size * systems.scale as f32).floor() as usize
+                        - scrollbar_size as usize),
             )
         };
         self.length = if self.is_vertical {
