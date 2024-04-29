@@ -30,7 +30,38 @@ pub fn handle_ping(
 ) -> Result<()> {
     let end_time = MyInstant::now();
 
-    let elapse_time = end_time.duration_since(content.ping_start.0).as_millis();
+    let elapse_time =
+        end_time.duration_since(content.ping_start.0).as_millis() as u64;
+
+    let count = content.game_content.interface.average_ping_collection.len();
+    if count > 0 {
+        let sum: u64 = content
+            .game_content
+            .interface
+            .average_ping_collection
+            .iter()
+            .sum();
+        if sum > 0 {
+            let average = sum / count as u64;
+            systems.gfx.set_text(
+                &mut systems.renderer,
+                content.game_content.interface.average_ping,
+                &format!("Av. Ping: {:?}", average),
+            );
+        }
+        if count >= 20 {
+            content
+                .game_content
+                .interface
+                .average_ping_collection
+                .pop_back();
+        }
+    }
+    content
+        .game_content
+        .interface
+        .average_ping_collection
+        .push_front(elapse_time);
 
     systems.gfx.set_text(
         &mut systems.renderer,
@@ -495,7 +526,9 @@ pub fn handle_warp(
 
                     if old_pos.map != pos.map {
                         buffer.clear_buffer();
-                        content.game_content.init_map(systems, pos.map)?;
+                        content
+                            .game_content
+                            .init_map(systems, pos.map, buffer)?;
                         finalize_entity(world, systems)?;
                         content.game_content.refresh_map = true;
                     }

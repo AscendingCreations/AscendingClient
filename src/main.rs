@@ -294,17 +294,17 @@ async fn main() -> Result<()> {
     // create a Text rendering object.
     let text_scale = systems.scale as f32;
     let txt_pos = Vec2::new(
-        systems.size.width - (85.0 * text_scale).floor(),
+        systems.size.width - (150.0 * text_scale).floor(),
         systems.size.height - (25.0 * text_scale).floor(),
     );
     let txt = create_label(
         &mut systems,
         Vec3::new(txt_pos.x, txt_pos.y, 0.0),
-        (Vec2::new(85.0, 20.0) * text_scale).floor(),
+        (Vec2::new(150.0, 20.0) * text_scale).floor(),
         Bounds::new(
             txt_pos.x,
             txt_pos.y,
-            txt_pos.x + (85.0 * text_scale).floor(),
+            txt_pos.x + (150.0 * text_scale).floor(),
             txt_pos.y + (20.0 * text_scale).floor(),
         ),
         Color::rgba(255, 255, 255, 255),
@@ -358,6 +358,8 @@ async fn main() -> Result<()> {
     content.game_content.current_music = "caves.ogg".to_string();
     #[allow(deprecated)]
     event_loop.run(move |event, elwt| {
+        let frame_time_start = MyInstant::now();
+
         frame_time.update();
         let seconds = frame_time.seconds();
 
@@ -547,8 +549,14 @@ async fn main() -> Result<()> {
         )
         .unwrap();
         if systems.fade.fade_logic(&mut systems.gfx, seconds) {
-            fade_end(&mut systems, &mut world, &mut content, &mut socket)
-                .unwrap();
+            fade_end(
+                &mut systems,
+                &mut world,
+                &mut content,
+                &mut socket,
+                &mut buffertask,
+            )
+            .unwrap();
         }
         if systems.map_fade.fade_logic(&mut systems.gfx, seconds) {
             map_fade_end(&mut systems, &mut world, &mut content);
@@ -695,6 +703,41 @@ async fn main() -> Result<()> {
         if fps == 4 {
             systems.renderer.font_sys.shape_run_cache.trim(1024);
         }
+
+        let frame_time_end = MyInstant::now();
+        let elapse_time = frame_time_end
+            .duration_since(frame_time_start.0)
+            .as_millis() as u64;
+
+        let count = content.game_content.interface.frame_loop_collection.len();
+        if count > 0 {
+            let sum: u64 = content
+                .game_content
+                .interface
+                .frame_loop_collection
+                .iter()
+                .sum();
+            if sum > 0 {
+                let average: u64 = sum / count as u64;
+                systems.gfx.set_text(
+                    &mut systems.renderer,
+                    content.game_content.interface.frame_loop,
+                    &format!("Frame Jitter: {:?}", average),
+                );
+            }
+            if count >= 20 {
+                content
+                    .game_content
+                    .interface
+                    .frame_loop_collection
+                    .pop_back();
+            }
+        }
+        content
+            .game_content
+            .interface
+            .frame_loop_collection
+            .push_front(elapse_time);
     })?;
 
     Ok(())

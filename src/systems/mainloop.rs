@@ -63,7 +63,7 @@ pub fn game_loop(
             if seconds > loop_timer.ping_tmr && systems.config.show_ping {
                 send_gameping(socket)?;
                 content.ping_start = MyInstant::now();
-                loop_timer.ping_tmr = seconds + 5.0;
+                loop_timer.ping_tmr = seconds + 1.0;
             }
         }
         ContentType::Menu => {}

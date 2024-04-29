@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
@@ -54,7 +56,11 @@ pub enum SelectedTextbox {
 
 pub struct Interface {
     pub ping_text: usize,
-    menu_button: [Button; 3],
+    pub average_ping: usize,
+    pub frame_loop: usize,
+    pub average_ping_collection: VecDeque<u64>,
+    pub frame_loop_collection: VecDeque<u64>,
+    pub menu_button: [Button; 3],
     pub vitalbar: VitalBar,
     did_button_click: bool,
     pub inventory: Inventory,
@@ -74,27 +80,22 @@ impl Interface {
     pub fn new(systems: &mut SystemHolder) -> Self {
         let menu_button = create_menu_button(systems);
 
-        let size = (Vec2::new(85.0, 20.0) * systems.scale as f32).floor();
-        let addy = if systems.config.show_fps {
-            30.0 * systems.scale as f32
-        } else {
-            5.0 * systems.scale as f32
-        }
-        .floor();
-        let ping_pos = Vec3::new(
+        let size = (Vec2::new(150.0, 20.0) * systems.scale as f32).floor();
+        let statistic_pos = Vec3::new(
             systems.size.width - size.x,
-            systems.size.height - size.y - addy,
+            systems.size.height - size.y - 30.0 * systems.scale as f32,
             0.0,
         );
+
         let ping = create_label(
             systems,
-            ping_pos,
+            statistic_pos,
             size,
             Bounds::new(
-                ping_pos.x,
-                ping_pos.y,
-                ping_pos.x + size.x,
-                ping_pos.y + size.y,
+                statistic_pos.x,
+                statistic_pos.y,
+                statistic_pos.x + size.x,
+                statistic_pos.y + size.y,
             ),
             Color::rgba(200, 200, 200, 255),
         );
@@ -104,9 +105,59 @@ impl Interface {
             .gfx
             .set_text(&mut systems.renderer, ping_text, "Ping: 0");
 
+        let pos = Vec3::new(
+            statistic_pos.x,
+            statistic_pos.y - 25.0 * systems.scale as f32,
+            statistic_pos.z,
+        );
+        let averageping = create_label(
+            systems,
+            pos,
+            size,
+            Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+            Color::rgba(200, 200, 200, 255),
+        );
+        let average_ping =
+            systems.gfx.add_text(averageping, 5, "Av. Ping".to_string());
+        systems
+            .gfx
+            .set_visible(average_ping, systems.config.show_average_ping);
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            average_ping,
+            "Av. Ping: 0",
+        );
+
+        let pos = Vec3::new(
+            statistic_pos.x,
+            statistic_pos.y - 50.0 * systems.scale as f32,
+            statistic_pos.z,
+        );
+        let framejitter = create_label(
+            systems,
+            pos,
+            size,
+            Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+            Color::rgba(200, 200, 200, 255),
+        );
+        let frame_loop =
+            systems.gfx.add_text(framejitter, 5, "Av. Ping".to_string());
+        systems
+            .gfx
+            .set_visible(frame_loop, systems.config.show_frame_loop);
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            frame_loop,
+            "Frame Jitter: 0",
+        );
+
         let mut interface = Interface {
             menu_button,
             ping_text,
+            average_ping,
+            frame_loop,
+            average_ping_collection: VecDeque::with_capacity(20),
+            frame_loop_collection: VecDeque::with_capacity(20),
             vitalbar: VitalBar::new(systems),
             did_button_click: false,
             inventory: Inventory::new(systems),
@@ -156,6 +207,12 @@ impl Interface {
         systems
             .gfx
             .set_visible(self.ping_text, systems.config.show_ping);
+        systems
+            .gfx
+            .set_visible(self.average_ping, systems.config.show_average_ping);
+        systems
+            .gfx
+            .set_visible(self.frame_loop, systems.config.show_frame_loop);
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
@@ -173,6 +230,8 @@ impl Interface {
         self.window_order.clear();
         self.item_desc.unload(systems);
         systems.gfx.set_visible(self.ping_text, false);
+        systems.gfx.set_visible(self.average_ping, false);
+        systems.gfx.set_visible(self.frame_loop, false);
     }
 
     pub fn mouse_input(
@@ -397,6 +456,8 @@ impl Interface {
                             systems,
                             index,
                             interface.ping_text,
+                            interface.average_ping,
+                            interface.frame_loop,
                         );
                         result = true;
                     }

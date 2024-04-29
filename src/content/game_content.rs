@@ -73,7 +73,7 @@ impl GameContent {
             players: Rc::new(RefCell::new(IndexSet::default())),
             npcs: Rc::new(RefCell::new(IndexSet::default())),
             mapitems: Rc::new(RefCell::new(IndexSet::default())),
-            map: MapContent::new(systems),
+            map: MapContent::new(),
             camera: Camera::new(Vec2::new(0.0, 0.0)),
             interface: Interface::new(systems),
             keyinput: [false; MAX_KEY],
@@ -91,7 +91,7 @@ impl GameContent {
     }
 
     pub fn show(&mut self, systems: &mut SystemHolder) {
-        self.map.recreate(systems);
+        self.map.recreate();
         self.interface.recreate(systems);
         self.keyinput.iter_mut().for_each(|key| {
             *key = false;
@@ -126,137 +126,6 @@ impl GameContent {
         self.player_data.unload();
         self.float_text.unload(systems);
         systems.caret.index = None;
-        Ok(())
-    }
-
-    pub fn init_map(
-        &mut self,
-        systems: &mut SystemHolder,
-        map: MapPosition,
-    ) -> Result<()> {
-        self.map.map_pos = map;
-
-        if self.map.initiated {
-            let mut map_to_load = Vec::with_capacity(9);
-
-            let mut array_used = [false; 9];
-            (0..9).for_each(|i| {
-                let mut got_result = false;
-
-                let (mx, my) = get_map_loc(map.x, map.y, i);
-                let map_pos = MapPosition {
-                    x: mx,
-                    y: my,
-                    group: map.group,
-                };
-
-                for (z, inused) in array_used.iter_mut().enumerate() {
-                    if self.map.mappos[z].0 == map_pos {
-                        // Swap Position
-                        *inused = true;
-                        self.map.mappos[z].1 = i;
-                        self.map.map_attribute[z].1 = i;
-                        self.map.dir_block[z].1 = i;
-                        self.map.music[z].1 = i;
-                        self.map.index[z].1 = i;
-                        got_result = true;
-                        break;
-                    }
-                }
-
-                if !got_result {
-                    map_to_load.push(i);
-                }
-            });
-            let mut check_index = 0;
-            for (arr_index, inused) in array_used.iter_mut().enumerate() {
-                if !*inused {
-                    let index = map_to_load[check_index];
-                    self.map.mappos[arr_index].1 = index;
-                    self.map.map_attribute[arr_index].1 = index;
-                    self.map.dir_block[arr_index].1 = index;
-                    self.map.music[arr_index].1 = index;
-                    self.map.index[arr_index].1 = index;
-                    check_index += 1;
-                    *inused = true;
-                }
-            }
-
-            self.map.sort_map();
-
-            for i in map_to_load.iter() {
-                let (mx, my) = get_map_loc(map.x, map.y, *i);
-                let mapdata = get_map_data(systems, mx, my, map.group as u64)?;
-                load_map_data(systems, &mapdata, self.map.index[*i].0);
-
-                self.map.mappos[*i] = (
-                    MapPosition {
-                        x: mx,
-                        y: my,
-                        group: map.group,
-                    },
-                    *i,
-                );
-
-                self.map.map_attribute[*i] = (
-                    MapAttributes {
-                        attribute: mapdata.attribute.clone(),
-                    },
-                    *i,
-                );
-
-                self.map.music[*i] = (mapdata.music.clone(), *i);
-
-                self.map.dir_block[*i] = (
-                    MapDirBlock {
-                        dir: mapdata.dir_block.clone(),
-                    },
-                    *i,
-                );
-            }
-
-            info!("Map Loaded {:?}", map_to_load.len());
-
-            return Ok(());
-        }
-
-        self.map.map_attribute.clear();
-        self.map.dir_block.clear();
-        self.map.music.clear();
-
-        for i in 0..9 {
-            let (mx, my) = get_map_loc(map.x, map.y, i);
-            let mapdata = get_map_data(systems, mx, my, map.group as u64)?;
-            load_map_data(systems, &mapdata, self.map.index[i].0);
-
-            self.map.mappos[i] = (
-                MapPosition {
-                    x: mx,
-                    y: my,
-                    group: map.group,
-                },
-                i,
-            );
-
-            self.map.map_attribute.push((
-                MapAttributes {
-                    attribute: mapdata.attribute.clone(),
-                },
-                i,
-            ));
-
-            self.map.music.push((mapdata.music.clone(), i));
-
-            self.map.dir_block.push((
-                MapDirBlock {
-                    dir: mapdata.dir_block.clone(),
-                },
-                i,
-            ));
-        }
-
-        self.map.initiated = true;
-
         Ok(())
     }
 
@@ -379,14 +248,40 @@ impl GameContent {
             );
         }
 
-        if let Some(music) = &self.map.music[0].0 {
+        /*if let Some(music) = &self.map.music[0].0 {
             if self.current_music != *music {
                 self.current_music.clone_from(music);
                 systems.audio.set_music(&format!("./audio/{}", music))?;
             }
-        }
+        }*/
 
         self.finalized = true;
+        Ok(())
+    }
+
+    pub fn init_map(
+        &mut self,
+        systems: &mut SystemHolder,
+        map: MapPosition,
+        buffer: &mut BufferTask,
+    ) -> Result<()> {
+        self.map.map_pos = map;
+
+        for i in 0..9 {
+            let (mx, my) = get_map_loc(map.x, map.y, i);
+
+            if let Some(mappos) = get_map_id(systems, self.map.mapindex[i]) {
+                if map.checkdistance(mappos) > 1 {
+                    set_map_visible(systems, self.map.mapindex[i], false);
+                }
+            }
+
+            let key = get_map_key(systems, mx, my, map.group, buffer)?;
+            self.map.mapindex[i] = key;
+            set_map_pos(systems, key, get_mapindex_base_pos(i));
+            set_map_visible(systems, key, true);
+        }
+
         Ok(())
     }
 
@@ -405,73 +300,7 @@ impl GameContent {
             Direction::Up => self.map.map_pos.y += 1,
         }
 
-        let move_maps = match dir {
-            Direction::Up => [(0, 2), (4, 1), (5, 3), (7, 0), (6, 4), (8, 5)],
-            Direction::Left => [(0, 5), (2, 3), (7, 8), (1, 2), (4, 0), (6, 7)],
-            Direction::Right => {
-                [(0, 4), (2, 1), (7, 6), (3, 2), (5, 0), (8, 7)]
-            }
-            Direction::Down => [(0, 7), (4, 6), (5, 8), (2, 0), (1, 4), (3, 5)],
-        };
-        for (from, to) in move_maps {
-            self.map.index[from].1 = to;
-            self.map.map_attribute[from].1 = to;
-            self.map.dir_block[from].1 = to;
-            self.map.music[from].1 = to;
-            self.map.mappos[from].1 = to;
-        }
-
-        buffer.clear_buffer();
-
-        let load_maps = match dir {
-            Direction::Up => [(1, 6), (2, 7), (3, 8)],
-            Direction::Left => [(3, 1), (5, 4), (8, 6)],
-            Direction::Right => [(1, 3), (4, 5), (6, 8)],
-            Direction::Down => [(6, 1), (7, 2), (8, 3)],
-        };
-        for (from, to) in load_maps {
-            let (mx, my) =
-                get_map_loc(self.map.map_pos.x, self.map.map_pos.y, to);
-            self.map.index[from].1 = to;
-            self.map.map_attribute[from].1 = to;
-            self.map.dir_block[from].1 = to;
-            self.map.music[from].1 = to;
-            self.map.mappos[from].1 = to;
-
-            buffer.add_task(BufferTaskEnum::ApplyMap(
-                mx,
-                my,
-                self.map.map_pos.group as u64,
-                to,
-            ));
-            buffer.add_task(BufferTaskEnum::ApplyMapAttribute(
-                mx,
-                my,
-                self.map.map_pos.group as u64,
-                to,
-            ));
-            buffer.add_task(BufferTaskEnum::ApplyMapMusic(
-                mx,
-                my,
-                self.map.map_pos.group as u64,
-                to,
-            ));
-            buffer.add_task(BufferTaskEnum::ApplyMapDirBlock(
-                mx,
-                my,
-                self.map.map_pos.group as u64,
-                to,
-            ));
-        }
-
-        self.map.sort_map();
-
-        if let Some(music) = &self.map.music[0].0 {
-            if self.current_music != *music {
-                self.current_music.clone_from(music);
-                systems.audio.set_music(&format!("./audio/{}", music))?;
-            }
-        }
+        self.init_map(systems, self.map.map_pos, buffer)?;
 
         update_camera(world, self, systems, socket)
     }

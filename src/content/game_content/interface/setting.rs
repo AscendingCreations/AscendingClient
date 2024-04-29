@@ -338,9 +338,99 @@ impl Setting {
                 false,
                 None,
             ),
+            Checkbox::new(
+                systems,
+                CheckboxType::Rect(CheckboxRect {
+                    rect_color: Color::rgba(100, 100, 100, 255),
+                    got_border: true,
+                    border_color: Color::rgba(50, 50, 50, 255),
+                    border_radius: 2.0,
+                    hover_change: CheckboxChangeType::ColorChange(Color::rgba(
+                        140, 140, 140, 255,
+                    )),
+                    click_change: CheckboxChangeType::ColorChange(Color::rgba(
+                        70, 70, 70, 255,
+                    )),
+                }),
+                CheckType::SetRect(CheckRect {
+                    rect_color: Color::rgba(200, 200, 200, 255),
+                    got_border: false,
+                    border_color: Color::rgba(255, 255, 255, 255),
+                    border_radius: 2.0,
+                    pos: Vec2::new(5.0, 5.0),
+                    size: Vec2::new(14.0, 14.0),
+                }),
+                Vec2::new(w_pos.x, w_pos.y),
+                Vec2::new(10.0, w_size.y - 178.0),
+                detail_1,
+                (0.0001, 4),
+                Vec2::new(24.0, 24.0),
+                0,
+                Some(CheckboxText {
+                    text: "Show Average Ping?".to_string(),
+                    offset_pos: Vec2::new(3.0, 2.0),
+                    render_layer: 1,
+                    label_size: Vec2::new(180.0, 20.0),
+                    color: Color::rgba(200, 200, 200, 255),
+                    hover_change: CheckboxChangeType::ColorChange(Color::rgba(
+                        240, 240, 240, 255,
+                    )),
+                    click_change: CheckboxChangeType::ColorChange(Color::rgba(
+                        80, 80, 80, 255,
+                    )),
+                }),
+                false,
+                None,
+            ),
+            Checkbox::new(
+                systems,
+                CheckboxType::Rect(CheckboxRect {
+                    rect_color: Color::rgba(100, 100, 100, 255),
+                    got_border: true,
+                    border_color: Color::rgba(50, 50, 50, 255),
+                    border_radius: 2.0,
+                    hover_change: CheckboxChangeType::ColorChange(Color::rgba(
+                        140, 140, 140, 255,
+                    )),
+                    click_change: CheckboxChangeType::ColorChange(Color::rgba(
+                        70, 70, 70, 255,
+                    )),
+                }),
+                CheckType::SetRect(CheckRect {
+                    rect_color: Color::rgba(200, 200, 200, 255),
+                    got_border: false,
+                    border_color: Color::rgba(255, 255, 255, 255),
+                    border_radius: 2.0,
+                    pos: Vec2::new(5.0, 5.0),
+                    size: Vec2::new(14.0, 14.0),
+                }),
+                Vec2::new(w_pos.x, w_pos.y),
+                Vec2::new(10.0, w_size.y - 202.0),
+                detail_1,
+                (0.0001, 4),
+                Vec2::new(24.0, 24.0),
+                0,
+                Some(CheckboxText {
+                    text: "Show Frame Jitter?".to_string(),
+                    offset_pos: Vec2::new(3.0, 2.0),
+                    render_layer: 1,
+                    label_size: Vec2::new(180.0, 20.0),
+                    color: Color::rgba(200, 200, 200, 255),
+                    hover_change: CheckboxChangeType::ColorChange(Color::rgba(
+                        240, 240, 240, 255,
+                    )),
+                    click_change: CheckboxChangeType::ColorChange(Color::rgba(
+                        80, 80, 80, 255,
+                    )),
+                }),
+                false,
+                None,
+            ),
         ];
         checkbox[0].set_value(systems, systems.config.show_fps);
         checkbox[1].set_value(systems, systems.config.show_ping);
+        checkbox[2].set_value(systems, systems.config.show_average_ping);
+        checkbox[3].set_value(systems, systems.config.show_frame_loop);
 
         Setting {
             visible: false,
@@ -737,6 +827,8 @@ impl Setting {
         systems: &mut SystemHolder,
         index: usize,
         ping_index: usize,
+        average_ping_index: usize,
+        frame_jitter_index: usize,
     ) {
         #[allow(clippy::single_match)]
         match index {
@@ -746,61 +838,28 @@ impl Setting {
                     .gfx
                     .set_visible(systems.fps, systems.config.show_fps);
                 systems.config.save_config("settings.toml");
-
-                let size =
-                    (Vec2::new(85.0, 20.0) * systems.scale as f32).floor();
-                let addy = if systems.config.show_fps {
-                    30.0 * systems.scale as f32
-                } else {
-                    5.0 * systems.scale as f32
-                }
-                .floor();
-                let ping_pos = Vec3::new(
-                    systems.size.width - size.x,
-                    systems.size.height - size.y - addy,
-                    0.0,
-                );
-                systems.gfx.set_pos(ping_index, ping_pos);
-                systems.gfx.set_bound(
-                    ping_index,
-                    Bounds::new(
-                        ping_pos.x,
-                        ping_pos.y,
-                        ping_pos.x + size.x,
-                        ping_pos.y + size.y,
-                    ),
-                );
             }
             1 => {
                 systems.config.show_ping = self.checkbox[index].value;
                 systems
                     .gfx
                     .set_visible(ping_index, systems.config.show_ping);
-
-                let size =
-                    (Vec2::new(85.0, 20.0) * systems.scale as f32).floor();
-                let addy = if systems.config.show_fps {
-                    30.0 * systems.scale as f32
-                } else {
-                    5.0 * systems.scale as f32
-                }
-                .floor();
-                let ping_pos = Vec3::new(
-                    systems.size.width - size.x,
-                    systems.size.height - size.y - addy,
-                    0.0,
+                systems.config.save_config("settings.toml");
+            }
+            2 => {
+                systems.config.show_average_ping = self.checkbox[index].value;
+                systems.gfx.set_visible(
+                    average_ping_index,
+                    systems.config.show_average_ping,
                 );
-                systems.gfx.set_pos(ping_index, ping_pos);
-                systems.gfx.set_bound(
-                    ping_index,
-                    Bounds::new(
-                        ping_pos.x,
-                        ping_pos.y,
-                        ping_pos.x + size.x,
-                        ping_pos.y + size.y,
-                    ),
+                systems.config.save_config("settings.toml");
+            }
+            3 => {
+                systems.config.show_frame_loop = self.checkbox[index].value;
+                systems.gfx.set_visible(
+                    frame_jitter_index,
+                    systems.config.show_frame_loop,
                 );
-
                 systems.config.save_config("settings.toml");
             }
             _ => {}

@@ -40,83 +40,40 @@ impl MapDirBlock {
 #[derive(Clone, Debug)]
 pub struct MapContent {
     pub map_pos: MapPosition,
-    pub initiated: bool,
-    pub index: [(usize, usize); 9], // (MapIndex, Order)
-    pub mappos: [(MapPosition, usize); 9],
-    pub dir_block: Vec<(MapDirBlock, usize)>,
-    pub map_attribute: Vec<(MapAttributes, usize)>,
-    pub music: Vec<(Option<String>, usize)>,
+    pub mapindex: [Index; 9],
 }
 
 impl MapContent {
-    pub fn new(systems: &mut SystemHolder) -> Self {
-        let mut index = [(0, 0); 9];
-
-        for (i, index) in index.iter_mut().enumerate() {
-            let mut mapdata = Map::new(&mut systems.renderer, TILE_SIZE as u32);
-            mapdata.pos = get_mapindex_base_pos(i);
-            mapdata.can_render = true;
-            *index = (systems.gfx.add_map(mapdata, 0, "Map".into()), i);
-        }
-
+    pub fn new() -> Self {
         Self {
             map_pos: MapPosition::default(),
-            initiated: false,
-            index,
-            mappos: [(MapPosition::default(), 0); 9],
-            dir_block: Vec::with_capacity(9),
-            map_attribute: Vec::with_capacity(9),
-            music: Vec::with_capacity(9),
+            mapindex: [Index::default(); 9],
         }
     }
 
-    pub fn recreate(&mut self, systems: &mut SystemHolder) {
-        for i in 0..9 {
-            let mut mapdata = Map::new(&mut systems.renderer, TILE_SIZE as u32);
-            mapdata.pos = get_mapindex_base_pos(i);
-            mapdata.can_render = true;
-            self.index[i] = (systems.gfx.add_map(mapdata, 0, "Map".into()), i);
-        }
+    pub fn recreate(&mut self) {
+        self.mapindex = [Index::default(); 9];
         self.map_pos = MapPosition::default();
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        self.index.iter().for_each(|(index, _)| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *index);
-        });
-        self.dir_block.clear();
-        self.map_attribute.clear();
-        self.music.clear();
-    }
-
-    pub fn sort_map(&mut self) {
-        self.index.sort_by(|a, b| a.1.cmp(&b.1));
-        self.dir_block.sort_by(|a, b| a.1.cmp(&b.1));
-        self.map_attribute.sort_by(|a, b| a.1.cmp(&b.1));
-        self.music.sort_by(|a, b| a.1.cmp(&b.1));
-        self.mappos.sort_by(|a, b| a.1.cmp(&b.1));
+        clear_map_data(systems);
     }
 
     pub fn move_pos(&mut self, systems: &mut SystemHolder, pos: Vec2) {
-        self.index
-            .iter()
-            .enumerate()
-            .for_each(|(index, (map_index, _))| {
-                let add_pos = get_mapindex_base_pos(index);
-                systems.gfx.set_pos(
-                    *map_index,
-                    Vec3::new(add_pos.x + pos.x, add_pos.y + pos.y, 0.0),
-                );
-            });
-    }
-
-    pub fn get_pos(&mut self, systems: &mut SystemHolder) -> Vec2 {
-        let pos = systems.gfx.get_pos(self.index[0].0);
-        Vec2::new(pos.x, pos.y)
+        self.mapindex.iter().enumerate().for_each(|(index, key)| {
+            let add_pos = get_mapindex_base_pos(index);
+            set_map_pos(
+                systems,
+                *key,
+                Vec2::new(add_pos.x + pos.x, add_pos.y + pos.y),
+            );
+        });
     }
 
     pub fn get_attribute(
         &self,
+        systems: &mut SystemHolder,
         pos: Vec2,
         direction: &Direction,
     ) -> MapAttribute {
@@ -155,7 +112,9 @@ impl MapContent {
             new_pos.y = 0.0;
         }
         let tile_num = get_tile_pos(new_pos.x as i32, new_pos.y as i32);
-        self.map_attribute[map_index].0.attribute[tile_num].clone()
+        get_map_attributes(systems, self.mapindex[map_index]).attribute
+            [tile_num]
+            .clone()
     }
 
     pub fn get_next_pos(
@@ -189,9 +148,14 @@ impl MapContent {
         new_pos
     }
 
-    pub fn get_dir_block(&self, pos: Vec2, map_index: usize) -> u8 {
+    pub fn get_dir_block(
+        &self,
+        systems: &mut SystemHolder,
+        pos: Vec2,
+        map_index: usize,
+    ) -> u8 {
         let tile_num = get_tile_pos(pos.x as i32, pos.y as i32);
-        self.dir_block[map_index].0.dir[tile_num]
+        get_map_dir_block(systems, self.mapindex[map_index]).dir[tile_num]
     }
 }
 
@@ -201,9 +165,8 @@ pub fn find_entity(
     content: &mut GameContent,
     screen_pos: Vec2,
 ) -> Option<Entity> {
-    let center_pos = systems.gfx.get_pos(content.map.index[0].0);
-    let adjusted_pos =
-        Vec2::new(screen_pos.x - center_pos.x, screen_pos.y - center_pos.y);
+    let center_pos = get_map_pos(systems, content.map.mapindex[0]);
+    let adjusted_pos = screen_pos - center_pos;
     let tile_pos = Vec2::new(
         (adjusted_pos.x / 20.0).floor(),
         (adjusted_pos.y / 20.0).floor(),
@@ -294,9 +257,11 @@ pub fn can_move(
         return Ok(false);
     }
 
-    let dir_block = content
-        .map
-        .get_dir_block(Vec2::new(pos.x as f32, pos.y as f32), 0);
+    let dir_block = content.map.get_dir_block(
+        systems,
+        Vec2::new(pos.x as f32, pos.y as f32),
+        0,
+    );
     if match direction {
         Direction::Down => dir_block.get(B0) == 0b00000001,
         Direction::Right => dir_block.get(B3) == 0b00001000,
@@ -320,9 +285,11 @@ pub fn can_move(
         }
     }
 
-    let attribute = content
-        .map
-        .get_attribute(Vec2::new(pos.x as f32, pos.y as f32), direction);
+    let attribute = content.map.get_attribute(
+        systems,
+        Vec2::new(pos.x as f32, pos.y as f32),
+        direction,
+    );
     Ok(!matches!(
         attribute,
         MapAttribute::Blocked | MapAttribute::Storage | MapAttribute::Shop(_)

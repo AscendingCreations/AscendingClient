@@ -254,9 +254,11 @@ pub fn move_player(
     if let Some(p) = content.myentity {
         if &p == entity {
             let pos = world.get_or_err::<Position>(entity)?;
-            let attribute = content
-                .map
-                .get_attribute(Vec2::new(pos.x as f32, pos.y as f32), &dir);
+            let attribute = content.map.get_attribute(
+                systems,
+                Vec2::new(pos.x as f32, pos.y as f32),
+                &dir,
+            );
             if matches!(attribute, MapAttribute::Warp(_)) {
                 systems.map_fade.force_fade(&mut systems.gfx, FadeType::In);
             }
