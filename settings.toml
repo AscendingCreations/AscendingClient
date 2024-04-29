@@ -1,13 +1,13 @@
 username = "lordsatin@hotmail.com"
 password = "test"
 save_password = true
-bgm_volume = 7
+bgm_volume = 1
 sfx_volume = 7
-reconnect_code = "Zp8jiR59YZl77N7nUC9mcWnM7NZ3xNJE"
+reconnect_code = "iJShJE02o2NCgWPmq4dHvY9vSsV6Tami"
 level_filter = "Info"
 enable_backtrace = false
 graphic_backend = "OpenGL|DX12|Vulkan|Metal"
-show_fps = false
+show_fps = true
 show_ping = true
 power_settings = "HighPower"
 present_mode = "AutoVsync"

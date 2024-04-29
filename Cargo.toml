@@ -53,19 +53,23 @@ educe = { version = "0.5.11", default-features = false, features = [
 ] }
 rand = "0.8.5"
 bit_op = "0.1.1"
+slotmap = "1.0.7"
 
 [dependencies.camera]
 package = "ascending_camera"
+git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/camera"
 version = "0.1.1"
 
 [dependencies.input]
 package = "ascending_input"
+git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/input"
 version = "0.2.1"
 
 [dependencies.graphics]
 package = "ascending_graphics"
+git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/graphics"
 version = "0.5.0"
 
