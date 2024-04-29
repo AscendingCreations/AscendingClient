@@ -1193,6 +1193,12 @@ pub fn handle_openstorage(
         Window::Storage,
     );
 
+    content
+        .game_content
+        .keyinput
+        .iter_mut()
+        .for_each(|key_press| *key_press = false);
+
     content.game_content.player_data.is_using_type = IsUsingType::Bank;
 
     Ok(())
@@ -1216,6 +1222,12 @@ pub fn handle_openshop(
         .interface
         .shop
         .set_shop(systems, shop_index as usize);
+
+    content
+        .game_content
+        .keyinput
+        .iter_mut()
+        .for_each(|key_press| *key_press = false);
 
     content.game_content.player_data.is_using_type =
         IsUsingType::Store(shop_index as i64);
@@ -1332,6 +1344,12 @@ pub fn handle_inittrade(
         .interface
         .trade
         .clear_trade_items(systems);
+
+    content
+        .game_content
+        .keyinput
+        .iter_mut()
+        .for_each(|key_press| *key_press = false);
 
     Ok(())
 }

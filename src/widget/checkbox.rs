@@ -1,3 +1,5 @@
+use std::default;
+
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
@@ -56,18 +58,23 @@ pub struct CheckboxText {
     pub click_change: CheckboxChangeType,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub enum CheckType {
+    #[default]
+    Empty,
     SetRect(CheckRect),
     SetImage(CheckImage),
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub enum CheckboxType {
+    #[default]
+    Empty,
     Rect(CheckboxRect),
     Image(CheckboxImage),
 }
 
+#[derive(Default)]
 pub struct Checkbox {
     visible: bool,
     image: usize,
@@ -143,6 +150,7 @@ impl Checkbox {
                     "Checkbox Image".into(),
                 )
             }
+            _ => 0,
         };
         systems.gfx.set_visible(image, visible);
 
@@ -184,6 +192,7 @@ impl Checkbox {
                     "Checkbox Check".into(),
                 )
             }
+            _ => 0,
         };
         systems.gfx.set_visible(check_image, false);
 
@@ -306,6 +315,7 @@ impl Checkbox {
         let extra_pos = match contenttype {
             CheckType::SetRect(data) => data.pos * systems.scale as f32,
             CheckType::SetImage(data) => data.pos * systems.scale as f32,
+            _ => Vec2::new(0.0, 0.0),
         };
         let pos = Vec3::new(
             self.base_pos.x
@@ -409,6 +419,7 @@ impl Checkbox {
                     );
                 }
             }
+            _ => {}
         }
 
         if let Some(data) = &mut self.text_type {
@@ -445,6 +456,7 @@ impl Checkbox {
                     );
                 }
             }
+            _ => {}
         }
 
         if let Some(data) = &mut self.text_type {
@@ -469,6 +481,7 @@ impl Checkbox {
                     Vec4::new(0.0, 0.0, self.box_size.x, self.box_size.y),
                 );
             }
+            _ => {}
         }
 
         if let Some(data) = &mut self.text_type {

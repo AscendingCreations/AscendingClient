@@ -48,6 +48,7 @@ pub struct ItemSpawnData {
 #[derive(
     Clone,
     Debug,
+    Default,
     Serialize,
     Deserialize,
     PartialEq,
@@ -56,6 +57,7 @@ pub struct ItemSpawnData {
     ByteBufferWrite,
 )]
 pub enum MapAttribute {
+    #[default]
     Walkable,
     Blocked,
     NpcBlocked,

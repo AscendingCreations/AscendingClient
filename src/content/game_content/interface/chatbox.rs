@@ -1099,6 +1099,18 @@ pub fn send_chat(
                     "trade" => {
                         send_command(socket, crate::Command::Trade)?;
                     }
+                    "warp" => send_command(
+                        socket,
+                        crate::Command::WarpTo(Position {
+                            x: 10,
+                            y: 10,
+                            map: MapPosition {
+                                x: 0,
+                                y: -1,
+                                group: 0,
+                            },
+                        }),
+                    )?,
                     _ => {
                         interface.chatbox.add_chat(
                             systems,
