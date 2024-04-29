@@ -1,8 +1,11 @@
+use std::collections::HashMap;
+
 use graphics::{
     wgpu::{InstanceFlags, PresentMode},
     *,
 };
 use serde::{Deserialize, Serialize};
+use slotmap::{Key, SlotMap};
 use winit::dpi::PhysicalSize;
 
 pub mod fade;
@@ -10,8 +13,8 @@ pub mod fade;
 pub use fade::*;
 
 use crate::{
-    data_types::*, game_content::*, Audio, Config, ItemData, NpcData, ShopData,
-    TextureAllocation,
+    data_types::*, game_content::*, Audio, Config, ItemData, MapData, NpcData,
+    ShopData, TextureAllocation,
 };
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -85,6 +88,8 @@ pub struct DatabaseHolder {
     pub item: Vec<ItemData>,
     pub shop: Vec<ShopData>,
     pub npc: Vec<NpcData>,
+    pub mapdata: SlotMap<Index, MapData>,
+    pub mappos_key: HashMap<MapPosition, Index>,
 }
 
 pub struct SystemHolder {

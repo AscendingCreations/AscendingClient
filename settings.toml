@@ -1,20 +1,14 @@
 username = "sherwin@test.com"
 password = "test"
 save_password = true
-<<<<<<< HEAD
-bgm_volume = 1
-sfx_volume = 7
-reconnect_code = "iJShJE02o2NCgWPmq4dHvY9vSsV6Tami"
-=======
 bgm_volume = 0
 sfx_volume = 70
-reconnect_code = "ZlCFuZ4VIIszlW7G9HX8AqseHqdjfxfC"
->>>>>>> b7c167be664882a51e61f369e735547084a2c7dd
+reconnect_code = "5BVSjEoniX30lMjKUw1MTlAaI5T8Ck1v"
 level_filter = "Info"
 enable_backtrace = false
 graphic_backend = "OpenGL|DX12|Vulkan|Metal"
-show_fps = true
-show_ping = true
+show_fps = false
+show_ping = false
 power_settings = "HighPower"
 present_mode = "AutoVsync"
 gpu_instance = "None"

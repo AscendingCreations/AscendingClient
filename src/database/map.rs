@@ -135,6 +135,36 @@ impl MapData {
     }
 }
 
+pub fn get_map_data(
+    systems: &mut SystemHolder,
+    x: i32,
+    y: i32,
+    group: u64,
+) -> Result<MapData> {
+    let mappos = MapPosition {
+        x,
+        y,
+        group: group as i32,
+    };
+
+    let key = systems.base.mappos_key.get(&mappos);
+
+    if let Some(keyindex) = key {
+        let mapdata = systems.base.mapdata.get(*keyindex);
+        if let Some(data) = mapdata {
+            println!("Loading from SlotMap");
+            return Ok(data.clone());
+        }
+    }
+
+    let mapdata = load_file(x, y, group)?;
+    let key = systems.base.mapdata.insert(mapdata.clone());
+    systems.base.mappos_key.insert(mappos, key);
+
+    println!("Loading from File");
+    Ok(mapdata)
+}
+
 pub fn load_file(x: i32, y: i32, group: u64) -> Result<MapData> {
     if !is_map_exist(x, y, group) {
         return Ok(MapData::default(x, y, group));

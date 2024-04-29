@@ -186,7 +186,7 @@ impl GameContent {
 
             for i in map_to_load.iter() {
                 let (mx, my) = get_map_loc(map.x, map.y, *i);
-                let mapdata = load_file(mx, my, map.group as u64)?;
+                let mapdata = get_map_data(systems, mx, my, map.group as u64)?;
                 load_map_data(systems, &mapdata, self.map.index[*i].0);
 
                 self.map.mappos[*i] = (
@@ -226,7 +226,7 @@ impl GameContent {
 
         for i in 0..9 {
             let (mx, my) = get_map_loc(map.x, map.y, i);
-            let mapdata = load_file(mx, my, map.group as u64)?;
+            let mapdata = get_map_data(systems, mx, my, map.group as u64)?;
             load_map_data(systems, &mapdata, self.map.index[i].0);
 
             self.map.mappos[i] = (
@@ -438,11 +438,6 @@ impl GameContent {
             self.map.music[from].1 = to;
             self.map.mappos[from].1 = to;
 
-            buffer.add_task(BufferTaskEnum::LoadMap(
-                mx,
-                my,
-                self.map.map_pos.group as u64,
-            ));
             buffer.add_task(BufferTaskEnum::ApplyMap(
                 mx,
                 my,
@@ -466,11 +461,6 @@ impl GameContent {
                 my,
                 self.map.map_pos.group as u64,
                 to,
-            ));
-            buffer.add_task(BufferTaskEnum::UnloadMap(
-                mx,
-                my,
-                self.map.map_pos.group as u64,
             ));
         }
 

@@ -31,6 +31,7 @@ pub struct Finalized(pub bool);
     Eq,
     ByteBufferRead,
     ByteBufferWrite,
+    Hash,
 )]
 pub struct MapPosition {
     pub x: i32,

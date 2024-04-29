@@ -13,12 +13,10 @@ pub struct StoredData {
 }
 
 pub enum BufferTaskEnum {
-    LoadMap(i32, i32, u64),
     ApplyMap(i32, i32, u64, usize),
     ApplyMapAttribute(i32, i32, u64, usize),
     ApplyMapMusic(i32, i32, u64, usize),
     ApplyMapDirBlock(i32, i32, u64, usize),
-    UnloadMap(i32, i32, u64),
 }
 
 pub struct BufferTask {
@@ -63,61 +61,53 @@ impl BufferTask {
         if let Some(task) = task_data {
             match task {
                 BufferTaskEnum::ApplyMap(mx, my, mg, map_index) => {
-                    let key = format!("{}_{}_{}", mx, my, mg);
-                    if let Some(mapdata) = self.storage.map_data.get(&key) {
-                        load_map_data(
-                            systems,
-                            mapdata,
-                            content.game_content.map.index[map_index].0,
-                        );
-                        content.game_content.map.index[map_index].1 = map_index;
+                    //let key = format!("{}_{}_{}", mx, my, mg);
+                    let mapdata = get_map_data(systems, mx, my, mg)?;
+                    //if let Some(mapdata) = self.storage.map_data.get(&key) {
+                    load_map_data(
+                        systems,
+                        &mapdata,
+                        content.game_content.map.index[map_index].0,
+                    );
+                    content.game_content.map.index[map_index].1 = map_index;
 
-                        content.game_content.map.mappos[map_index].0 =
-                            MapPosition {
-                                x: mx,
-                                y: my,
-                                group: mg as i32,
-                            };
-                        content.game_content.map.mappos[map_index].1 =
-                            map_index;
-                    }
+                    content.game_content.map.mappos[map_index].0 =
+                        MapPosition {
+                            x: mx,
+                            y: my,
+                            group: mg as i32,
+                        };
+                    content.game_content.map.mappos[map_index].1 = map_index;
+                    //}
                 }
                 BufferTaskEnum::ApplyMapAttribute(mx, my, mg, map_index) => {
-                    let key = format!("{}_{}_{}", mx, my, mg);
-                    if let Some(mapdata) = self.storage.map_data.get(&key) {
-                        content.game_content.map.map_attribute[map_index].0 =
-                            MapAttributes {
-                                attribute: mapdata.attribute.clone(),
-                            };
-                    }
+                    //let key = format!("{}_{}_{}", mx, my, mg);
+                    //if let Some(mapdata) = self.storage.map_data.get(&key) {
+                    let mapdata = get_map_data(systems, mx, my, mg)?;
+                    content.game_content.map.map_attribute[map_index].0 =
+                        MapAttributes {
+                            attribute: mapdata.attribute.clone(),
+                        };
+                    //}
                 }
                 BufferTaskEnum::ApplyMapDirBlock(mx, my, mg, map_index) => {
-                    let key = format!("{}_{}_{}", mx, my, mg);
-                    if let Some(mapdata) = self.storage.map_data.get(&key) {
-                        content.game_content.map.dir_block[map_index].0 =
-                            MapDirBlock {
-                                dir: mapdata.dir_block.clone(),
-                            };
-                    }
+                    //let key = format!("{}_{}_{}", mx, my, mg);
+                    //if let Some(mapdata) = self.storage.map_data.get(&key) {
+                    let mapdata = get_map_data(systems, mx, my, mg)?;
+                    content.game_content.map.dir_block[map_index].0 =
+                        MapDirBlock {
+                            dir: mapdata.dir_block.clone(),
+                        };
+                    //}
                 }
                 BufferTaskEnum::ApplyMapMusic(mx, my, mg, map_index) => {
-                    let key = format!("{}_{}_{}", mx, my, mg);
-                    if let Some(mapdata) = self.storage.map_data.get(&key) {
-                        content.game_content.map.music[map_index]
-                            .0
-                            .clone_from(&mapdata.music);
-                    }
-                }
-                BufferTaskEnum::LoadMap(mx, my, mg) => {
-                    let key = format!("{}_{}_{}", mx, my, mg);
-                    let map_data = load_file(mx, my, mg)?;
-                    self.storage.map_data.insert(key, map_data);
-                }
-                BufferTaskEnum::UnloadMap(mx, my, mg) => {
-                    let key = format!("{}_{}_{}", mx, my, mg);
-                    if self.storage.map_data.contains_key(&key) {
-                        self.storage.map_data.shift_remove(&key);
-                    }
+                    //let key = format!("{}_{}_{}", mx, my, mg);
+                    //if let Some(mapdata) = self.storage.map_data.get(&key) {
+                    let mapdata = get_map_data(systems, mx, my, mg)?;
+                    content.game_content.map.music[map_index]
+                        .0
+                        .clone_from(&mapdata.music);
+                    //}
                 }
             }
         }

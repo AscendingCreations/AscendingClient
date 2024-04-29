@@ -16,7 +16,8 @@ use hecs::World;
 use input::{Bindings, FrameTime, InputHandler, Key};
 use log::{error, info, warn, LevelFilter, Metadata, Record};
 use serde::{Deserialize, Serialize};
-use std::env;
+use slotmap::SlotMap;
+use std::{collections::HashMap, env};
 use std::{
     fs::{self, File},
     io::{prelude::*, Read, Write},
@@ -187,7 +188,7 @@ async fn main() -> Result<()> {
     let size = renderer.size();
 
     // get the Scale factor the pc currently is using for upscaling or downscaling the rendering.
-    let scale = 1.5; //renderer.window().current_monitor().unwrap().scale_factor();
+    let scale = 1.0; //renderer.window().current_monitor().unwrap().scale_factor();
 
     // We generate Texture atlases to use with out types.
     let mut atlases: Vec<AtlasSet> = iter::from_fn(|| {
@@ -218,6 +219,8 @@ async fn main() -> Result<()> {
         item: get_item()?,
         shop: get_shop()?,
         npc: get_npc()?,
+        mapdata: SlotMap::with_key(),
+        mappos_key: HashMap::new(),
     };
 
     // Compile all rendering data in one type for quick access and passing

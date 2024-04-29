@@ -38,6 +38,7 @@ pub fn login_mouse_input(
             }
 
             if menu_content.login.click_checkbox(systems, screen_pos) {
+                menu_content.login.checkbox.set_click(systems, true);
                 menu_content.did_checkbox_click = true;
                 trigger_checkbox(menu_content, systems, 0);
             }
@@ -126,6 +127,10 @@ fn trigger_checkbox(
         0 => {
             // Remember Account
             systems.config.save_password = menu_content.login.checkbox.value;
+            menu_content
+                .login
+                .checkbox
+                .set_value(systems, menu_content.login.checkbox.value);
         }
         _ => {}
     }
