@@ -33,35 +33,38 @@ pub fn handle_ping(
     let elapse_time =
         end_time.duration_since(content.ping_start.0).as_millis() as u64;
 
-    let count = content.game_content.interface.average_ping_collection.len();
-    if count > 0 {
-        let sum: u64 = content
-            .game_content
-            .interface
-            .average_ping_collection
-            .iter()
-            .sum();
-        if sum > 0 {
-            let average = sum / count as u64;
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                content.game_content.interface.average_ping,
-                &format!("Av. Ping: {:?}", average),
-            );
-        }
-        if count >= 20 {
-            content
+    if systems.config.show_average_ping {
+        let count =
+            content.game_content.interface.average_ping_collection.len();
+        if count > 0 {
+            let sum: u64 = content
                 .game_content
                 .interface
                 .average_ping_collection
-                .pop_back();
+                .iter()
+                .sum();
+            if sum > 0 {
+                let average = sum / count as u64;
+                systems.gfx.set_text(
+                    &mut systems.renderer,
+                    content.game_content.interface.average_ping,
+                    &format!("Av. Ping: {:?}", average),
+                );
+            }
+            if count >= 20 {
+                content
+                    .game_content
+                    .interface
+                    .average_ping_collection
+                    .pop_back();
+            }
         }
+        content
+            .game_content
+            .interface
+            .average_ping_collection
+            .push_front(elapse_time);
     }
-    content
-        .game_content
-        .interface
-        .average_ping_collection
-        .push_front(elapse_time);
 
     systems.gfx.set_text(
         &mut systems.renderer,

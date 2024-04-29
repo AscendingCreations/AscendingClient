@@ -705,39 +705,43 @@ async fn main() -> Result<()> {
         }
 
         let frame_time_end = MyInstant::now();
-        let elapse_time = frame_time_end
-            .duration_since(frame_time_start.0)
-            .as_millis() as u64;
 
-        let count = content.game_content.interface.frame_loop_collection.len();
-        if count > 0 {
-            let sum: u64 = content
-                .game_content
-                .interface
-                .frame_loop_collection
-                .iter()
-                .sum();
-            if sum > 0 {
-                let average: u64 = sum / count as u64;
-                systems.gfx.set_text(
-                    &mut systems.renderer,
-                    content.game_content.interface.frame_loop,
-                    &format!("Frame Jitter: {:?}", average),
-                );
-            }
-            if count >= 20 {
-                content
+        if systems.config.show_frame_loop {
+            let elapse_time = frame_time_end
+                .duration_since(frame_time_start.0)
+                .as_millis() as u64;
+
+            let count =
+                content.game_content.interface.frame_loop_collection.len();
+            if count > 0 {
+                let sum: u64 = content
                     .game_content
                     .interface
                     .frame_loop_collection
-                    .pop_back();
+                    .iter()
+                    .sum();
+                if sum > 0 {
+                    let average: u64 = sum / count as u64;
+                    systems.gfx.set_text(
+                        &mut systems.renderer,
+                        content.game_content.interface.frame_loop,
+                        &format!("Frame Jitter: {:?}", average),
+                    );
+                }
+                if count >= 20 {
+                    content
+                        .game_content
+                        .interface
+                        .frame_loop_collection
+                        .pop_back();
+                }
             }
+            content
+                .game_content
+                .interface
+                .frame_loop_collection
+                .push_front(elapse_time);
         }
-        content
-            .game_content
-            .interface
-            .frame_loop_collection
-            .push_front(elapse_time);
     })?;
 
     Ok(())
