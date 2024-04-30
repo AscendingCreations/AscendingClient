@@ -67,7 +67,8 @@ impl Content {
                 self.menu_content.show(systems);
             }
         }
-        info!("GFX Loaded Count: {:?}", systems.gfx.count_collection());
+
+        systems.gfx.count_collection();
         Ok(())
     }
 }

@@ -15,9 +15,10 @@ use graphics::*;
 use hecs::World;
 use input::{Bindings, FrameTime, InputHandler, Key};
 use log::{error, info, warn, LevelFilter, Metadata, Record};
+use lru::LruCache;
 use serde::{Deserialize, Serialize};
 use slotmap::SlotMap;
-use std::{collections::HashMap, env};
+use std::{collections::HashMap, env, num::NonZeroUsize};
 use std::{
     fs::{self, File},
     io::{prelude::*, Read, Write},
@@ -221,6 +222,7 @@ async fn main() -> Result<()> {
         npc: get_npc()?,
         mapdata: SlotMap::with_key(),
         mappos_key: HashMap::new(),
+        map_cache: LruCache::new(NonZeroUsize::new(64).unwrap()),
     };
 
     // Compile all rendering data in one type for quick access and passing
@@ -573,7 +575,7 @@ async fn main() -> Result<()> {
         );
 
         // This adds the Image data to the Buffer for rendering.
-        add_image_to_buffer(&mut systems, &mut graphics);
+        add_image_to_buffer(&mut systems, &mut graphics, seconds);
 
         // this cycles all the Image's in the Image buffer by first putting them in rendering order
         // and then uploading them to the GPU if they have moved or changed in any way. clears the

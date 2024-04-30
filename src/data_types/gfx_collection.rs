@@ -2,16 +2,19 @@ use crate::info;
 use cosmic_text::Attrs;
 use graphics::*;
 use slab::Slab;
+use slotmap::SlotMap;
 
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum GfxType {
-    Image(Box<Image>),
-    Rect(Box<Rect>),
-    Text(Box<Text>),
-    Map(Box<Map>),
+    Image,
+    Rect,
+    Text,
+    Map,
 }
 
 pub struct Gfx {
-    pub gfx: GfxType,
+    pub key: Index,
+    pub gfx_type: GfxType,
     pub layer: usize,
     pub visible: bool,
     pub identifier: String,
@@ -20,6 +23,12 @@ pub struct Gfx {
 #[derive(Default)]
 pub struct GfxCollection {
     pub collection: Slab<Gfx>,
+    pub image_storage: SlotMap<Index, Image>,
+    pub rect_storage: SlotMap<Index, Rect>,
+    pub text_storage: SlotMap<Index, Text>,
+    pub map_storage: SlotMap<Index, Map>,
+    pub sorted_array: Vec<(GfxType, usize)>,
+    pub last_sorted_seconds: f32,
 }
 
 impl GfxCollection {
@@ -27,14 +36,25 @@ impl GfxCollection {
         Self::default()
     }
 
-    pub fn count_collection(&self) -> usize {
-        self.collection.len()
+    pub fn count_collection(&self) {
+        info!("Collection Size: {:?}", self.collection.len());
+        info!("Image Size: {:?}", self.image_storage.len());
+        info!("Rect Size: {:?}", self.rect_storage.len());
+        info!("Text Size: {:?}", self.text_storage.len());
+        info!("Map Size: {:?}", self.map_storage.len());
     }
 
     pub fn print_details(&self) {
-        for data in self.collection.iter() {
+        /*for data in self.collection.iter() {
             info!("Data {:?} Type: {:?}", data.0, data.1.identifier);
+        }*/
+        for data in self.sorted_array.iter() {
+            info!("Data Type: {:?} Index: {:?}", data.0, data.1);
         }
+    }
+
+    pub fn sort_gfx_array(&mut self) {
+        self.sorted_array.sort_by(|a, b| a.0.cmp(&b.0));
     }
 
     pub fn add_image(
@@ -43,13 +63,18 @@ impl GfxCollection {
         layer: usize,
         identifier: String,
     ) -> usize {
+        let key = self.image_storage.insert(image);
+
         let gfx = Gfx {
-            gfx: GfxType::Image(Box::new(image)),
+            key,
+            gfx_type: GfxType::Image,
             layer,
             visible: true,
             identifier,
         };
-        self.collection.insert(gfx)
+        let gfx_index = self.collection.insert(gfx);
+        self.sorted_array.push((GfxType::Image, gfx_index));
+        gfx_index
     }
 
     pub fn add_rect(
@@ -58,13 +83,18 @@ impl GfxCollection {
         layer: usize,
         identifier: String,
     ) -> usize {
+        let key = self.rect_storage.insert(rect);
+
         let gfx = Gfx {
-            gfx: GfxType::Rect(Box::new(rect)),
+            key,
+            gfx_type: GfxType::Rect,
             layer,
             visible: true,
             identifier,
         };
-        self.collection.insert(gfx)
+        let gfx_index = self.collection.insert(gfx);
+        self.sorted_array.push((GfxType::Rect, gfx_index));
+        gfx_index
     }
 
     pub fn add_text(
@@ -73,13 +103,18 @@ impl GfxCollection {
         layer: usize,
         identifier: String,
     ) -> usize {
+        let key = self.text_storage.insert(text);
+
         let gfx = Gfx {
-            gfx: GfxType::Text(Box::new(text)),
+            key,
+            gfx_type: GfxType::Text,
             layer,
             visible: true,
             identifier,
         };
-        self.collection.insert(gfx)
+        let gfx_index = self.collection.insert(gfx);
+        self.sorted_array.push((GfxType::Text, gfx_index));
+        gfx_index
     }
 
     pub fn add_map(
@@ -88,62 +123,123 @@ impl GfxCollection {
         layer: usize,
         identifier: String,
     ) -> usize {
+        let key = self.map_storage.insert(map);
+
         let gfx = Gfx {
-            gfx: GfxType::Map(Box::new(map)),
+            key,
+            gfx_type: GfxType::Map,
             layer,
             visible: true,
             identifier,
         };
-        self.collection.insert(gfx)
+        let gfx_index = self.collection.insert(gfx);
+        self.sorted_array.push((GfxType::Map, gfx_index));
+        gfx_index
     }
 
     pub fn remove_gfx(&mut self, renderer: &mut GpuRenderer, index: usize) {
-        if let Some(data) = self.collection.get_mut(index) {
-            match &data.gfx {
-                GfxType::Image(image) => image.unload(renderer),
-                GfxType::Rect(rect) => rect.unload(renderer),
-                GfxType::Text(text) => text.unload(renderer),
-                GfxType::Map(map) => map.unload(renderer),
+        if let Some(data) = self.collection.get(index) {
+            match &data.gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) = self.image_storage.get_mut(data.key) {
+                        gfx.unload(renderer);
+                    }
+                    self.image_storage.remove(data.key);
+                }
+                GfxType::Rect => {
+                    if let Some(gfx) = self.rect_storage.get_mut(data.key) {
+                        gfx.unload(renderer);
+                    }
+                    self.rect_storage.remove(data.key);
+                }
+                GfxType::Text => {
+                    if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                        gfx.unload(renderer);
+                    }
+                    self.text_storage.remove(data.key);
+                }
+                GfxType::Map => {
+                    if let Some(gfx) = self.map_storage.get_mut(data.key) {
+                        gfx.unload(renderer);
+                    }
+                    self.map_storage.remove(data.key);
+                }
             }
         }
         if self.collection.contains(index) {
             self.collection.remove(index);
+        }
+        let index = self.sorted_array.iter().position(|data| data.1 == index);
+        if let Some(gfx_index) = index {
+            self.sorted_array.swap_remove(gfx_index);
         }
     }
 
     pub fn set_visible(&mut self, index: usize, visible: bool) {
         self.collection[index].visible = visible;
         if self.collection[index].visible {
-            match &mut self.collection[index].gfx {
-                GfxType::Image(image) => image.changed = true,
-                GfxType::Rect(rect) => rect.changed = true,
-                GfxType::Text(text) => text.changed = true,
-                GfxType::Map(map) => map.changed = true,
+            match &self.collection[index].gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) =
+                        self.image_storage.get_mut(self.collection[index].key)
+                    {
+                        gfx.changed = true;
+                    }
+                }
+                GfxType::Rect => {
+                    if let Some(gfx) =
+                        self.rect_storage.get_mut(self.collection[index].key)
+                    {
+                        gfx.changed = true;
+                    }
+                }
+                GfxType::Text => {
+                    if let Some(gfx) =
+                        self.text_storage.get_mut(self.collection[index].key)
+                    {
+                        gfx.changed = true;
+                    }
+                }
+                GfxType::Map => {
+                    if let Some(gfx) =
+                        self.map_storage.get_mut(self.collection[index].key)
+                    {
+                        gfx.changed = true;
+                    }
+                }
             }
         }
     }
 
     pub fn set_image(&mut self, index: usize, texture: usize) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Image(image) = &mut data.gfx {
-                image.texture = Some(texture);
-                image.changed = true;
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Image {
+                if let Some(gfx) = self.image_storage.get_mut(data.key) {
+                    gfx.texture = Some(texture);
+                    gfx.changed = true;
+                }
             }
         }
     }
 
     pub fn set_color(&mut self, index: usize, color: Color) {
-        if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Image(image) => {
-                    image.color = color;
-                    image.changed = true;
+        if let Some(data) = self.collection.get(index) {
+            match data.gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) = self.image_storage.get_mut(data.key) {
+                        gfx.color = color;
+                        gfx.changed = true;
+                    }
                 }
-                GfxType::Rect(rect) => {
-                    rect.set_color(color);
+                GfxType::Rect => {
+                    if let Some(gfx) = self.rect_storage.get_mut(data.key) {
+                        gfx.set_color(color);
+                    }
                 }
-                GfxType::Text(text) => {
-                    text.set_default_color(color);
+                GfxType::Text => {
+                    if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                        gfx.set_default_color(color);
+                    }
                 }
                 _ => {}
             }
@@ -151,73 +247,92 @@ impl GfxCollection {
     }
 
     pub fn set_border_color(&mut self, index: usize, color: Color) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Rect(rect) = &mut data.gfx {
-                rect.set_border_color(color);
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Rect {
+                if let Some(gfx) = self.rect_storage.get_mut(data.key) {
+                    gfx.set_border_color(color);
+                }
             }
         }
     }
 
     pub fn set_border_width(&mut self, index: usize, width: f32) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Rect(rect) = &mut data.gfx {
-                rect.set_border_width(width);
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Rect {
+                if let Some(gfx) = self.rect_storage.get_mut(data.key) {
+                    gfx.set_border_width(width);
+                }
             }
         }
     }
 
     pub fn set_pos(&mut self, index: usize, pos: Vec3) {
-        if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Image(image) => {
-                    //if image.pos == pos { return }
-                    image.pos = pos;
-                    image.changed = true;
-                }
-                GfxType::Rect(rect) => {
-                    if rect.position == pos {
-                        return;
+        if let Some(data) = self.collection.get(index) {
+            match data.gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) = self.image_storage.get_mut(data.key) {
+                        gfx.pos = pos;
+                        gfx.changed = true;
                     }
-                    rect.set_position(pos);
                 }
-                GfxType::Text(text) => {
-                    if text.pos == pos {
-                        return;
+                GfxType::Rect => {
+                    if let Some(gfx) = self.rect_storage.get_mut(data.key) {
+                        if gfx.position == pos {
+                            return;
+                        }
+                        gfx.set_position(pos);
                     }
-                    text.set_position(pos);
                 }
-                GfxType::Map(map) => {
-                    if map.pos == Vec2::new(pos.x, pos.y) {
-                        return;
+                GfxType::Text => {
+                    if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                        if gfx.pos == pos {
+                            return;
+                        }
+                        gfx.set_position(pos);
                     }
-                    map.pos = Vec2::new(pos.x, pos.y);
-                    map.changed = true;
+                }
+                GfxType::Map => {
+                    if let Some(gfx) = self.map_storage.get_mut(data.key) {
+                        if gfx.pos == Vec2::new(pos.x, pos.y) {
+                            return;
+                        }
+                        gfx.pos = Vec2::new(pos.x, pos.y);
+                        gfx.changed = true;
+                    }
                 }
             }
         }
     }
 
     pub fn set_bound(&mut self, index: usize, bound: Bounds) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Text(text) = &mut data.gfx {
-                text.set_bounds(Some(bound));
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Text {
+                if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                    gfx.set_bounds(Some(bound));
+                }
             }
         }
     }
 
     pub fn set_size(&mut self, index: usize, size: Vec2) {
-        if let Some(data) = self.collection.get_mut(index) {
-            match &mut data.gfx {
-                GfxType::Image(image) => {
-                    image.hw = size;
-                    image.changed = true;
+        if let Some(data) = self.collection.get(index) {
+            match data.gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) = self.image_storage.get_mut(data.key) {
+                        gfx.hw = size;
+                        gfx.changed = true;
+                    }
                 }
-                GfxType::Rect(rect) => {
-                    rect.set_size(size);
+                GfxType::Rect => {
+                    if let Some(gfx) = self.rect_storage.get_mut(data.key) {
+                        gfx.set_size(size);
+                    }
                 }
-                GfxType::Text(text) => {
-                    text.size = size;
-                    text.changed = true;
+                GfxType::Text => {
+                    if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                        gfx.size = size;
+                        gfx.changed = true;
+                    }
                 }
                 _ => {}
             }
@@ -225,10 +340,12 @@ impl GfxCollection {
     }
 
     pub fn set_uv(&mut self, index: usize, uv: Vec4) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Image(image) = &mut data.gfx {
-                image.uv = uv;
-                image.changed = true;
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Image {
+                if let Some(gfx) = self.image_storage.get_mut(data.key) {
+                    gfx.uv = uv;
+                    gfx.changed = true;
+                }
             }
         }
     }
@@ -239,9 +356,16 @@ impl GfxCollection {
         index: usize,
         msg: &str,
     ) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Text(text) = &mut data.gfx {
-                text.set_text(renderer, msg, Attrs::new(), Shaping::Advanced);
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Text {
+                if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                    gfx.set_text(
+                        renderer,
+                        msg,
+                        Attrs::new(),
+                        Shaping::Advanced,
+                    );
+                }
             }
         }
     }
@@ -254,14 +378,16 @@ impl GfxCollection {
     ) where
         I: IntoIterator<Item = (&'s str, Attrs<'r>)>,
     {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Text(text) = &mut data.gfx {
-                text.set_rich_text(
-                    renderer,
-                    msg,
-                    Attrs::new(),
-                    Shaping::Advanced,
-                );
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Text {
+                if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                    gfx.set_rich_text(
+                        renderer,
+                        msg,
+                        Attrs::new(),
+                        Shaping::Advanced,
+                    );
+                }
             }
         }
     }
@@ -272,60 +398,92 @@ impl GfxCollection {
         index: usize,
         can_wrap: bool,
     ) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Text(text) = &mut data.gfx {
-                if can_wrap {
-                    text.set_wrap(renderer, cosmic_text::Wrap::Word);
-                } else {
-                    text.set_wrap(renderer, cosmic_text::Wrap::None);
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Text {
+                if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                    if can_wrap {
+                        gfx.set_wrap(renderer, cosmic_text::Wrap::Word);
+                    } else {
+                        gfx.set_wrap(renderer, cosmic_text::Wrap::None);
+                    }
                 }
             }
         }
     }
 
     pub fn center_text(&mut self, index: usize) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Text(text) = &mut data.gfx {
-                let size = text.measure();
-                let bound = text.bounds.unwrap_or_default();
-                let textbox_size = bound.right - bound.left;
-                text.pos.x =
-                    bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
-                text.changed = true;
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Text {
+                if let Some(gfx) = self.text_storage.get_mut(data.key) {
+                    let size = gfx.measure();
+                    let bound = gfx.bounds.unwrap_or_default();
+                    let textbox_size = bound.right - bound.left;
+                    gfx.pos.x =
+                        bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
+                    gfx.changed = true;
+                }
             }
         }
     }
 
     pub fn get_pos(&mut self, index: usize) -> Vec3 {
         if let Some(data) = self.collection.get(index) {
-            match &data.gfx {
-                GfxType::Image(image) => image.pos,
-                GfxType::Rect(rect) => rect.position,
-                GfxType::Text(text) => text.pos,
-                GfxType::Map(map) => Vec3::new(map.pos.x, map.pos.y, 0.0),
+            match data.gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) = self.image_storage.get(data.key) {
+                        return gfx.pos;
+                    }
+                }
+                GfxType::Rect => {
+                    if let Some(gfx) = self.rect_storage.get(data.key) {
+                        return gfx.position;
+                    }
+                }
+                GfxType::Text => {
+                    if let Some(gfx) = self.text_storage.get(data.key) {
+                        return gfx.pos;
+                    }
+                }
+                GfxType::Map => {
+                    if let Some(gfx) = self.map_storage.get(data.key) {
+                        return Vec3::new(gfx.pos.x, gfx.pos.y, 0.0);
+                    }
+                }
             }
-        } else {
-            Vec3::new(0.0, 0.0, 0.0)
         }
+        Vec3::new(0.0, 0.0, 0.0)
     }
 
     pub fn get_size(&mut self, index: usize) -> Vec2 {
         if let Some(data) = self.collection.get(index) {
-            match &data.gfx {
-                GfxType::Image(image) => image.hw,
-                GfxType::Rect(rect) => rect.size,
-                GfxType::Text(text) => text.size,
-                _ => Vec2::new(0.0, 0.0),
+            match data.gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) = self.image_storage.get(data.key) {
+                        return gfx.hw;
+                    }
+                }
+                GfxType::Rect => {
+                    if let Some(gfx) = self.rect_storage.get(data.key) {
+                        return gfx.size;
+                    }
+                }
+                GfxType::Text => {
+                    if let Some(gfx) = self.text_storage.get(data.key) {
+                        return gfx.size;
+                    }
+                }
+                _ => return Vec2::new(0.0, 0.0),
             }
-        } else {
-            Vec2::new(0.0, 0.0)
         }
+        Vec2::new(0.0, 0.0)
     }
 
     pub fn get_uv(&mut self, index: usize) -> Vec4 {
         if let Some(data) = self.collection.get(index) {
-            if let GfxType::Image(image) = &data.gfx {
-                return image.uv;
+            if data.gfx_type == GfxType::Image {
+                if let Some(gfx) = self.image_storage.get(data.key) {
+                    return gfx.uv;
+                }
             }
         }
         Vec4::new(0.0, 0.0, 0.0, 0.0)
@@ -333,26 +491,40 @@ impl GfxCollection {
 
     pub fn get_color(&mut self, index: usize) -> Color {
         if let Some(data) = self.collection.get(index) {
-            match &data.gfx {
-                GfxType::Image(image) => image.color,
-                GfxType::Rect(rect) => rect.color,
-                GfxType::Text(text) => text.default_color,
-                _ => Color::rgba(0, 0, 0, 0),
+            match data.gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) = self.image_storage.get(data.key) {
+                        return gfx.color;
+                    }
+                }
+                GfxType::Rect => {
+                    if let Some(gfx) = self.rect_storage.get(data.key) {
+                        return gfx.color;
+                    }
+                }
+                GfxType::Text => {
+                    if let Some(gfx) = self.text_storage.get(data.key) {
+                        return gfx.default_color;
+                    }
+                }
+                _ => return Color::rgba(0, 0, 0, 0),
             }
-        } else {
-            Color::rgba(0, 0, 0, 0)
         }
+        Color::rgba(0, 0, 0, 0)
     }
 
     pub fn get_measure(&mut self, index: usize) -> Vec2 {
         if let Some(data) = self.collection.get(index) {
-            match &data.gfx {
-                GfxType::Text(text) => text.measure(),
-                _ => Vec2::new(0.0, 0.0),
+            match data.gfx_type {
+                GfxType::Text => {
+                    if let Some(gfx) = self.text_storage.get(data.key) {
+                        return gfx.measure();
+                    }
+                }
+                _ => return Vec2::new(0.0, 0.0),
             }
-        } else {
-            Vec2::new(0.0, 0.0)
         }
+        Vec2::new(0.0, 0.0)
     }
 
     pub fn set_map_tile(
@@ -361,9 +533,11 @@ impl GfxCollection {
         pos: (u32, u32, u32),
         tile: TileData,
     ) {
-        if let Some(data) = self.collection.get_mut(index) {
-            if let GfxType::Map(map) = &mut data.gfx {
-                map.set_tile(pos, tile);
+        if let Some(data) = self.collection.get(index) {
+            if data.gfx_type == GfxType::Map {
+                if let Some(gfx) = self.map_storage.get_mut(data.key) {
+                    gfx.set_tile(pos, tile);
+                }
             }
         }
     }

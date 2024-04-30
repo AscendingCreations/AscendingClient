@@ -79,9 +79,7 @@ pub fn handle_key_input(
         #[allow(clippy::single_match)]
         match key {
             Key::Named(NamedKey::F1) => systems.gfx.print_details(),
-            Key::Named(NamedKey::F2) => {
-                info!("Gfx Count: {}", systems.gfx.count_collection())
-            }
+            Key::Named(NamedKey::F2) => systems.gfx.count_collection(),
             Key::Named(NamedKey::F3) => {
                 info!("World NPC Count: {}", count_npc(world));
                 info!("World Player Count: {}", count_player(world));

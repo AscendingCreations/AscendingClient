@@ -54,6 +54,7 @@ educe = { version = "0.5.11", default-features = false, features = [
 rand = "0.8.5"
 bit_op = "0.1.1"
 slotmap = "1.0.7"
+lru = "0.12.3"
 
 [dependencies.camera]
 package = "ascending_camera"

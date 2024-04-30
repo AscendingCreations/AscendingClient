@@ -214,12 +214,25 @@ pub fn get_map_key(
 
     if let Some(index) = systems.base.mappos_key.get(&mappos) {
         info!("Got Map Index from Hash");
+        systems.base.map_cache.promote(index);
         return Ok(*index);
+    }
+
+    if systems.base.map_cache.len() > 60 {
+        let keydata = systems.base.map_cache.pop_lru();
+        if let Some(key) = keydata {
+            if let Some(mapdata) = systems.base.mapdata.get(key.0) {
+                let mappos = mapdata.mappos;
+                systems.base.mappos_key.remove(&mappos);
+            }
+            systems.base.mapdata.remove(key.0);
+        }
     }
 
     info!("Got Map Index by creating map data");
     let key = create_map_data(systems, mappos)?;
     systems.base.mappos_key.insert(mappos, key);
+    systems.base.map_cache.push(key, key);
     buffer.add_task(BufferTaskEnum::ApplyMap(mappos, key));
     Ok(key)
 }
@@ -322,46 +335,6 @@ pub fn is_map_exist(x: i32, y: i32, group: u64) -> bool {
     let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
     Path::new(&name).exists()
 }
-
-/*pub fn clear_map(systems: &mut SystemHolder, map_index: usize) {
-    (0..9).for_each(|layer| {
-        (0..32).for_each(|x| {
-            (0..32).for_each(|y| {
-                systems.gfx.set_map_tile(
-                    map_index,
-                    (x, y, layer),
-                    TileData::default(),
-                );
-            });
-        });
-    });
-}
-
-pub fn load_map_data(
-    systems: &mut SystemHolder,
-    mapdata: &MapData,
-    map_index: usize,
-) {
-    clear_map(systems, map_index);
-    (0..32).for_each(|x| {
-        (0..32).for_each(|y| {
-            let tile_num = get_tile_pos(x, y);
-            (0..9).for_each(|layer| {
-                let id = mapdata.tile[layer].id[tile_num] as usize;
-                if id > 0 {
-                    systems.gfx.set_map_tile(
-                        map_index,
-                        (x as u32, y as u32, layer as u32),
-                        TileData {
-                            id,
-                            color: Color::rgba(255, 255, 255, 255),
-                        },
-                    );
-                }
-            });
-        });
-    });
-}*/
 
 pub fn get_tile_pos(x: i32, y: i32) -> usize {
     (x + (y * 32_i32)) as usize
