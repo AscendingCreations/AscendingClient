@@ -3,7 +3,7 @@ use std::default;
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{logic::*, widget::*, SystemHolder};
+use crate::{logic::*, widget::*, GfxType, SystemHolder};
 
 #[derive(Clone)]
 pub enum CheckboxChangeType {
@@ -77,11 +77,11 @@ pub enum CheckboxType {
 #[derive(Default)]
 pub struct Checkbox {
     visible: bool,
-    image: usize,
-    check_image: usize,
+    image: GfxType,
+    check_image: GfxType,
     box_type: CheckboxType,
     check_type: CheckType,
-    text_type: Option<(usize, CheckboxText)>,
+    text_type: Option<(GfxType, CheckboxText)>,
 
     in_hover: bool,
     in_click: bool,
@@ -131,6 +131,7 @@ impl Checkbox {
                     rect,
                     render_layer,
                     "Checkbox Image".into(),
+                    visible,
                 )
             }
             CheckboxType::Image(data) => {
@@ -148,11 +149,11 @@ impl Checkbox {
                     img,
                     render_layer,
                     "Checkbox Image".into(),
+                    visible,
                 )
             }
-            _ => 0,
+            _ => GfxType::None,
         };
-        systems.gfx.set_visible(image, visible);
 
         let check_image = match checktype {
             CheckType::SetRect(data) => {
@@ -173,6 +174,7 @@ impl Checkbox {
                     rect,
                     render_layer,
                     "Checkbox Check".into(),
+                    false,
                 )
             }
             CheckType::SetImage(data) => {
@@ -190,11 +192,11 @@ impl Checkbox {
                     img,
                     render_layer,
                     "Checkbox Check".into(),
+                    false,
                 )
             }
-            _ => 0,
+            _ => GfxType::None,
         };
-        systems.gfx.set_visible(check_image, false);
 
         let mut adjust_x = 0.0;
         let text_type = if let Some(data) = text_data {
@@ -221,11 +223,11 @@ impl Checkbox {
                 txt,
                 data.render_layer,
                 "Checkbox Text".into(),
+                visible,
             );
             systems
                 .gfx
-                .set_text(&mut systems.renderer, txt_index, &data.text);
-            systems.gfx.set_visible(txt_index, visible);
+                .set_text(&mut systems.renderer, &txt_index, &data.text);
             adjust_x = data.offset_pos.x + data.label_size.x;
             Some((txt_index, data_copy))
         } else {
@@ -253,12 +255,12 @@ impl Checkbox {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.image);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.image);
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.check_image);
+            .remove_gfx(&mut systems.renderer, &self.check_image);
         if let Some(data) = &mut self.text_type {
-            systems.gfx.remove_gfx(&mut systems.renderer, data.0);
+            systems.gfx.remove_gfx(&mut systems.renderer, &data.0);
         }
     }
 
@@ -267,26 +269,26 @@ impl Checkbox {
             return;
         }
         self.visible = visible;
-        systems.gfx.set_visible(self.image, visible);
+        systems.gfx.set_visible(&self.image, visible);
         if visible {
-            systems.gfx.set_visible(self.check_image, self.value);
+            systems.gfx.set_visible(&self.check_image, self.value);
         } else {
-            systems.gfx.set_visible(self.check_image, false);
+            systems.gfx.set_visible(&self.check_image, false);
         }
         if let Some(data) = &mut self.text_type {
-            systems.gfx.set_visible(data.0, visible);
+            systems.gfx.set_visible(&data.0, visible);
         }
     }
 
     pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         self.z_order = z_order;
-        let pos = systems.gfx.get_pos(self.image);
+        let pos = systems.gfx.get_pos(&self.image);
         systems
             .gfx
-            .set_pos(self.image, Vec3::new(pos.x, pos.y, self.z_order));
-        let pos = systems.gfx.get_pos(self.check_image);
+            .set_pos(&self.image, Vec3::new(pos.x, pos.y, self.z_order));
+        let pos = systems.gfx.get_pos(&self.check_image);
         systems.gfx.set_pos(
-            self.check_image,
+            &self.check_image,
             Vec3::new(
                 pos.x,
                 pos.y,
@@ -294,10 +296,10 @@ impl Checkbox {
             ),
         );
         if let Some(data) = &mut self.text_type {
-            let pos = systems.gfx.get_pos(data.0);
+            let pos = systems.gfx.get_pos(&data.0);
             systems
                 .gfx
-                .set_pos(data.0, Vec3::new(pos.x, pos.y, self.z_order));
+                .set_pos(&data.0, Vec3::new(pos.x, pos.y, self.z_order));
         }
     }
 
@@ -309,7 +311,7 @@ impl Checkbox {
             self.base_pos.y + (self.adjust_pos.y * systems.scale as f32),
             self.z_order,
         );
-        systems.gfx.set_pos(self.image, pos);
+        systems.gfx.set_pos(&self.image, pos);
 
         let contenttype = self.check_type.clone();
         let extra_pos = match contenttype {
@@ -326,7 +328,7 @@ impl Checkbox {
                 + extra_pos.y,
             self.z_order,
         );
-        systems.gfx.set_pos(self.check_image, pos);
+        systems.gfx.set_pos(&self.check_image, pos);
 
         if let Some(data) = &mut self.text_type {
             let pos = Vec3::new(
@@ -340,9 +342,9 @@ impl Checkbox {
                         * systems.scale as f32),
                 self.z_order,
             );
-            systems.gfx.set_pos(data.0, pos);
+            systems.gfx.set_pos(&data.0, pos);
             systems.gfx.set_bound(
-                data.0,
+                &data.0,
                 Bounds::new(
                     pos.x,
                     pos.y,
@@ -391,7 +393,7 @@ impl Checkbox {
         }
         self.value = value;
         if self.visible {
-            systems.gfx.set_visible(self.check_image, self.value);
+            systems.gfx.set_visible(&self.check_image, self.value);
         }
     }
 
@@ -402,14 +404,14 @@ impl Checkbox {
                 if let CheckboxChangeType::ColorChange(color) =
                     data.click_change
                 {
-                    systems.gfx.set_color(self.image, color);
+                    systems.gfx.set_color(&self.image, color);
                 }
             }
             CheckboxType::Image(data) => {
                 if let CheckboxChangeType::ImageFrame(frame) = data.click_change
                 {
                     systems.gfx.set_uv(
-                        self.image,
+                        &self.image,
                         Vec4::new(
                             0.0,
                             self.box_size.y * frame as f32,
@@ -427,7 +429,7 @@ impl Checkbox {
             if let CheckboxChangeType::ColorChange(color) =
                 contenttype.click_change
             {
-                systems.gfx.set_color(data.0, color);
+                systems.gfx.set_color(&data.0, color);
             }
         }
     }
@@ -439,14 +441,14 @@ impl Checkbox {
                 if let CheckboxChangeType::ColorChange(color) =
                     data.hover_change
                 {
-                    systems.gfx.set_color(self.image, color);
+                    systems.gfx.set_color(&self.image, color);
                 }
             }
             CheckboxType::Image(data) => {
                 if let CheckboxChangeType::ImageFrame(frame) = data.hover_change
                 {
                     systems.gfx.set_uv(
-                        self.image,
+                        &self.image,
                         Vec4::new(
                             0.0,
                             self.box_size.y * frame as f32,
@@ -464,7 +466,7 @@ impl Checkbox {
             if let CheckboxChangeType::ColorChange(color) =
                 contenttype.hover_change
             {
-                systems.gfx.set_color(data.0, color);
+                systems.gfx.set_color(&data.0, color);
             }
         }
     }
@@ -473,11 +475,11 @@ impl Checkbox {
         let buttontype = self.box_type.clone();
         match buttontype {
             CheckboxType::Rect(data) => {
-                systems.gfx.set_color(self.image, data.rect_color);
+                systems.gfx.set_color(&self.image, data.rect_color);
             }
             CheckboxType::Image(_) => {
                 systems.gfx.set_uv(
-                    self.image,
+                    &self.image,
                     Vec4::new(0.0, 0.0, self.box_size.x, self.box_size.y),
                 );
             }
@@ -485,7 +487,7 @@ impl Checkbox {
         }
 
         if let Some(data) = &mut self.text_type {
-            systems.gfx.set_color(data.0, data.1.color);
+            systems.gfx.set_color(&data.0, data.1.color);
         }
     }
 }

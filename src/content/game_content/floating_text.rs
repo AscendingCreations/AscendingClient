@@ -9,8 +9,8 @@ use graphics::{
 use rand::{thread_rng, Rng};
 
 struct FloatingTextData {
-    text_bg: usize,
-    text: usize,
+    text_bg: GfxType,
+    text: GfxType,
     size: Vec2,
     adjust_pos: Vec2,
     float_y: f32,
@@ -36,8 +36,8 @@ impl FloatingText {
     pub fn unload(&mut self, systems: &mut SystemHolder) {
         self.unload = true;
         for data in &self.data {
-            systems.gfx.remove_gfx(&mut systems.renderer, data.text);
-            systems.gfx.remove_gfx(&mut systems.renderer, data.text_bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, &data.text);
+            systems.gfx.remove_gfx(&mut systems.renderer, &data.text_bg);
         }
         self.data.clear();
     }
@@ -80,7 +80,7 @@ pub fn float_text_loop(
                     continue;
                 }
             };
-        let cur_pos = systems.gfx.get_pos(float_data.text);
+        let cur_pos = systems.gfx.get_pos(&float_data.text);
         let texture_pos = content.camera.0
             + (Vec2::new(float_data.pos.x as f32, float_data.pos.y as f32)
                 * TILE_SIZE as f32);
@@ -95,11 +95,11 @@ pub fn float_text_loop(
 
         if pos != Vec2::new(cur_pos.x, cur_pos.y) {
             systems.gfx.set_pos(
-                float_data.text,
+                &float_data.text,
                 Vec3::new(pos.x, pos.y, ORDER_FLOAT_TEXT),
             );
             systems.gfx.set_pos(
-                float_data.text_bg,
+                &float_data.text_bg,
                 Vec3::new(pos.x - 1.0, pos.y - 2.0, ORDER_FLOAT_TEXT_BG),
             );
         }
@@ -108,11 +108,11 @@ pub fn float_text_loop(
     for index in remove_list.iter().rev() {
         systems.gfx.remove_gfx(
             &mut systems.renderer,
-            content.float_text.data[*index].text,
+            &content.float_text.data[*index].text,
         );
         systems.gfx.remove_gfx(
             &mut systems.renderer,
-            content.float_text.data[*index].text_bg,
+            &content.float_text.data[*index].text_bg,
         );
         content.float_text.data.swap_remove(*index);
     }
@@ -151,8 +151,8 @@ pub fn add_float_text(
             systems.size.height,
         )))
         .set_default_color(color);
-    let text_index = systems.gfx.add_text(text, 1, "Floating Text".into());
-    systems.gfx.set_visible(text_index, true);
+    let text_index =
+        systems.gfx.add_text(text, 1, "Floating Text".into(), true);
 
     let mut textbg = create_label(
         systems,
@@ -166,8 +166,7 @@ pub fn add_float_text(
     let text_bg =
         systems
             .gfx
-            .add_text(textbg, 1, "Floating Text Shadow".into());
-    systems.gfx.set_visible(text_bg, true);
+            .add_text(textbg, 1, "Floating Text Shadow".into(), true);
 
     content.float_text.data.push(FloatingTextData {
         text: text_index,

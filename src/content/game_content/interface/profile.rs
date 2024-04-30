@@ -13,19 +13,19 @@ pub enum ProfileLabel {
 
 #[derive(Clone, Copy)]
 struct EqData {
-    img: usize,
+    img: GfxType,
     index: usize,
 }
 
 pub struct Profile {
     pub visible: bool,
-    bg: usize,
-    header: usize,
-    header_text: usize,
+    bg: GfxType,
+    header: GfxType,
+    header_text: GfxType,
     button: Vec<Button>,
-    fixed_label: Vec<usize>,
-    value_label: Vec<usize>,
-    slot: [usize; MAX_EQPT],
+    fixed_label: Vec<GfxType>,
+    value_label: Vec<GfxType>,
+    slot: [GfxType; MAX_EQPT],
     eq_data: [Option<EqData>; MAX_EQPT],
 
     pub pos: Vec2,
@@ -62,8 +62,7 @@ impl Profile {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Profile BG".into());
-        systems.gfx.set_visible(bg, false);
+        let bg = systems.gfx.add_rect(rect, 0, "Profile BG".into(), false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
@@ -79,11 +78,12 @@ impl Profile {
                 (header_size.y * systems.scale as f32).floor(),
             ))
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header =
-            systems
-                .gfx
-                .add_rect(header_rect, 0, "Profile Header".into());
-        systems.gfx.set_visible(header, false);
+        let header = systems.gfx.add_rect(
+            header_rect,
+            0,
+            "Profile Header".into(),
+            false,
+        );
 
         let text = create_label(
             systems,
@@ -102,12 +102,13 @@ impl Profile {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems.gfx.add_text(text, 1, "Profile Header Text".into());
+            systems
+                .gfx
+                .add_text(text, 1, "Profile Header Text".into(), false);
         systems
             .gfx
-            .set_text(&mut systems.renderer, header_text, "Profile");
-        systems.gfx.center_text(header_text);
-        systems.gfx.set_visible(header_text, false);
+            .set_text(&mut systems.renderer, &header_text, "Profile");
+        systems.gfx.center_text(&header_text);
 
         let mut button = Vec::with_capacity(1);
         let close_button = Button::new(
@@ -143,7 +144,7 @@ impl Profile {
         );
         button.push(close_button);
 
-        let mut slot = [0; MAX_EQPT];
+        let mut slot = [GfxType::None; MAX_EQPT];
         for (i, slot) in slot.iter_mut().enumerate() {
             let mut box_rect = Rect::new(&mut systems.renderer, 0);
             box_rect
@@ -158,11 +159,12 @@ impl Profile {
                     (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
                 )
                 .set_color(Color::rgba(200, 200, 200, 255));
-            *slot =
-                systems
-                    .gfx
-                    .add_rect(box_rect, 0, "Profile EQ Slot BG".into());
-            systems.gfx.set_visible(*slot, false);
+            *slot = systems.gfx.add_rect(
+                box_rect,
+                0,
+                "Profile EQ Slot BG".into(),
+                false,
+            );
         }
 
         let mut fixed_label = Vec::with_capacity(5);
@@ -225,9 +227,9 @@ impl Profile {
                 Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
                 Color::rgba(200, 200, 200, 255),
             );
-            let label = systems.gfx.add_text(text, 1, "Profile Label".into());
-            systems.gfx.set_text(&mut systems.renderer, label, msg);
-            systems.gfx.set_visible(label, false);
+            let label =
+                systems.gfx.add_text(text, 1, "Profile Label".into(), false);
+            systems.gfx.set_text(&mut systems.renderer, &label, msg);
             fixed_label.push(label);
         }
 
@@ -251,10 +253,13 @@ impl Profile {
                 Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
                 Color::rgba(200, 200, 200, 255),
             );
-            let label =
-                systems.gfx.add_text(text, 1, "Profile Label Value".into());
-            systems.gfx.set_text(&mut systems.renderer, label, "0");
-            systems.gfx.set_visible(label, false);
+            let label = systems.gfx.add_text(
+                text,
+                1,
+                "Profile Label Value".into(),
+                false,
+            );
+            systems.gfx.set_text(&mut systems.renderer, &label, "0");
             value_label.push(label);
         }
 
@@ -288,29 +293,29 @@ impl Profile {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
-        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.header);
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.header_text);
+            .remove_gfx(&mut systems.renderer, &self.header_text);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.button.clear();
         self.slot.iter().for_each(|slot| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *slot);
+            systems.gfx.remove_gfx(&mut systems.renderer, slot);
         });
         for i in 0..MAX_EQPT {
             if let Some(data) = self.eq_data[i] {
-                systems.gfx.remove_gfx(&mut systems.renderer, data.img);
+                systems.gfx.remove_gfx(&mut systems.renderer, &data.img);
             }
             self.eq_data[i] = None;
         }
         self.fixed_label.iter().for_each(|label| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *label);
+            systems.gfx.remove_gfx(&mut systems.renderer, label);
         });
         self.value_label.iter().for_each(|label| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *label);
+            systems.gfx.remove_gfx(&mut systems.renderer, label);
         });
     }
 
@@ -320,25 +325,25 @@ impl Profile {
         }
         self.visible = visible;
         self.z_order = 0.0;
-        systems.gfx.set_visible(self.bg, visible);
-        systems.gfx.set_visible(self.header, visible);
-        systems.gfx.set_visible(self.header_text, visible);
+        systems.gfx.set_visible(&self.bg, visible);
+        systems.gfx.set_visible(&self.header, visible);
+        systems.gfx.set_visible(&self.header_text, visible);
         self.button.iter_mut().for_each(|button| {
             button.set_visible(systems, visible);
         });
         self.slot.iter().for_each(|slot| {
-            systems.gfx.set_visible(*slot, visible);
+            systems.gfx.set_visible(slot, visible);
         });
         self.eq_data.iter().for_each(|slot| {
             if let Some(data) = slot {
-                systems.gfx.set_visible(data.img, visible);
+                systems.gfx.set_visible(&data.img, visible);
             }
         });
         self.fixed_label.iter().for_each(|label| {
-            systems.gfx.set_visible(*label, visible);
+            systems.gfx.set_visible(label, visible);
         });
         self.value_label.iter().for_each(|label| {
-            systems.gfx.set_visible(*label, visible);
+            systems.gfx.set_visible(label, visible);
         });
     }
 
@@ -392,44 +397,44 @@ impl Profile {
         let detail_1 = detail_origin.sub_f32(0.001, 3);
         let detail_2 = detail_origin.sub_f32(0.002, 3);
 
-        let mut pos = systems.gfx.get_pos(self.bg);
+        let mut pos = systems.gfx.get_pos(&self.bg);
         pos.z = detail_origin;
-        systems.gfx.set_pos(self.bg, pos);
+        systems.gfx.set_pos(&self.bg, pos);
 
-        let mut pos = systems.gfx.get_pos(self.header);
+        let mut pos = systems.gfx.get_pos(&self.header);
         let header_zpos = detail_1;
         pos.z = header_zpos;
-        systems.gfx.set_pos(self.header, pos);
+        systems.gfx.set_pos(&self.header, pos);
 
-        let mut pos = systems.gfx.get_pos(self.header_text);
+        let mut pos = systems.gfx.get_pos(&self.header_text);
         pos.z = detail_2;
-        systems.gfx.set_pos(self.header_text, pos);
+        systems.gfx.set_pos(&self.header_text, pos);
 
         self.button.iter_mut().for_each(|button| {
             button.set_z_order(systems, detail_2);
         });
 
         for i in 0..MAX_EQPT {
-            let mut pos = systems.gfx.get_pos(self.slot[i]);
+            let mut pos = systems.gfx.get_pos(&self.slot[i]);
             pos.z = detail_1;
-            systems.gfx.set_pos(self.slot[i], pos);
+            systems.gfx.set_pos(&self.slot[i], pos);
 
             if let Some(data) = self.eq_data[i] {
-                let mut pos = systems.gfx.get_pos(data.img);
+                let mut pos = systems.gfx.get_pos(&data.img);
                 pos.z = detail_2;
-                systems.gfx.set_pos(data.img, pos);
+                systems.gfx.set_pos(&data.img, pos);
             }
         }
 
         self.fixed_label.iter().for_each(|label| {
-            let mut pos = systems.gfx.get_pos(*label);
+            let mut pos = systems.gfx.get_pos(label);
             pos.z = detail_1;
-            systems.gfx.set_pos(*label, pos);
+            systems.gfx.set_pos(label, pos);
         });
         self.value_label.iter().for_each(|label| {
-            let mut pos = systems.gfx.get_pos(*label);
+            let mut pos = systems.gfx.get_pos(label);
             pos.z = detail_1;
-            systems.gfx.set_pos(*label, pos);
+            systems.gfx.set_pos(label, pos);
         });
     }
 
@@ -445,27 +450,27 @@ impl Profile {
             .max(self.max_bound)
             .min(self.min_bound);
 
-        let pos = systems.gfx.get_pos(self.bg);
+        let pos = systems.gfx.get_pos(&self.bg);
         systems.gfx.set_pos(
-            self.bg,
+            &self.bg,
             Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z),
         );
-        let pos = systems.gfx.get_pos(self.header);
+        let pos = systems.gfx.get_pos(&self.header);
         self.header_pos = Vec2::new(
             self.pos.x,
             self.pos.y + (237.0 * systems.scale as f32).floor(),
         );
         systems.gfx.set_pos(
-            self.header,
+            &self.header,
             Vec3::new(
                 self.pos.x,
                 self.pos.y + (237.0 * systems.scale as f32).floor(),
                 pos.z,
             ),
         );
-        let pos = systems.gfx.get_pos(self.header_text);
+        let pos = systems.gfx.get_pos(&self.header_text);
         systems.gfx.set_pos(
-            self.header_text,
+            &self.header_text,
             Vec3::new(
                 self.pos.x,
                 self.pos.y + (242.0 * systems.scale as f32).floor(),
@@ -473,7 +478,7 @@ impl Profile {
             ),
         );
         systems.gfx.set_bound(
-            self.header_text,
+            &self.header_text,
             Bounds::new(
                 self.pos.x,
                 self.pos.y + (242.0 * systems.scale as f32).floor(),
@@ -481,7 +486,7 @@ impl Profile {
                 self.pos.y + (262.0 * systems.scale as f32).floor(),
             ),
         );
-        systems.gfx.center_text(self.header_text);
+        systems.gfx.center_text(&self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
@@ -495,16 +500,16 @@ impl Profile {
                 self.pos.y + (10.0 * systems.scale as f32).floor(),
             );
 
-            let pos = systems.gfx.get_pos(self.slot[i]);
+            let pos = systems.gfx.get_pos(&self.slot[i]);
             systems.gfx.set_pos(
-                self.slot[i],
+                &self.slot[i],
                 Vec3::new(slot_pos.x, slot_pos.y, pos.z),
             );
 
             if let Some(data) = self.eq_data[i] {
-                let pos = systems.gfx.get_pos(data.img);
+                let pos = systems.gfx.get_pos(&data.img);
                 systems.gfx.set_pos(
-                    data.img,
+                    &data.img,
                     Vec3::new(
                         slot_pos.x + (6.0 * systems.scale as f32).floor(),
                         slot_pos.y + (6.0 * systems.scale as f32).floor(),
@@ -515,7 +520,7 @@ impl Profile {
         }
 
         for index in 0..5 {
-            let spos = systems.gfx.get_pos(self.fixed_label[index]);
+            let spos = systems.gfx.get_pos(&self.fixed_label[index]);
             let (pos, size) = match index {
                 0 => (
                     Vec3::new(
@@ -563,17 +568,17 @@ impl Profile {
                 ),
             };
             systems.gfx.set_pos(
-                self.fixed_label[index],
+                &self.fixed_label[index],
                 Vec3::new(pos.x, pos.y, pos.z),
             );
             systems.gfx.set_bound(
-                self.fixed_label[index],
+                &self.fixed_label[index],
                 Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
             );
         }
 
         for index in 0..4 {
-            let spos = systems.gfx.get_pos(self.value_label[index]);
+            let spos = systems.gfx.get_pos(&self.value_label[index]);
             let (pos, size) = (
                 Vec3::new(
                     self.pos.x + (90.0 * systems.scale as f32).floor(),
@@ -586,11 +591,11 @@ impl Profile {
                 (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
             );
             systems.gfx.set_pos(
-                self.value_label[index],
+                &self.value_label[index],
                 Vec3::new(pos.x, pos.y, pos.z),
             );
             systems.gfx.set_bound(
-                self.value_label[index],
+                &self.value_label[index],
                 Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
             );
         }
@@ -732,7 +737,7 @@ impl Profile {
         };
         systems.gfx.set_text(
             &mut systems.renderer,
-            self.value_label[label_index],
+            &self.value_label[label_index],
             &format!("{value}"),
         );
     }
@@ -744,7 +749,7 @@ impl Profile {
         item: &Item,
     ) {
         if let Some(data) = self.eq_data[slot] {
-            systems.gfx.remove_gfx(&mut systems.renderer, data.img);
+            systems.gfx.remove_gfx(&mut systems.renderer, &data.img);
         }
 
         if item.val == 0 {
@@ -776,8 +781,12 @@ impl Profile {
             slot_pos.y + (6.0 * systems.scale as f32).floor(),
             z_order,
         );
-        let eq_img = systems.gfx.add_image(img, 0, "Profile EQ Image".into());
-        systems.gfx.set_visible(eq_img, self.visible);
+        let eq_img = systems.gfx.add_image(
+            img,
+            0,
+            "Profile EQ Image".into(),
+            self.visible,
+        );
 
         self.eq_data[slot] = Some(EqData {
             img: eq_img,

@@ -4,8 +4,8 @@ use graphics::*;
 use crate::{create_label, data_types::*, SystemHolder};
 
 pub struct Tooltip {
-    window: usize,
-    text: usize,
+    window: GfxType,
+    text: GfxType,
     visible: bool,
 
     init: bool,
@@ -25,11 +25,12 @@ impl Tooltip {
             .set_color(Color::rgba(130, 130, 130, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let window =
-            systems
-                .gfx
-                .add_rect(window_rect, 4, "Tool Tips Window".into());
-        systems.gfx.set_visible(window, visible);
+        let window = systems.gfx.add_rect(
+            window_rect,
+            4,
+            "Tool Tips Window".into(),
+            visible,
+        );
 
         let mut text_label = create_label(
             systems,
@@ -43,8 +44,12 @@ impl Tooltip {
             300,
             systems.size.height as i32,
         );
-        let text = systems.gfx.add_text(text_label, 5, "Tool Tips Text".into());
-        systems.gfx.set_visible(text, visible);
+        let text = systems.gfx.add_text(
+            text_label,
+            5,
+            "Tool Tips Text".into(),
+            visible,
+        );
 
         Tooltip {
             window,
@@ -70,15 +75,17 @@ impl Tooltip {
         self.init = true;
         self.hide_tooltip(systems);
 
-        systems.gfx.set_text(&mut systems.renderer, self.text, &msg);
+        systems
+            .gfx
+            .set_text(&mut systems.renderer, &self.text, &msg);
         let text_size =
-            systems.gfx.get_measure(self.text) + Vec2::new(0.0, 4.0);
+            systems.gfx.get_measure(&self.text) + Vec2::new(0.0, 4.0);
         let w_size = text_size + Vec2::new(16.0, 16.0);
         let w_pos = screen_pos;
 
-        systems.gfx.set_size(self.text, text_size);
+        systems.gfx.set_size(&self.text, text_size);
         systems.gfx.set_bound(
-            self.text,
+            &self.text,
             Bounds::new(
                 w_pos.x + 8.0,
                 w_pos.y + 8.0,
@@ -87,13 +94,13 @@ impl Tooltip {
             ),
         );
         systems.gfx.set_pos(
-            self.text,
+            &self.text,
             Vec3::new(w_pos.x + 8.0, w_pos.y + 8.0, ORDER_TOOLTIP_TEXT),
         );
         systems
             .gfx
-            .set_pos(self.window, Vec3::new(w_pos.x, w_pos.y, ORDER_TOOLTIP));
-        systems.gfx.set_size(self.window, w_size);
+            .set_pos(&self.window, Vec3::new(w_pos.x, w_pos.y, ORDER_TOOLTIP));
+        systems.gfx.set_size(&self.window, w_size);
     }
 
     pub fn hide_tooltip(&mut self, systems: &mut SystemHolder) {
@@ -101,8 +108,8 @@ impl Tooltip {
             return;
         }
         self.visible = false;
-        systems.gfx.set_visible(self.window, self.visible);
-        systems.gfx.set_visible(self.text, self.visible);
+        systems.gfx.set_visible(&self.window, self.visible);
+        systems.gfx.set_visible(&self.text, self.visible);
     }
 
     pub fn show_tooltip(&mut self, systems: &mut SystemHolder) {
@@ -110,8 +117,8 @@ impl Tooltip {
             return;
         }
         self.visible = true;
-        systems.gfx.set_visible(self.window, self.visible);
-        systems.gfx.set_visible(self.text, self.visible);
+        systems.gfx.set_visible(&self.window, self.visible);
+        systems.gfx.set_visible(&self.text, self.visible);
     }
 
     pub fn check_tooltip(

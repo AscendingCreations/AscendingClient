@@ -14,9 +14,9 @@ struct ItemSlot {
     need_update: bool,
     got_data: bool,
     got_count: bool,
-    image: usize,
-    count_bg: usize,
-    count: usize,
+    image: GfxType,
+    count_bg: GfxType,
+    count: GfxType,
     item_index: u16,
     count_data: u16,
 }
@@ -26,10 +26,12 @@ impl ItemSlot {
         if !self.got_data {
             return;
         }
-        systems.gfx.remove_gfx(&mut systems.renderer, self.image);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.image);
         if self.got_count {
-            systems.gfx.remove_gfx(&mut systems.renderer, self.count_bg);
-            systems.gfx.remove_gfx(&mut systems.renderer, self.count);
+            systems
+                .gfx
+                .remove_gfx(&mut systems.renderer, &self.count_bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, &self.count);
         }
         self.got_data = false;
         self.got_count = false;
@@ -40,10 +42,10 @@ impl ItemSlot {
 
 pub struct Storage {
     pub visible: bool,
-    bg: usize,
-    header: usize,
-    header_text: usize,
-    slot: [usize; MAX_STORAGE],
+    bg: GfxType,
+    header: GfxType,
+    header_text: GfxType,
+    slot: [GfxType; MAX_STORAGE],
     item_slot: [ItemSlot; MAX_STORAGE],
     button: Vec<Button>,
 
@@ -83,8 +85,7 @@ impl Storage {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Storage BG".into());
-        systems.gfx.set_visible(bg, false);
+        let bg = systems.gfx.add_rect(rect, 0, "Storage BG".into(), false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(pos.x, pos.y + 274.0);
@@ -94,11 +95,12 @@ impl Storage {
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header =
-            systems
-                .gfx
-                .add_rect(header_rect, 0, "Storage Header".into());
-        systems.gfx.set_visible(header, false);
+        let header = systems.gfx.add_rect(
+            header_rect,
+            0,
+            "Storage Header".into(),
+            false,
+        );
 
         let text = create_label(
             systems,
@@ -108,14 +110,15 @@ impl Storage {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems.gfx.add_text(text, 1, "Storage Header Text".into());
+            systems
+                .gfx
+                .add_text(text, 1, "Storage Header Text".into(), false);
         systems
             .gfx
-            .set_text(&mut systems.renderer, header_text, "Storage");
-        systems.gfx.center_text(header_text);
-        systems.gfx.set_visible(header_text, false);
+            .set_text(&mut systems.renderer, &header_text, "Storage");
+        systems.gfx.center_text(&header_text);
 
-        let mut slot = [0; MAX_STORAGE];
+        let mut slot = [GfxType::None; MAX_STORAGE];
         for (i, slot) in slot.iter_mut().enumerate() {
             let mut box_rect = Rect::new(&mut systems.renderer, 0);
             let frame_pos = Vec2::new(
@@ -130,8 +133,12 @@ impl Storage {
                 ))
                 .set_size(Vec2::new(32.0, 32.0))
                 .set_color(Color::rgba(200, 200, 200, 255));
-            *slot = systems.gfx.add_rect(box_rect, 0, "Storage Slot BG".into());
-            systems.gfx.set_visible(*slot, false);
+            *slot = systems.gfx.add_rect(
+                box_rect,
+                0,
+                "Storage Slot BG".into(),
+                false,
+            );
         }
 
         let mut button = Vec::with_capacity(1);
@@ -199,26 +206,26 @@ impl Storage {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
-        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.header);
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.header_text);
+            .remove_gfx(&mut systems.renderer, &self.header_text);
         self.slot.iter().for_each(|slot| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *slot);
+            systems.gfx.remove_gfx(&mut systems.renderer, slot);
         });
         self.item_slot.iter().for_each(|item_slot| {
             if item_slot.got_data {
                 systems
                     .gfx
-                    .remove_gfx(&mut systems.renderer, item_slot.image);
+                    .remove_gfx(&mut systems.renderer, &item_slot.image);
                 if item_slot.got_count {
                     systems
                         .gfx
-                        .remove_gfx(&mut systems.renderer, item_slot.count_bg);
+                        .remove_gfx(&mut systems.renderer, &item_slot.count_bg);
                     systems
                         .gfx
-                        .remove_gfx(&mut systems.renderer, item_slot.count);
+                        .remove_gfx(&mut systems.renderer, &item_slot.count);
                 }
             }
         });
@@ -234,19 +241,19 @@ impl Storage {
         }
         self.visible = visible;
         self.z_order = 0.0;
-        systems.gfx.set_visible(self.bg, visible);
-        systems.gfx.set_visible(self.header, visible);
-        systems.gfx.set_visible(self.header_text, visible);
+        systems.gfx.set_visible(&self.bg, visible);
+        systems.gfx.set_visible(&self.header, visible);
+        systems.gfx.set_visible(&self.header_text, visible);
         self.slot.iter().for_each(|slot| {
-            systems.gfx.set_visible(*slot, visible);
+            systems.gfx.set_visible(slot, visible);
         });
         self.item_slot.iter_mut().for_each(|item_slot| {
             if visible {
                 if item_slot.got_data {
-                    systems.gfx.set_visible(item_slot.image, visible);
+                    systems.gfx.set_visible(&item_slot.image, visible);
                     if item_slot.got_count {
-                        systems.gfx.set_visible(item_slot.count_bg, visible);
-                        systems.gfx.set_visible(item_slot.count, visible);
+                        systems.gfx.set_visible(&item_slot.count_bg, visible);
+                        systems.gfx.set_visible(&item_slot.count, visible);
                     }
                 }
             } else if item_slot.got_data && !visible {
@@ -289,7 +296,7 @@ impl Storage {
         }
 
         systems.gfx.set_pos(
-            self.item_slot[slot].image,
+            &self.item_slot[slot].image,
             Vec3::new(
                 screen_pos.x - self.hold_adjust_pos.x,
                 screen_pos.y - self.hold_adjust_pos.x,
@@ -298,10 +305,10 @@ impl Storage {
         );
 
         if self.item_slot[slot].got_count {
-            systems.gfx.set_visible(self.item_slot[slot].count, false);
+            systems.gfx.set_visible(&self.item_slot[slot].count, false);
             systems
                 .gfx
-                .set_visible(self.item_slot[slot].count_bg, false);
+                .set_visible(&self.item_slot[slot].count_bg, false);
         }
     }
 
@@ -359,9 +366,12 @@ impl Storage {
         image.hw = Vec2::new(20.0, 20.0);
         image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         image.pos = Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, item_zpos);
-        let image_index =
-            systems.gfx.add_image(image, 0, "Storage Item".into());
-        systems.gfx.set_visible(image_index, self.visible);
+        let image_index = systems.gfx.add_image(
+            image,
+            0,
+            "Storage Item".into(),
+            self.visible,
+        );
 
         self.item_slot[slot].image = image_index;
         self.item_slot[slot].item_index = data.num as u16;
@@ -375,9 +385,12 @@ impl Storage {
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
-            let text_bg_index =
-                systems.gfx.add_rect(text_bg, 1, "Storage Amount BG".into());
-            systems.gfx.set_visible(text_bg_index, self.visible);
+            let text_bg_index = systems.gfx.add_rect(
+                text_bg,
+                1,
+                "Storage Amount BG".into(),
+                self.visible,
+            );
 
             let text_size = Vec2::new(32.0, 16.0);
             let text = create_label(
@@ -392,14 +405,17 @@ impl Storage {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let text_index =
-                systems.gfx.add_text(text, 2, "Storage Amount".into());
+            let text_index = systems.gfx.add_text(
+                text,
+                2,
+                "Storage Amount".into(),
+                self.visible,
+            );
             systems.gfx.set_text(
                 &mut systems.renderer,
-                text_index,
+                &text_index,
                 &format!("{}", data.val),
             );
-            systems.gfx.set_visible(text_index, self.visible);
 
             self.item_slot[slot].count = text_index;
             self.item_slot[slot].count_bg = text_bg_index;
@@ -487,27 +503,27 @@ impl Storage {
         let detail_3 = detail_origin.sub_f32(0.003, 3);
         let detail_4 = detail_origin.sub_f32(0.004, 3);
 
-        let mut pos = systems.gfx.get_pos(self.bg);
+        let mut pos = systems.gfx.get_pos(&self.bg);
         pos.z = detail_origin;
-        systems.gfx.set_pos(self.bg, pos);
+        systems.gfx.set_pos(&self.bg, pos);
 
-        let mut pos = systems.gfx.get_pos(self.header);
+        let mut pos = systems.gfx.get_pos(&self.header);
         let header_zpos = detail_1;
         pos.z = header_zpos;
-        systems.gfx.set_pos(self.header, pos);
+        systems.gfx.set_pos(&self.header, pos);
 
-        let mut pos = systems.gfx.get_pos(self.header_text);
+        let mut pos = systems.gfx.get_pos(&self.header_text);
         pos.z = detail_2;
-        systems.gfx.set_pos(self.header_text, pos);
+        systems.gfx.set_pos(&self.header_text, pos);
 
         self.button.iter_mut().for_each(|button| {
             button.set_z_order(systems, detail_2);
         });
 
         for i in 0..MAX_STORAGE {
-            let mut pos = systems.gfx.get_pos(self.slot[i]);
+            let mut pos = systems.gfx.get_pos(&self.slot[i]);
             pos.z = detail_1;
-            systems.gfx.set_pos(self.slot[i], pos);
+            systems.gfx.set_pos(&self.slot[i], pos);
 
             let can_proceed = if let Some(hold_slot) = self.hold_slot {
                 hold_slot != i
@@ -515,19 +531,19 @@ impl Storage {
                 true
             };
             if self.item_slot[i].got_data && can_proceed {
-                let mut pos = systems.gfx.get_pos(self.item_slot[i].image);
+                let mut pos = systems.gfx.get_pos(&self.item_slot[i].image);
                 pos.z = detail_2;
-                systems.gfx.set_pos(self.item_slot[i].image, pos);
+                systems.gfx.set_pos(&self.item_slot[i].image, pos);
             }
 
             if self.item_slot[i].got_count {
-                let mut pos = systems.gfx.get_pos(self.item_slot[i].count_bg);
+                let mut pos = systems.gfx.get_pos(&self.item_slot[i].count_bg);
                 pos.z = detail_3;
-                systems.gfx.set_pos(self.item_slot[i].count_bg, pos);
+                systems.gfx.set_pos(&self.item_slot[i].count_bg, pos);
 
-                let mut pos = systems.gfx.get_pos(self.item_slot[i].count);
+                let mut pos = systems.gfx.get_pos(&self.item_slot[i].count);
                 pos.z = detail_4;
-                systems.gfx.set_pos(self.item_slot[i].count, pos);
+                systems.gfx.set_pos(&self.item_slot[i].count, pos);
             }
         }
     }
@@ -544,24 +560,24 @@ impl Storage {
             .max(self.max_bound)
             .min(self.min_bound);
 
-        let pos = systems.gfx.get_pos(self.bg);
+        let pos = systems.gfx.get_pos(&self.bg);
         systems.gfx.set_pos(
-            self.bg,
+            &self.bg,
             Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z),
         );
-        let pos = systems.gfx.get_pos(self.header);
+        let pos = systems.gfx.get_pos(&self.header);
         self.header_pos = Vec2::new(self.pos.x, self.pos.y + 274.0);
         systems.gfx.set_pos(
-            self.header,
+            &self.header,
             Vec3::new(self.pos.x, self.pos.y + 274.0, pos.z),
         );
-        let pos = systems.gfx.get_pos(self.header_text);
+        let pos = systems.gfx.get_pos(&self.header_text);
         systems.gfx.set_pos(
-            self.header_text,
+            &self.header_text,
             Vec3::new(self.pos.x, self.pos.y + 279.0, pos.z),
         );
         systems.gfx.set_bound(
-            self.header_text,
+            &self.header_text,
             Bounds::new(
                 self.pos.x,
                 self.pos.y + 279.0,
@@ -569,7 +585,7 @@ impl Storage {
                 self.pos.y + 299.0,
             ),
         );
-        systems.gfx.center_text(self.header_text);
+        systems.gfx.center_text(&self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
@@ -586,33 +602,33 @@ impl Storage {
                 self.pos.y + 232.0 - (37.0 * frame_pos.y),
             );
 
-            let pos = systems.gfx.get_pos(self.slot[i]);
+            let pos = systems.gfx.get_pos(&self.slot[i]);
             systems.gfx.set_pos(
-                self.slot[i],
+                &self.slot[i],
                 Vec3::new(slot_pos.x, slot_pos.y, pos.z),
             );
 
             if self.item_slot[i].got_data {
-                let pos = systems.gfx.get_pos(self.item_slot[i].image);
+                let pos = systems.gfx.get_pos(&self.item_slot[i].image);
                 systems.gfx.set_pos(
-                    self.item_slot[i].image,
+                    &self.item_slot[i].image,
                     Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, pos.z),
                 );
 
                 if self.item_slot[i].got_count {
-                    let pos = systems.gfx.get_pos(self.item_slot[i].count_bg);
+                    let pos = systems.gfx.get_pos(&self.item_slot[i].count_bg);
                     systems.gfx.set_pos(
-                        self.item_slot[i].count_bg,
+                        &self.item_slot[i].count_bg,
                         Vec3::new(slot_pos.x, slot_pos.y, pos.z),
                     );
 
-                    let pos = systems.gfx.get_pos(self.item_slot[i].count);
+                    let pos = systems.gfx.get_pos(&self.item_slot[i].count);
                     systems.gfx.set_pos(
-                        self.item_slot[i].count,
+                        &self.item_slot[i].count,
                         Vec3::new(slot_pos.x + 2.0, slot_pos.y + 2.0, pos.z),
                     );
                     systems.gfx.set_bound(
-                        self.item_slot[i].count,
+                        &self.item_slot[i].count,
                         Bounds::new(
                             slot_pos.x,
                             slot_pos.y,
@@ -818,16 +834,16 @@ pub fn release_storage_slot(
     );
 
     systems.gfx.set_pos(
-        interface.storage.item_slot[slot].image,
+        &interface.storage.item_slot[slot].image,
         Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, z_pos),
     );
     if interface.storage.item_slot[slot].got_count {
         systems
             .gfx
-            .set_visible(interface.storage.item_slot[slot].count, true);
+            .set_visible(&interface.storage.item_slot[slot].count, true);
         systems
             .gfx
-            .set_visible(interface.storage.item_slot[slot].count_bg, true);
+            .set_visible(&interface.storage.item_slot[slot].count_bg, true);
     }
     Ok(())
 }

@@ -47,7 +47,7 @@ pub fn handle_ping(
                 let average = sum / count as u64;
                 systems.gfx.set_text(
                     &mut systems.renderer,
-                    content.game_content.interface.average_ping,
+                    &content.game_content.interface.average_ping,
                     &format!("Av. Ping: {:?}", average),
                 );
             }
@@ -68,7 +68,7 @@ pub fn handle_ping(
 
     systems.gfx.set_text(
         &mut systems.renderer,
-        content.game_content.interface.ping_text,
+        &content.game_content.interface.ping_text,
         &format!("Ping: {:?}", elapse_time),
     );
 
@@ -289,7 +289,7 @@ pub fn handle_playerdata(
         let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
         systems
             .gfx
-            .set_text(&mut systems.renderer, entity_name.0, &username);
+            .set_text(&mut systems.renderer, &entity_name.0, &username);
 
         {
             world.get::<&mut HPBar>(entity.0)?.visible =
@@ -369,7 +369,7 @@ pub fn handle_playerspawn(
                 let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
                 systems.gfx.set_text(
                     &mut systems.renderer,
-                    entity_name.0,
+                    &entity_name.0,
                     &username,
                 );
 
@@ -664,9 +664,9 @@ pub fn handle_vitals(
             }
 
             let hpbar = world.get_or_err::<HPBar>(&entity)?;
-            let mut size = systems.gfx.get_size(hpbar.bar_index);
+            let mut size = systems.gfx.get_size(&hpbar.bar_index);
             size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
-            systems.gfx.set_size(hpbar.bar_index, size);
+            systems.gfx.set_size(&hpbar.bar_index, size);
 
             if world.get_or_err::<WorldEntityType>(&entity)?
                 == WorldEntityType::Player
@@ -677,11 +677,11 @@ pub fn handle_vitals(
                             vitals[0] != vitalmax[0];
 
                         systems.gfx.set_visible(
-                            hpbar.bar_index,
+                            &hpbar.bar_index,
                             vitals[0] != vitalmax[0],
                         );
                         systems.gfx.set_visible(
-                            hpbar.bg_index,
+                            &hpbar.bg_index,
                             vitals[0] != vitalmax[0],
                         );
 
@@ -1067,7 +1067,7 @@ pub fn handle_npcdata(
                         world.get_or_err::<EntityNameMap>(&entity)?;
                     systems.gfx.set_text(
                         &mut systems.renderer,
-                        entity_name.0,
+                        &entity_name.0,
                         &npc_data.name,
                     );
                 }

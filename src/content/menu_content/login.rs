@@ -6,8 +6,8 @@ use crate::{
 };
 
 pub struct Login {
-    window: Vec<usize>,
-    label: Vec<usize>,
+    window: Vec<GfxType>,
+    label: Vec<GfxType>,
     button: Vec<crate::widget::Button>,
     pub checkbox: Checkbox,
     pub textbox: Vec<Textbox>,
@@ -38,7 +38,12 @@ impl Login {
             .set_color(Color::rgba(160, 160, 160, 255))
             .set_border_color(Color::rgba(10, 10, 10, 255))
             .set_border_width(1.0);
-        window.push(systems.gfx.add_rect(menu_rect, 0, "Login Window".into()));
+        window.push(systems.gfx.add_rect(
+            menu_rect,
+            0,
+            "Login Window".into(),
+            true,
+        ));
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         header_rect
@@ -53,6 +58,7 @@ impl Login {
             header_rect,
             0,
             "Login Header".into(),
+            true,
         ));
 
         let header_text = create_label(
@@ -71,14 +77,18 @@ impl Login {
             ),
             Color::rgba(240, 240, 240, 255),
         );
-        let text_index =
-            systems
-                .gfx
-                .add_text(header_text, 1, "Login Header Text".into());
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, text_index, "Login Window");
-        systems.gfx.center_text(text_index);
+        let text_index = systems.gfx.add_text(
+            header_text,
+            1,
+            "Login Header Text".into(),
+            true,
+        );
+        systems.gfx.set_text(
+            &mut systems.renderer,
+            &text_index,
+            "Login Window",
+        );
+        systems.gfx.center_text(&text_index);
         label.push(text_index);
 
         for index in 0..2 {
@@ -112,11 +122,13 @@ impl Login {
                 labelbox,
                 0,
                 "Login Labelbox".into(),
+                true,
             ));
             window.push(systems.gfx.add_rect(
                 textbox_bg,
                 0,
                 "Login Textbox BG".into(),
+                true,
             ));
 
             let tpos = Vec2::new(
@@ -135,7 +147,8 @@ impl Login {
                 ),
                 Color::rgba(100, 100, 100, 255),
             );
-            let textindex = systems.gfx.add_text(text, 1, "Login Label".into());
+            let textindex =
+                systems.gfx.add_text(text, 1, "Login Label".into(), true);
             let (msg, disable_option) = match index {
                 1 => (
                     "Password",
@@ -147,7 +160,7 @@ impl Login {
                 ),
                 _ => ("Email", vec![]),
             };
-            systems.gfx.set_text(&mut systems.renderer, textindex, msg);
+            systems.gfx.set_text(&mut systems.renderer, &textindex, msg);
             label.push(textindex);
 
             let is_hidden = index == 1;
@@ -296,10 +309,10 @@ impl Login {
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         self.window.iter().for_each(|index| {
-            systems.gfx.set_visible(*index, visible);
+            systems.gfx.set_visible(index, visible);
         });
         self.label.iter().for_each(|index| {
-            systems.gfx.set_visible(*index, visible);
+            systems.gfx.set_visible(index, visible);
         });
         self.button.iter_mut().for_each(|button| {
             button.set_visible(systems, visible);

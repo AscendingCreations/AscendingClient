@@ -6,12 +6,12 @@ use crate::{
 };
 
 pub struct Register {
-    window: Vec<usize>,
-    label: Vec<usize>,
-    pub unique_label: usize,
+    window: Vec<GfxType>,
+    label: Vec<GfxType>,
+    pub unique_label: GfxType,
     button: Vec<crate::widget::Button>,
     pub textbox: Vec<Textbox>,
-    pub image: usize,
+    pub image: GfxType,
 }
 
 impl Register {
@@ -39,6 +39,7 @@ impl Register {
             menu_rect,
             0,
             "Register Window".into(),
+            true,
         ));
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
@@ -54,6 +55,7 @@ impl Register {
             header_rect,
             0,
             "Register Header".into(),
+            true,
         ));
 
         let header_text = create_label(
@@ -72,16 +74,18 @@ impl Register {
             ),
             Color::rgba(240, 240, 240, 255),
         );
-        let text_index =
-            systems
-                .gfx
-                .add_text(header_text, 1, "Register Header Text".into());
+        let text_index = systems.gfx.add_text(
+            header_text,
+            1,
+            "Register Header Text".into(),
+            true,
+        );
         systems.gfx.set_text(
             &mut systems.renderer,
-            text_index,
+            &text_index,
             "Register Window",
         );
-        systems.gfx.center_text(text_index);
+        systems.gfx.center_text(&text_index);
         label.push(text_index);
 
         for index in 0..5 {
@@ -118,11 +122,13 @@ impl Register {
                 labelbox,
                 0,
                 "Register Labelbox".into(),
+                true,
             ));
             window.push(systems.gfx.add_rect(
                 textbox_bg,
                 0,
                 "Register Textbox BG".into(),
+                true,
             ));
 
             let tpos = Vec2::new(
@@ -142,7 +148,7 @@ impl Register {
                 Color::rgba(100, 100, 100, 255),
             );
             let textindex =
-                systems.gfx.add_text(text, 1, "Register Label".into());
+                systems.gfx.add_text(text, 1, "Register Label".into(), true);
             let msg = match index {
                 1 => "Retype",
                 2 => "Password",
@@ -150,7 +156,7 @@ impl Register {
                 4 => "Username",
                 _ => "Email",
             };
-            systems.gfx.set_text(&mut systems.renderer, textindex, msg);
+            systems.gfx.set_text(&mut systems.renderer, &textindex, msg);
             label.push(textindex);
 
             let tooltip = match index {
@@ -193,6 +199,7 @@ impl Register {
             sprite_bg,
             0,
             "Register Sprite BG".into(),
+            true,
         ));
 
         let mut image_texture = Image::new(
@@ -208,10 +215,12 @@ impl Register {
             ORDER_MENU_WINDOW_CONTENT_DETAIL,
         );
         image_texture.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
-        let image =
-            systems
-                .gfx
-                .add_image(image_texture, 0, "Register Sprite".into());
+        let image = systems.gfx.add_image(
+            image_texture,
+            0,
+            "Register Sprite".into(),
+            true,
+        );
 
         let sprite_label = create_label(
             systems,
@@ -233,13 +242,14 @@ impl Register {
             sprite_label,
             1,
             "Register Sprite Label".into(),
+            true,
         );
         systems.gfx.set_text(
             &mut systems.renderer,
-            sprite_index,
+            &sprite_index,
             "Sprite Selection",
         );
-        systems.gfx.center_text(sprite_index);
+        systems.gfx.center_text(&sprite_index);
         label.push(sprite_index);
 
         let btn = Button::new(
@@ -391,11 +401,12 @@ impl Register {
             sprite_number_text,
             1,
             "Register Sprite Number".into(),
+            true,
         );
         systems
             .gfx
-            .set_text(&mut systems.renderer, unique_label, "0");
-        systems.gfx.center_text(unique_label);
+            .set_text(&mut systems.renderer, &unique_label, "0");
+        systems.gfx.center_text(&unique_label);
 
         Register {
             window,
@@ -409,10 +420,10 @@ impl Register {
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         self.window.iter().for_each(|index| {
-            systems.gfx.set_visible(*index, visible);
+            systems.gfx.set_visible(index, visible);
         });
         self.label.iter().for_each(|index| {
-            systems.gfx.set_visible(*index, visible);
+            systems.gfx.set_visible(index, visible);
         });
         self.button.iter_mut().for_each(|button| {
             button.set_visible(systems, visible);
@@ -420,8 +431,8 @@ impl Register {
         self.textbox.iter_mut().for_each(|textbox| {
             textbox.set_visible(systems, visible);
         });
-        systems.gfx.set_visible(self.unique_label, visible);
-        systems.gfx.set_visible(self.image, visible);
+        systems.gfx.set_visible(&self.unique_label, visible);
+        systems.gfx.set_visible(&self.image, visible);
     }
 
     pub fn hover_buttons(

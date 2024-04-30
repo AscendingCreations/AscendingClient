@@ -31,15 +31,15 @@ pub enum AlertIndex {
 }
 
 pub struct AlertTextbox {
-    bg: usize,
+    bg: GfxType,
     textbox: Textbox,
     selected: bool,
     numeric_only: bool,
 }
 
 pub struct Alert {
-    window: Vec<usize>,
-    text: Vec<usize>,
+    window: Vec<GfxType>,
+    text: Vec<GfxType>,
     button: Vec<Button>,
     alert_type: AlertType,
     input_box: Option<AlertTextbox>,
@@ -80,16 +80,16 @@ impl Alert {
     ) {
         if self.visible {
             self.window.iter().for_each(|gfx_index| {
-                systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
+                systems.gfx.remove_gfx(&mut systems.renderer, gfx_index);
             });
             self.text.iter().for_each(|gfx_index| {
-                systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
+                systems.gfx.remove_gfx(&mut systems.renderer, gfx_index);
             });
             self.button.iter_mut().for_each(|button| {
                 button.unload(systems);
             });
             if let Some(textbox) = &mut self.input_box {
-                systems.gfx.remove_gfx(&mut systems.renderer, textbox.bg);
+                systems.gfx.remove_gfx(&mut systems.renderer, &textbox.bg);
                 textbox.textbox.unload(systems);
             }
         }
@@ -168,12 +168,14 @@ impl Alert {
         header_text.size =
             Vec2::new(header_text_size.x, header_text_size.y + 4.0);
         header_text.changed = true;
-        let header_text_index =
-            systems
-                .gfx
-                .add_text(header_text, 5, "Alert Header Text".into());
+        let header_text_index = systems.gfx.add_text(
+            header_text,
+            5,
+            "Alert Header Text".into(),
+            true,
+        );
         if alert_type == AlertType::Input {
-            systems.gfx.center_text(header_text_index);
+            systems.gfx.center_text(&header_text_index);
         }
         self.text.push(header_text_index);
 
@@ -191,11 +193,12 @@ impl Alert {
             .set_color(Color::rgba(160, 160, 160, 255));
 
         self.window
-            .push(systems.gfx.add_rect(bg, 3, "Alert BG".into()));
+            .push(systems.gfx.add_rect(bg, 3, "Alert BG".into(), true));
         self.window.push(systems.gfx.add_rect(
             window,
             4,
             "Alert Window".into(),
+            true,
         ));
 
         if alert_type != AlertType::Input {
@@ -212,8 +215,12 @@ impl Alert {
                 )));
             text.size = Vec2::new(text_size.x, text_size.y + 10.0);
             text.changed = true;
-            self.text
-                .push(systems.gfx.add_text(text, 5, "Alert Text".into()));
+            self.text.push(systems.gfx.add_text(
+                text,
+                5,
+                "Alert Text".into(),
+                true,
+            ));
 
             let mut header = Rect::new(&mut systems.renderer, 0);
             header
@@ -228,6 +235,7 @@ impl Alert {
                 header,
                 4,
                 "Alert Header BG".into(),
+                true,
             ));
         }
 
@@ -353,6 +361,7 @@ impl Alert {
                         textbox_bg,
                         4,
                         "Alert Input BG".into(),
+                        true,
                     ),
                     textbox,
                     selected: false,
@@ -414,16 +423,16 @@ impl Alert {
         }
         self.visible = false;
         self.window.iter().for_each(|gfx_index| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, gfx_index);
         });
         self.text.iter().for_each(|gfx_index| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *gfx_index);
+            systems.gfx.remove_gfx(&mut systems.renderer, gfx_index);
         });
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         if let Some(textbox) = &mut self.input_box {
-            systems.gfx.remove_gfx(&mut systems.renderer, textbox.bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, &textbox.bg);
             textbox.textbox.unload(systems);
         }
         systems.caret.index = None;

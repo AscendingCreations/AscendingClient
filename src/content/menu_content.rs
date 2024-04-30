@@ -20,14 +20,14 @@ pub enum WindowType {
 }
 
 pub struct MenuContent {
-    bg: usize,
+    bg: GfxType,
     cur_window: WindowType,
 
     login: Login,
     register: Register,
 
     selected_textbox: Option<usize>,
-    pub server_status: usize,
+    pub server_status: GfxType,
 
     pub content_data: usize,
 
@@ -45,7 +45,7 @@ impl MenuContent {
         bg_image.pos = Vec3::new(0.0, 0.0, ORDER_MENU_BG);
         bg_image.hw = Vec2::new(800.0, 600.0);
         bg_image.uv = Vec4::new(0.0, 0.0, 800.0, 600.0);
-        let bg = systems.gfx.add_image(bg_image, 0, "Menu BG".into());
+        let bg = systems.gfx.add_image(bg_image, 0, "Menu BG".into(), true);
 
         let label_size = Vec2::new(
             200.0 * systems.scale as f32,
@@ -60,7 +60,9 @@ impl MenuContent {
             Color::rgba(220, 220, 220, 255),
         );
         let server_status =
-            systems.gfx.add_text(text, 1, "Menu Server Status".into());
+            systems
+                .gfx
+                .add_text(text, 1, "Menu Server Status".into(), true);
 
         MenuContent {
             bg,
@@ -77,14 +79,14 @@ impl MenuContent {
     }
 
     pub fn show(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.set_visible(self.bg, true);
-        systems.gfx.set_visible(self.server_status, true);
+        systems.gfx.set_visible(&self.bg, true);
+        systems.gfx.set_visible(&self.server_status, true);
         create_window(systems, self, WindowType::Login);
     }
 
     pub fn hide(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.set_visible(self.bg, false);
-        systems.gfx.set_visible(self.server_status, false);
+        systems.gfx.set_visible(&self.bg, false);
+        systems.gfx.set_visible(&self.server_status, false);
         systems.caret.index = None;
         self.clear_window(systems)
     }
@@ -99,7 +101,7 @@ impl MenuContent {
     pub fn set_status_online(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_rich_text(
             &mut systems.renderer,
-            self.server_status,
+            &self.server_status,
             [
                 (
                     "Server Status: ",
@@ -113,7 +115,7 @@ impl MenuContent {
     pub fn set_status_offline(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_rich_text(
             &mut systems.renderer,
-            self.server_status,
+            &self.server_status,
             [
                 (
                     "Server Status: ",

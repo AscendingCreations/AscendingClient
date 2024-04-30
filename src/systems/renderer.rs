@@ -81,7 +81,7 @@ impl ClientGPUInstances {
 
 pub struct TextCaret {
     pub visible: bool,
-    pub index: Option<usize>,
+    pub index: Option<GfxType>,
     pub timer: f32,
 }
 
@@ -107,7 +107,7 @@ pub struct SystemHolder {
     pub audio: Audio,
     pub caret: TextCaret,
     pub try_once: bool,
-    pub fps: usize,
+    pub fps: GfxType,
 }
 
 pub struct State<Controls>
@@ -213,129 +213,50 @@ where
 pub fn add_image_to_buffer<Controls>(
     systems: &mut SystemHolder,
     graphics: &mut State<Controls>,
-    seconds: f32,
 ) where
     Controls: camera::controls::Controls,
 {
-    if systems.gfx.last_sorted_seconds < seconds {
-        systems.gfx.sort_gfx_array();
-        systems.gfx.last_sorted_seconds = seconds + 3.0;
-    }
-
-    systems.gfx.collection.iter().for_each(|data| {
-        //systems.gfx.sorted_array.iter().for_each(|gfx_data| {
-        //if let Some(data) = systems.gfx.collection.get(gfx_data.1) {
-        if data.1.visible {
-            match data.1.gfx_type {
-                GfxType::Image => {
-                    if let Some(gfx) =
-                        systems.gfx.image_storage.get_mut(data.1.key)
-                    {
-                        graphics.image_renderer.image_update(
-                            gfx,
-                            &mut systems.renderer,
-                            &mut graphics.image_atlas,
-                            data.1.layer,
-                        );
-                    }
-                }
-                GfxType::Rect => {
-                    if let Some(gfx) =
-                        systems.gfx.rect_storage.get_mut(data.1.key)
-                    {
-                        graphics.ui_renderer.rect_update(
-                            gfx,
-                            &mut systems.renderer,
-                            &mut graphics.ui_atlas,
-                            data.1.layer,
-                        );
-                    }
-                }
-                GfxType::Text => {
-                    if let Some(gfx) =
-                        systems.gfx.text_storage.get_mut(data.1.key)
-                    {
-                        graphics
-                            .text_renderer
-                            .text_update(
-                                gfx,
-                                &mut graphics.text_atlas,
-                                &mut systems.renderer,
-                                data.1.layer,
-                            )
-                            .unwrap();
-                    }
-                }
-                GfxType::Map => {
-                    if let Some(gfx) =
-                        systems.gfx.map_storage.get_mut(data.1.key)
-                    {
-                        graphics.map_renderer.map_update(
-                            gfx,
-                            &mut systems.renderer,
-                            &mut graphics.map_atlas,
-                            [0, 1],
-                        );
-                    }
-                }
-            }
+    systems.gfx.image_storage.iter_mut().for_each(|(_, gfx)| {
+        if gfx.data.visible {
+            graphics.image_renderer.image_update(
+                &mut gfx.gfx,
+                &mut systems.renderer,
+                &mut graphics.image_atlas,
+                gfx.data.layer,
+            );
         }
     });
-    /*systems.gfx.collection.iter().for_each(|data| {
-        if data.1.visible {
-            match data.1.gfx_type {
-                GfxType::Image => {
-                    if let Some(gfx) =
-                        systems.gfx.image_storage.get_mut(data.1.key)
-                    {
-                        graphics.image_renderer.image_update(
-                            gfx,
-                            &mut systems.renderer,
-                            &mut graphics.image_atlas,
-                            data.1.layer,
-                        );
-                    }
-                }
-                GfxType::Rect => {
-                    if let Some(gfx) =
-                        systems.gfx.rect_storage.get_mut(data.1.key)
-                    {
-                        graphics.ui_renderer.rect_update(
-                            gfx,
-                            &mut systems.renderer,
-                            &mut graphics.ui_atlas,
-                            data.1.layer,
-                        );
-                    }
-                }
-                GfxType::Text => {
-                    if let Some(gfx) =
-                        systems.gfx.text_storage.get_mut(data.1.key)
-                    {
-                        graphics
-                            .text_renderer
-                            .text_update(
-                                gfx,
-                                &mut graphics.text_atlas,
-                                &mut systems.renderer,
-                                data.1.layer,
-                            )
-                            .unwrap();
-                    }
-                }
-                GfxType::Map => {
-                    if let Some(gfx) =
-                        systems.gfx.map_storage.get_mut(data.1.key)
-                    {
-                        graphics.map_renderer.map_update(
-                            gfx,
-                            &mut systems.renderer,
-                            &mut graphics.map_atlas,
-                            [0, 1],
-                        );
-                    }
-                }
-            }
+    systems.gfx.text_storage.iter_mut().for_each(|(_, gfx)| {
+        if gfx.data.visible {
+            graphics
+                .text_renderer
+                .text_update(
+                    &mut gfx.gfx,
+                    &mut graphics.text_atlas,
+                    &mut systems.renderer,
+                    gfx.data.layer,
+                )
+                .unwrap();
         }
-    });*/
+    });
+    systems.gfx.rect_storage.iter_mut().for_each(|(_, gfx)| {
+        if gfx.data.visible {
+            graphics.ui_renderer.rect_update(
+                &mut gfx.gfx,
+                &mut systems.renderer,
+                &mut graphics.ui_atlas,
+                gfx.data.layer,
+            );
+        }
+    });
+    systems.gfx.map_storage.iter_mut().for_each(|(_, gfx)| {
+        if gfx.data.visible {
+            graphics.map_renderer.map_update(
+                &mut gfx.gfx,
+                &mut systems.renderer,
+                &mut graphics.map_atlas,
+                [0, 1],
+            );
+        }
+    });
 }

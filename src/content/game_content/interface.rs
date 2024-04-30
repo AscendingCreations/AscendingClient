@@ -11,8 +11,8 @@ use crate::{
     send_closestorage, send_closetrade, send_command, send_message,
     send_removetradeitem, send_submittrade, send_unequip,
     send_updatetrademoney, send_useitem, widget::*, Alert, AlertIndex,
-    AlertType, GameContent, MouseInputType, Result, Socket, SystemHolder,
-    TradeStatus, COLOR_WHITE,
+    AlertType, GameContent, GfxType, MouseInputType, Result, Socket,
+    SystemHolder, TradeStatus, COLOR_WHITE,
 };
 use hecs::World;
 
@@ -55,9 +55,9 @@ pub enum SelectedTextbox {
 }
 
 pub struct Interface {
-    pub ping_text: usize,
-    pub average_ping: usize,
-    pub frame_loop: usize,
+    pub ping_text: GfxType,
+    pub average_ping: GfxType,
+    pub frame_loop: GfxType,
     pub average_ping_collection: VecDeque<u64>,
     pub frame_loop_collection: VecDeque<u64>,
     pub menu_button: [Button; 3],
@@ -99,11 +99,15 @@ impl Interface {
             ),
             Color::rgba(200, 200, 200, 255),
         );
-        let ping_text = systems.gfx.add_text(ping, 5, "Ping".to_string());
-        systems.gfx.set_visible(ping_text, systems.config.show_ping);
+        let ping_text = systems.gfx.add_text(
+            ping,
+            5,
+            "Ping".to_string(),
+            systems.config.show_ping,
+        );
         systems
             .gfx
-            .set_text(&mut systems.renderer, ping_text, "Ping: 0");
+            .set_text(&mut systems.renderer, &ping_text, "Ping: 0");
 
         let pos = Vec3::new(
             statistic_pos.x,
@@ -117,14 +121,15 @@ impl Interface {
             Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
             Color::rgba(200, 200, 200, 255),
         );
-        let average_ping =
-            systems.gfx.add_text(averageping, 5, "Av. Ping".to_string());
-        systems
-            .gfx
-            .set_visible(average_ping, systems.config.show_average_ping);
+        let average_ping = systems.gfx.add_text(
+            averageping,
+            5,
+            "Av. Ping".to_string(),
+            systems.config.show_average_ping,
+        );
         systems.gfx.set_text(
             &mut systems.renderer,
-            average_ping,
+            &average_ping,
             "Av. Ping: 0",
         );
 
@@ -140,14 +145,15 @@ impl Interface {
             Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
             Color::rgba(200, 200, 200, 255),
         );
-        let frame_loop =
-            systems.gfx.add_text(framejitter, 5, "Av. Ping".to_string());
-        systems
-            .gfx
-            .set_visible(frame_loop, systems.config.show_frame_loop);
+        let frame_loop = systems.gfx.add_text(
+            framejitter,
+            5,
+            "Av. Ping".to_string(),
+            systems.config.show_frame_loop,
+        );
         systems.gfx.set_text(
             &mut systems.renderer,
-            frame_loop,
+            &frame_loop,
             "Frame Jitter: 0",
         );
 
@@ -206,13 +212,13 @@ impl Interface {
         self.selected_textbox = SelectedTextbox::None;
         systems
             .gfx
-            .set_visible(self.ping_text, systems.config.show_ping);
+            .set_visible(&self.ping_text, systems.config.show_ping);
         systems
             .gfx
-            .set_visible(self.average_ping, systems.config.show_average_ping);
+            .set_visible(&self.average_ping, systems.config.show_average_ping);
         systems
             .gfx
-            .set_visible(self.frame_loop, systems.config.show_frame_loop);
+            .set_visible(&self.frame_loop, systems.config.show_frame_loop);
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
@@ -229,9 +235,9 @@ impl Interface {
         self.trade.unload(systems);
         self.window_order.clear();
         self.item_desc.unload(systems);
-        systems.gfx.set_visible(self.ping_text, false);
-        systems.gfx.set_visible(self.average_ping, false);
-        systems.gfx.set_visible(self.frame_loop, false);
+        systems.gfx.set_visible(&self.ping_text, false);
+        systems.gfx.set_visible(&self.average_ping, false);
+        systems.gfx.set_visible(&self.frame_loop, false);
     }
 
     pub fn mouse_input(
@@ -456,9 +462,9 @@ impl Interface {
                         interface.setting.trigger_checkbox(
                             systems,
                             index,
-                            interface.ping_text,
-                            interface.average_ping,
-                            interface.frame_loop,
+                            &interface.ping_text,
+                            &interface.average_ping,
+                            &interface.frame_loop,
                         );
                         result = true;
                     }

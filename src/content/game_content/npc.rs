@@ -33,8 +33,7 @@ pub fn add_npc(
     );
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
-    let sprite = systems.gfx.add_image(image, 0, "Npc Sprite".into());
-    systems.gfx.set_visible(sprite, false);
+    let sprite = systems.gfx.add_image(image, 0, "Npc Sprite".into(), false);
 
     let mut bg_image = Rect::new(&mut systems.renderer, 0);
     bg_image
@@ -43,15 +42,16 @@ pub fn add_npc(
         .set_color(Color::rgba(80, 80, 80, 255))
         .set_border_width(1.0)
         .set_border_color(Color::rgba(10, 10, 10, 255));
-    let bg_index = systems.gfx.add_rect(bg_image, 0, "Npc HP BG".into());
-    systems.gfx.set_visible(bg_index, false);
+    let bg_index = systems.gfx.add_rect(bg_image, 0, "Npc HP BG".into(), false);
     let mut bar_image = Rect::new(&mut systems.renderer, 0);
     bar_image
         .set_size(Vec2::new(18.0, 4.0))
         .set_position(Vec3::new(1.0, 1.0, ORDER_HPBAR))
         .set_color(Color::rgba(180, 30, 30, 255));
-    let bar_index = systems.gfx.add_rect(bar_image, 0, "Npc HP Bar".into());
-    systems.gfx.set_visible(bar_index, false);
+    let bar_index =
+        systems
+            .gfx
+            .add_rect(bar_image, 0, "Npc HP Bar".into(), false);
 
     let entity_name = create_label(
         systems,
@@ -60,8 +60,10 @@ pub fn add_npc(
         Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
         Color::rgba(200, 40, 40, 255),
     );
-    let name_index = systems.gfx.add_text(entity_name, 1, "Npc Name".into());
-    systems.gfx.set_visible(name_index, false);
+    let name_index =
+        systems
+            .gfx
+            .add_text(entity_name, 1, "Npc Name".into(), false);
     let entitynamemap = EntityNameMap(name_index);
 
     let hpbar = HPBar {
@@ -129,15 +131,15 @@ pub fn npc_finalized(
 
 pub fn npc_finalized_data(
     systems: &mut SystemHolder,
-    sprite: usize,
-    name: usize,
+    sprite: GfxType,
+    name: GfxType,
     hpbar: &HPBar,
 ) {
-    systems.gfx.set_visible(sprite, true);
-    systems.gfx.set_visible(name, true);
+    systems.gfx.set_visible(&sprite, true);
+    systems.gfx.set_visible(&name, true);
 
-    systems.gfx.set_visible(hpbar.bg_index, hpbar.visible);
-    systems.gfx.set_visible(hpbar.bar_index, hpbar.visible);
+    systems.gfx.set_visible(&hpbar.bg_index, hpbar.visible);
+    systems.gfx.set_visible(&hpbar.bar_index, hpbar.visible);
 }
 
 pub fn unload_npc(
@@ -146,18 +148,18 @@ pub fn unload_npc(
     entity: &Entity,
 ) -> Result<()> {
     let npc_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-    systems.gfx.remove_gfx(&mut systems.renderer, npc_sprite);
+    systems.gfx.remove_gfx(&mut systems.renderer, &npc_sprite);
     let hpbar = world.get_or_err::<HPBar>(entity)?;
     systems
         .gfx
-        .remove_gfx(&mut systems.renderer, hpbar.bar_index);
+        .remove_gfx(&mut systems.renderer, &hpbar.bar_index);
     systems
         .gfx
-        .remove_gfx(&mut systems.renderer, hpbar.bg_index);
+        .remove_gfx(&mut systems.renderer, &hpbar.bg_index);
     let entitynamemap = world.get_or_err::<EntityNameMap>(entity)?;
     systems
         .gfx
-        .remove_gfx(&mut systems.renderer, entitynamemap.0);
+        .remove_gfx(&mut systems.renderer, &entitynamemap.0);
     world.despawn(entity.0)?;
     Ok(())
 }
@@ -282,7 +284,7 @@ pub fn end_npc_move(
 pub fn update_npc_position(
     systems: &mut SystemHolder,
     content: &mut GameContent,
-    sprite: usize,
+    sprite: GfxType,
     pos: &Position,
     pos_offset: &PositionOffset,
     hpbar: &HPBar,
@@ -292,7 +294,7 @@ pub fn update_npc_position(
         .unwrap_or_else(|| {
             Vec2::new(systems.size.width * 2.0, systems.size.height * 2.0)
         });
-    let cur_pos = systems.gfx.get_pos(sprite);
+    let cur_pos = systems.gfx.get_pos(&sprite);
     let texture_pos = content.camera.0
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset.offset
@@ -307,24 +309,24 @@ pub fn update_npc_position(
 
     systems
         .gfx
-        .set_pos(sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+        .set_pos(&sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
 
-    let sprite_size = systems.gfx.get_size(sprite);
+    let sprite_size = systems.gfx.get_size(&sprite);
     let bar_pos = pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
     systems.gfx.set_pos(
-        hpbar.bar_index,
+        &hpbar.bar_index,
         Vec3::new(bar_pos.x + 1.0, bar_pos.y + 1.0, ORDER_HPBAR),
     );
     systems.gfx.set_pos(
-        hpbar.bg_index,
+        &hpbar.bg_index,
         Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG),
     );
 
-    let textsize = systems.gfx.get_measure(entitynamemap.0).floor();
+    let textsize = systems.gfx.get_measure(&entitynamemap.0).floor();
     let name_pos =
         pos + Vec2::new(((sprite_size.x - textsize.x) * 0.5).floor(), 40.0);
     systems.gfx.set_pos(
-        entitynamemap.0,
+        &entitynamemap.0,
         Vec3::new(name_pos.x, name_pos.y, ORDER_ENTITY_NAME),
     );
 
@@ -342,13 +344,13 @@ pub fn set_npc_frame(
     }
 
     let sprite_index = world.get_or_err::<SpriteIndex>(entity)?.0;
-    let size = systems.gfx.get_size(sprite_index);
+    let size = systems.gfx.get_size(&sprite_index);
     let frame_pos = Vec2::new(
         frame_index as f32 % NPC_SPRITE_FRAME_X,
         (frame_index as f32 / NPC_SPRITE_FRAME_X).floor(),
     );
     systems.gfx.set_uv(
-        sprite_index,
+        &sprite_index,
         Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y),
     );
     Ok(())
@@ -489,10 +491,10 @@ pub fn update_npc_camera(
         if is_target {
             if !hpbar.visible {
                 hpbar.visible = true;
-                systems.gfx.set_visible(hpbar.bar_index, true);
-                systems.gfx.set_visible(hpbar.bg_index, true);
+                systems.gfx.set_visible(&hpbar.bar_index, true);
+                systems.gfx.set_visible(&hpbar.bg_index, true);
             }
-            let pos = systems.gfx.get_pos(spriteindex.0);
+            let pos = systems.gfx.get_pos(&spriteindex.0);
             content.target.set_target_pos(
                 socket,
                 systems,
@@ -501,8 +503,8 @@ pub fn update_npc_camera(
             )?;
         } else if hpbar.visible {
             hpbar.visible = false;
-            systems.gfx.set_visible(hpbar.bar_index, false);
-            systems.gfx.set_visible(hpbar.bg_index, false);
+            systems.gfx.set_visible(&hpbar.bar_index, false);
+            systems.gfx.set_visible(&hpbar.bg_index, false);
         }
         update_npc_position(
             systems,

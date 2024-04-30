@@ -4,12 +4,12 @@ use graphics::{
 };
 
 use crate::{
-    create_empty_label, create_label, data_types::ItemTypes, SystemHolder,
-    ORDER_ITEM_DESC, ORDER_ITEM_DESC_TEXT,
+    create_empty_label, create_label, data_types::ItemTypes, GfxType,
+    SystemHolder, ORDER_ITEM_DESC, ORDER_ITEM_DESC_TEXT,
 };
 
 struct DescData {
-    index: usize,
+    index: GfxType,
     pos: Vec2,
 }
 
@@ -21,7 +21,7 @@ struct ItemDescData {
 
 pub struct ItemDescription {
     pub visible: bool,
-    bg: usize,
+    bg: GfxType,
     data: Option<ItemDescData>,
     size: Vec2,
     min_bound: Vec2,
@@ -37,8 +37,10 @@ impl ItemDescription {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let bg = systems.gfx.add_rect(bg_rect, 0, "Item Desc Window".into());
-        systems.gfx.set_visible(bg, false);
+        let bg =
+            systems
+                .gfx
+                .add_rect(bg_rect, 0, "Item Desc Window".into(), false);
 
         ItemDescription {
             visible: false,
@@ -51,22 +53,22 @@ impl ItemDescription {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.bg);
         if let Some(data) = &self.data {
             for desc_data in data.data.iter() {
                 systems
                     .gfx
-                    .remove_gfx(&mut systems.renderer, desc_data.index);
+                    .remove_gfx(&mut systems.renderer, &desc_data.index);
             }
         }
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
         self.visible = visible;
-        systems.gfx.set_visible(self.bg, visible);
+        systems.gfx.set_visible(&self.bg, visible);
         if let Some(data) = &self.data {
             for desc_data in data.data.iter() {
-                systems.gfx.set_visible(desc_data.index, visible);
+                systems.gfx.set_visible(&desc_data.index, visible);
             }
         }
     }
@@ -79,7 +81,7 @@ impl ItemDescription {
                 for desc_data in data.data.iter() {
                     systems
                         .gfx
-                        .remove_gfx(&mut systems.renderer, desc_data.index);
+                        .remove_gfx(&mut systems.renderer, &desc_data.index);
                 }
             }
         }
@@ -155,8 +157,12 @@ impl ItemDescription {
                 tpos.y + text_size.y,
             )))
             .set_default_color(Color::rgba(250, 250, 250, 255));
-        let name = systems.gfx.add_text(name_text, 1, "Item Desc Name".into());
-        systems.gfx.set_visible(name, self.visible);
+        let name = systems.gfx.add_text(
+            name_text,
+            1,
+            "Item Desc Name".into(),
+            self.visible,
+        );
 
         let mut data = Vec::with_capacity(text_holder.len());
         data.push(DescData {
@@ -180,10 +186,15 @@ impl ItemDescription {
                     ),
                     Color::rgba(200, 200, 200, 255),
                 );
-                let text_index =
-                    systems.gfx.add_text(text, 1, "Item Desc Text".into());
-                systems.gfx.set_text(&mut systems.renderer, text_index, msg);
-                systems.gfx.set_visible(text_index, self.visible);
+                let text_index = systems.gfx.add_text(
+                    text,
+                    1,
+                    "Item Desc Text".into(),
+                    self.visible,
+                );
+                systems
+                    .gfx
+                    .set_text(&mut systems.renderer, &text_index, msg);
 
                 data.push(DescData {
                     index: text_index,
@@ -200,10 +211,10 @@ impl ItemDescription {
 
         systems
             .gfx
-            .set_pos(self.bg, Vec3::new(-1.0, -1.0, ORDER_ITEM_DESC));
+            .set_pos(&self.bg, Vec3::new(-1.0, -1.0, ORDER_ITEM_DESC));
         systems
             .gfx
-            .set_size(self.bg, Vec2::new(size.x + 2.0, size.y + 2.0));
+            .set_size(&self.bg, Vec2::new(size.x + 2.0, size.y + 2.0));
 
         self.min_bound = Vec2::new(
             systems.size.width - size.x - 1.0,
@@ -223,14 +234,14 @@ impl ItemDescription {
             .min(self.min_bound);
 
         systems.gfx.set_pos(
-            self.bg,
+            &self.bg,
             Vec3::new(pos.x - 1.0, pos.y - 1.0, ORDER_ITEM_DESC),
         );
 
         if let Some(data) = &self.data {
             for desc_data in data.data.iter() {
                 systems.gfx.set_pos(
-                    desc_data.index,
+                    &desc_data.index,
                     Vec3::new(
                         pos.x + desc_data.pos.x,
                         pos.y + desc_data.pos.y,
@@ -238,7 +249,7 @@ impl ItemDescription {
                     ),
                 );
                 systems.gfx.set_bound(
-                    desc_data.index,
+                    &desc_data.index,
                     Bounds::new(
                         pos.x + desc_data.pos.x,
                         pos.y + desc_data.pos.y,

@@ -201,12 +201,12 @@ fn trigger_button(
             menu_content.content_data =
                 menu_content.content_data.saturating_sub(1).max(0);
             systems.gfx.set_image(
-                menu_content.register.image,
+                &menu_content.register.image,
                 systems.resource.players[menu_content.content_data].allocation,
             );
             systems.gfx.set_text(
                 &mut systems.renderer,
-                menu_content.register.unique_label,
+                &menu_content.register.unique_label,
                 &format!("{}", menu_content.content_data),
             );
         }
@@ -215,12 +215,12 @@ fn trigger_button(
             menu_content.content_data =
                 menu_content.content_data.saturating_add(1).min(2);
             systems.gfx.set_image(
-                menu_content.register.image,
+                &menu_content.register.image,
                 systems.resource.players[menu_content.content_data].allocation,
             );
             systems.gfx.set_text(
                 &mut systems.renderer,
-                menu_content.register.unique_label,
+                &menu_content.register.unique_label,
                 &format!("{}", menu_content.content_data),
             );
         }

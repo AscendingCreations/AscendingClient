@@ -12,7 +12,7 @@ const MAX_CHAT: usize = 100;
 
 #[derive(Debug, Clone)]
 pub struct Chat {
-    text: usize,
+    text: GfxType,
     msg: String,
     size: Vec2,
     adjust_y: f32,
@@ -21,8 +21,8 @@ pub struct Chat {
 
 #[derive(Clone, Copy, Debug)]
 pub struct ChatTab {
-    bg: usize,
-    text: usize,
+    bg: GfxType,
+    text: GfxType,
     base_pos: Vec2,
     adjust_pos: Vec2,
     size: Vec2,
@@ -48,8 +48,7 @@ impl ChatTab {
             .set_border_width(1.0)
             .set_color(Color::rgba(100, 100, 100, 255))
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let bg = systems.gfx.add_rect(bg_rect, 0, "ChatTab BG".into());
-        systems.gfx.set_visible(bg, true);
+        let bg = systems.gfx.add_rect(bg_rect, 0, "ChatTab BG".into(), true);
 
         let text_data = create_label(
             systems,
@@ -63,10 +62,12 @@ impl ChatTab {
             ),
             Color::rgba(255, 255, 255, 255),
         );
-        let text = systems.gfx.add_text(text_data, 1, "ChatTab Text".into());
-        systems.gfx.set_text(&mut systems.renderer, text, &msg);
-        systems.gfx.center_text(text);
-        systems.gfx.set_visible(text, true);
+        let text =
+            systems
+                .gfx
+                .add_text(text_data, 1, "ChatTab Text".into(), true);
+        systems.gfx.set_text(&mut systems.renderer, &text, &msg);
+        systems.gfx.center_text(&text);
 
         ChatTab {
             bg,
@@ -100,11 +101,11 @@ impl ChatTab {
             if self.in_hover {
                 systems
                     .gfx
-                    .set_color(self.bg, Color::rgba(150, 150, 150, 255));
+                    .set_color(&self.bg, Color::rgba(150, 150, 150, 255));
             } else {
                 systems
                     .gfx
-                    .set_color(self.bg, Color::rgba(100, 100, 100, 255));
+                    .set_color(&self.bg, Color::rgba(100, 100, 100, 255));
             }
         }
     }
@@ -115,50 +116,52 @@ impl ChatTab {
         }
         self.is_selected = is_selected;
         if self.is_selected {
-            systems.gfx.set_color(self.bg, Color::rgba(65, 65, 65, 255));
+            systems
+                .gfx
+                .set_color(&self.bg, Color::rgba(65, 65, 65, 255));
         } else if self.in_hover {
             systems
                 .gfx
-                .set_color(self.bg, Color::rgba(150, 150, 150, 255));
+                .set_color(&self.bg, Color::rgba(150, 150, 150, 255));
         } else {
             systems
                 .gfx
-                .set_color(self.bg, Color::rgba(100, 100, 100, 255));
+                .set_color(&self.bg, Color::rgba(100, 100, 100, 255));
         }
     }
 
     fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
-        systems.gfx.remove_gfx(&mut systems.renderer, self.text);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.text);
     }
 
     fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: [f32; 2]) {
-        let pos = systems.gfx.get_pos(self.bg);
+        let pos = systems.gfx.get_pos(&self.bg);
         systems
             .gfx
-            .set_pos(self.bg, Vec3::new(pos.x, pos.y, z_order[0]));
+            .set_pos(&self.bg, Vec3::new(pos.x, pos.y, z_order[0]));
 
-        let pos = systems.gfx.get_pos(self.text);
+        let pos = systems.gfx.get_pos(&self.text);
         systems
             .gfx
-            .set_pos(self.text, Vec3::new(pos.x, pos.y, z_order[1]));
+            .set_pos(&self.text, Vec3::new(pos.x, pos.y, z_order[1]));
     }
 
     fn move_pos(&mut self, systems: &mut SystemHolder, newpos: Vec2) {
         self.base_pos = newpos;
         let set_pos = newpos + (self.adjust_pos * systems.scale as f32).floor();
 
-        let pos = systems.gfx.get_pos(self.bg);
+        let pos = systems.gfx.get_pos(&self.bg);
         systems
             .gfx
-            .set_pos(self.bg, Vec3::new(set_pos.x, set_pos.y, pos.z));
+            .set_pos(&self.bg, Vec3::new(set_pos.x, set_pos.y, pos.z));
 
-        let pos = systems.gfx.get_pos(self.text);
+        let pos = systems.gfx.get_pos(&self.text);
         systems
             .gfx
-            .set_pos(self.text, Vec3::new(set_pos.x, set_pos.y, pos.z));
+            .set_pos(&self.text, Vec3::new(set_pos.x, set_pos.y, pos.z));
         systems.gfx.set_bound(
-            self.text,
+            &self.text,
             Bounds::new(
                 set_pos.x,
                 set_pos.y,
@@ -166,20 +169,20 @@ impl ChatTab {
                 set_pos.y + (20.0 * systems.scale as f32).floor(),
             ),
         );
-        systems.gfx.center_text(self.text);
+        systems.gfx.center_text(&self.text);
     }
 }
 
 pub struct Chatbox {
-    window: usize,
-    textbox_bg: usize,
-    chatarea_bg: usize,
+    window: GfxType,
+    textbox_bg: GfxType,
+    chatarea_bg: GfxType,
     pub textbox: Textbox,
     button: [Button; 3],
     pub did_button_click: bool,
     pub scrollbar: Scrollbar,
     pub chat_tab: [ChatTab; 3],
-    msg_selection: usize,
+    msg_selection: GfxType,
     msg_select_index: Option<usize>,
     pub selected_tab: usize,
 
@@ -218,7 +221,10 @@ impl Chatbox {
             .set_color(Color::rgba(120, 120, 120, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let window = systems.gfx.add_rect(window_rect, 0, "Chatbox BG".into());
+        let window =
+            systems
+                .gfx
+                .add_rect(window_rect, 0, "Chatbox BG".into(), true);
 
         let mut textbox_rect = Rect::new(&mut systems.renderer, 0);
         let textbox_zpos = detail_1;
@@ -233,10 +239,12 @@ impl Chatbox {
                 (24.0 * systems.scale as f32).floor(),
             ))
             .set_color(Color::rgba(80, 80, 80, 255));
-        let textbox_bg =
-            systems
-                .gfx
-                .add_rect(textbox_rect, 0, "Chatbox Textbox BG".into());
+        let textbox_bg = systems.gfx.add_rect(
+            textbox_rect,
+            0,
+            "Chatbox Textbox BG".into(),
+            true,
+        );
 
         let mut chatarea_rect = Rect::new(&mut systems.renderer, 0);
         let chatarea_zorder = detail_1;
@@ -256,10 +264,12 @@ impl Chatbox {
             ))
             .set_size(chat_areasize)
             .set_color(Color::rgba(140, 140, 140, 255));
-        let chatarea_bg =
-            systems
-                .gfx
-                .add_rect(chatarea_rect, 0, "Chatbox Chat Area".into());
+        let chatarea_bg = systems.gfx.add_rect(
+            chatarea_rect,
+            0,
+            "Chatbox Chat Area".into(),
+            true,
+        );
         let chat_zorder = detail_3;
         let chat_bounds = Bounds::new(
             chat_area_pos.x,
@@ -450,11 +460,13 @@ impl Chatbox {
             .set_position(Vec3::new(0.0, 0.0, detail_3))
             .set_size(Vec2::new(0.0, 0.0))
             .set_color(Color::rgba(60, 60, 60, 255));
-        let msg_selection =
-            systems
-                .gfx
-                .add_rect(selection_rect, 0, "Chatbox Selection".into());
-        systems.gfx.set_visible(msg_selection, false);
+        let msg_selection = systems.gfx.add_rect(
+            selection_rect,
+            0,
+            "Chatbox Selection".into(),
+            true,
+        );
+        systems.gfx.set_visible(&msg_selection, false);
 
         Chatbox {
             window,
@@ -490,19 +502,19 @@ impl Chatbox {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.window);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.window);
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.textbox_bg);
+            .remove_gfx(&mut systems.renderer, &self.textbox_bg);
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.chatarea_bg);
+            .remove_gfx(&mut systems.renderer, &self.chatarea_bg);
         self.textbox.unload(systems);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.chat.iter().for_each(|chat| {
-            systems.gfx.remove_gfx(&mut systems.renderer, chat.text);
+            systems.gfx.remove_gfx(&mut systems.renderer, &chat.text);
         });
         self.scrollbar.unload(systems);
         self.chat_tab.iter_mut().for_each(|tab| {
@@ -510,7 +522,7 @@ impl Chatbox {
         });
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.msg_selection);
+            .remove_gfx(&mut systems.renderer, &self.msg_selection);
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
@@ -576,19 +588,19 @@ impl Chatbox {
         let detail_2 = detail_origin.sub_f32(0.002, 3);
         let detail_3 = detail_origin.sub_f32(0.002, 3);
 
-        let pos = systems.gfx.get_pos(self.window);
+        let pos = systems.gfx.get_pos(&self.window);
         systems
             .gfx
-            .set_pos(self.window, Vec3::new(pos.x, pos.y, detail_origin));
-        let pos = systems.gfx.get_pos(self.textbox_bg);
+            .set_pos(&self.window, Vec3::new(pos.x, pos.y, detail_origin));
+        let pos = systems.gfx.get_pos(&self.textbox_bg);
         systems
             .gfx
-            .set_pos(self.textbox_bg, Vec3::new(pos.x, pos.y, detail_1));
-        let pos = systems.gfx.get_pos(self.chatarea_bg);
+            .set_pos(&self.textbox_bg, Vec3::new(pos.x, pos.y, detail_1));
+        let pos = systems.gfx.get_pos(&self.chatarea_bg);
         self.chat_zorder = detail_3;
         systems
             .gfx
-            .set_pos(self.chatarea_bg, Vec3::new(pos.x, pos.y, detail_1));
+            .set_pos(&self.chatarea_bg, Vec3::new(pos.x, pos.y, detail_1));
         self.textbox.set_z_order(systems, detail_2);
         self.button.iter_mut().for_each(|button| {
             button.set_z_order(systems, detail_1);
@@ -596,16 +608,16 @@ impl Chatbox {
         self.scrollbar.set_z_order(systems, detail_1);
 
         for chat in self.chat.iter() {
-            let pos = systems.gfx.get_pos(chat.text);
+            let pos = systems.gfx.get_pos(&chat.text);
             systems
                 .gfx
-                .set_pos(chat.text, Vec3::new(pos.x, pos.y, self.chat_zorder));
+                .set_pos(&chat.text, Vec3::new(pos.x, pos.y, self.chat_zorder));
         }
 
-        let pos = systems.gfx.get_pos(self.msg_selection);
+        let pos = systems.gfx.get_pos(&self.msg_selection);
         systems
             .gfx
-            .set_pos(self.msg_selection, Vec3::new(pos.x, pos.y, detail_2));
+            .set_pos(&self.msg_selection, Vec3::new(pos.x, pos.y, detail_2));
 
         self.chat_tab.iter_mut().for_each(|tab| {
             tab.set_z_order(systems, [detail_origin, detail_1]);
@@ -624,20 +636,20 @@ impl Chatbox {
             .max(self.max_bound)
             .min(self.min_bound);
 
-        let pos = systems.gfx.get_pos(self.window);
+        let pos = systems.gfx.get_pos(&self.window);
         systems
             .gfx
-            .set_pos(self.window, Vec3::new(self.pos.x, self.pos.y, pos.z));
-        let pos = systems.gfx.get_pos(self.textbox_bg);
+            .set_pos(&self.window, Vec3::new(self.pos.x, self.pos.y, pos.z));
+        let pos = systems.gfx.get_pos(&self.textbox_bg);
         systems.gfx.set_pos(
-            self.textbox_bg,
+            &self.textbox_bg,
             Vec3::new(
                 self.pos.x + (5.0 * systems.scale as f32).floor(),
                 self.pos.y + (5.0 * systems.scale as f32).floor(),
                 pos.z,
             ),
         );
-        let pos = systems.gfx.get_pos(self.chatarea_bg);
+        let pos = systems.gfx.get_pos(&self.chatarea_bg);
         let chat_area_pos = Vec2::new(
             self.pos.x + (5.0 * systems.scale as f32).floor(),
             self.pos.y + (34.0 * systems.scale as f32).floor(),
@@ -649,7 +661,7 @@ impl Chatbox {
             chat_area_pos.y + self.chat_areasize.y,
         );
         systems.gfx.set_pos(
-            self.chatarea_bg,
+            &self.chatarea_bg,
             Vec3::new(chat_area_pos.x, chat_area_pos.y, pos.z),
         );
         self.textbox.set_pos(systems, self.pos);
@@ -666,7 +678,7 @@ impl Chatbox {
                 self.chat_bounds.bottom - self.chat_areasize.y,
             );
             systems.gfx.set_pos(
-                data.text,
+                &data.text,
                 Vec3::new(
                     start_pos.x,
                     (start_pos.y
@@ -676,14 +688,14 @@ impl Chatbox {
                     self.chat_zorder,
                 ),
             );
-            systems.gfx.set_bound(data.text, self.chat_bounds);
+            systems.gfx.set_bound(&data.text, self.chat_bounds);
         }
 
-        let pos = systems.gfx.get_pos(self.msg_selection);
+        let pos = systems.gfx.get_pos(&self.msg_selection);
         systems
             .gfx
-            .set_pos(self.msg_selection, Vec3::new(0.0, 0.0, pos.z));
-        systems.gfx.set_visible(self.msg_selection, false);
+            .set_pos(&self.msg_selection, Vec3::new(0.0, 0.0, pos.z));
+        systems.gfx.set_visible(&self.msg_selection, false);
 
         self.chat_tab.iter_mut().for_each(|tab| {
             tab.move_pos(systems, self.pos);
@@ -776,17 +788,18 @@ impl Chatbox {
                 .y
                 .min((self.chat_bounds.bottom + self.chat_areasize.y) - pos.y);
 
-            systems.gfx.set_visible(self.msg_selection, true);
+            systems.gfx.set_visible(&self.msg_selection, true);
 
-            let curpos = systems.gfx.get_pos(self.msg_selection);
-            systems
-                .gfx
-                .set_pos(self.msg_selection, Vec3::new(pos.x, pos.y, curpos.z));
-            systems.gfx.set_size(self.msg_selection, size);
+            let curpos = systems.gfx.get_pos(&self.msg_selection);
+            systems.gfx.set_pos(
+                &self.msg_selection,
+                Vec3::new(pos.x, pos.y, curpos.z),
+            );
+            systems.gfx.set_size(&self.msg_selection, size);
 
             self.msg_select_index = Some(index);
         } else {
-            systems.gfx.set_visible(self.msg_selection, false);
+            systems.gfx.set_visible(&self.msg_selection, false);
 
             self.msg_select_index = None;
         }
@@ -877,7 +890,7 @@ impl Chatbox {
                 self.chat_bounds.bottom - self.chat_areasize.y,
             );
             systems.gfx.set_pos(
-                data.text,
+                &data.text,
                 Vec3::new(
                     start_pos.x,
                     (start_pos.y
@@ -912,14 +925,14 @@ impl Chatbox {
             )
             .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
 
-        let text = systems.gfx.add_text(text_data, 1, "Chatbox Text".into());
+        let text = systems.gfx.add_text(text_data, 1, "Chatbox Text".into(), true);
         let msg_color = Attrs::new().color(msg.1);
 
         let msg = if let Some(header) = header_msg {
             let header_color = Attrs::new().color(header.1);
             systems.gfx.set_rich_text(
                 &mut systems.renderer,
-                text,
+                &text,
                 [
                     (header.0.as_str(), header_color),
                     (msg.0.as_str(), msg_color),
@@ -929,12 +942,12 @@ impl Chatbox {
         } else {
             systems.gfx.set_rich_text(
                 &mut systems.renderer,
-                text,
+                &text,
                 [(msg.0.as_str(), msg_color)],
             );
             msg.0
         };
-        let size = systems.gfx.get_measure(text);
+        let size = systems.gfx.get_measure(&text);
 
         let chat = Chat {
             text,
@@ -945,7 +958,7 @@ impl Chatbox {
         };
 
         systems.gfx.set_visible(
-            chat.text,
+            &chat.text,
             can_channel_show(channel, self.selected_tab),
         );
 
@@ -963,7 +976,7 @@ impl Chatbox {
                 self.chat_bounds.bottom - self.chat_areasize.y,
             );
             systems.gfx.set_pos(
-                text,
+                &text,
                 Vec3::new(
                     start_pos.x,
                     start_pos.y + (2.0 * systems.scale as f32).floor() + size.y,
@@ -975,7 +988,7 @@ impl Chatbox {
                 if can_channel_show(data.channel, self.selected_tab) {
                     data.adjust_y += size.y;
                     systems.gfx.set_pos(
-                        data.text,
+                        &data.text,
                         Vec3::new(
                             start_pos.x,
                             start_pos.y
@@ -1015,12 +1028,12 @@ impl Chatbox {
         let mut add_y = 0.0;
         for data in self.chat.iter_mut() {
             if can_channel_show(data.channel, self.selected_tab) {
-                systems.gfx.set_visible(data.text, true);
+                systems.gfx.set_visible(&data.text, true);
 
                 data.adjust_y = data.size.y + add_y;
 
                 systems.gfx.set_pos(
-                    data.text,
+                    &data.text,
                     Vec3::new(
                         start_pos.x,
                         start_pos.y
@@ -1033,7 +1046,7 @@ impl Chatbox {
                 chat_line_size += data.size.y;
                 add_y += data.size.y;
             } else {
-                systems.gfx.set_visible(data.text, false);
+                systems.gfx.set_visible(&data.text, false);
             }
         }
         self.chat_line_size = chat_line_size;

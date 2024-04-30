@@ -43,8 +43,7 @@ impl MapItem {
         );
         image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         image.hw = Vec2::new(20.0, 20.0);
-        let index = systems.gfx.add_image(image, 0, "Map Item".into());
-        systems.gfx.set_visible(index, false);
+        let index = systems.gfx.add_image(image, 0, "Map Item".into(), false);
 
         let component1 = (
             pos,
@@ -79,15 +78,15 @@ impl MapItem {
         Ok(())
     }
 
-    pub fn finalized_data(systems: &mut SystemHolder, sprite: usize) {
-        systems.gfx.set_visible(sprite, true);
+    pub fn finalized_data(systems: &mut SystemHolder, sprite: GfxType) {
+        systems.gfx.set_visible(&sprite, true);
     }
 }
 
 pub fn update_mapitem_position(
     systems: &mut SystemHolder,
     content: &GameContent,
-    sprite: usize,
+    sprite: GfxType,
     pos: &Position,
     pos_offset: &PositionOffset,
 ) {
@@ -95,7 +94,7 @@ pub fn update_mapitem_position(
         .unwrap_or_else(|| {
             Vec2::new(systems.size.width * 2.0, systems.size.height * 2.0)
         });
-    let cur_pos = systems.gfx.get_pos(sprite);
+    let cur_pos = systems.gfx.get_pos(&sprite);
     let texture_pos = content.camera.0
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset.offset;
@@ -103,7 +102,7 @@ pub fn update_mapitem_position(
         return;
     }
     systems.gfx.set_pos(
-        sprite,
+        &sprite,
         Vec3::new(
             start_pos.x + texture_pos.x,
             start_pos.y + texture_pos.y,
@@ -118,7 +117,7 @@ pub fn unload_mapitems(
     entity: &Entity,
 ) -> Result<()> {
     let item_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-    systems.gfx.remove_gfx(&mut systems.renderer, item_sprite);
+    systems.gfx.remove_gfx(&mut systems.renderer, &item_sprite);
     world.despawn(entity.0)?;
     Ok(())
 }

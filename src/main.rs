@@ -243,7 +243,7 @@ async fn main() -> Result<()> {
             timer: 0.0,
         },
         try_once: true,
-        fps: 0,
+        fps: GfxType::None,
     };
     systems.fade.init_setup(
         &mut systems.renderer,
@@ -311,8 +311,10 @@ async fn main() -> Result<()> {
         ),
         Color::rgba(255, 255, 255, 255),
     );
-    let text = systems.gfx.add_text(txt, 5, "FPS".into());
-    systems.gfx.set_visible(text, systems.config.show_fps);
+    let text =
+        systems
+            .gfx
+            .add_text(txt, 5, "FPS".into(), systems.config.show_fps);
     systems.fps = text;
 
     // Allow the window to be seen. hiding it then making visible speeds up
@@ -535,7 +537,7 @@ async fn main() -> Result<()> {
             if systems.caret.timer <= seconds {
                 systems.caret.visible = !systems.caret.visible;
                 systems.caret.timer = seconds + 0.35;
-                systems.gfx.set_visible(gfx_index, systems.caret.visible);
+                systems.gfx.set_visible(&gfx_index, systems.caret.visible);
             }
         }
 
@@ -575,7 +577,7 @@ async fn main() -> Result<()> {
         );
 
         // This adds the Image data to the Buffer for rendering.
-        add_image_to_buffer(&mut systems, &mut graphics, seconds);
+        add_image_to_buffer(&mut systems, &mut graphics);
 
         // this cycles all the Image's in the Image buffer by first putting them in rendering order
         // and then uploading them to the GPU if they have moved or changed in any way. clears the
@@ -671,7 +673,7 @@ async fn main() -> Result<()> {
         if time < seconds {
             systems.gfx.set_rich_text(
                 &mut systems.renderer,
-                systems.fps,
+                &systems.fps,
                 [
                     ("FPS: ", fps_label_color),
                     (&format!("{fps}"), fps_number_color),
@@ -726,7 +728,7 @@ async fn main() -> Result<()> {
                     let average: u64 = sum / count as u64;
                     systems.gfx.set_text(
                         &mut systems.renderer,
-                        content.game_content.interface.frame_loop,
+                        &content.game_content.interface.frame_loop,
                         &format!("Frame Jitter: {:?}", average),
                     );
                 }

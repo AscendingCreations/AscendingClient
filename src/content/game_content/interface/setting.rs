@@ -6,16 +6,16 @@ use crate::{
 
 pub struct Setting {
     pub visible: bool,
-    bg: usize,
-    header: usize,
-    header_text: usize,
+    bg: GfxType,
+    header: GfxType,
+    header_text: GfxType,
     pub sfx_scroll: Scrollbar,
     pub bgm_scroll: Scrollbar,
     button: Vec<Button>,
     checkbox: Vec<Checkbox>,
-    label: Vec<usize>,
-    sfx_label: usize,
-    bgm_label: usize,
+    label: Vec<GfxType>,
+    sfx_label: GfxType,
+    bgm_label: GfxType,
 
     pub pos: Vec2,
     pub size: Vec2,
@@ -52,8 +52,7 @@ impl Setting {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Settings BG".into());
-        systems.gfx.set_visible(bg, false);
+        let bg = systems.gfx.add_rect(rect, 0, "Settings BG".into(), false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
@@ -66,11 +65,12 @@ impl Setting {
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size((header_size * systems.scale as f32).floor())
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header =
-            systems
-                .gfx
-                .add_rect(header_rect, 0, "Settings Header".into());
-        systems.gfx.set_visible(header, false);
+        let header = systems.gfx.add_rect(
+            header_rect,
+            0,
+            "Settings Header".into(),
+            false,
+        );
 
         let text = create_label(
             systems,
@@ -89,12 +89,13 @@ impl Setting {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems.gfx.add_text(text, 1, "Settings Header Text".into());
+            systems
+                .gfx
+                .add_text(text, 1, "Settings Header Text".into(), false);
         systems
             .gfx
-            .set_text(&mut systems.renderer, header_text, "Setting");
-        systems.gfx.center_text(header_text);
-        systems.gfx.set_visible(header_text, false);
+            .set_text(&mut systems.renderer, &header_text, "Setting");
+        systems.gfx.center_text(&header_text);
 
         let mut sfx_scroll = Scrollbar::new(
             systems,
@@ -219,11 +220,12 @@ impl Setting {
                 Color::rgba(200, 200, 200, 255),
             );
             let label_index =
-                systems.gfx.add_text(text, 1, "Settings Label".into());
+                systems
+                    .gfx
+                    .add_text(text, 1, "Settings Label".into(), false);
             systems
                 .gfx
-                .set_text(&mut systems.renderer, label_index, msg);
-            systems.gfx.set_visible(label_index, false);
+                .set_text(&mut systems.renderer, &label_index, msg);
             label.push(label_index);
         }
 
@@ -241,13 +243,14 @@ impl Setting {
             Color::rgba(200, 200, 200, 255),
         );
         let bgm_label =
-            systems.gfx.add_text(slabel, 1, "Settings BGM Label".into());
+            systems
+                .gfx
+                .add_text(slabel, 1, "Settings BGM Label".into(), false);
         systems.gfx.set_text(
             &mut systems.renderer,
-            bgm_label,
+            &bgm_label,
             &format!("{}", systems.config.bgm_volume),
         );
-        systems.gfx.set_visible(bgm_label, false);
 
         let tpos = Vec3::new(
             w_pos.x + (50.0 * systems.scale as f32).floor(),
@@ -262,13 +265,14 @@ impl Setting {
             Color::rgba(200, 200, 200, 255),
         );
         let sfx_label =
-            systems.gfx.add_text(slabel, 1, "Settings SFX Label".into());
+            systems
+                .gfx
+                .add_text(slabel, 1, "Settings SFX Label".into(), false);
         systems.gfx.set_text(
             &mut systems.renderer,
-            sfx_label,
+            &sfx_label,
             &format!("{}", systems.config.sfx_volume),
         );
-        systems.gfx.set_visible(sfx_label, false);
 
         let mut checkbox = vec![
             Checkbox::new(
@@ -486,11 +490,11 @@ impl Setting {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
-        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.header);
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.header_text);
+            .remove_gfx(&mut systems.renderer, &self.header_text);
         self.sfx_scroll.unload(systems);
         self.bgm_scroll.unload(systems);
         self.button.iter_mut().for_each(|button| {
@@ -500,15 +504,15 @@ impl Setting {
             checkbox.unload(systems);
         });
         self.label.iter().for_each(|text| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *text);
+            systems.gfx.remove_gfx(&mut systems.renderer, text);
         });
         self.button.clear();
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.bgm_label);
+            .remove_gfx(&mut systems.renderer, &self.bgm_label);
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.sfx_label);
+            .remove_gfx(&mut systems.renderer, &self.sfx_label);
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
@@ -517,9 +521,9 @@ impl Setting {
         }
         self.visible = visible;
         self.z_order = 0.0;
-        systems.gfx.set_visible(self.bg, visible);
-        systems.gfx.set_visible(self.header, visible);
-        systems.gfx.set_visible(self.header_text, visible);
+        systems.gfx.set_visible(&self.bg, visible);
+        systems.gfx.set_visible(&self.header, visible);
+        systems.gfx.set_visible(&self.header_text, visible);
         self.sfx_scroll.set_visible(systems, visible);
         self.bgm_scroll.set_visible(systems, visible);
         self.button.iter_mut().for_each(|button| {
@@ -529,10 +533,10 @@ impl Setting {
             checkbox.set_visible(systems, visible);
         });
         self.label.iter().for_each(|text| {
-            systems.gfx.set_visible(*text, visible);
+            systems.gfx.set_visible(text, visible);
         });
-        systems.gfx.set_visible(self.bgm_label, visible);
-        systems.gfx.set_visible(self.sfx_label, visible);
+        systems.gfx.set_visible(&self.bgm_label, visible);
+        systems.gfx.set_visible(&self.sfx_label, visible);
     }
 
     pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
@@ -577,18 +581,18 @@ impl Setting {
         let detail_1 = detail_origin.sub_f32(0.001, 3);
         let detail_2 = detail_origin.sub_f32(0.002, 3);
 
-        let mut pos = systems.gfx.get_pos(self.bg);
+        let mut pos = systems.gfx.get_pos(&self.bg);
         pos.z = detail_origin;
-        systems.gfx.set_pos(self.bg, pos);
+        systems.gfx.set_pos(&self.bg, pos);
 
-        let mut pos = systems.gfx.get_pos(self.header);
+        let mut pos = systems.gfx.get_pos(&self.header);
         let header_zpos = detail_1;
         pos.z = header_zpos;
-        systems.gfx.set_pos(self.header, pos);
+        systems.gfx.set_pos(&self.header, pos);
 
-        let mut pos = systems.gfx.get_pos(self.header_text);
+        let mut pos = systems.gfx.get_pos(&self.header_text);
         pos.z = detail_2;
-        systems.gfx.set_pos(self.header_text, pos);
+        systems.gfx.set_pos(&self.header_text, pos);
 
         self.sfx_scroll.set_z_order(systems, detail_1);
         self.bgm_scroll.set_z_order(systems, detail_1);
@@ -602,18 +606,18 @@ impl Setting {
         });
 
         self.label.iter().for_each(|text| {
-            let mut pos = systems.gfx.get_pos(*text);
+            let mut pos = systems.gfx.get_pos(text);
             pos.z = detail_1;
-            systems.gfx.set_pos(*text, pos);
+            systems.gfx.set_pos(text, pos);
         });
 
-        let mut pos = systems.gfx.get_pos(self.bgm_label);
+        let mut pos = systems.gfx.get_pos(&self.bgm_label);
         pos.z = detail_1;
-        systems.gfx.set_pos(self.bgm_label, pos);
+        systems.gfx.set_pos(&self.bgm_label, pos);
 
-        let mut pos = systems.gfx.get_pos(self.sfx_label);
+        let mut pos = systems.gfx.get_pos(&self.sfx_label);
         pos.z = detail_1;
-        systems.gfx.set_pos(self.sfx_label, pos);
+        systems.gfx.set_pos(&self.sfx_label, pos);
     }
 
     pub fn move_window(
@@ -628,24 +632,24 @@ impl Setting {
             .max(self.max_bound)
             .min(self.min_bound);
 
-        let pos = systems.gfx.get_pos(self.bg);
+        let pos = systems.gfx.get_pos(&self.bg);
         systems.gfx.set_pos(
-            self.bg,
+            &self.bg,
             Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z),
         );
-        let pos = systems.gfx.get_pos(self.header);
+        let pos = systems.gfx.get_pos(&self.header);
         self.header_pos = Vec2::new(self.pos.x, self.pos.y + 237.0);
         systems.gfx.set_pos(
-            self.header,
+            &self.header,
             Vec3::new(
                 self.pos.x,
                 self.pos.y + (237.0 * systems.scale as f32).floor(),
                 pos.z,
             ),
         );
-        let pos = systems.gfx.get_pos(self.header_text);
+        let pos = systems.gfx.get_pos(&self.header_text);
         systems.gfx.set_pos(
-            self.header_text,
+            &self.header_text,
             Vec3::new(
                 self.pos.x,
                 self.pos.y + (242.0 * systems.scale as f32).floor(),
@@ -653,7 +657,7 @@ impl Setting {
             ),
         );
         systems.gfx.set_bound(
-            self.header_text,
+            &self.header_text,
             Bounds::new(
                 self.pos.x,
                 self.pos.y + (242.0 * systems.scale as f32).floor(),
@@ -661,7 +665,7 @@ impl Setting {
                 self.pos.y + (262.0 * systems.scale as f32).floor(),
             ),
         );
-        systems.gfx.center_text(self.header_text);
+        systems.gfx.center_text(&self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
@@ -684,10 +688,10 @@ impl Setting {
                 self.pos.y + ypos,
             );
 
-            let pos = systems.gfx.get_pos(*text);
-            systems.gfx.set_pos(*text, Vec3::new(tpos.x, tpos.y, pos.z));
+            let pos = systems.gfx.get_pos(text);
+            systems.gfx.set_pos(text, Vec3::new(tpos.x, tpos.y, pos.z));
             systems.gfx.set_bound(
-                *text,
+                text,
                 Bounds::new(
                     tpos.x,
                     tpos.y,
@@ -702,12 +706,12 @@ impl Setting {
             self.pos.y + self.size.y - (60.0 * systems.scale as f32).floor(),
         );
         let tsize = (Vec2::new(50.0, 20.0) * systems.scale as f32).floor();
-        let pos = systems.gfx.get_pos(self.bgm_label);
+        let pos = systems.gfx.get_pos(&self.bgm_label);
         systems
             .gfx
-            .set_pos(self.bgm_label, Vec3::new(tpos.x, tpos.y, pos.z));
+            .set_pos(&self.bgm_label, Vec3::new(tpos.x, tpos.y, pos.z));
         systems.gfx.set_bound(
-            self.bgm_label,
+            &self.bgm_label,
             Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
         );
 
@@ -715,12 +719,12 @@ impl Setting {
             self.pos.x + (50.0 * systems.scale as f32).floor(),
             self.pos.y + self.size.y - (90.0 * systems.scale as f32).floor(),
         );
-        let pos = systems.gfx.get_pos(self.sfx_label);
+        let pos = systems.gfx.get_pos(&self.sfx_label);
         systems
             .gfx
-            .set_pos(self.sfx_label, Vec3::new(tpos.x, tpos.y, pos.z));
+            .set_pos(&self.sfx_label, Vec3::new(tpos.x, tpos.y, pos.z));
         systems.gfx.set_bound(
-            self.sfx_label,
+            &self.sfx_label,
             Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
         );
     }
@@ -880,9 +884,9 @@ impl Setting {
         &mut self,
         systems: &mut SystemHolder,
         index: usize,
-        ping_index: usize,
-        average_ping_index: usize,
-        frame_jitter_index: usize,
+        ping_index: &GfxType,
+        average_ping_index: &GfxType,
+        frame_jitter_index: &GfxType,
     ) {
         #[allow(clippy::single_match)]
         match index {
@@ -890,7 +894,7 @@ impl Setting {
                 systems.config.show_fps = self.checkbox[index].value;
                 systems
                     .gfx
-                    .set_visible(systems.fps, systems.config.show_fps);
+                    .set_visible(&systems.fps, systems.config.show_fps);
                 systems.config.save_config("settings.toml");
             }
             1 => {
@@ -938,7 +942,7 @@ impl Setting {
     ) {
         systems.gfx.set_text(
             &mut systems.renderer,
-            self.bgm_label,
+            &self.bgm_label,
             &format!("{}", value),
         );
     }
@@ -950,7 +954,7 @@ impl Setting {
     ) {
         systems.gfx.set_text(
             &mut systems.renderer,
-            self.sfx_label,
+            &self.sfx_label,
             &format!("{}", value),
         );
     }

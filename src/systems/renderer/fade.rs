@@ -25,7 +25,7 @@ pub const FADE_SWITCH_TO_GAME: usize = 1;
 #[derive(Default)]
 pub struct Fade {
     show: bool,
-    f_image: usize,
+    f_image: GfxType,
     f_tmr: f32,
     f_alpha: isize,
     f_type: FadeType,
@@ -48,7 +48,8 @@ impl Fade {
         rect.set_size(Vec2::new(screen_size.width, screen_size.height))
             .set_position(Vec3::new(0.0, 0.0, ORDER_FADE))
             .set_color(Color::rgba(0, 0, 0, 0));
-        self.f_image = gfx_collection.add_rect(rect, 4, "Fade Image".into());
+        self.f_image =
+            gfx_collection.add_rect(rect, 4, "Fade Image".into(), true);
 
         self.show = false;
         self.f_tmr = 0.0;
@@ -85,7 +86,7 @@ impl Fade {
                 }
             }
             gfx_collection.set_color(
-                self.f_image,
+                &self.f_image,
                 Color::rgba(0, 0, 0, self.f_alpha as u8),
             );
             self.f_tmr = seconds + 0.03;
@@ -110,7 +111,7 @@ impl Fade {
             }
         }
         gfx_collection
-            .set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
+            .set_color(&self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
         self.f_type = fade_type;
         self.f_end_index = fade_end_index;
         self.f_data = fade_data;
@@ -121,7 +122,7 @@ impl Fade {
 #[derive(Default)]
 pub struct MapFade {
     show: bool,
-    f_image: usize,
+    f_image: GfxType,
     f_tmr: f32,
     pub f_alpha: isize,
     f_type: FadeType,
@@ -145,7 +146,7 @@ impl MapFade {
             .set_position(Vec3::new(0.0, 0.0, ORDER_MAP_FADE))
             .set_color(Color::rgba(0, 0, 0, 0));
         self.f_image =
-            gfx_collection.add_rect(rect, 4, "Map Fade Image".into());
+            gfx_collection.add_rect(rect, 4, "Map Fade Image".into(), true);
 
         self.show = false;
         self.f_tmr = 0.0;
@@ -182,7 +183,7 @@ impl MapFade {
                 }
             }
             gfx_collection.set_color(
-                self.f_image,
+                &self.f_image,
                 Color::rgba(0, 0, 0, self.f_alpha as u8),
             );
             self.f_tmr = seconds + 0.03;
@@ -205,7 +206,7 @@ impl MapFade {
             }
         }
         gfx_collection
-            .set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
+            .set_color(&self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
     }
 
     pub fn init_fade(
@@ -224,7 +225,7 @@ impl MapFade {
             }
         }
         gfx_collection
-            .set_color(self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
+            .set_color(&self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
         self.f_type = fade_type;
         self.f_end_index = fade_end_index;
         self.f_data = fade_data;

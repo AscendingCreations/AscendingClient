@@ -100,7 +100,7 @@ pub enum Weather {
 
 pub struct MapSlotData {
     pub mappos: MapPosition,
-    pub map_index: usize,
+    pub map_index: GfxType,
     pub enable: bool,
     pub dir_block: MapDirBlock,
     pub attributes: MapAttributes,
@@ -161,7 +161,7 @@ pub fn apply_map_data(
                     let id = mapdata.tile[layer].id[tile_num] as usize;
                     if id > 0 {
                         systems.gfx.set_map_tile(
-                            mapslotdata.map_index,
+                            &mapslotdata.map_index,
                             (x as u32, y as u32, layer as u32),
                             TileData {
                                 id,
@@ -241,7 +241,7 @@ pub fn clear_map_data(systems: &mut SystemHolder) {
     for mapslotdata in systems.base.mapdata.iter() {
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, mapslotdata.1.map_index);
+            .remove_gfx(&mut systems.renderer, &mapslotdata.1.map_index);
     }
     systems.base.mapdata.clear();
     systems.base.mappos_key.clear();
@@ -249,7 +249,7 @@ pub fn clear_map_data(systems: &mut SystemHolder) {
 
 pub fn set_map_visible(systems: &mut SystemHolder, key: Index, visible: bool) {
     if let Some(mapslotdata) = systems.base.mapdata.get(key) {
-        systems.gfx.set_visible(mapslotdata.map_index, visible)
+        systems.gfx.set_visible(&mapslotdata.map_index, visible)
     }
 }
 
@@ -257,13 +257,13 @@ pub fn set_map_pos(systems: &mut SystemHolder, key: Index, pos: Vec2) {
     if let Some(mapslotdata) = systems.base.mapdata.get(key) {
         systems
             .gfx
-            .set_pos(mapslotdata.map_index, Vec3::new(pos.x, pos.y, 0.0))
+            .set_pos(&mapslotdata.map_index, Vec3::new(pos.x, pos.y, 0.0))
     }
 }
 
 pub fn get_map_pos(systems: &mut SystemHolder, key: Index) -> Vec2 {
     if let Some(mapslotdata) = systems.base.mapdata.get(key) {
-        let pos = systems.gfx.get_pos(mapslotdata.map_index);
+        let pos = systems.gfx.get_pos(&mapslotdata.map_index);
         return Vec2::new(pos.x, pos.y);
     } else {
         error!("Failed to get map pos of Key: {:?}", key);

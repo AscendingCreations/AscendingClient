@@ -6,22 +6,22 @@ use super::ItemDescription;
 
 pub struct ShopItem {
     got_data: bool,
-    icon_bg: usize,
-    icon: Option<usize>,
-    name: usize,
-    price_icon: usize,
-    price: usize,
+    icon_bg: GfxType,
+    icon: Option<GfxType>,
+    name: GfxType,
+    price_icon: GfxType,
+    price: GfxType,
     got_count: bool,
-    amount_bg: usize,
-    amount: usize,
+    amount_bg: GfxType,
+    amount: GfxType,
     item_index: usize,
 }
 
 pub struct Shop {
     pub visible: bool,
-    bg: usize,
-    header: usize,
-    header_text: usize,
+    bg: GfxType,
+    header: GfxType,
+    header_text: GfxType,
     button: Vec<Button>,
     item: Vec<ShopItem>,
     pub item_scroll: Scrollbar,
@@ -63,8 +63,7 @@ impl Shop {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Shop BG".into());
-        systems.gfx.set_visible(bg, false);
+        let bg = systems.gfx.add_rect(rect, 0, "Shop BG".into(), false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(w_pos.x, w_pos.y + 246.0);
@@ -74,8 +73,10 @@ impl Shop {
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size(header_size)
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header = systems.gfx.add_rect(header_rect, 0, "Shop Header".into());
-        systems.gfx.set_visible(header, false);
+        let header =
+            systems
+                .gfx
+                .add_rect(header_rect, 0, "Shop Header".into(), false);
 
         let text = create_label(
             systems,
@@ -90,12 +91,13 @@ impl Shop {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems.gfx.add_text(text, 1, "Shop Header Text".into());
+            systems
+                .gfx
+                .add_text(text, 1, "Shop Header Text".into(), false);
         systems
             .gfx
-            .set_text(&mut systems.renderer, header_text, "Shop");
-        systems.gfx.center_text(header_text);
-        systems.gfx.set_visible(header_text, false);
+            .set_text(&mut systems.renderer, &header_text, "Shop");
+        systems.gfx.center_text(&header_text);
 
         let mut button = vec![
             Button::new(
@@ -201,8 +203,8 @@ impl Shop {
             bg.set_position(Vec3::new(pos.x, pos.y, detail_1))
                 .set_size(Vec2::new(32.0, 32.0))
                 .set_color(Color::rgba(200, 200, 200, 255));
-            let icon_bg = systems.gfx.add_rect(bg, 0, "Shop Item BG".into());
-            systems.gfx.set_visible(icon_bg, false);
+            let icon_bg =
+                systems.gfx.add_rect(bg, 0, "Shop Item BG".into(), false);
 
             let pos =
                 Vec2::new(w_pos.x + 48.0, w_pos.y + 220.0 - (i as f32 * 48.0));
@@ -213,10 +215,13 @@ impl Shop {
                 Bounds::new(pos.x, pos.y, pos.x + 114.0, pos.y + 20.0),
                 Color::rgba(200, 200, 200, 255),
             );
-            let name =
-                systems.gfx.add_text(item_name, 1, "Shop Item Name".into());
-            systems.gfx.set_text(&mut systems.renderer, name, "");
-            systems.gfx.set_visible(name, false);
+            let name = systems.gfx.add_text(
+                item_name,
+                1,
+                "Shop Item Name".into(),
+                false,
+            );
+            systems.gfx.set_text(&mut systems.renderer, &name, "");
 
             let pos =
                 Vec2::new(w_pos.x + 72.0, w_pos.y + 198.0 - (i as f32 * 48.0));
@@ -227,12 +232,13 @@ impl Shop {
                 Bounds::new(pos.x, pos.y, pos.x + 90.0, pos.y + 20.0),
                 Color::rgba(200, 200, 200, 255),
             );
-            let price =
-                systems
-                    .gfx
-                    .add_text(price_text, 1, "Shop Item Price".into());
-            systems.gfx.set_text(&mut systems.renderer, price, "");
-            systems.gfx.set_visible(price, false);
+            let price = systems.gfx.add_text(
+                price_text,
+                1,
+                "Shop Item Price".into(),
+                false,
+            );
+            systems.gfx.set_text(&mut systems.renderer, &price, "");
 
             let mut p_icon = Image::new(
                 Some(systems.resource.shop_currency_icon.allocation),
@@ -246,9 +252,12 @@ impl Shop {
                 detail_1,
             );
             p_icon.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-            let price_icon =
-                systems.gfx.add_image(p_icon, 0, "Shop Price Icon".into());
-            systems.gfx.set_visible(price_icon, false);
+            let price_icon = systems.gfx.add_image(
+                p_icon,
+                0,
+                "Shop Price Icon".into(),
+                false,
+            );
 
             let buy_button = Button::new(
                 systems,
@@ -296,8 +305,8 @@ impl Shop {
                 amount_bg_rect,
                 1,
                 "Shop Item Amount BG".into(),
+                false,
             );
-            systems.gfx.set_visible(amount_bg, false);
 
             let text_size = Vec2::new(32.0, 16.0);
             let text = create_label(
@@ -313,8 +322,9 @@ impl Shop {
                 Color::rgba(240, 240, 240, 255),
             );
             let amount =
-                systems.gfx.add_text(text, 2, "Shop Item Amount".into());
-            systems.gfx.set_visible(amount, false);
+                systems
+                    .gfx
+                    .add_text(text, 2, "Shop Item Amount".into(), false);
 
             item.push(ShopItem {
                 got_data: false,
@@ -392,29 +402,29 @@ impl Shop {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
-        systems.gfx.remove_gfx(&mut systems.renderer, self.header);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.header);
         systems
             .gfx
-            .remove_gfx(&mut systems.renderer, self.header_text);
+            .remove_gfx(&mut systems.renderer, &self.header_text);
         self.button.iter_mut().for_each(|button| {
             button.unload(systems);
         });
         self.button.clear();
         self.item.iter_mut().for_each(|item| {
             if let Some(sprite) = item.icon {
-                systems.gfx.remove_gfx(&mut systems.renderer, sprite)
+                systems.gfx.remove_gfx(&mut systems.renderer, &sprite)
             }
-            systems.gfx.remove_gfx(&mut systems.renderer, item.icon_bg);
-            systems.gfx.remove_gfx(&mut systems.renderer, item.name);
+            systems.gfx.remove_gfx(&mut systems.renderer, &item.icon_bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, &item.name);
             systems
                 .gfx
-                .remove_gfx(&mut systems.renderer, item.price_icon);
-            systems.gfx.remove_gfx(&mut systems.renderer, item.price);
+                .remove_gfx(&mut systems.renderer, &item.price_icon);
+            systems.gfx.remove_gfx(&mut systems.renderer, &item.price);
             systems
                 .gfx
-                .remove_gfx(&mut systems.renderer, item.amount_bg);
-            systems.gfx.remove_gfx(&mut systems.renderer, item.amount);
+                .remove_gfx(&mut systems.renderer, &item.amount_bg);
+            systems.gfx.remove_gfx(&mut systems.renderer, &item.amount);
         });
         self.item_scroll.unload(systems);
     }
@@ -425,9 +435,9 @@ impl Shop {
         }
         self.visible = visible;
         self.z_order = 0.0;
-        systems.gfx.set_visible(self.bg, visible);
-        systems.gfx.set_visible(self.header, visible);
-        systems.gfx.set_visible(self.header_text, visible);
+        systems.gfx.set_visible(&self.bg, visible);
+        systems.gfx.set_visible(&self.header, visible);
+        systems.gfx.set_visible(&self.header_text, visible);
         self.button
             .iter_mut()
             .enumerate()
@@ -446,16 +456,16 @@ impl Shop {
             });
         self.item.iter_mut().for_each(|item| {
             if item.got_data {
-                systems.gfx.set_visible(item.icon_bg, visible);
+                systems.gfx.set_visible(&item.icon_bg, visible);
                 if let Some(item_sprite) = item.icon {
-                    systems.gfx.set_visible(item_sprite, visible);
+                    systems.gfx.set_visible(&item_sprite, visible);
                 }
-                systems.gfx.set_visible(item.name, visible);
-                systems.gfx.set_visible(item.price_icon, visible);
-                systems.gfx.set_visible(item.price, visible);
+                systems.gfx.set_visible(&item.name, visible);
+                systems.gfx.set_visible(&item.price_icon, visible);
+                systems.gfx.set_visible(&item.price, visible);
                 if item.got_count {
-                    systems.gfx.set_visible(item.amount_bg, visible);
-                    systems.gfx.set_visible(item.amount, visible);
+                    systems.gfx.set_visible(&item.amount_bg, visible);
+                    systems.gfx.set_visible(&item.amount, visible);
                 }
             }
         });
@@ -506,53 +516,53 @@ impl Shop {
         let detail_3 = detail_origin.sub_f32(0.003, 3);
         let detail_4 = detail_origin.sub_f32(0.004, 3);
 
-        let mut pos = systems.gfx.get_pos(self.bg);
+        let mut pos = systems.gfx.get_pos(&self.bg);
         pos.z = detail_origin;
-        systems.gfx.set_pos(self.bg, pos);
+        systems.gfx.set_pos(&self.bg, pos);
 
-        let mut pos = systems.gfx.get_pos(self.header);
+        let mut pos = systems.gfx.get_pos(&self.header);
         let header_zpos = detail_1;
         pos.z = header_zpos;
-        systems.gfx.set_pos(self.header, pos);
+        systems.gfx.set_pos(&self.header, pos);
 
-        let mut pos = systems.gfx.get_pos(self.header_text);
+        let mut pos = systems.gfx.get_pos(&self.header_text);
         pos.z = detail_2;
-        systems.gfx.set_pos(self.header_text, pos);
+        systems.gfx.set_pos(&self.header_text, pos);
 
         self.button.iter_mut().for_each(|button| {
             button.set_z_order(systems, detail_2);
         });
 
         self.item.iter_mut().for_each(|item| {
-            let mut pos = systems.gfx.get_pos(item.icon_bg);
+            let mut pos = systems.gfx.get_pos(&item.icon_bg);
             pos.z = detail_1;
-            systems.gfx.set_pos(item.icon_bg, pos);
+            systems.gfx.set_pos(&item.icon_bg, pos);
 
             if let Some(item_sprite) = item.icon {
-                let mut pos = systems.gfx.get_pos(item_sprite);
+                let mut pos = systems.gfx.get_pos(&item_sprite);
                 pos.z = detail_2;
-                systems.gfx.set_pos(item_sprite, pos);
+                systems.gfx.set_pos(&item_sprite, pos);
             }
 
-            let mut pos = systems.gfx.get_pos(item.name);
+            let mut pos = systems.gfx.get_pos(&item.name);
             pos.z = detail_1;
-            systems.gfx.set_pos(item.name, pos);
+            systems.gfx.set_pos(&item.name, pos);
 
-            let mut pos = systems.gfx.get_pos(item.price_icon);
+            let mut pos = systems.gfx.get_pos(&item.price_icon);
             pos.z = detail_1;
-            systems.gfx.set_pos(item.price_icon, pos);
+            systems.gfx.set_pos(&item.price_icon, pos);
 
-            let mut pos = systems.gfx.get_pos(item.price);
+            let mut pos = systems.gfx.get_pos(&item.price);
             pos.z = detail_1;
-            systems.gfx.set_pos(item.price, pos);
+            systems.gfx.set_pos(&item.price, pos);
 
-            let mut pos = systems.gfx.get_pos(item.amount_bg);
+            let mut pos = systems.gfx.get_pos(&item.amount_bg);
             pos.z = detail_3;
-            systems.gfx.set_pos(item.amount_bg, pos);
+            systems.gfx.set_pos(&item.amount_bg, pos);
 
-            let mut pos = systems.gfx.get_pos(item.amount);
+            let mut pos = systems.gfx.get_pos(&item.amount);
             pos.z = detail_4;
-            systems.gfx.set_pos(item.amount, pos);
+            systems.gfx.set_pos(&item.amount, pos);
         });
 
         self.item_scroll.set_z_order(systems, detail_1);
@@ -570,24 +580,24 @@ impl Shop {
             .max(self.max_bound)
             .min(self.min_bound);
 
-        let pos = systems.gfx.get_pos(self.bg);
+        let pos = systems.gfx.get_pos(&self.bg);
         systems.gfx.set_pos(
-            self.bg,
+            &self.bg,
             Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z),
         );
-        let pos = systems.gfx.get_pos(self.header);
+        let pos = systems.gfx.get_pos(&self.header);
         self.header_pos = Vec2::new(self.pos.x, self.pos.y + 246.0);
         systems.gfx.set_pos(
-            self.header,
+            &self.header,
             Vec3::new(self.pos.x, self.pos.y + 246.0, pos.z),
         );
-        let pos = systems.gfx.get_pos(self.header_text);
+        let pos = systems.gfx.get_pos(&self.header_text);
         systems.gfx.set_pos(
-            self.header_text,
+            &self.header_text,
             Vec3::new(self.pos.x, self.pos.y + 251.0, pos.z),
         );
         systems.gfx.set_bound(
-            self.header_text,
+            &self.header_text,
             Bounds::new(
                 self.pos.x,
                 self.pos.y + 251.0,
@@ -595,7 +605,7 @@ impl Shop {
                 self.pos.y + 271.0,
             ),
         );
-        systems.gfx.center_text(self.header_text);
+        systems.gfx.center_text(&self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
@@ -604,9 +614,9 @@ impl Shop {
         self.item_scroll.set_pos(systems, self.pos);
 
         for i in 0..5 {
-            let pos = systems.gfx.get_pos(self.item[i].icon_bg);
+            let pos = systems.gfx.get_pos(&self.item[i].icon_bg);
             systems.gfx.set_pos(
-                self.item[i].icon_bg,
+                &self.item[i].icon_bg,
                 Vec3::new(
                     self.pos.x + 10.0,
                     self.pos.y + 203.0 - (i as f32 * 48.0),
@@ -615,9 +625,9 @@ impl Shop {
             );
 
             if let Some(item_sprite) = self.item[i].icon {
-                let pos = systems.gfx.get_pos(item_sprite);
+                let pos = systems.gfx.get_pos(&item_sprite);
                 systems.gfx.set_pos(
-                    item_sprite,
+                    &item_sprite,
                     Vec3::new(
                         self.pos.x + 16.0,
                         self.pos.y + 209.0 - (i as f32 * 48.0),
@@ -630,13 +640,13 @@ impl Shop {
                 self.pos.x + 48.0,
                 self.pos.y + 220.0 - (i as f32 * 48.0),
             );
-            let pos = systems.gfx.get_pos(self.item[i].name);
+            let pos = systems.gfx.get_pos(&self.item[i].name);
             systems.gfx.set_pos(
-                self.item[i].name,
+                &self.item[i].name,
                 Vec3::new(set_pos.x, set_pos.y, pos.z),
             );
             systems.gfx.set_bound(
-                self.item[i].name,
+                &self.item[i].name,
                 Bounds::new(
                     set_pos.x,
                     set_pos.y,
@@ -649,13 +659,13 @@ impl Shop {
                 self.pos.x + 72.0,
                 self.pos.y + 198.0 - (i as f32 * 48.0),
             );
-            let pos = systems.gfx.get_pos(self.item[i].price);
+            let pos = systems.gfx.get_pos(&self.item[i].price);
             systems.gfx.set_pos(
-                self.item[i].price,
+                &self.item[i].price,
                 Vec3::new(set_pos.x, set_pos.y, pos.z),
             );
             systems.gfx.set_bound(
-                self.item[i].price,
+                &self.item[i].price,
                 Bounds::new(
                     set_pos.x,
                     set_pos.y,
@@ -664,9 +674,9 @@ impl Shop {
                 ),
             );
 
-            let pos = systems.gfx.get_pos(self.item[i].price_icon);
+            let pos = systems.gfx.get_pos(&self.item[i].price_icon);
             systems.gfx.set_pos(
-                self.item[i].price_icon,
+                &self.item[i].price_icon,
                 Vec3::new(
                     self.pos.x + 48.0,
                     self.pos.y + 198.0 - (i as f32 * 48.0),
@@ -674,9 +684,9 @@ impl Shop {
                 ),
             );
 
-            let pos = systems.gfx.get_pos(self.item[i].amount_bg);
+            let pos = systems.gfx.get_pos(&self.item[i].amount_bg);
             systems.gfx.set_pos(
-                self.item[i].amount_bg,
+                &self.item[i].amount_bg,
                 Vec3::new(
                     self.pos.x + 10.0,
                     self.pos.y + 203.0 - (i as f32 * 48.0),
@@ -688,13 +698,13 @@ impl Shop {
                 self.pos.x + 10.0,
                 self.pos.y + 203.0 - (i as f32 * 48.0),
             );
-            let pos = systems.gfx.get_pos(self.item[i].amount);
+            let pos = systems.gfx.get_pos(&self.item[i].amount);
             systems.gfx.set_pos(
-                self.item[i].amount,
+                &self.item[i].amount,
                 Vec3::new(set_pos.x + 2.0, set_pos.y + 2.0, pos.z),
             );
             systems.gfx.set_bound(
-                self.item[i].amount,
+                &self.item[i].amount,
                 Bounds::new(
                     set_pos.x,
                     set_pos.y,
@@ -828,10 +838,10 @@ impl Shop {
         self.item.iter_mut().for_each(|item| {
             item.got_data = false;
             item.got_count = false;
-            systems.gfx.set_visible(item.amount, false);
-            systems.gfx.set_visible(item.amount_bg, false);
+            systems.gfx.set_visible(&item.amount, false);
+            systems.gfx.set_visible(&item.amount_bg, false);
             if let Some(item_sprite) = item.icon {
-                systems.gfx.remove_gfx(&mut systems.renderer, item_sprite);
+                systems.gfx.remove_gfx(&mut systems.renderer, &item_sprite);
             }
         });
 
@@ -847,23 +857,25 @@ impl Shop {
             self.button[3 + index].set_visible(systems, self.visible);
             systems
                 .gfx
-                .set_visible(self.item[index].icon_bg, self.visible);
-            systems.gfx.set_visible(self.item[index].name, self.visible);
+                .set_visible(&self.item[index].icon_bg, self.visible);
             systems
                 .gfx
-                .set_visible(self.item[index].price_icon, self.visible);
+                .set_visible(&self.item[index].name, self.visible);
             systems
                 .gfx
-                .set_visible(self.item[index].price, self.visible);
+                .set_visible(&self.item[index].price_icon, self.visible);
+            systems
+                .gfx
+                .set_visible(&self.item[index].price, self.visible);
 
             systems.gfx.set_text(
                 &mut systems.renderer,
-                self.item[index].name,
+                &self.item[index].name,
                 &item_data.name,
             );
             systems.gfx.set_text(
                 &mut systems.renderer,
-                self.item[index].price,
+                &self.item[index].price,
                 &format!("{}", shopdata.item[index].price),
             );
 
@@ -872,16 +884,16 @@ impl Shop {
 
                 systems.gfx.set_text(
                     &mut systems.renderer,
-                    self.item[index].amount,
+                    &self.item[index].amount,
                     &format!("{}", shopdata.item[index].amount),
                 );
 
                 systems
                     .gfx
-                    .set_visible(self.item[index].amount, self.visible);
+                    .set_visible(&self.item[index].amount, self.visible);
                 systems
                     .gfx
-                    .set_visible(self.item[index].amount_bg, self.visible);
+                    .set_visible(&self.item[index].amount_bg, self.visible);
             }
 
             let item_pic = item_data.sprite;
@@ -897,9 +909,12 @@ impl Shop {
                 item_zpos,
             );
             item_sprite.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-            let item_index =
-                systems.gfx.add_image(item_sprite, 0, "Shop Item".into());
-            systems.gfx.set_visible(item_index, self.visible);
+            let item_index = systems.gfx.add_image(
+                item_sprite,
+                0,
+                "Shop Item".into(),
+                self.visible,
+            );
             self.item[index].icon = Some(item_index);
             self.item[index].item_index = shopdata.item[index].index as usize;
         });
@@ -926,17 +941,17 @@ impl Shop {
                 shopdata.item[index].index as usize;
 
             if let Some(sprite_icon) = self.item[default_index].icon {
-                systems.gfx.remove_gfx(&mut systems.renderer, sprite_icon);
+                systems.gfx.remove_gfx(&mut systems.renderer, &sprite_icon);
             }
 
             systems.gfx.set_text(
                 &mut systems.renderer,
-                self.item[default_index].name,
+                &self.item[default_index].name,
                 &item_data.name,
             );
             systems.gfx.set_text(
                 &mut systems.renderer,
-                self.item[default_index].price,
+                &self.item[default_index].price,
                 &format!("{}", shopdata.item[index].price),
             );
 
@@ -945,25 +960,26 @@ impl Shop {
 
                 systems.gfx.set_text(
                     &mut systems.renderer,
-                    self.item[default_index].amount,
+                    &self.item[default_index].amount,
                     &format!("{}", shopdata.item[index].amount),
                 );
 
-                systems
-                    .gfx
-                    .set_visible(self.item[default_index].amount, self.visible);
                 systems.gfx.set_visible(
-                    self.item[default_index].amount_bg,
+                    &self.item[default_index].amount,
+                    self.visible,
+                );
+                systems.gfx.set_visible(
+                    &self.item[default_index].amount_bg,
                     self.visible,
                 );
             } else {
                 self.item[default_index].got_count = false;
                 systems
                     .gfx
-                    .set_visible(self.item[default_index].amount, false);
+                    .set_visible(&self.item[default_index].amount, false);
                 systems
                     .gfx
-                    .set_visible(self.item[default_index].amount_bg, false);
+                    .set_visible(&self.item[default_index].amount_bg, false);
             }
 
             let item_pic = item_data.sprite;
@@ -979,9 +995,12 @@ impl Shop {
                 item_zpos,
             );
             item_sprite.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-            let item_index =
-                systems.gfx.add_image(item_sprite, 0, "Shop Item".into());
-            systems.gfx.set_visible(item_index, self.visible);
+            let item_index = systems.gfx.add_image(
+                item_sprite,
+                0,
+                "Shop Item".into(),
+                self.visible,
+            );
             self.item[default_index].icon = Some(item_index);
         })
     }

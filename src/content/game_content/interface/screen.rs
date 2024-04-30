@@ -2,9 +2,9 @@ use crate::{data_types::*, get_percent, widget::*, SystemHolder};
 use graphics::*;
 
 pub struct VitalBar {
-    bg: usize,
-    bar_bg: [usize; 3],
-    bar: [usize; 3],
+    bg: GfxType,
+    bar_bg: [GfxType; 3],
+    bar: [GfxType; 3],
     bar_size: f32,
 }
 
@@ -24,12 +24,14 @@ impl VitalBar {
             .set_color(Color::rgba(180, 180, 180, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let bg = systems.gfx.add_rect(bg_rect, 0, "Vital Window".into());
+        let bg = systems
+            .gfx
+            .add_rect(bg_rect, 0, "Vital Window".into(), true);
 
         let bar_size = size.x - (12.0 * systems.scale as f32).floor();
 
-        let mut bar_bg = [0; 3];
-        let mut bar = [0; 3];
+        let mut bar_bg = [GfxType::None; 3];
+        let mut bar = [GfxType::None; 3];
         for i in 0..3 {
             let (add_y, color, height) = match i {
                 0 => (38.0, Color::rgba(200, 80, 80, 255), 20.0),
@@ -51,7 +53,8 @@ impl VitalBar {
                 .set_color(Color::rgba(100, 100, 100, 255))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(60, 60, 60, 255));
-            bar_bg[i] = systems.gfx.add_rect(bg_rect, 0, "Vital BG".into());
+            bar_bg[i] =
+                systems.gfx.add_rect(bg_rect, 0, "Vital BG".into(), true);
 
             let mut bar_rect = Rect::new(&mut systems.renderer, 0);
             bar_rect
@@ -65,7 +68,8 @@ impl VitalBar {
                     ((height - 2.0) * systems.scale as f32).floor(),
                 ))
                 .set_color(color);
-            bar[i] = systems.gfx.add_rect(bar_rect, 0, "Vital Bar".into());
+            bar[i] =
+                systems.gfx.add_rect(bar_rect, 0, "Vital Bar".into(), true);
         }
 
         VitalBar {
@@ -77,12 +81,12 @@ impl VitalBar {
     }
 
     pub fn unload(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.remove_gfx(&mut systems.renderer, self.bg);
+        systems.gfx.remove_gfx(&mut systems.renderer, &self.bg);
         self.bar.iter().for_each(|index| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *index);
+            systems.gfx.remove_gfx(&mut systems.renderer, index);
         });
         self.bar_bg.iter().for_each(|index| {
-            systems.gfx.remove_gfx(&mut systems.renderer, *index);
+            systems.gfx.remove_gfx(&mut systems.renderer, index);
         });
     }
 
@@ -93,9 +97,9 @@ impl VitalBar {
         vitals: i32,
         max_vitals: i32,
     ) {
-        let mut size = systems.gfx.get_size(self.bar[bar_index]);
+        let mut size = systems.gfx.get_size(&self.bar[bar_index]);
         size.x = get_percent(vitals, max_vitals, self.bar_size as i32) as f32;
-        systems.gfx.set_size(self.bar[bar_index], size);
+        systems.gfx.set_size(&self.bar[bar_index], size);
     }
 }
 

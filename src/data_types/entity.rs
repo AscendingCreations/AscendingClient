@@ -82,8 +82,8 @@ pub struct PositionOffset {
 #[derive(Copy, Clone, Debug, Default)]
 pub struct HPBar {
     pub visible: bool,
-    pub bg_index: usize,
-    pub bar_index: usize,
+    pub bg_index: GfxType,
+    pub bar_index: GfxType,
 }
 
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
@@ -95,8 +95,8 @@ pub struct Level(pub i32);
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
 pub struct LastMoveFrame(pub usize);
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
-pub struct SpriteIndex(pub usize);
+#[derive(Copy, Clone, Debug, Default)]
+pub struct SpriteIndex(pub GfxType);
 
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
 pub struct SpriteImage(pub u8);
@@ -165,7 +165,7 @@ pub struct Hidden(pub bool);
 pub struct EntityName(pub String);
 
 #[derive(Debug, Clone, Copy, Default)]
-pub struct EntityNameMap(pub usize);
+pub struct EntityNameMap(pub GfxType);
 
 #[derive(
     Debug,

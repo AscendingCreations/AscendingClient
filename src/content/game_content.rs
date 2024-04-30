@@ -232,12 +232,12 @@ impl GameContent {
 
             let hpbar = world.get_or_err::<HPBar>(&myindex)?;
             let vitals = world.get_or_err::<Vitals>(&myindex)?;
-            let mut size = systems.gfx.get_size(hpbar.bar_index);
+            let mut size = systems.gfx.get_size(&hpbar.bar_index);
             size.x =
                 get_percent(vitals.vital[0], vitals.vitalmax[0], 18) as f32;
-            systems.gfx.set_size(hpbar.bar_index, size);
-            systems.gfx.set_visible(hpbar.bar_index, hpbar.visible);
-            systems.gfx.set_visible(hpbar.bg_index, hpbar.visible);
+            systems.gfx.set_size(&hpbar.bar_index, size);
+            systems.gfx.set_visible(&hpbar.bar_index, hpbar.visible);
+            systems.gfx.set_visible(&hpbar.bg_index, hpbar.visible);
         }
 
         for i in 0..MAX_EQPT {
@@ -679,10 +679,10 @@ pub fn update_camera(
                         if is_target {
                             if !hpbar.visible {
                                 hpbar.visible = true;
-                                systems.gfx.set_visible(hpbar.bar_index, true);
-                                systems.gfx.set_visible(hpbar.bg_index, true);
+                                systems.gfx.set_visible(&hpbar.bar_index, true);
+                                systems.gfx.set_visible(&hpbar.bg_index, true);
                             }
-                            let spritepos = systems.gfx.get_pos(sprite.0);
+                            let spritepos = systems.gfx.get_pos(&sprite.0);
                             content.target.set_target_pos(
                                 socket,
                                 systems,
@@ -691,8 +691,8 @@ pub fn update_camera(
                             )?;
                         } else if hpbar.visible && !is_my_entity {
                             hpbar.visible = false;
-                            systems.gfx.set_visible(hpbar.bar_index, false);
-                            systems.gfx.set_visible(hpbar.bg_index, false);
+                            systems.gfx.set_visible(&hpbar.bar_index, false);
+                            systems.gfx.set_visible(&hpbar.bg_index, false);
                         }
                     }
                 }
@@ -707,10 +707,10 @@ pub fn update_camera(
                         if is_target {
                             if !hpbar.visible {
                                 hpbar.visible = true;
-                                systems.gfx.set_visible(hpbar.bar_index, true);
-                                systems.gfx.set_visible(hpbar.bg_index, true);
+                                systems.gfx.set_visible(&hpbar.bar_index, true);
+                                systems.gfx.set_visible(&hpbar.bg_index, true);
                             }
-                            let spritepos = systems.gfx.get_pos(sprite.0);
+                            let spritepos = systems.gfx.get_pos(&sprite.0);
                             content.target.set_target_pos(
                                 socket,
                                 systems,
@@ -719,8 +719,8 @@ pub fn update_camera(
                             )?;
                         } else if hpbar.visible {
                             hpbar.visible = false;
-                            systems.gfx.set_visible(hpbar.bar_index, false);
-                            systems.gfx.set_visible(hpbar.bg_index, false);
+                            systems.gfx.set_visible(&hpbar.bar_index, false);
+                            systems.gfx.set_visible(&hpbar.bg_index, false);
                         }
                     }
                 }
