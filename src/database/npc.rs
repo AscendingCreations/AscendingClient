@@ -55,7 +55,7 @@ pub struct NpcData {
 }
 
 pub fn get_npc() -> Result<Vec<NpcData>> {
-    let mut npc_data: Vec<NpcData> = Vec::new();
+    let mut npc_data: Vec<NpcData> = Vec::with_capacity(MAX_NPCS);
 
     for i in 0..MAX_NPCS {
         if let Some(data) = load_file(i)? {

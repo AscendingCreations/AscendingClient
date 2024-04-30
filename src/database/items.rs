@@ -27,7 +27,7 @@ pub struct ItemData {
 }
 
 pub fn get_item() -> Result<Vec<ItemData>> {
-    let mut item_data: Vec<ItemData> = Vec::new();
+    let mut item_data: Vec<ItemData> = Vec::with_capacity(MAX_ITEMS);
 
     for i in 0..MAX_ITEMS {
         if let Some(data) = load_file(i)? {

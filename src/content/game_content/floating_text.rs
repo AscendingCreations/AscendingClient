@@ -29,7 +29,7 @@ impl FloatingText {
     pub fn new() -> Self {
         FloatingText {
             unload: false,
-            data: Vec::new(),
+            data: Vec::with_capacity(255),
         }
     }
 
@@ -56,7 +56,7 @@ pub fn float_text_loop(
         return;
     }
 
-    let mut remove_list = Vec::new();
+    let mut remove_list = Vec::with_capacity(255);
 
     for (index, float_data) in content.float_text.data.iter_mut().enumerate() {
         if float_data.spawned {
