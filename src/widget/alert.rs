@@ -51,11 +51,11 @@ pub struct Alert {
 impl Default for Alert {
     fn default() -> Self {
         Alert {
-            window: Vec::new(),
-            button: Vec::new(),
+            window: Vec::with_capacity(3),
+            button: Vec::with_capacity(2),
             alert_type: AlertType::Inform,
             input_box: None,
-            text: Vec::new(),
+            text: Vec::with_capacity(2),
             visible: false,
             did_button_click: false,
             custom_index: AlertIndex::None,

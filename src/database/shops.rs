@@ -25,7 +25,7 @@ pub struct ShopData {
 }
 
 pub fn get_shop() -> Result<Vec<ShopData>> {
-    let mut shop_data: Vec<ShopData> = Vec::new();
+    let mut shop_data: Vec<ShopData> = Vec::with_capacity(MAX_SHOPS);
 
     for i in 0..MAX_SHOPS {
         if let Some(data) = load_file(i)? {

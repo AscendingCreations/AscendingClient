@@ -21,7 +21,7 @@ pub struct MapAttributes {
 impl MapAttributes {
     pub fn default() -> Self {
         MapAttributes {
-            attribute: Vec::new(),
+            attribute: Vec::with_capacity(1024),
         }
     }
 }
@@ -33,7 +33,9 @@ pub struct MapDirBlock {
 
 impl MapDirBlock {
     pub fn default() -> Self {
-        MapDirBlock { dir: Vec::new() }
+        MapDirBlock {
+            dir: Vec::with_capacity(1024),
+        }
     }
 }
 

@@ -86,7 +86,7 @@ impl ItemDescription {
 
         let item_base = &systems.base.item[index];
 
-        let mut text_holder = Vec::new();
+        let mut text_holder = Vec::with_capacity(4);
         text_holder.push(item_base.name.clone());
 
         match item_base.itemtype {
