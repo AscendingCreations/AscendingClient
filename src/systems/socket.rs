@@ -490,8 +490,8 @@ impl Client {
             tls: rustls::ClientConnection::new(config, server_name)?,
             state: ClientState::Open,
             poll_state: SocketPollState::Read,
-            sends: VecDeque::new(),
-            tls_sends: VecDeque::new(),
+            sends: VecDeque::with_capacity(32),
+            tls_sends: VecDeque::with_capacity(4),
         })
     }
 }
