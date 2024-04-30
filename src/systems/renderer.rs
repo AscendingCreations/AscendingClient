@@ -222,60 +222,60 @@ pub fn add_image_to_buffer<Controls>(
         systems.gfx.last_sorted_seconds = seconds + 3.0;
     }
 
-    systems.gfx.sorted_array.iter().for_each(|gfx_data| {
-        if let Some(data) = systems.gfx.collection.get(gfx_data.1) {
-            if data.visible {
-                match data.gfx_type {
-                    GfxType::Image => {
-                        if let Some(gfx) =
-                            systems.gfx.image_storage.get_mut(data.key)
-                        {
-                            graphics.image_renderer.image_update(
-                                gfx,
-                                &mut systems.renderer,
-                                &mut graphics.image_atlas,
-                                data.layer,
-                            );
-                        }
+    systems.gfx.collection.iter().for_each(|data| {
+        //systems.gfx.sorted_array.iter().for_each(|gfx_data| {
+        //if let Some(data) = systems.gfx.collection.get(gfx_data.1) {
+        if data.1.visible {
+            match data.1.gfx_type {
+                GfxType::Image => {
+                    if let Some(gfx) =
+                        systems.gfx.image_storage.get_mut(data.1.key)
+                    {
+                        graphics.image_renderer.image_update(
+                            gfx,
+                            &mut systems.renderer,
+                            &mut graphics.image_atlas,
+                            data.1.layer,
+                        );
                     }
-                    GfxType::Rect => {
-                        if let Some(gfx) =
-                            systems.gfx.rect_storage.get_mut(data.key)
-                        {
-                            graphics.ui_renderer.rect_update(
-                                gfx,
-                                &mut systems.renderer,
-                                &mut graphics.ui_atlas,
-                                data.layer,
-                            );
-                        }
+                }
+                GfxType::Rect => {
+                    if let Some(gfx) =
+                        systems.gfx.rect_storage.get_mut(data.1.key)
+                    {
+                        graphics.ui_renderer.rect_update(
+                            gfx,
+                            &mut systems.renderer,
+                            &mut graphics.ui_atlas,
+                            data.1.layer,
+                        );
                     }
-                    GfxType::Text => {
-                        if let Some(gfx) =
-                            systems.gfx.text_storage.get_mut(data.key)
-                        {
-                            graphics
-                                .text_renderer
-                                .text_update(
-                                    gfx,
-                                    &mut graphics.text_atlas,
-                                    &mut systems.renderer,
-                                    data.layer,
-                                )
-                                .unwrap();
-                        }
-                    }
-                    GfxType::Map => {
-                        if let Some(gfx) =
-                            systems.gfx.map_storage.get_mut(data.key)
-                        {
-                            graphics.map_renderer.map_update(
+                }
+                GfxType::Text => {
+                    if let Some(gfx) =
+                        systems.gfx.text_storage.get_mut(data.1.key)
+                    {
+                        graphics
+                            .text_renderer
+                            .text_update(
                                 gfx,
+                                &mut graphics.text_atlas,
                                 &mut systems.renderer,
-                                &mut graphics.map_atlas,
-                                [0, 1],
-                            );
-                        }
+                                data.1.layer,
+                            )
+                            .unwrap();
+                    }
+                }
+                GfxType::Map => {
+                    if let Some(gfx) =
+                        systems.gfx.map_storage.get_mut(data.1.key)
+                    {
+                        graphics.map_renderer.map_update(
+                            gfx,
+                            &mut systems.renderer,
+                            &mut graphics.map_atlas,
+                            [0, 1],
+                        );
                     }
                 }
             }

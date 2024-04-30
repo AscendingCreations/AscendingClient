@@ -353,8 +353,9 @@ impl Interface {
                 if interface.inventory.visible
                     && interface.inventory.order_index == 0
                 {
-                    if let Some(slot) =
-                        interface.inventory.find_inv_slot(screen_pos, false)
+                    if let Some(slot) = interface
+                        .inventory
+                        .find_inv_slot(systems, screen_pos, false)
                     {
                         send_useitem(socket, slot as u16)?;
                     }
@@ -1277,13 +1278,17 @@ fn hold_interface(
     interface_set_to_first(interface, systems, window);
     match window {
         Window::Inventory => {
-            if interface.inventory.can_hold(screen_pos) && !hold_check {
+            if interface.inventory.can_hold(systems, screen_pos) && !hold_check
+            {
                 interface.inventory.hold_window(screen_pos);
-            } else if let Some(slot) =
-                interface.inventory.find_inv_slot(screen_pos, false)
+            } else if let Some(slot) = interface
+                .inventory
+                .find_inv_slot(systems, screen_pos, false)
             {
                 if check_content {
-                    interface.inventory.hold_inv_slot(slot, screen_pos);
+                    interface
+                        .inventory
+                        .hold_inv_slot(systems, slot, screen_pos);
                 }
 
                 return;
@@ -1292,7 +1297,7 @@ fn hold_interface(
             }
         }
         Window::Profile => {
-            if !interface.profile.can_hold(screen_pos) {
+            if !interface.profile.can_hold(systems, screen_pos) {
                 return;
             }
             interface.profile.hold_window(screen_pos);

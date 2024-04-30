@@ -342,11 +342,19 @@ impl Profile {
         });
     }
 
-    pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
+    pub fn can_hold(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) -> bool {
         if !self.visible {
             return false;
         }
-        is_within_area(screen_pos, self.header_pos, self.header_size)
+        is_within_area(
+            screen_pos,
+            self.header_pos,
+            (self.header_size * systems.scale as f32).floor(),
+        )
     }
 
     pub fn in_window(&mut self, screen_pos: Vec2) -> bool {

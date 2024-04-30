@@ -781,7 +781,8 @@ pub fn release_storage_slot(
     } else if interface.inventory.in_window(screen_pos)
         && interface.inventory.order_index == 0
     {
-        let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
+        let find_slot =
+            interface.inventory.find_inv_slot(systems, screen_pos, true);
         if let Some(inv_slot) = find_slot {
             if interface.storage.item_slot[slot].count_data > 1 {
                 alert.show_alert(

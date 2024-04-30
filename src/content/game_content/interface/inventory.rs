@@ -49,7 +49,8 @@ pub struct Inventory {
 
 impl Inventory {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let w_size = Vec2::new(200.0, 267.0);
+        let orig_size = Vec2::new(200.0, 267.0);
+        let w_size = (orig_size * systems.scale as f32).floor();
         let w_pos = Vec3::new(
             systems.size.width - w_size.x - 10.0,
             60.0,
@@ -70,21 +71,31 @@ impl Inventory {
         systems.gfx.set_visible(bg, false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
-        let header_pos = Vec2::new(pos.x, pos.y + 237.0);
-        let header_size = Vec2::new(w_size.x, 30.0);
+        let header_pos =
+            Vec2::new(pos.x, pos.y + (237.0 * systems.scale as f32).floor());
+        let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
         header_rect
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
-            .set_size(header_size)
+            .set_size((header_size * systems.scale as f32).floor())
             .set_color(Color::rgba(70, 70, 70, 255));
         let header = systems.gfx.add_rect(header_rect, 0, "Inv Header".into());
         systems.gfx.set_visible(header, false);
 
         let text = create_label(
             systems,
-            Vec3::new(pos.x, pos.y + 242.0, detail_2),
-            Vec2::new(w_size.x, 20.0),
-            Bounds::new(pos.x, pos.y + 242.0, pos.x + w_size.x, pos.y + 262.0),
+            Vec3::new(
+                pos.x,
+                pos.y + (242.0 * systems.scale as f32).floor(),
+                detail_2,
+            ),
+            Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
+            Bounds::new(
+                pos.x,
+                pos.y + (242.0 * systems.scale as f32).floor(),
+                pos.x + w_size.x,
+                pos.y + (262.0 * systems.scale as f32).floor(),
+            ),
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
@@ -102,11 +113,19 @@ impl Inventory {
                 Vec2::new(i as f32 % MAX_INV_X, (i as f32 / MAX_INV_X).floor());
             box_rect
                 .set_position(Vec3::new(
-                    w_pos.x + 10.0 + (37.0 * frame_pos.x),
-                    w_pos.y + 10.0 + (37.0 * frame_pos.y),
+                    w_pos.x
+                        + ((10.0 + (37.0 * frame_pos.x))
+                            * systems.scale as f32)
+                            .floor(),
+                    w_pos.y
+                        + ((10.0 + (37.0 * frame_pos.y))
+                            * systems.scale as f32)
+                            .floor(),
                     detail_1,
                 ))
-                .set_size(Vec2::new(32.0, 32.0))
+                .set_size(
+                    (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                )
                 .set_color(Color::rgba(200, 200, 200, 255));
             *slot = systems.gfx.add_rect(box_rect, 0, "Inv Slot BG".into());
             systems.gfx.set_visible(*slot, false);
@@ -233,7 +252,12 @@ impl Inventory {
         })
     }
 
-    pub fn hold_inv_slot(&mut self, slot: usize, screen_pos: Vec2) {
+    pub fn hold_inv_slot(
+        &mut self,
+        systems: &mut SystemHolder,
+        slot: usize,
+        screen_pos: Vec2,
+    ) {
         if self.hold_slot.is_some() || self.item_slot[slot].need_update {
             return;
         }
@@ -245,8 +269,12 @@ impl Inventory {
             (slot as f32 / MAX_INV_X).floor(),
         );
         let slot_pos = Vec2::new(
-            self.pos.x + 16.0 + (37.0 * frame_pos.x),
-            self.pos.y + 195.0 - (37.0 * frame_pos.y),
+            self.pos.x
+                + ((16.0 + (37.0 * frame_pos.x)) * systems.scale as f32)
+                    .floor(),
+            self.pos.y
+                + ((195.0 - (37.0 * frame_pos.y)) * systems.scale as f32)
+                    .floor(),
         );
 
         self.hold_adjust_pos = screen_pos - slot_pos;
@@ -330,8 +358,12 @@ impl Inventory {
             (slot as f32 / MAX_INV_X).floor(),
         );
         let slot_pos = Vec2::new(
-            self.pos.x + 10.0 + (37.0 * frame_pos.x),
-            self.pos.y + 195.0 - (37.0 * frame_pos.y),
+            self.pos.x
+                + ((10.0 + (37.0 * frame_pos.x)) * systems.scale as f32)
+                    .floor(),
+            self.pos.y
+                + ((195.0 - (37.0 * frame_pos.y)) * systems.scale as f32)
+                    .floor(),
         );
 
         let sprite =
@@ -346,9 +378,13 @@ impl Inventory {
             &mut systems.renderer,
             0,
         );
-        image.hw = Vec2::new(20.0, 20.0);
+        image.hw = (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
         image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-        image.pos = Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, item_zpos);
+        image.pos = Vec3::new(
+            slot_pos.x + (6.0 * systems.scale as f32).floor(),
+            slot_pos.y + (6.0 * systems.scale as f32).floor(),
+            item_zpos,
+        );
         let image_index = systems.gfx.add_image(image, 0, "Inv Item".into());
         systems.gfx.set_visible(image_index, self.visible);
 
@@ -359,7 +395,9 @@ impl Inventory {
         if data.val > 1 {
             let mut text_bg = Rect::new(&mut systems.renderer, 0);
             text_bg
-                .set_size(Vec2::new(32.0, 16.0))
+                .set_size(
+                    (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
+                )
                 .set_position(Vec3::new(slot_pos.x, slot_pos.y, textbg_zpos))
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
@@ -368,10 +406,15 @@ impl Inventory {
                 systems.gfx.add_rect(text_bg, 1, "Inv Amount BG".into());
             systems.gfx.set_visible(text_bg_index, self.visible);
 
-            let text_size = Vec2::new(32.0, 16.0);
+            let text_size =
+                (Vec2::new(32.0, 16.0) * systems.scale as f32).floor();
             let text = create_label(
                 systems,
-                Vec3::new(slot_pos.x + 2.0, slot_pos.y + 2.0, text_zpos),
+                Vec3::new(
+                    slot_pos.x + (2.0 * systems.scale as f32).floor(),
+                    slot_pos.y + (2.0 * systems.scale as f32).floor(),
+                    text_zpos,
+                ),
                 text_size,
                 Bounds::new(
                     slot_pos.x,
@@ -397,15 +440,24 @@ impl Inventory {
         self.item_slot[slot].got_data = true;
     }
 
-    pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
+    pub fn can_hold(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) -> bool {
         if !self.visible {
             return false;
         }
-        is_within_area(screen_pos, self.header_pos, self.header_size)
+        is_within_area(
+            screen_pos,
+            self.header_pos,
+            (self.header_size * systems.scale as f32).floor(),
+        )
     }
 
     pub fn find_inv_slot(
         &mut self,
+        systems: &mut SystemHolder,
         screen_pos: Vec2,
         check_empty: bool,
     ) -> Option<usize> {
@@ -421,14 +473,22 @@ impl Inventory {
                     (slot as f32 / MAX_INV_X).floor(),
                 );
                 let slot_pos = Vec2::new(
-                    self.pos.x + 10.0 + (37.0 * frame_pos.x),
-                    self.pos.y + 195.0 - (37.0 * frame_pos.y),
+                    self.pos.x
+                        + ((10.0 + (37.0 * frame_pos.x))
+                            * systems.scale as f32)
+                            .floor(),
+                    self.pos.y
+                        + ((195.0 - (37.0 * frame_pos.y))
+                            * systems.scale as f32)
+                            .floor(),
                 );
 
                 if screen_pos.x >= slot_pos.x
-                    && screen_pos.x <= slot_pos.x + 32.0
+                    && screen_pos.x
+                        <= slot_pos.x + (32.0 * systems.scale as f32).floor()
                     && screen_pos.y >= slot_pos.y
-                    && screen_pos.y <= slot_pos.y + 32.0
+                    && screen_pos.y
+                        <= slot_pos.y + (32.0 * systems.scale as f32).floor()
                 {
                     return Some(slot);
                 }
@@ -538,23 +598,34 @@ impl Inventory {
             Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z),
         );
         let pos = systems.gfx.get_pos(self.header);
-        self.header_pos = Vec2::new(self.pos.x, self.pos.y + 237.0);
+        self.header_pos = Vec2::new(
+            self.pos.x,
+            self.pos.y + (237.0 * systems.scale as f32).floor(),
+        );
         systems.gfx.set_pos(
             self.header,
-            Vec3::new(self.pos.x, self.pos.y + 237.0, pos.z),
+            Vec3::new(
+                self.pos.x,
+                self.pos.y + (237.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         let pos = systems.gfx.get_pos(self.header_text);
         systems.gfx.set_pos(
             self.header_text,
-            Vec3::new(self.pos.x, self.pos.y + 242.0, pos.z),
+            Vec3::new(
+                self.pos.x,
+                self.pos.y + (242.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         systems.gfx.set_bound(
             self.header_text,
             Bounds::new(
                 self.pos.x,
-                self.pos.y + 242.0,
+                self.pos.y + (242.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
-                self.pos.y + 262.0,
+                self.pos.y + (262.0 * systems.scale as f32).floor(),
             ),
         );
         systems.gfx.center_text(self.header_text);
@@ -563,13 +634,18 @@ impl Inventory {
             button.set_pos(systems, self.pos);
         });
 
-        let item_text_size = Vec2::new(32.0, 16.0);
+        let item_text_size =
+            (Vec2::new(32.0, 16.0) * systems.scale as f32).floor();
         for i in 0..MAX_INV {
             let frame_pos =
                 Vec2::new(i as f32 % MAX_INV_X, (i as f32 / MAX_INV_X).floor());
             let slot_pos = Vec2::new(
-                self.pos.x + 10.0 + (37.0 * frame_pos.x),
-                self.pos.y + 195.0 - (37.0 * frame_pos.y),
+                self.pos.x
+                    + ((10.0 + (37.0 * frame_pos.x)) * systems.scale as f32)
+                        .floor(),
+                self.pos.y
+                    + ((195.0 - (37.0 * frame_pos.y)) * systems.scale as f32)
+                        .floor(),
             );
 
             let pos = systems.gfx.get_pos(self.slot[i]);
@@ -582,7 +658,11 @@ impl Inventory {
                 let pos = systems.gfx.get_pos(self.item_slot[i].image);
                 systems.gfx.set_pos(
                     self.item_slot[i].image,
-                    Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, pos.z),
+                    Vec3::new(
+                        slot_pos.x + (6.0 * systems.scale as f32).floor(),
+                        slot_pos.y + (6.0 * systems.scale as f32).floor(),
+                        pos.z,
+                    ),
                 );
 
                 if self.item_slot[i].got_count {
@@ -595,7 +675,11 @@ impl Inventory {
                     let pos = systems.gfx.get_pos(self.item_slot[i].count);
                     systems.gfx.set_pos(
                         self.item_slot[i].count,
-                        Vec3::new(slot_pos.x + 2.0, slot_pos.y + 2.0, pos.z),
+                        Vec3::new(
+                            slot_pos.x + (2.0 * systems.scale as f32).floor(),
+                            slot_pos.y + (2.0 * systems.scale as f32).floor(),
+                            pos.z,
+                        ),
                     );
                     systems.gfx.set_bound(
                         self.item_slot[i].count,
@@ -621,7 +705,7 @@ impl Inventory {
             return;
         }
 
-        if let Some(slot) = self.find_inv_slot(screen_pos, false) {
+        if let Some(slot) = self.find_inv_slot(systems, screen_pos, false) {
             let itemindex = self.item_slot[slot].item_index;
             itemdesc.set_visible(systems, true);
             itemdesc.set_data(systems, itemindex as usize);
@@ -644,10 +728,12 @@ impl Inventory {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_hover(systems, true);
             } else {
@@ -670,10 +756,12 @@ impl Inventory {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_click(systems, true);
                 button_found = Some(index)
@@ -713,7 +801,8 @@ pub fn release_inv_slot(
         && interface.inventory.order_index == 0
         && !interface.trade.visible
     {
-        let find_slot = interface.inventory.find_inv_slot(screen_pos, true);
+        let find_slot =
+            interface.inventory.find_inv_slot(systems, screen_pos, true);
         if let Some(new_slot) = find_slot {
             if new_slot != slot {
                 if interface.inventory.item_slot[slot].item_index
@@ -855,13 +944,19 @@ pub fn release_inv_slot(
     let frame_pos =
         Vec2::new(slot as f32 % MAX_INV_X, (slot as f32 / MAX_INV_X).floor());
     let slot_pos = Vec2::new(
-        interface.inventory.pos.x + 10.0 + (37.0 * frame_pos.x),
-        interface.inventory.pos.y + 195.0 - (37.0 * frame_pos.y),
+        interface.inventory.pos.x
+            + ((10.0 + (37.0 * frame_pos.x)) * systems.scale as f32).floor(),
+        interface.inventory.pos.y
+            + ((195.0 - (37.0 * frame_pos.y)) * systems.scale as f32).floor(),
     );
 
     systems.gfx.set_pos(
         interface.inventory.item_slot[slot].image,
-        Vec3::new(slot_pos.x + 6.0, slot_pos.y + 6.0, z_pos),
+        Vec3::new(
+            slot_pos.x + (6.0 * systems.scale as f32).floor(),
+            slot_pos.y + (6.0 * systems.scale as f32).floor(),
+            z_pos,
+        ),
     );
     if interface.inventory.item_slot[slot].got_count {
         systems
