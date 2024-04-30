@@ -34,7 +34,8 @@ pub struct Setting {
 
 impl Setting {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let w_size = Vec2::new(200.0, 267.0);
+        let orig_size = Vec2::new(200.0, 267.0);
+        let w_size = (orig_size * systems.scale as f32).floor();
         let w_pos = Vec3::new(
             systems.size.width - w_size.x - 10.0,
             60.0,
@@ -55,12 +56,15 @@ impl Setting {
         systems.gfx.set_visible(bg, false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
-        let header_pos = Vec2::new(w_pos.x, w_pos.y + 237.0);
-        let header_size = Vec2::new(w_size.x, 30.0);
+        let header_pos = Vec2::new(
+            w_pos.x,
+            w_pos.y + (237.0 * systems.scale as f32).floor(),
+        );
+        let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
         header_rect
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
-            .set_size(header_size)
+            .set_size((header_size * systems.scale as f32).floor())
             .set_color(Color::rgba(70, 70, 70, 255));
         let header =
             systems
@@ -70,13 +74,17 @@ impl Setting {
 
         let text = create_label(
             systems,
-            Vec3::new(w_pos.x, w_pos.y + 242.0, detail_2),
-            Vec2::new(w_size.x, 20.0),
+            Vec3::new(
+                w_pos.x,
+                w_pos.y + (242.0 * systems.scale as f32).floor(),
+                detail_2,
+            ),
+            Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
             Bounds::new(
                 w_pos.x,
-                w_pos.y + 242.0,
+                w_pos.y + (242.0 * systems.scale as f32).floor(),
                 w_pos.x + w_size.x,
-                w_pos.y + 262.0,
+                w_pos.y + (262.0 * systems.scale as f32).floor(),
             ),
             Color::rgba(200, 200, 200, 255),
         );
@@ -91,7 +99,7 @@ impl Setting {
         let mut sfx_scroll = Scrollbar::new(
             systems,
             Vec2::new(w_pos.x, w_pos.y),
-            Vec2::new(w_size.x - 110.0, w_size.y - 90.0),
+            Vec2::new(orig_size.x - 110.0, orig_size.y - 90.0),
             100.0,
             20.0,
             false,
@@ -124,7 +132,7 @@ impl Setting {
         let mut bgm_scroll = Scrollbar::new(
             systems,
             Vec2::new(w_pos.x, w_pos.y),
-            Vec2::new(w_size.x - 110.0, w_size.y - 60.0),
+            Vec2::new(orig_size.x - 110.0, orig_size.y - 60.0),
             100.0,
             20.0,
             false,
@@ -191,15 +199,23 @@ impl Setting {
         let mut label = Vec::with_capacity(2);
         for i in 0..2 {
             let (msg, ypos) = match i {
-                0 => ("BGM", w_size.y - 60.0),
-                _ => ("SFX", w_size.y - 90.0),
+                0 => ("BGM", w_size.y - (60.0 * systems.scale as f32).floor()),
+                _ => ("SFX", w_size.y - (90.0 * systems.scale as f32).floor()),
             };
-            let tpos = Vec2::new(w_pos.x + 10.0, w_pos.y + ypos);
+            let tpos = Vec2::new(
+                w_pos.x + (10.0 * systems.scale as f32).floor(),
+                w_pos.y + ypos,
+            );
             let text = create_label(
                 systems,
                 Vec3::new(tpos.x, tpos.y, detail_1),
-                Vec2::new(100.0, 20.0),
-                Bounds::new(tpos.x, tpos.y, tpos.x + 100.0, tpos.y + 20.0),
+                (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
+                Bounds::new(
+                    tpos.x,
+                    tpos.y,
+                    tpos.x + (100.0 * systems.scale as f32).floor(),
+                    tpos.y + (20.0 * systems.scale as f32).floor(),
+                ),
                 Color::rgba(200, 200, 200, 255),
             );
             let label_index =
@@ -211,9 +227,12 @@ impl Setting {
             label.push(label_index);
         }
 
-        let tpos =
-            Vec3::new(w_pos.x + 50.0, w_pos.y + w_size.y - 60.0, detail_1);
-        let tsize = Vec2::new(50.0, 20.0);
+        let tpos = Vec3::new(
+            w_pos.x + (50.0 * systems.scale as f32).floor(),
+            w_pos.y + w_size.y - (60.0 * systems.scale as f32).floor(),
+            detail_1,
+        );
+        let tsize = (Vec2::new(50.0, 20.0) * systems.scale as f32).floor();
         let slabel = create_label(
             systems,
             tpos,
@@ -230,9 +249,11 @@ impl Setting {
         );
         systems.gfx.set_visible(bgm_label, false);
 
-        let tpos =
-            Vec3::new(w_pos.x + 50.0, w_pos.y + w_size.y - 90.0, detail_1);
-        let tsize = Vec2::new(50.0, 20.0);
+        let tpos = Vec3::new(
+            w_pos.x + (50.0 * systems.scale as f32).floor(),
+            w_pos.y + w_size.y - (90.0 * systems.scale as f32).floor(),
+            detail_1,
+        );
         let slabel = create_label(
             systems,
             tpos,
@@ -273,7 +294,7 @@ impl Setting {
                     size: Vec2::new(14.0, 14.0),
                 }),
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(10.0, w_size.y - 130.0),
+                Vec2::new(10.0, orig_size.y - 130.0),
                 detail_1,
                 (0.0001, 4),
                 Vec2::new(24.0, 24.0),
@@ -317,7 +338,7 @@ impl Setting {
                     size: Vec2::new(14.0, 14.0),
                 }),
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(10.0, w_size.y - 154.0),
+                Vec2::new(10.0, orig_size.y - 154.0),
                 detail_1,
                 (0.0001, 4),
                 Vec2::new(24.0, 24.0),
@@ -361,7 +382,7 @@ impl Setting {
                     size: Vec2::new(14.0, 14.0),
                 }),
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(10.0, w_size.y - 178.0),
+                Vec2::new(10.0, orig_size.y - 178.0),
                 detail_1,
                 (0.0001, 4),
                 Vec2::new(24.0, 24.0),
@@ -405,7 +426,7 @@ impl Setting {
                     size: Vec2::new(14.0, 14.0),
                 }),
                 Vec2::new(w_pos.x, w_pos.y),
-                Vec2::new(10.0, w_size.y - 202.0),
+                Vec2::new(10.0, orig_size.y - 202.0),
                 detail_1,
                 (0.0001, 4),
                 Vec2::new(24.0, 24.0),
@@ -616,20 +637,28 @@ impl Setting {
         self.header_pos = Vec2::new(self.pos.x, self.pos.y + 237.0);
         systems.gfx.set_pos(
             self.header,
-            Vec3::new(self.pos.x, self.pos.y + 237.0, pos.z),
+            Vec3::new(
+                self.pos.x,
+                self.pos.y + (237.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         let pos = systems.gfx.get_pos(self.header_text);
         systems.gfx.set_pos(
             self.header_text,
-            Vec3::new(self.pos.x, self.pos.y + 242.0, pos.z),
+            Vec3::new(
+                self.pos.x,
+                self.pos.y + (242.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         systems.gfx.set_bound(
             self.header_text,
             Bounds::new(
                 self.pos.x,
-                self.pos.y + 242.0,
+                self.pos.y + (242.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
-                self.pos.y + 262.0,
+                self.pos.y + (262.0 * systems.scale as f32).floor(),
             ),
         );
         systems.gfx.center_text(self.header_text);
@@ -647,22 +676,32 @@ impl Setting {
 
         self.label.iter().enumerate().for_each(|(index, text)| {
             let ypos = match index {
-                0 => self.size.y - 60.0,
-                _ => self.size.y - 90.0,
+                0 => self.size.y - (60.0 * systems.scale as f32).floor(),
+                _ => self.size.y - (90.0 * systems.scale as f32).floor(),
             };
-            let tpos = Vec2::new(self.pos.x + 10.0, self.pos.y + ypos);
+            let tpos = Vec2::new(
+                self.pos.x + (10.0 * systems.scale as f32).floor(),
+                self.pos.y + ypos,
+            );
 
             let pos = systems.gfx.get_pos(*text);
             systems.gfx.set_pos(*text, Vec3::new(tpos.x, tpos.y, pos.z));
             systems.gfx.set_bound(
                 *text,
-                Bounds::new(tpos.x, tpos.y, tpos.x + 100.0, tpos.y + 20.0),
+                Bounds::new(
+                    tpos.x,
+                    tpos.y,
+                    tpos.x + (100.0 * systems.scale as f32).floor(),
+                    tpos.y + (20.0 * systems.scale as f32).floor(),
+                ),
             );
         });
 
-        let tpos =
-            Vec2::new(self.pos.x + 50.0, self.pos.y + self.size.y - 60.0);
-        let tsize = Vec2::new(50.0, 20.0);
+        let tpos = Vec2::new(
+            self.pos.x + (50.0 * systems.scale as f32).floor(),
+            self.pos.y + self.size.y - (60.0 * systems.scale as f32).floor(),
+        );
+        let tsize = (Vec2::new(50.0, 20.0) * systems.scale as f32).floor();
         let pos = systems.gfx.get_pos(self.bgm_label);
         systems
             .gfx
@@ -672,9 +711,10 @@ impl Setting {
             Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
         );
 
-        let tpos =
-            Vec2::new(self.pos.x + 50.0, self.pos.y + self.size.y - 90.0);
-        let tsize = Vec2::new(50.0, 20.0);
+        let tpos = Vec2::new(
+            self.pos.x + (50.0 * systems.scale as f32).floor(),
+            self.pos.y + self.size.y - (90.0 * systems.scale as f32).floor(),
+        );
         let pos = systems.gfx.get_pos(self.sfx_label);
         systems
             .gfx
@@ -719,10 +759,12 @@ impl Setting {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_hover(systems, true);
             } else {
@@ -745,10 +787,12 @@ impl Setting {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_click(systems, true);
                 button_found = Some(index)
@@ -778,13 +822,18 @@ impl Setting {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    checkbox.base_pos.x + checkbox.adjust_pos.x,
-                    checkbox.base_pos.y + checkbox.adjust_pos.y,
+                    checkbox.base_pos.x
+                        + (checkbox.adjust_pos.x * systems.scale as f32)
+                            .floor(),
+                    checkbox.base_pos.y
+                        + (checkbox.adjust_pos.y * systems.scale as f32)
+                            .floor(),
                 ),
-                Vec2::new(
+                (Vec2::new(
                     checkbox.box_size.x + checkbox.adjust_x,
                     checkbox.box_size.y,
-                ),
+                ) * systems.scale as f32)
+                    .floor(),
             ) {
                 checkbox.set_hover(systems, true);
 
@@ -807,13 +856,18 @@ impl Setting {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    checkbox.base_pos.x + checkbox.adjust_pos.x,
-                    checkbox.base_pos.y + checkbox.adjust_pos.y,
+                    checkbox.base_pos.x
+                        + (checkbox.adjust_pos.x * systems.scale as f32)
+                            .floor(),
+                    checkbox.base_pos.y
+                        + (checkbox.adjust_pos.y * systems.scale as f32)
+                            .floor(),
                 ),
-                Vec2::new(
+                (Vec2::new(
                     checkbox.box_size.x + checkbox.adjust_x,
                     checkbox.box_size.y,
-                ),
+                ) * systems.scale as f32)
+                    .floor(),
             ) {
                 checkbox.set_click(systems, true);
                 checkbox_found = Some(index)
