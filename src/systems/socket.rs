@@ -240,9 +240,9 @@ impl Socket {
     fn read(&mut self) -> Result<()> {
         let pos = self.buffer.cursor();
         self.buffer.move_cursor_to_end();
+        let mut buf: [u8; 4096] = [0; 4096];
 
         loop {
-            let mut buf: [u8; 2048] = [0; 2048];
             match self.client.socket.read(&mut buf) {
                 Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
                     break
@@ -326,18 +326,9 @@ impl Socket {
     }
 
     pub fn write(&mut self) {
-        //let mut count: usize = 0;
-
-        //make sure the player exists before we send anything.
-
         let mut packet = match self.client.sends.pop_front() {
             Some(packet) => packet,
-            None => {
-                if self.client.sends.capacity() > 100 {
-                    self.client.sends.shrink_to_fit();
-                }
-                return;
-            }
+            None => return,
         };
 
         match self.client.socket.write_all(packet.as_slice()) {
@@ -351,10 +342,6 @@ impl Socket {
                 self.client.state = ClientState::Closing;
             }
         }
-
-        /*if !self.client.sends.is_empty() {
-            self.client.poll_state.add(SocketPollState::Write);
-        }*/
     }
 
     #[inline]
@@ -551,7 +538,10 @@ pub fn process_packets(
     seconds: f32,
     buffertask: &mut BufferTask,
 ) -> Result<()> {
+    let mut packet = ByteBuffer::with_capacity(1500)?;
+
     loop {
+        packet.move_cursor_to_start();
         let length = match get_length(socket) {
             Some(n) => n,
             None => return Ok(()),
@@ -564,15 +554,23 @@ pub fn process_packets(
         }
 
         if length <= (socket.buffer.length() - socket.buffer.cursor()) as u64 {
-            let mut buffer = match socket.buffer.read_to_buffer(length as usize)
-            {
-                Ok(n) => n,
-                Err(_) => {
-                    log::error!("Disconnected on packet read to buffer");
-                    socket.set_to_closing();
-                    break;
+            let mut errored = false;
+
+            if let Ok(bytes) = socket.buffer.read_slice(length as usize) {
+                if packet.write_slice(bytes).is_err() {
+                    errored = true;
                 }
-            };
+
+                packet.move_cursor_to_start();
+            } else {
+                errored = true;
+            }
+
+            if errored {
+                log::error!("Disconnected on packet read to buffer");
+                socket.set_to_closing();
+                break;
+            }
 
             if handle_data(
                 socket,
@@ -581,7 +579,7 @@ pub fn process_packets(
                 systems,
                 content,
                 alert,
-                &mut buffer,
+                &mut packet,
                 seconds,
                 buffertask,
             )
@@ -599,22 +597,6 @@ pub fn process_packets(
 
     if socket.buffer.cursor() == socket.buffer.length() {
         socket.buffer.truncate(0)?;
-        if socket.buffer.capacity() > 25000 {
-            socket.buffer.resize(4096)?;
-        }
-    } else if socket.buffer.capacity() > 25000
-        && (socket.buffer.length() - socket.buffer.cursor()) as u64 <= 10000
-    {
-        let mut replacement = ByteBuffer::with_capacity(
-            socket.buffer.length() - socket.buffer.cursor(),
-        )?;
-        replacement.write_slice(
-            socket
-                .buffer
-                .read_slice(socket.buffer.length() - socket.buffer.cursor())?,
-        )?;
-        replacement.move_cursor_to_start();
-        socket.buffer = replacement;
     }
 
     Ok(())
