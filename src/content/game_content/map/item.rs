@@ -52,6 +52,7 @@ impl MapItem {
             SpriteImage(sprite as u8),
             PositionOffset::default(),
             Finalized::default(),
+            EntityLight::default(),
         );
 
         if let Some(data) = entity {
@@ -89,6 +90,7 @@ pub fn update_mapitem_position(
     sprite: GfxType,
     pos: &Position,
     pos_offset: &PositionOffset,
+    light_key: Option<Index>,
 ) {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
         .unwrap_or_else(|| {
@@ -101,14 +103,20 @@ pub fn update_mapitem_position(
     if start_pos + texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
-    systems.gfx.set_pos(
-        &sprite,
-        Vec3::new(
-            start_pos.x + texture_pos.x,
-            start_pos.y + texture_pos.y,
-            cur_pos.z,
-        ),
-    );
+
+    let pos = start_pos + texture_pos;
+
+    systems
+        .gfx
+        .set_pos(&sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+
+    if let Some(light) = light_key {
+        systems.gfx.set_area_light_pos(
+            &content.game_lights,
+            light,
+            pos + TILE_SIZE as f32,
+        )
+    }
 }
 
 pub fn unload_mapitems(

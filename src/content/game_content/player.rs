@@ -112,6 +112,7 @@ pub fn add_player(
         hpbar,
         Finalized::default(),
         entitynamemap,
+        EntityLight::default(),
     );
 
     if let Some(data) = entity {
@@ -364,6 +365,7 @@ pub fn update_player_position(
     pos_offset: &PositionOffset,
     hpbar: &HPBar,
     entitynamemap: &EntityNameMap,
+    light_key: Option<Index>,
 ) -> Result<()> {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
         .unwrap_or_else(|| {
@@ -385,6 +387,14 @@ pub fn update_player_position(
     systems
         .gfx
         .set_pos(&sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+
+    if let Some(light) = light_key {
+        systems.gfx.set_area_light_pos(
+            &content.game_lights,
+            light,
+            pos + TILE_SIZE as f32,
+        )
+    }
 
     let sprite_size = systems.gfx.get_size(&sprite);
     let bar_pos = pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
@@ -566,10 +576,17 @@ pub fn update_player_camera(
         &Position,
         &PositionOffset,
         &EntityNameMap,
+        &EntityLight,
     )>(entity.0)?;
 
-    if let Some((hpbar, spriteindex, position, positionoffset, entitymapname)) =
-        query.get()
+    if let Some((
+        hpbar,
+        spriteindex,
+        position,
+        positionoffset,
+        entitymapname,
+        entitylight,
+    )) = query.get()
     {
         update_player_position(
             systems,
@@ -579,6 +596,7 @@ pub fn update_player_camera(
             positionoffset,
             hpbar,
             entitymapname,
+            entitylight.0,
         )?;
 
         let is_target = if let Some(target) = content.target.entity {
@@ -635,5 +653,26 @@ pub fn player_get_next_lvl_exp(
         Ok(player_level.0 as u64 * exp_per_level as u64)
     } else {
         Ok(0)
+    }
+}
+
+pub fn create_player_light(
+    world: &mut World,
+    systems: &mut SystemHolder,
+    game_light: &GfxType,
+    entity: &Entity,
+) {
+    if let Ok(mut entitylight) = world.get::<&mut EntityLight>(entity.0) {
+        entitylight.0 = systems.gfx.add_area_light(
+            game_light,
+            AreaLight {
+                pos: Vec2::new(0.0, 0.0),
+                color: Color::rgba(100, 100, 100, 20),
+                max_distance: 60.0,
+                animate: true,
+                anim_speed: 5.0,
+                dither: 0.8,
+            },
+        )
     }
 }

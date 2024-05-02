@@ -189,10 +189,11 @@ pub const ORDER_NPC: f32 = 8.0;
 pub const ORDER_HPBAR_BG: f32 = 7.9;
 pub const ORDER_HPBAR: f32 = 7.8;
 pub const ORDER_TARGET: f32 = 7.7;
-pub const ORDER_ENTITY_NAME: f32 = 7.9;
 // Upper Map Order 5.1 - 5.0
-pub const ORDER_FLOAT_TEXT_BG: f32 = 4.9;
-pub const ORDER_FLOAT_TEXT: f32 = 4.8;
+pub const ORDER_LIGHT: f32 = 4.9;
+pub const ORDER_ENTITY_NAME: f32 = 4.8;
+pub const ORDER_FLOAT_TEXT_BG: f32 = 4.7;
+pub const ORDER_FLOAT_TEXT: f32 = 4.6;
 pub const ORDER_MAP_FADE: f32 = 4.0;
 pub const ORDER_VITAL_BG: f32 = 3.9;
 pub const ORDER_VITAL_HPBG: f32 = 3.8;

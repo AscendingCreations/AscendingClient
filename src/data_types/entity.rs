@@ -107,6 +107,9 @@ pub struct Attacking(pub bool);
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
 pub struct AttackTimer(pub f32);
 
+#[derive(Copy, Clone, Debug, Default)]
+pub struct EntityLight(pub Option<Index>);
+
 #[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
 pub struct AttackFrame {
     pub frame: usize,

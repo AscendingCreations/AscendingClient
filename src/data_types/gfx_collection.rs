@@ -14,6 +14,7 @@ pub enum GfxType {
     Rect(Index),
     Text(Index),
     Map(Index),
+    Light(Index),
 }
 
 pub struct GfxData {
@@ -42,12 +43,18 @@ pub struct GfxMap {
     pub gfx: Map,
 }
 
+pub struct GfxLight {
+    pub data: GfxData,
+    pub gfx: Lights,
+}
+
 #[derive(Default)]
 pub struct GfxCollection {
     pub image_storage: SlotMap<Index, GfxImage>,
     pub rect_storage: SlotMap<Index, GfxRect>,
     pub text_storage: SlotMap<Index, GfxText>,
     pub map_storage: SlotMap<Index, GfxMap>,
+    pub light_storage: SlotMap<Index, GfxLight>,
 }
 
 impl GfxCollection {
@@ -60,6 +67,7 @@ impl GfxCollection {
         info!("Rect Size: {:?}", self.rect_storage.len());
         info!("Text Size: {:?}", self.text_storage.len());
         info!("Map Size: {:?}", self.map_storage.len());
+        info!("Light Size: {:?}", self.light_storage.len());
     }
 
     pub fn add_image(
@@ -112,13 +120,29 @@ impl GfxCollection {
         gfx: Map,
         layer: usize,
         identifier: String,
+        visible: bool,
     ) -> GfxType {
         let data = GfxData {
             layer,
-            visible: true,
+            visible,
             identifier,
         };
         GfxType::Map(self.map_storage.insert(GfxMap { data, gfx }))
+    }
+
+    pub fn add_light(
+        &mut self,
+        gfx: Lights,
+        layer: usize,
+        identifier: String,
+        visible: bool,
+    ) -> GfxType {
+        let data = GfxData {
+            layer,
+            visible,
+            identifier,
+        };
+        GfxType::Light(self.light_storage.insert(GfxLight { data, gfx }))
     }
 
     pub fn remove_gfx(&mut self, renderer: &mut GpuRenderer, index: &GfxType) {
@@ -147,6 +171,12 @@ impl GfxCollection {
                 }
                 self.map_storage.remove(*gfx_index);
             }
+            GfxType::Light(gfx_index) => {
+                if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
+                    gfx.gfx.unload(renderer);
+                }
+                self.light_storage.remove(*gfx_index);
+            }
             _ => {}
         }
     }
@@ -173,6 +203,12 @@ impl GfxCollection {
             }
             GfxType::Map(gfx_index) => {
                 if let Some(gfx) = self.map_storage.get_mut(*gfx_index) {
+                    gfx.data.visible = visible;
+                    gfx.gfx.changed = true;
+                }
+            }
+            GfxType::Light(gfx_index) => {
+                if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
                     gfx.data.visible = visible;
                     gfx.gfx.changed = true;
                 }
@@ -479,6 +515,85 @@ impl GfxCollection {
         if let GfxType::Map(gfx_index) = index {
             if let Some(gfx) = self.map_storage.get_mut(*gfx_index) {
                 gfx.gfx.set_tile(pos, tile);
+            }
+        }
+    }
+
+    pub fn add_area_light(
+        &mut self,
+        index: &GfxType,
+        light: AreaLight,
+    ) -> Option<Index> {
+        if let GfxType::Light(gfx_index) = index {
+            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
+                return gfx.gfx.insert_area_light(light);
+            }
+        }
+        None
+    }
+
+    pub fn add_directional_light(
+        &mut self,
+        index: &GfxType,
+        light: DirectionalLight,
+    ) -> Option<Index> {
+        if let GfxType::Light(gfx_index) = index {
+            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
+                return gfx.gfx.insert_directional_light(light);
+            }
+        }
+        None
+    }
+
+    pub fn remove_area_light(&mut self, index: &GfxType, light_key: Index) {
+        if let GfxType::Light(gfx_index) = index {
+            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
+                gfx.gfx.remove_area_light(light_key);
+            }
+        }
+    }
+
+    pub fn remove_directional_light(
+        &mut self,
+        index: &GfxType,
+        light_key: Index,
+    ) {
+        if let GfxType::Light(gfx_index) = index {
+            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
+                gfx.gfx.remove_directional_light(light_key);
+            }
+        }
+    }
+
+    pub fn set_area_light_pos(
+        &mut self,
+        index: &GfxType,
+        light_key: Index,
+        pos: Vec2,
+    ) {
+        if let GfxType::Light(gfx_index) = index {
+            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
+                if let Some(light_data) = gfx.gfx.get_mut_area_light(light_key)
+                {
+                    light_data.pos = pos;
+                }
+            }
+        }
+    }
+
+    pub fn set_directional_light_pos(
+        &mut self,
+        index: &GfxType,
+        light_key: Index,
+        pos: Vec2,
+    ) {
+        if let GfxType::Light(gfx_index) = index {
+            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
+                if let Some(light_data) =
+                    gfx.gfx.get_mut_directional_light(light_key)
+                {
+                    light_data.pos = pos;
+                }
             }
         }
     }

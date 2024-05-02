@@ -51,6 +51,7 @@ pub struct GameContent {
     pub players: Rc<RefCell<IndexSet<Entity>>>,
     pub npcs: Rc<RefCell<IndexSet<Entity>>>,
     pub mapitems: Rc<RefCell<IndexSet<Entity>>>,
+    pub game_lights: GfxType,
     pub map: MapContent,
     camera: Camera,
     pub interface: Interface,
@@ -69,10 +70,20 @@ pub struct GameContent {
 
 impl GameContent {
     pub fn new(systems: &mut SystemHolder) -> Self {
+        let mut lights = Lights::new(&mut systems.renderer, 0, ORDER_LIGHT);
+        lights.world_color = Vec4::new(0.0, 0.0, 0.0, 0.8);
+        lights.enable_lights = true;
+
+        let game_lights =
+            systems
+                .gfx
+                .add_light(lights, 2, "Game Lights".into(), false);
+
         GameContent {
             players: Rc::new(RefCell::new(IndexSet::default())),
             npcs: Rc::new(RefCell::new(IndexSet::default())),
             mapitems: Rc::new(RefCell::new(IndexSet::default())),
+            game_lights,
             map: MapContent::new(),
             camera: Camera::new(Vec2::new(0.0, 0.0)),
             interface: Interface::new(systems),
@@ -115,6 +126,7 @@ impl GameContent {
         for entity in self.mapitems.borrow().iter() {
             unload_mapitems(world, systems, entity)?;
         }
+        systems.gfx.set_visible(&self.game_lights, false);
         self.players.borrow_mut().clear();
         self.npcs.borrow_mut().clear();
         self.mapitems.borrow_mut().clear();
@@ -247,6 +259,8 @@ impl GameContent {
                 &self.player_data.equipment[i],
             );
         }
+
+        systems.gfx.set_visible(&self.game_lights, true);
 
         /*if let Some(music) = &self.map.music[0].0 {
             if self.current_music != *music {
@@ -646,7 +660,15 @@ pub fn update_camera(
 
     for (
         entity,
-        (worldentitytype, sprite, pos, pos_offset, hp_bar, entitynamemap),
+        (
+            worldentitytype,
+            sprite,
+            pos,
+            pos_offset,
+            hp_bar,
+            entitynamemap,
+            entitylight,
+        ),
     ) in world
         .query_mut::<(
             &WorldEntityType,
@@ -655,6 +677,7 @@ pub fn update_camera(
             &PositionOffset,
             Option<&mut HPBar>,
             Option<&mut EntityNameMap>,
+            &EntityLight,
         )>()
         .into_iter()
     {
@@ -673,8 +696,14 @@ pub fn update_camera(
                 if let Some(hpbar) = hp_bar {
                     if let Some(namemap) = entitynamemap {
                         update_player_position(
-                            systems, content, sprite.0, pos, pos_offset, hpbar,
+                            systems,
+                            content,
+                            sprite.0,
+                            pos,
+                            pos_offset,
+                            hpbar,
                             namemap,
+                            entitylight.0,
                         )?;
                         if is_target {
                             if !hpbar.visible {
@@ -701,8 +730,14 @@ pub fn update_camera(
                 if let Some(hpbar) = hp_bar {
                     if let Some(namemap) = entitynamemap {
                         update_npc_position(
-                            systems, content, sprite.0, pos, pos_offset, hpbar,
+                            systems,
+                            content,
+                            sprite.0,
+                            pos,
+                            pos_offset,
+                            hpbar,
                             namemap,
+                            entitylight.0,
                         )?;
                         if is_target {
                             if !hpbar.visible {
@@ -727,7 +762,12 @@ pub fn update_camera(
             }
             WorldEntityType::MapItem => {
                 update_mapitem_position(
-                    systems, content, sprite.0, pos, pos_offset,
+                    systems,
+                    content,
+                    sprite.0,
+                    pos,
+                    pos_offset,
+                    entitylight.0,
                 );
             }
             _ => {}

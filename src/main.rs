@@ -189,7 +189,7 @@ async fn main() -> Result<()> {
     let size = renderer.size();
 
     // get the Scale factor the pc currently is using for upscaling or downscaling the rendering.
-    let scale = 1.5; //renderer.window().current_monitor().unwrap().scale_factor();
+    let scale = 1.0; //renderer.window().current_monitor().unwrap().scale_factor();
 
     // We generate Texture atlases to use with out types.
     let mut atlases: Vec<AtlasSet> = iter::from_fn(|| {
@@ -260,6 +260,7 @@ async fn main() -> Result<()> {
     let text_renderer = TextRenderer::new(&systems.renderer).unwrap();
     let image_renderer = ImageRenderer::new(&systems.renderer).unwrap();
     let map_renderer = MapRenderer::new(&mut systems.renderer, 81).unwrap();
+    let light_renderer = LightRenderer::new(&mut systems.renderer).unwrap();
     let ui_renderer = RectRenderer::new(&systems.renderer).unwrap();
 
     let mut world = World::new();
@@ -331,6 +332,7 @@ async fn main() -> Result<()> {
         image_renderer,
         text_renderer,
         map_renderer,
+        light_renderer,
         ui_renderer,
     };
 
@@ -586,6 +588,7 @@ async fn main() -> Result<()> {
         graphics.image_renderer.finalize(&mut systems.renderer);
         graphics.text_renderer.finalize(&mut systems.renderer);
         graphics.map_renderer.finalize(&mut systems.renderer);
+        graphics.light_renderer.finalize(&mut systems.renderer);
         graphics.ui_renderer.finalize(&mut systems.renderer);
 
         // Start encoding commands. this stores all the rendering calls for execution when

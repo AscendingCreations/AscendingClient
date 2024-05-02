@@ -125,6 +125,7 @@ where
     pub image_renderer: ImageRenderer,
     pub text_renderer: TextRenderer,
     pub map_renderer: MapRenderer,
+    pub light_renderer: LightRenderer,
     pub ui_renderer: RectRenderer,
 }
 
@@ -206,6 +207,7 @@ where
                 &self.system,
                 layer,
             );
+            pass.render_lights(renderer, &self.light_renderer, layer);
         }
     }
 }
@@ -256,6 +258,15 @@ pub fn add_image_to_buffer<Controls>(
                 &mut systems.renderer,
                 &mut graphics.map_atlas,
                 [0, 1],
+            );
+        }
+    });
+    systems.gfx.light_storage.iter_mut().for_each(|(_, gfx)| {
+        if gfx.data.visible {
+            graphics.light_renderer.lights_update(
+                &mut gfx.gfx,
+                &mut systems.renderer,
+                gfx.data.layer,
             );
         }
     });

@@ -1,6 +1,7 @@
 use crate::{
     add_float_text, add_npc, close_interface,
     content::game_content::{interface::chatbox::*, player::*},
+    create_npc_light,
     data_types::*,
     dir_to_enum,
     fade::*,
@@ -196,6 +197,7 @@ pub fn handle_mapitems(
                         world.get_or_err::<SpriteIndex>(&entity)?.0,
                         &pos,
                         &world.get_or_err::<PositionOffset>(&entity)?,
+                        world.get_or_err::<EntityLight>(&entity)?.0,
                     );
                 }
             }
@@ -276,6 +278,14 @@ pub fn handle_playerdata(
                 Some(&entity),
                 sprite as usize,
             )?;
+            // Create Lights
+            create_player_light(
+                world,
+                systems,
+                &content.game_content.game_lights,
+                &entity,
+            );
+
             content.game_content.players.borrow_mut().insert(player);
             content.game_content.in_game = true;
         }
@@ -364,6 +374,13 @@ pub fn handle_playerspawn(
                     Some(&entity),
                     sprite as usize,
                 )?;
+                create_player_light(
+                    world,
+                    systems,
+                    &content.game_content.game_lights,
+                    &entity,
+                );
+
                 content.game_content.players.borrow_mut().insert(player);
 
                 let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
@@ -1060,6 +1077,13 @@ pub fn handle_npcdata(
                     Some(&entity),
                     num as usize,
                 )?;
+                create_npc_light(
+                    world,
+                    systems,
+                    &content.game_content.game_lights,
+                    &entity,
+                );
+
                 content.game_content.npcs.borrow_mut().insert(npc);
 
                 if let Some(npc_data) = systems.base.npc.get(num as usize) {
