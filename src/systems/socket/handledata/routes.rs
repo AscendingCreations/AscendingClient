@@ -620,6 +620,14 @@ pub fn handle_warp(
                             .players
                             .borrow_mut()
                             .swap_remove(&entity);
+                    } else {
+                        update_player_camera(
+                            world,
+                            systems,
+                            socket,
+                            &entity,
+                            &mut content.game_content,
+                        )?;
                     }
                 }
             }
