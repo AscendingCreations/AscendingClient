@@ -1,4 +1,4 @@
-use bytey::{ByteBufferRead, ByteBufferWrite};
+use crate::socket::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(
@@ -12,6 +12,8 @@ use serde::{Deserialize, Serialize};
     Serialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum ItemTypes {
     #[default]
@@ -45,6 +47,8 @@ pub enum ItemTypes {
     Default,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 #[repr(u8)]
 pub enum AIBehavior {

@@ -1,4 +1,4 @@
-use bytey::{ByteBufferRead, ByteBufferWrite};
+use crate::socket::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(
@@ -12,6 +12,8 @@ use serde::{Deserialize, Serialize};
     Serialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct Rgba {
     pub r: i16,

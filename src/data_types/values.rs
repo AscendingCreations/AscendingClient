@@ -1,5 +1,4 @@
-use crate::data_types::*;
-use bytey::{ByteBufferRead, ByteBufferWrite};
+use crate::{data_types::*, socket::*};
 use graphics::*;
 use serde::{Deserialize, Serialize};
 
@@ -38,6 +37,8 @@ pub enum EntityType {
     Serialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum MessageChannel {
     #[default]
@@ -63,6 +64,8 @@ pub enum MessageChannel {
     Default,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum VitalTypes {
     Hp,
@@ -83,6 +86,8 @@ pub enum VitalTypes {
     Default,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum IsUsingType {
     #[default]
@@ -106,6 +111,8 @@ pub enum IsUsingType {
     Serialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum TradeStatus {
     #[default]
@@ -130,6 +137,8 @@ impl IsUsingType {
     Deserialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum EquipmentType {
     Weapon,
@@ -150,6 +159,8 @@ pub enum EquipmentType {
     Serialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum FtlType {
     Message,

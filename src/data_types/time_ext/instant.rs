@@ -1,4 +1,4 @@
-use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
+use crate::socket::*;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::{ops::Add, time::Instant};
 
@@ -101,6 +101,72 @@ impl ByteBufferWrite for &MyInstant {
         Ok(())
     }
     fn write_to_buffer_be(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+        buffer.write_be(self.to_dur())?;
+        Ok(())
+    }
+}
+
+impl MByteBufferRead for MyInstant {
+    fn read_from_mbuffer(buffer: &mut MByteBuffer) -> mmap_bytey::Result<Self> {
+        Ok(MyInstant::from_dur(buffer.read::<i64>()?))
+    }
+
+    fn read_from_mbuffer_le(
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<Self> {
+        Ok(MyInstant::from_dur(buffer.read_le::<i64>()?))
+    }
+
+    fn read_from_mbuffer_be(
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<Self> {
+        Ok(MyInstant::from_dur(buffer.read_be::<i64>()?))
+    }
+}
+
+impl MByteBufferWrite for &MyInstant {
+    fn write_to_mbuffer(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        buffer.write(self.to_dur())?;
+        Ok(())
+    }
+    fn write_to_mbuffer_le(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        buffer.write_le(self.to_dur())?;
+        Ok(())
+    }
+    fn write_to_mbuffer_be(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        buffer.write_be(self.to_dur())?;
+        Ok(())
+    }
+}
+
+impl MByteBufferWrite for MyInstant {
+    fn write_to_mbuffer(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        buffer.write(self.to_dur())?;
+        Ok(())
+    }
+    fn write_to_mbuffer_le(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        buffer.write_le(self.to_dur())?;
+        Ok(())
+    }
+    fn write_to_mbuffer_be(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
         buffer.write_be(self.to_dur())?;
         Ok(())
     }

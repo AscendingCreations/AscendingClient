@@ -1,5 +1,4 @@
-use crate::{data_types::*, ClientError, Direction, Result};
-use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
+use crate::{data_types::*, socket::*, ClientError, Direction, Result};
 use core::any::type_name;
 use educe::Educe;
 use graphics::*;
@@ -31,6 +30,8 @@ pub struct Finalized(pub bool);
     Eq,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
     Hash,
 )]
 pub struct MapPosition {
@@ -66,7 +67,16 @@ impl MapPosition {
 }
 
 #[derive(
-    Copy, Clone, Debug, Default, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    PartialEq,
+    Eq,
+    ByteBufferRead,
+    ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct Position {
     pub x: i32,
@@ -86,38 +96,110 @@ pub struct HPBar {
     pub bar_index: GfxType,
 }
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct Dir(pub u8);
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct Level(pub i32);
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct LastMoveFrame(pub usize);
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct SpriteIndex(pub GfxType);
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct SpriteImage(pub u8);
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct Attacking(pub bool);
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct AttackTimer(pub f32);
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct EntityLight(pub Option<Index>);
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct AttackFrame {
     pub frame: usize,
     pub timer: f32,
 }
 
 #[derive(
-    Debug, Copy, Clone, PartialEq, Eq, Default, ByteBufferRead, ByteBufferWrite,
+    Debug,
+    Copy,
+    Clone,
+    PartialEq,
+    Eq,
+    Default,
+    ByteBufferRead,
+    ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct Physical {
     pub damage: u32,
@@ -125,7 +207,16 @@ pub struct Physical {
 }
 
 #[derive(
-    Educe, Debug, Copy, Clone, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
+    Educe,
+    Debug,
+    Copy,
+    Clone,
+    PartialEq,
+    Eq,
+    ByteBufferRead,
+    ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 #[educe(Default)]
 pub struct Vitals {
@@ -181,6 +272,8 @@ pub struct EntityNameMap(pub GfxType);
     Educe,
     ByteBufferWrite,
     ByteBufferRead,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 #[educe(Default)]
 pub struct Item {
@@ -201,6 +294,8 @@ pub struct Item {
     Serialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 #[educe(Default)]
 pub struct Equipment {
@@ -229,6 +324,8 @@ pub enum WorldEntityType {
     Deserialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum DeathType {
     #[default]
@@ -239,7 +336,16 @@ pub enum DeathType {
     Spawning,
 }
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    ByteBufferRead,
+    ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
+)]
 pub enum UserAccess {
     #[default]
     None,
@@ -258,6 +364,8 @@ pub enum UserAccess {
     Default,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum NpcMode {
     None,
@@ -268,7 +376,16 @@ pub enum NpcMode {
     Boss,
 }
 
-#[derive(Copy, Clone, Debug, Default, ByteBufferRead, ByteBufferWrite)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+    ByteBufferRead,
+    ByteBufferWrite,
+)]
 pub struct NpcIndex(pub u64);
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Deserialize, Serialize, Hash)]
@@ -293,6 +410,20 @@ impl ByteBufferWrite for Entity {
         &self,
         buffer: &mut bytey::ByteBuffer,
     ) -> bytey::Result<()> {
+        self.0.to_bits().write_to_buffer_be(buffer)
+    }
+}
+
+impl ByteBufferWrite for &Entity {
+    fn write_to_buffer(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+        self.0.to_bits().write_to_buffer(buffer)
+    }
+
+    fn write_to_buffer_le(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+        self.0.to_bits().write_to_buffer_le(buffer)
+    }
+
+    fn write_to_buffer_be(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
         self.0.to_bits().write_to_buffer_be(buffer)
     }
 }
@@ -336,6 +467,98 @@ impl ByteBufferRead for Entity {
             hecs::Entity::from_bits(buffer.read_be::<u64>()?).ok_or(
                 ByteBufferError::OtherError {
                     error: "Bits could not be converted to hecs Entity. Is your Struct wrong?"
+                        .to_owned(),
+                },
+            )?,
+        ))
+    }
+}
+
+impl MByteBufferWrite for Entity {
+    fn write_to_mbuffer(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        self.0.to_bits().write_to_mbuffer(buffer)
+    }
+
+    fn write_to_mbuffer_le(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        self.0.to_bits().write_to_mbuffer_le(buffer)
+    }
+
+    fn write_to_mbuffer_be(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        self.0.to_bits().write_to_mbuffer_be(buffer)
+    }
+}
+
+impl MByteBufferWrite for &Entity {
+    fn write_to_mbuffer(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        self.0.to_bits().write_to_mbuffer(buffer)
+    }
+
+    fn write_to_mbuffer_le(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        self.0.to_bits().write_to_mbuffer_le(buffer)
+    }
+
+    fn write_to_mbuffer_be(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        self.0.to_bits().write_to_mbuffer_be(buffer)
+    }
+}
+
+impl MByteBufferRead for Entity {
+    fn read_from_mbuffer(buffer: &mut MByteBuffer) -> mmap_bytey::Result<Self>
+    where
+        Self: Sized,
+    {
+        Ok(Entity(
+            hecs::Entity::from_bits(buffer.read::<u64>()?).ok_or(MByteBufferError::OtherError {
+                error: "Bits could nto be converted to hecs Entity. Is your Struct wrong?"
+                    .to_owned(),
+            })?,
+        ))
+    }
+
+    fn read_from_mbuffer_le(
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<Self>
+    where
+        Self: Sized,
+    {
+        Ok(Entity(
+            hecs::Entity::from_bits(buffer.read_le::<u64>()?).ok_or(
+                MByteBufferError::OtherError {
+                    error: "Bits could nto be converted to hecs Entity. Is your Struct wrong?"
+                        .to_owned(),
+                },
+            )?,
+        ))
+    }
+
+    fn read_from_mbuffer_be(
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<Self>
+    where
+        Self: Sized,
+    {
+        Ok(Entity(
+            hecs::Entity::from_bits(buffer.read_be::<u64>()?).ok_or(
+                MByteBufferError::OtherError {
+                    error: "Bits could nto be converted to hecs Entity. Is your Struct wrong?"
                         .to_owned(),
                 },
             )?,

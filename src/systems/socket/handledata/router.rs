@@ -10,7 +10,7 @@ pub fn handle_data(
     systems: &mut SystemHolder,
     content: &mut Content,
     alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     seconds: f32,
     buffer: &mut BufferTask,
 ) -> Result<()> {

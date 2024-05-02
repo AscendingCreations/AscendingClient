@@ -1,5 +1,4 @@
-use crate::{data_types::*, Result};
-use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
+use crate::{data_types::*, socket::*, Result};
 use educe::Educe;
 use log::warn;
 use serde::{Deserialize, Serialize};
@@ -7,7 +6,15 @@ use std::fs::{File, OpenOptions};
 use std::io::{BufReader, Read};
 
 #[derive(
-    Clone, Copy, Debug, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite,
+    Clone,
+    Copy,
+    Debug,
+    Deserialize,
+    Serialize,
+    ByteBufferRead,
+    ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct ShopItem {
     pub index: u16,
@@ -16,7 +23,14 @@ pub struct ShopItem {
 }
 
 #[derive(
-    Clone, Debug, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite,
+    Clone,
+    Debug,
+    Deserialize,
+    Serialize,
+    ByteBufferRead,
+    ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct ShopData {
     pub name: String,
@@ -44,7 +58,7 @@ fn load_file(id: usize) -> Result<Option<ShopData>> {
             let mut data = Vec::new();
             file.read_to_end(&mut data)?;
 
-            let mut buf = ByteBuffer::new()?;
+            let mut buf = ByteBuffer::with_capacity(data.len())?;
             buf.write(data)?;
             buf.move_cursor_to_start();
 

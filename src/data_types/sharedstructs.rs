@@ -1,4 +1,4 @@
-use bytey::{ByteBufferRead, ByteBufferWrite};
+use crate::socket::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(
@@ -12,6 +12,8 @@ use serde::{Deserialize, Serialize};
     Default,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct TileBox {
     pub x: u8,
@@ -31,6 +33,8 @@ pub struct TileBox {
     Eq,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct GameTime {
     pub hour: u32,

@@ -1,16 +1,13 @@
+use crate::{
+    data_types::*, socket::*, BufferTask, BufferTaskEnum, MapAttributes,
+    MapDirBlock, Result, SystemHolder,
+};
 use graphics::*;
 use log::{error, info};
 use serde::{Deserialize, Serialize};
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, Read};
 use std::path::Path;
-
-use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
-
-use crate::{
-    data_types::*, BufferTask, BufferTaskEnum, MapAttributes, MapDirBlock,
-    Result, SystemHolder,
-};
 
 #[derive(
     Clone,
@@ -22,7 +19,10 @@ use crate::{
     Default,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
+
 pub struct WarpData {
     pub map_x: i32,
     pub map_y: i32,
@@ -41,6 +41,8 @@ pub struct WarpData {
     Default,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct ItemSpawnData {
     pub index: u32,
@@ -58,6 +60,8 @@ pub struct ItemSpawnData {
     Eq,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum MapAttribute {
     #[default]
@@ -83,6 +87,8 @@ pub enum MapAttribute {
     Debug,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub enum Weather {
     #[default]
@@ -108,14 +114,28 @@ pub struct MapSlotData {
 }
 
 #[derive(
-    Clone, Debug, Serialize, Deserialize, ByteBufferRead, ByteBufferWrite,
+    Clone,
+    Debug,
+    Serialize,
+    Deserialize,
+    ByteBufferRead,
+    ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct Tile {
     pub id: Vec<u32>,
 }
 
 #[derive(
-    Clone, Debug, Serialize, Deserialize, ByteBufferRead, ByteBufferWrite,
+    Clone,
+    Debug,
+    Serialize,
+    Deserialize,
+    ByteBufferRead,
+    ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
 )]
 pub struct MapData {
     pub position: MapPosition,

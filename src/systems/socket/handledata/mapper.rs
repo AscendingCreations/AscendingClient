@@ -1,6 +1,4 @@
 use crate::{data_types::*, fade::*, socket::*, BufferTask};
-
-use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -10,7 +8,7 @@ type PacketFunction = fn(
     &mut SystemHolder,
     &mut Content,
     &mut Alert,
-    &mut ByteBuffer,
+    &mut MByteBuffer,
     f32,
     &mut BufferTask,
 ) -> Result<()>;
@@ -25,6 +23,8 @@ type PacketFunction = fn(
     Deserialize,
     ByteBufferRead,
     ByteBufferWrite,
+    MByteBufferRead,
+    MByteBufferWrite,
     Hash,
 )]
 pub enum ServerPackets {

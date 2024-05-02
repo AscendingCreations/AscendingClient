@@ -1,4 +1,4 @@
-use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
+use crate::socket::*;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -94,6 +94,57 @@ impl ByteBufferWrite for &MyDuration {
         Ok(())
     }
     fn write_to_buffer_be(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+        buffer.write_be(self.num_milliseconds())?;
+        Ok(())
+    }
+}
+
+impl MByteBufferRead for MyDuration {
+    fn read_from_mbuffer(buffer: &mut MByteBuffer) -> mmap_bytey::Result<Self> {
+        Ok(MyDuration(
+            chrono::Duration::try_milliseconds(buffer.read::<i64>()?)
+                .unwrap_or_default(),
+        ))
+    }
+
+    fn read_from_mbuffer_le(
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<Self> {
+        Ok(MyDuration(
+            chrono::Duration::try_milliseconds(buffer.read_le::<i64>()?)
+                .unwrap_or_default(),
+        ))
+    }
+
+    fn read_from_mbuffer_be(
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<Self> {
+        Ok(MyDuration(
+            chrono::Duration::try_milliseconds(buffer.read_be::<i64>()?)
+                .unwrap_or_default(),
+        ))
+    }
+}
+
+impl MByteBufferWrite for &MyDuration {
+    fn write_to_mbuffer(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        buffer.write(self.num_milliseconds())?;
+        Ok(())
+    }
+    fn write_to_mbuffer_le(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
+        buffer.write_le(self.num_milliseconds())?;
+        Ok(())
+    }
+    fn write_to_mbuffer_be(
+        &self,
+        buffer: &mut MByteBuffer,
+    ) -> mmap_bytey::Result<()> {
         buffer.write_be(self.num_milliseconds())?;
         Ok(())
     }

@@ -16,10 +16,10 @@ use crate::{
     ProfileLabel, Result, Socket, SystemHolder, TradeStatus, Window, MAX_EQPT,
     NPC_SPRITE_FRAME_X, VITALS_MAX,
 };
-use bytey::ByteBuffer;
 use graphics::*;
 use hecs::World;
 use log::info;
+use mmap_bytey::MByteBuffer;
 
 pub fn handle_ping(
     _socket: &mut Socket,
@@ -27,7 +27,7 @@ pub fn handle_ping(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    _data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -84,7 +84,7 @@ pub fn handle_alertmsg(
     _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -100,7 +100,7 @@ pub fn handle_fltalert(
     _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -116,7 +116,7 @@ pub fn handle_handshake(
     systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -135,7 +135,7 @@ pub fn handle_loginok(
     systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -157,7 +157,7 @@ pub fn handle_mapitems(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -215,7 +215,7 @@ pub fn handle_myindex(
     _systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -230,7 +230,7 @@ pub fn handle_move_ok(
     _systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -248,7 +248,7 @@ pub fn handle_playerdata(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -335,7 +335,7 @@ pub fn handle_playerspawn(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -438,7 +438,7 @@ pub fn handle_move(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -509,7 +509,7 @@ pub fn handle_warp(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -643,7 +643,7 @@ pub fn handle_dir(
     systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -683,7 +683,7 @@ pub fn handle_vitals(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -759,7 +759,7 @@ pub fn handle_playerinv(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -786,7 +786,7 @@ pub fn handle_playerinvslot(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -808,7 +808,7 @@ pub fn handle_playerstorage(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -841,7 +841,7 @@ pub fn handle_playerstorageslot(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -863,7 +863,7 @@ pub fn handle_attack(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -900,7 +900,7 @@ pub fn handle_playerequipment(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -971,7 +971,7 @@ pub fn handle_playerlevel(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1017,7 +1017,7 @@ pub fn handle_playermoney(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1039,7 +1039,7 @@ pub fn handle_death(
     _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1059,7 +1059,7 @@ pub fn handle_playerpk(
     _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    _data: &mut ByteBuffer,
+    _data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1072,7 +1072,7 @@ pub fn handle_npcdata(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1171,7 +1171,7 @@ pub fn handle_chatmsg(
     _systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1211,7 +1211,7 @@ pub fn handle_entityunload(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1281,7 +1281,7 @@ pub fn handle_openstorage(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1310,7 +1310,7 @@ pub fn handle_openshop(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1341,7 +1341,7 @@ pub fn handle_clearisusingtype(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1384,7 +1384,7 @@ pub fn handle_updatetradeitem(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1408,7 +1408,7 @@ pub fn handle_updatetrademoney(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1429,7 +1429,7 @@ pub fn handle_inittrade(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1460,7 +1460,7 @@ pub fn handle_tradestatus(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1535,7 +1535,7 @@ pub fn handle_traderequest(
     systems: &mut SystemHolder,
     _content: &mut Content,
     alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1565,7 +1565,7 @@ pub fn handle_playitemsfx(
     systems: &mut SystemHolder,
     _content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -1587,7 +1587,7 @@ pub fn handle_damage(
     systems: &mut SystemHolder,
     content: &mut Content,
     _alert: &mut Alert,
-    data: &mut ByteBuffer,
+    data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {

@@ -90,6 +90,13 @@ pub enum ClientError {
         backtrace: Box<Backtrace>,
     },
     #[error("Error: {error}, BackTrace: {backtrace}")]
+    MByteyError {
+        #[from]
+        error: mmap_bytey::MByteBufferError,
+        #[backtrace]
+        backtrace: Box<Backtrace>,
+    },
+    #[error("Error: {error}, BackTrace: {backtrace}")]
     Rustls {
         #[from]
         error: rustls::Error,

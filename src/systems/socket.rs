@@ -1,28 +1,30 @@
-use bytey::ByteBuffer;
+use crate::{
+    config::*, Alert, BufferTask, ClientError, Content, Result, SystemHolder,
+};
+pub use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use hecs::World;
 use log::{info, trace, warn};
 use mio::net::TcpStream;
 use mio::{Events, Interest, Poll};
+pub use mmap_bytey::{
+    MByteBuffer, MByteBufferError, MByteBufferRead, MByteBufferWrite,
+};
 use pki_types::ServerName;
 use serde::{Deserialize, Serialize};
-use std::collections::VecDeque;
-use std::convert::TryFrom;
-use std::io::{self, Read, Write};
-use std::net::ToSocketAddrs;
-use std::sync::Arc;
-use std::time::Duration;
-
-use bytey::{ByteBufferRead, ByteBufferWrite};
+use std::{
+    collections::VecDeque,
+    convert::TryFrom,
+    io::{self, Read, Write},
+    net::ToSocketAddrs,
+    str,
+    sync::Arc,
+    time::Duration,
+};
 
 pub mod handledata;
 pub mod sends;
-
 pub use handledata::*;
 pub use sends::*;
-
-use crate::{
-    config::*, Alert, BufferTask, ClientError, Content, Result, SystemHolder,
-};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ClientState {
@@ -380,7 +382,7 @@ impl Socket {
 
     #[inline]
     #[allow(dead_code)]
-    pub fn send(&mut self, buf: ByteBuffer) -> Result<()> {
+    pub fn send(&mut self, buf: MByteBuffer) -> Result<()> {
         self.client.sends.push_back(buf);
 
         self.client.poll_state.add(SocketPollState::Write);
@@ -389,7 +391,7 @@ impl Socket {
 
     #[inline]
     #[allow(dead_code)]
-    pub fn tls_send(&mut self, buf: ByteBuffer) -> Result<()> {
+    pub fn tls_send(&mut self, buf: MByteBuffer) -> Result<()> {
         self.client.tls_sends.push_back(buf);
 
         self.client.poll_state.add(SocketPollState::Write);
@@ -404,11 +406,53 @@ pub struct Client {
     pub state: ClientState,
     pub poll_state: SocketPollState,
     /// for unencrypted sends only.
-    pub sends: VecDeque<ByteBuffer>,
+    pub sends: VecDeque<MByteBuffer>,
     /// for encrypted sends only.
-    pub tls_sends: VecDeque<ByteBuffer>,
+    pub tls_sends: VecDeque<MByteBuffer>,
 }
 
+pub trait MByteBufferExt {
+    fn new_packet() -> Result<MByteBuffer>;
+    fn write_str(&mut self, str: &str) -> Result<&mut MByteBuffer>;
+    fn read_str(&mut self) -> Result<String>;
+    fn finish(&mut self) -> Result<&mut MByteBuffer>;
+}
+
+impl MByteBufferExt for MByteBuffer {
+    fn new_packet() -> Result<MByteBuffer> {
+        let mut buffer = MByteBuffer::new()?;
+        buffer.write(0u64)?;
+        Ok(buffer)
+    }
+
+    #[inline]
+    fn write_str(&mut self, str: &str) -> Result<&mut Self> {
+        let bytestr = str.as_bytes();
+        self.write(bytestr.len() as u64)?;
+        Ok(self.write_slice(bytestr)?)
+    }
+
+    #[inline]
+    fn read_str(&mut self) -> Result<String> {
+        let size = self.read::<u64>()? as usize;
+
+        if size == 0 {
+            return Ok(String::new());
+        }
+
+        match str::from_utf8(self.read_slice(size)?) {
+            Ok(string) => Ok(String::from(string)),
+            Err(_) => Ok(String::new()),
+        }
+    }
+
+    #[inline]
+    fn finish(&mut self) -> Result<&mut MByteBuffer> {
+        self.move_cursor(0)?;
+        self.write((self.length() - 8) as u64)?;
+        Ok(self.move_cursor(0)?)
+    }
+}
 pub trait ByteBufferExt {
     fn new_packet() -> bytey::Result<ByteBuffer>;
     fn new_packet_with(len: usize) -> bytey::Result<ByteBuffer>;
@@ -538,7 +582,7 @@ pub fn process_packets(
     seconds: f32,
     buffertask: &mut BufferTask,
 ) -> Result<()> {
-    let mut packet = ByteBuffer::with_capacity(1500)?;
+    let mut packet = MByteBuffer::new()?;
 
     loop {
         packet.move_cursor_to_start();

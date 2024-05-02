@@ -30,6 +30,7 @@ slab = "0.4.9"
 arboard = "3.3.1"
 mio = { version = "0.8.11", features = ["os-poll", "net"] }
 bytey = { version = "0.3.0", git = "https://github.com/Stefanowhb/bytey.git" }
+mmap_bytey = "0.2.0"
 pki-types = { package = "rustls-pki-types", version = "1", features = ["std"] }
 rcgen = { version = "0.12", features = [
     "pem",

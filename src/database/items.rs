@@ -1,5 +1,4 @@
-use crate::{data_types::*, Result};
-use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
+use crate::{data_types::*, socket::*, Result};
 use log::warn;
 use serde::{Deserialize, Serialize};
 use std::fs::{File, OpenOptions};
@@ -46,7 +45,7 @@ fn load_file(id: usize) -> Result<Option<ItemData>> {
             let mut data = Vec::new();
             file.read_to_end(&mut data)?;
 
-            let mut buf = ByteBuffer::new()?;
+            let mut buf = ByteBuffer::with_capacity(data.len())?;
             buf.write(data)?;
             buf.move_cursor_to_start();
 
