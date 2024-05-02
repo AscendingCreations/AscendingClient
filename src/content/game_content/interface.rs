@@ -419,7 +419,7 @@ impl Interface {
                     && interface.trade.trade_status == TradeStatus::None
                 {
                     if let Some(slot) =
-                        interface.trade.find_mytrade_slot(screen_pos)
+                        interface.trade.find_mytrade_slot(systems, screen_pos)
                     {
                         if interface.trade.my_items[slot].got_data {
                             if interface.trade.my_items[slot].count_data > 1 {
@@ -1321,13 +1321,16 @@ fn hold_interface(
             interface.chatbox.hold_window(screen_pos);
         }
         Window::Storage => {
-            if interface.storage.can_hold(screen_pos) && !hold_check {
+            if interface.storage.can_hold(systems, screen_pos) && !hold_check {
                 interface.storage.hold_window(screen_pos);
-            } else if let Some(slot) =
-                interface.storage.find_storage_slot(screen_pos, false)
+            } else if let Some(slot) = interface
+                .storage
+                .find_storage_slot(systems, screen_pos, false)
             {
                 if check_content {
-                    interface.storage.hold_storage_slot(slot, screen_pos);
+                    interface
+                        .storage
+                        .hold_storage_slot(systems, slot, screen_pos);
                 }
                 return;
             } else {
@@ -1335,13 +1338,13 @@ fn hold_interface(
             }
         }
         Window::Shop => {
-            if !interface.shop.can_hold(screen_pos) {
+            if !interface.shop.can_hold(systems, screen_pos) {
                 return;
             }
             interface.shop.hold_window(screen_pos);
         }
         Window::Trade => {
-            if !interface.trade.can_hold(screen_pos) {
+            if !interface.trade.can_hold(systems, screen_pos) {
                 return;
             }
             interface.trade.hold_window(screen_pos);

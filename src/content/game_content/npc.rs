@@ -146,6 +146,7 @@ pub fn npc_finalized_data(
 pub fn unload_npc(
     world: &mut World,
     systems: &mut SystemHolder,
+    content: &GameContent,
     entity: &Entity,
 ) -> Result<()> {
     let npc_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
@@ -161,6 +162,11 @@ pub fn unload_npc(
     systems
         .gfx
         .remove_gfx(&mut systems.renderer, &entitynamemap.0);
+    if let Some(entitylight) = world.get_or_err::<EntityLight>(entity)?.0 {
+        systems
+            .gfx
+            .remove_area_light(&content.game_lights, entitylight);
+    }
     world.despawn(entity.0)?;
     Ok(())
 }

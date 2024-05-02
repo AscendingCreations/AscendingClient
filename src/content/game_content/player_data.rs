@@ -14,10 +14,19 @@ pub struct PlayerData {
 
 impl PlayerData {
     pub fn new() -> Self {
+        let mut storage = Vec::with_capacity(MAX_STORAGE);
+        storage.resize_with(MAX_STORAGE, Item::default);
+
+        let mut inventory = Vec::with_capacity(MAX_INV);
+        inventory.resize_with(MAX_INV, Item::default);
+
+        let mut equipment = Vec::with_capacity(MAX_EQPT);
+        equipment.resize_with(MAX_EQPT, Item::default);
+
         PlayerData {
-            inventory: Vec::with_capacity(MAX_INV),
-            storage: Vec::with_capacity(MAX_STORAGE),
-            equipment: Vec::with_capacity(MAX_EQPT),
+            inventory,
+            storage,
+            equipment,
             player_money: 0,
             levelexp: 0,
             is_using_type: IsUsingType::None,
@@ -26,8 +35,11 @@ impl PlayerData {
 
     pub fn unload(&mut self) {
         self.inventory.clear();
+        self.inventory.resize_with(MAX_INV, Item::default);
         self.storage.clear();
+        self.storage.resize_with(MAX_STORAGE, Item::default);
         self.equipment.clear();
+        self.equipment.resize_with(MAX_EQPT, Item::default);
     }
 }
 

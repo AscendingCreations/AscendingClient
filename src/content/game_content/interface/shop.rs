@@ -44,7 +44,8 @@ pub struct Shop {
 
 impl Shop {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let w_size = Vec2::new(255.0, 276.0);
+        let orig_size = Vec2::new(255.0, 276.0);
+        let w_size = (orig_size * systems.scale as f32).floor();
         let w_pos = Vec3::new(
             systems.size.width - w_size.x - 10.0,
             60.0,
@@ -66,12 +67,15 @@ impl Shop {
         let bg = systems.gfx.add_rect(rect, 0, "Shop BG".into(), false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
-        let header_pos = Vec2::new(w_pos.x, w_pos.y + 246.0);
-        let header_size = Vec2::new(w_size.x, 30.0);
+        let header_pos = Vec2::new(
+            w_pos.x,
+            w_pos.y + (246.0 * systems.scale as f32).floor(),
+        );
+        let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
         header_rect
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
-            .set_size(header_size)
+            .set_size((header_size * systems.scale as f32).floor())
             .set_color(Color::rgba(70, 70, 70, 255));
         let header =
             systems
@@ -80,13 +84,17 @@ impl Shop {
 
         let text = create_label(
             systems,
-            Vec3::new(w_pos.x, w_pos.y + 251.0, detail_2),
-            Vec2::new(w_size.x, 20.0),
+            Vec3::new(
+                w_pos.x,
+                w_pos.y + (251.0 * systems.scale as f32).floor(),
+                detail_2,
+            ),
+            Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
             Bounds::new(
                 w_pos.x,
-                w_pos.y + 251.0,
+                w_pos.y + (251.0 * systems.scale as f32).floor(),
                 w_pos.x + w_size.x,
-                w_pos.y + 271.0,
+                w_pos.y + (271.0 * systems.scale as f32).floor(),
             ),
             Color::rgba(200, 200, 200, 255),
         );
@@ -197,22 +205,37 @@ impl Shop {
 
         let mut item = Vec::with_capacity(5);
         for i in 0..5 {
-            let pos =
-                Vec2::new(w_pos.x + 10.0, w_pos.y + 203.0 - (i as f32 * 48.0));
+            let pos = Vec2::new(
+                w_pos.x + (10.0 * systems.scale as f32).floor(),
+                w_pos.y
+                    + ((203.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
+            );
             let mut bg = Rect::new(&mut systems.renderer, 0);
             bg.set_position(Vec3::new(pos.x, pos.y, detail_1))
-                .set_size(Vec2::new(32.0, 32.0))
+                .set_size(
+                    (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                )
                 .set_color(Color::rgba(200, 200, 200, 255));
             let icon_bg =
                 systems.gfx.add_rect(bg, 0, "Shop Item BG".into(), false);
 
-            let pos =
-                Vec2::new(w_pos.x + 48.0, w_pos.y + 220.0 - (i as f32 * 48.0));
+            let pos = Vec2::new(
+                w_pos.x + (48.0 * systems.scale as f32).floor(),
+                w_pos.y
+                    + ((220.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
+            );
             let item_name = create_label(
                 systems,
                 Vec3::new(pos.x, pos.y, detail_1),
-                Vec2::new(114.0, 20.0),
-                Bounds::new(pos.x, pos.y, pos.x + 114.0, pos.y + 20.0),
+                (Vec2::new(114.0, 20.0) * systems.scale as f32).floor(),
+                Bounds::new(
+                    pos.x,
+                    pos.y,
+                    pos.x + (114.0 * systems.scale as f32).floor(),
+                    pos.y + (20.0 * systems.scale as f32).floor(),
+                ),
                 Color::rgba(200, 200, 200, 255),
             );
             let name = systems.gfx.add_text(
@@ -223,13 +246,22 @@ impl Shop {
             );
             systems.gfx.set_text(&mut systems.renderer, &name, "");
 
-            let pos =
-                Vec2::new(w_pos.x + 72.0, w_pos.y + 198.0 - (i as f32 * 48.0));
+            let pos = Vec2::new(
+                w_pos.x + (72.0 * systems.scale as f32).floor(),
+                w_pos.y
+                    + ((198.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
+            );
             let price_text = create_label(
                 systems,
                 Vec3::new(pos.x, pos.y, detail_1),
-                Vec2::new(90.0, 20.0),
-                Bounds::new(pos.x, pos.y, pos.x + 90.0, pos.y + 20.0),
+                (Vec2::new(90.0, 20.0) * systems.scale as f32).floor(),
+                Bounds::new(
+                    pos.x,
+                    pos.y,
+                    pos.x + (90.0 * systems.scale as f32).floor(),
+                    pos.y + (20.0 * systems.scale as f32).floor(),
+                ),
                 Color::rgba(200, 200, 200, 255),
             );
             let price = systems.gfx.add_text(
@@ -245,10 +277,12 @@ impl Shop {
                 &mut systems.renderer,
                 0,
             );
-            p_icon.hw = Vec2::new(20.0, 20.0);
+            p_icon.hw = (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
             p_icon.pos = Vec3::new(
-                w_pos.x + 48.0,
-                w_pos.y + 198.0 - (i as f32 * 48.0),
+                w_pos.x + (48.0 * systems.scale as f32).floor(),
+                w_pos.y
+                    + ((198.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
                 detail_1,
             );
             p_icon.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
@@ -292,12 +326,18 @@ impl Shop {
             );
             button.push(buy_button);
 
-            let pos =
-                Vec2::new(w_pos.x + 10.0, w_pos.y + 203.0 - (i as f32 * 48.0));
+            let pos = Vec2::new(
+                w_pos.x + (10.0 * systems.scale as f32).floor(),
+                w_pos.y
+                    + ((203.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
+            );
             let mut amount_bg_rect = Rect::new(&mut systems.renderer, 0);
             amount_bg_rect
                 .set_position(Vec3::new(pos.x, pos.y, detail_3))
-                .set_size(Vec2::new(32.0, 16.0))
+                .set_size(
+                    (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
+                )
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
@@ -308,10 +348,15 @@ impl Shop {
                 false,
             );
 
-            let text_size = Vec2::new(32.0, 16.0);
+            let text_size =
+                (Vec2::new(32.0, 16.0) * systems.scale as f32).floor();
             let text = create_label(
                 systems,
-                Vec3::new(pos.x + 2.0, pos.y + 2.0, detail_4),
+                Vec3::new(
+                    pos.x + (2.0 * systems.scale as f32).floor(),
+                    pos.y + (2.0 * systems.scale as f32).floor(),
+                    detail_4,
+                ),
                 text_size,
                 Bounds::new(
                     pos.x,
@@ -472,11 +517,19 @@ impl Shop {
         self.item_scroll.set_visible(systems, visible);
     }
 
-    pub fn can_hold(&mut self, screen_pos: Vec2) -> bool {
+    pub fn can_hold(
+        &mut self,
+        systems: &mut SystemHolder,
+        screen_pos: Vec2,
+    ) -> bool {
         if !self.visible {
             return false;
         }
-        is_within_area(screen_pos, self.header_pos, self.header_size)
+        is_within_area(
+            screen_pos,
+            self.header_pos,
+            (self.header_size * systems.scale as f32).floor(),
+        )
     }
 
     pub fn in_window(&mut self, screen_pos: Vec2) -> bool {
@@ -586,23 +639,34 @@ impl Shop {
             Vec3::new(self.pos.x - 1.0, self.pos.y - 1.0, pos.z),
         );
         let pos = systems.gfx.get_pos(&self.header);
-        self.header_pos = Vec2::new(self.pos.x, self.pos.y + 246.0);
+        self.header_pos = Vec2::new(
+            self.pos.x,
+            self.pos.y + (246.0 * systems.scale as f32).floor(),
+        );
         systems.gfx.set_pos(
             &self.header,
-            Vec3::new(self.pos.x, self.pos.y + 246.0, pos.z),
+            Vec3::new(
+                self.pos.x,
+                self.pos.y + (246.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         let pos = systems.gfx.get_pos(&self.header_text);
         systems.gfx.set_pos(
             &self.header_text,
-            Vec3::new(self.pos.x, self.pos.y + 251.0, pos.z),
+            Vec3::new(
+                self.pos.x,
+                self.pos.y + (251.0 * systems.scale as f32).floor(),
+                pos.z,
+            ),
         );
         systems.gfx.set_bound(
             &self.header_text,
             Bounds::new(
                 self.pos.x,
-                self.pos.y + 251.0,
+                self.pos.y + (251.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
-                self.pos.y + 271.0,
+                self.pos.y + (271.0 * systems.scale as f32).floor(),
             ),
         );
         systems.gfx.center_text(&self.header_text);
@@ -618,8 +682,10 @@ impl Shop {
             systems.gfx.set_pos(
                 &self.item[i].icon_bg,
                 Vec3::new(
-                    self.pos.x + 10.0,
-                    self.pos.y + 203.0 - (i as f32 * 48.0),
+                    self.pos.x + (10.0 * systems.scale as f32).floor(),
+                    self.pos.y
+                        + ((203.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                            .floor(),
                     pos.z,
                 ),
             );
@@ -629,16 +695,21 @@ impl Shop {
                 systems.gfx.set_pos(
                     &item_sprite,
                     Vec3::new(
-                        self.pos.x + 16.0,
-                        self.pos.y + 209.0 - (i as f32 * 48.0),
+                        self.pos.x + (16.0 * systems.scale as f32).floor(),
+                        self.pos.y
+                            + ((209.0 - (i as f32 * 48.0))
+                                * systems.scale as f32)
+                                .floor(),
                         pos.z,
                     ),
                 );
             }
 
             let set_pos = Vec2::new(
-                self.pos.x + 48.0,
-                self.pos.y + 220.0 - (i as f32 * 48.0),
+                self.pos.x + (48.0 * systems.scale as f32).floor(),
+                self.pos.y
+                    + ((220.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
             );
             let pos = systems.gfx.get_pos(&self.item[i].name);
             systems.gfx.set_pos(
@@ -650,14 +721,16 @@ impl Shop {
                 Bounds::new(
                     set_pos.x,
                     set_pos.y,
-                    set_pos.x + 114.0,
-                    set_pos.y + 20.0,
+                    set_pos.x + (114.0 * systems.scale as f32).floor(),
+                    set_pos.y + (20.0 * systems.scale as f32).floor(),
                 ),
             );
 
             let set_pos = Vec2::new(
-                self.pos.x + 72.0,
-                self.pos.y + 198.0 - (i as f32 * 48.0),
+                self.pos.x + (72.0 * systems.scale as f32).floor(),
+                self.pos.y
+                    + ((198.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
             );
             let pos = systems.gfx.get_pos(&self.item[i].price);
             systems.gfx.set_pos(
@@ -669,8 +742,8 @@ impl Shop {
                 Bounds::new(
                     set_pos.x,
                     set_pos.y,
-                    set_pos.x + 90.0,
-                    set_pos.y + 20.0,
+                    set_pos.x + (90.0 * systems.scale as f32).floor(),
+                    set_pos.y + (20.0 * systems.scale as f32).floor(),
                 ),
             );
 
@@ -678,8 +751,10 @@ impl Shop {
             systems.gfx.set_pos(
                 &self.item[i].price_icon,
                 Vec3::new(
-                    self.pos.x + 48.0,
-                    self.pos.y + 198.0 - (i as f32 * 48.0),
+                    self.pos.x + (48.0 * systems.scale as f32).floor(),
+                    self.pos.y
+                        + ((198.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                            .floor(),
                     pos.z,
                 ),
             );
@@ -688,28 +763,36 @@ impl Shop {
             systems.gfx.set_pos(
                 &self.item[i].amount_bg,
                 Vec3::new(
-                    self.pos.x + 10.0,
-                    self.pos.y + 203.0 - (i as f32 * 48.0),
+                    self.pos.x + (10.0 * systems.scale as f32).floor(),
+                    self.pos.y
+                        + ((203.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                            .floor(),
                     pos.z,
                 ),
             );
 
             let set_pos = Vec2::new(
-                self.pos.x + 10.0,
-                self.pos.y + 203.0 - (i as f32 * 48.0),
+                self.pos.x + (10.0 * systems.scale as f32).floor(),
+                self.pos.y
+                    + ((203.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
             );
             let pos = systems.gfx.get_pos(&self.item[i].amount);
             systems.gfx.set_pos(
                 &self.item[i].amount,
-                Vec3::new(set_pos.x + 2.0, set_pos.y + 2.0, pos.z),
+                Vec3::new(
+                    set_pos.x + (2.0 * systems.scale as f32).floor(),
+                    set_pos.y + (2.0 * systems.scale as f32).floor(),
+                    pos.z,
+                ),
             );
             systems.gfx.set_bound(
                 &self.item[i].amount,
                 Bounds::new(
                     set_pos.x,
                     set_pos.y,
-                    set_pos.x + 32.0,
-                    set_pos.y + 16.0,
+                    set_pos.x + (32.0 * systems.scale as f32).floor(),
+                    set_pos.y + (16.0 * systems.scale as f32).floor(),
                 ),
             );
         }
@@ -728,11 +811,17 @@ impl Shop {
         let mut got_item = None;
         for i in 0..5 {
             let pos = Vec2::new(
-                self.pos.x + 10.0,
-                self.pos.y + 203.0 - (i as f32 * 48.0),
+                self.pos.x + (10.0 * systems.scale as f32).floor(),
+                self.pos.y
+                    + ((203.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
             );
 
-            if is_within_area(screen_pos, pos, Vec2::new(32.0, 32.0)) {
+            if is_within_area(
+                screen_pos,
+                pos,
+                (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+            ) {
                 got_item = Some(i);
             }
         }
@@ -775,10 +864,12 @@ impl Shop {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_hover(systems, true);
             } else {
@@ -801,10 +892,12 @@ impl Shop {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_click(systems, true);
                 button_found = Some(index)
@@ -902,10 +995,13 @@ impl Shop {
                 &mut systems.renderer,
                 0,
             );
-            item_sprite.hw = Vec2::new(20.0, 20.0);
+            item_sprite.hw =
+                (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
             item_sprite.pos = Vec3::new(
-                self.pos.x + 16.0,
-                self.pos.y + 209.0 - (index as f32 * 48.0),
+                self.pos.x + (16.0 * systems.scale as f32).floor(),
+                self.pos.y
+                    + ((209.0 - (index as f32 * 48.0)) * systems.scale as f32)
+                        .floor(),
                 item_zpos,
             );
             item_sprite.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
@@ -988,10 +1084,14 @@ impl Shop {
                 &mut systems.renderer,
                 0,
             );
-            item_sprite.hw = Vec2::new(20.0, 20.0);
+            item_sprite.hw =
+                (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
             item_sprite.pos = Vec3::new(
-                self.pos.x + 16.0,
-                self.pos.y + 209.0 - (default_index as f32 * 48.0),
+                self.pos.x + (16.0 * systems.scale as f32).floor(),
+                self.pos.y
+                    + ((209.0 - (default_index as f32 * 48.0))
+                        * systems.scale as f32)
+                        .floor(),
                 item_zpos,
             );
             item_sprite.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);

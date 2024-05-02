@@ -122,10 +122,16 @@ pub fn update_mapitem_position(
 pub fn unload_mapitems(
     world: &mut World,
     systems: &mut SystemHolder,
+    content: &GameContent,
     entity: &Entity,
 ) -> Result<()> {
     let item_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     systems.gfx.remove_gfx(&mut systems.renderer, &item_sprite);
+    if let Some(entitylight) = world.get_or_err::<EntityLight>(entity)?.0 {
+        systems
+            .gfx
+            .remove_area_light(&content.game_lights, entitylight);
+    }
     world.despawn(entity.0)?;
     Ok(())
 }

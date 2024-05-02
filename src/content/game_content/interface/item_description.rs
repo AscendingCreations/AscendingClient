@@ -131,11 +131,13 @@ impl ItemDescription {
         }
 
         let mut size = Vec2::new(
-            text_size + 20.0,
-            20.0 + (text_holder.len() as f32 * 20.0),
+            text_size + (20.0 * systems.scale as f32).floor(),
+            (20.0 * systems.scale as f32).floor()
+                + (text_holder.len() as f32
+                    * (20.0 * systems.scale as f32).floor()),
         );
         if text_holder.len() > 1 {
-            size.y += 5.0;
+            size.y += (5.0 * systems.scale as f32).floor();
         }
         name_text.set_text(
             &mut systems.renderer,
@@ -144,8 +146,12 @@ impl ItemDescription {
             Shaping::Advanced,
         );
 
-        let tpos = Vec2::new(10.0, size.y - 30.0);
-        let text_size = Vec2::new(text_size, 20.0);
+        let tpos = Vec2::new(
+            (10.0 * systems.scale as f32).floor(),
+            size.y - (30.0 * systems.scale as f32).floor(),
+        );
+        let text_size =
+            Vec2::new(text_size, (20.0 * systems.scale as f32).floor());
 
         name_text.size = text_size;
         name_text
@@ -172,8 +178,13 @@ impl ItemDescription {
 
         for (index, msg) in text_holder.iter().enumerate() {
             if index != 0 {
-                let n_pos =
-                    Vec2::new(10.0, size.y - (35.0 + (20.0 * index as f32)));
+                let n_pos = Vec2::new(
+                    (10.0 * systems.scale as f32).floor(),
+                    size.y
+                        - (((35.0 + (20.0 * index as f32))
+                            * systems.scale as f32)
+                            .floor()),
+                );
                 let text = create_label(
                     systems,
                     Vec3::new(n_pos.x, n_pos.y, ORDER_ITEM_DESC_TEXT),

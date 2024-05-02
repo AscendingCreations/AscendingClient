@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use crate::{
     add_float_text, add_npc, close_interface,
     content::game_content::{interface::chatbox::*, player::*},
@@ -290,11 +292,8 @@ pub fn handle_playerdata(
             content.game_content.in_game = true;
         }
 
-        content
-            .game_content
-            .player_data
-            .equipment
-            .clone_from(&equipment.items);
+        content.game_content.player_data.equipment[..]
+            .copy_from_slice(&equipment.items);
 
         let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
         systems
@@ -469,7 +468,12 @@ pub fn handle_move(
                 } else {
                     match world.get_or_err::<WorldEntityType>(&entity)? {
                         WorldEntityType::Player => {
-                            unload_player(world, systems, &entity)?;
+                            unload_player(
+                                world,
+                                systems,
+                                &content.game_content,
+                                &entity,
+                            )?;
                             content
                                 .game_content
                                 .players
@@ -477,7 +481,12 @@ pub fn handle_move(
                                 .swap_remove(&entity);
                         }
                         WorldEntityType::Npc => {
-                            unload_npc(world, systems, &entity)?;
+                            unload_npc(
+                                world,
+                                systems,
+                                &content.game_content,
+                                &entity,
+                            )?;
                             content
                                 .game_content
                                 .npcs
@@ -600,7 +609,12 @@ pub fn handle_warp(
                             }
                         }
 
-                        unload_player(world, systems, &entity)?;
+                        unload_player(
+                            world,
+                            systems,
+                            &content.game_content,
+                            &entity,
+                        )?;
                         content
                             .game_content
                             .players
@@ -743,6 +757,8 @@ pub fn handle_playerinv(
 ) -> Result<()> {
     let items = data.read::<Vec<Item>>()?;
 
+    content.game_content.player_data.inventory[..].copy_from_slice(&items);
+
     if content.game_content.finalized {
         for (index, item) in items.iter().enumerate() {
             content
@@ -752,7 +768,6 @@ pub fn handle_playerinv(
                 .update_inv_slot(systems, index, item);
         }
     }
-    content.game_content.player_data.inventory = items;
 
     Ok(())
 }
@@ -789,18 +804,25 @@ pub fn handle_playerstorage(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
+    let start = data.read::<usize>()?;
+    let end = data.read::<usize>()?;
     let items = data.read::<Vec<Item>>()?;
 
+    content.game_content.player_data.storage[start..end]
+        .copy_from_slice(&items);
     if content.game_content.finalized {
-        for (index, item) in items.iter().enumerate() {
-            content
-                .game_content
-                .interface
-                .storage
-                .update_storage_slot(systems, index, item);
+        for (index, item) in content.game_content.player_data.storage
+            [start..end]
+            .iter()
+            .enumerate()
+        {
+            content.game_content.interface.storage.update_storage_slot(
+                systems,
+                index + start,
+                item,
+            );
         }
     }
-    content.game_content.player_data.storage = items;
 
     Ok(())
 }
@@ -1208,7 +1230,12 @@ pub fn handle_entityunload(
                 world.get_or_default::<WorldEntityType>(&entity);
             match world_entity_type {
                 WorldEntityType::Player => {
-                    unload_player(world, systems, &entity)?;
+                    unload_player(
+                        world,
+                        systems,
+                        &content.game_content,
+                        &entity,
+                    )?;
                     content
                         .game_content
                         .players
@@ -1216,11 +1243,16 @@ pub fn handle_entityunload(
                         .swap_remove(&entity);
                 }
                 WorldEntityType::Npc => {
-                    unload_npc(world, systems, &entity)?;
+                    unload_npc(world, systems, &content.game_content, &entity)?;
                     content.game_content.npcs.borrow_mut().swap_remove(&entity);
                 }
                 WorldEntityType::MapItem => {
-                    unload_mapitems(world, systems, &entity)?;
+                    unload_mapitems(
+                        world,
+                        systems,
+                        &content.game_content,
+                        &entity,
+                    )?;
                     content
                         .game_content
                         .mapitems

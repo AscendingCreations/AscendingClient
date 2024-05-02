@@ -870,7 +870,9 @@ pub fn release_inv_slot(
     } else if interface.storage.in_window(screen_pos)
         && interface.storage.order_index == 0
     {
-        let find_slot = interface.storage.find_storage_slot(screen_pos, true);
+        let find_slot = interface
+            .storage
+            .find_storage_slot(systems, screen_pos, true);
         if let Some(bank_slot) = find_slot {
             if interface.inventory.item_slot[slot].count_data > 1 {
                 alert.show_alert(

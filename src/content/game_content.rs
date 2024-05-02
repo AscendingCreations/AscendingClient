@@ -118,13 +118,13 @@ impl GameContent {
         systems: &mut SystemHolder,
     ) -> Result<()> {
         for entity in self.players.borrow().iter() {
-            unload_player(world, systems, entity)?;
+            unload_player(world, systems, self, entity)?;
         }
         for entity in self.npcs.borrow().iter() {
-            unload_npc(world, systems, entity)?;
+            unload_npc(world, systems, self, entity)?;
         }
         for entity in self.mapitems.borrow().iter() {
-            unload_mapitems(world, systems, entity)?;
+            unload_mapitems(world, systems, self, entity)?;
         }
         systems.gfx.set_visible(&self.game_lights, false);
         self.players.borrow_mut().clear();

@@ -94,15 +94,15 @@ pub fn update_map_refresh(
     for (entity, worldtype) in entity_to_remove {
         match worldtype {
             WorldEntityType::Player => {
-                unload_player(world, systems, &Entity(entity))?;
+                unload_player(world, systems, content, &Entity(entity))?;
                 content.players.borrow_mut().swap_remove(&Entity(entity));
             }
             WorldEntityType::Npc => {
-                unload_npc(world, systems, &Entity(entity))?;
+                unload_npc(world, systems, content, &Entity(entity))?;
                 content.npcs.borrow_mut().swap_remove(&Entity(entity));
             }
             WorldEntityType::MapItem => {
-                unload_mapitems(world, systems, &Entity(entity))?;
+                unload_mapitems(world, systems, content, &Entity(entity))?;
                 content.mapitems.borrow_mut().swap_remove(&Entity(entity));
             }
             _ => {}

@@ -189,7 +189,12 @@ async fn main() -> Result<()> {
     let size = renderer.size();
 
     // get the Scale factor the pc currently is using for upscaling or downscaling the rendering.
-    let scale = 1.0; //renderer.window().current_monitor().unwrap().scale_factor();
+    let scale = renderer
+        .window()
+        .current_monitor()
+        .unwrap()
+        .scale_factor()
+        .clamp(1.0, 1.5);
 
     // We generate Texture atlases to use with out types.
     let mut atlases: Vec<AtlasSet> = iter::from_fn(|| {

@@ -100,15 +100,20 @@ impl Alert {
         self.input_box = None;
         self.custom_index = custom_index;
 
-        let limit_width = match alert_type {
+        let limit_width = (match alert_type {
             AlertType::Inform => 80.0,
             AlertType::Confirm => 150.0,
             AlertType::Input => 170.0,
-        };
+        } * systems.scale as f32)
+            .floor();
 
         let mut text = create_empty_label(systems);
-        text.set_buffer_size(&mut systems.renderer, max_text_width as i32, 128)
-            .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
+        text.set_buffer_size(
+            &mut systems.renderer,
+            (max_text_width as f32 * systems.scale as f32).floor() as i32,
+            128,
+        )
+        .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
         text.set_text(
             &mut systems.renderer,
             &msg,
@@ -128,10 +133,19 @@ impl Alert {
 
         let text_width = header_text_size.x.max(text_size.x);
 
-        let center = get_screen_center(&systems.size);
+        let center = get_screen_center(&systems.size).floor();
+
+        let orig_size = Vec2::new(
+            ((text_width / systems.scale as f32).round() + 20.0)
+                .max(limit_width),
+            ((text_size.y / systems.scale as f32).round() + 90.0).max(110.0),
+        );
+
         let w_size = Vec2::new(
-            (text_width + 20.0).max(limit_width),
-            (text_size.y + 90.0).max(110.0),
+            (text_width + (20.0 * systems.scale as f32).floor())
+                .max(limit_width),
+            (text_size.y + (90.0 * systems.scale as f32).floor())
+                .max((110.0 * systems.scale as f32).floor()),
         );
         let w_pos = Vec3::new(
             (center.x - (w_size.x * 0.5)).floor(),
@@ -140,33 +154,41 @@ impl Alert {
         );
 
         let (pos, bounds) = if alert_type == AlertType::Input {
-            let s_pos = Vec2::new(w_pos.x, w_pos.y + w_size.y - 30.0);
+            let s_pos = Vec2::new(
+                w_pos.x,
+                w_pos.y + w_size.y - (30.0 * systems.scale as f32).floor(),
+            );
             (
                 s_pos,
                 Bounds::new(
                     s_pos.x,
                     s_pos.y,
                     s_pos.x + w_size.x,
-                    s_pos.y + 20.0,
+                    s_pos.y + (20.0 * systems.scale as f32).floor(),
                 ),
             )
         } else {
-            let s_pos = Vec2::new(w_pos.x + 10.0, w_pos.y + w_size.y - 25.0);
+            let s_pos = Vec2::new(
+                w_pos.x + (10.0 * systems.scale as f32).floor(),
+                w_pos.y + w_size.y - (25.0 * systems.scale as f32).floor(),
+            );
             (
                 s_pos,
                 Bounds::new(
                     s_pos.x,
                     s_pos.y,
                     s_pos.x + header_text_size.x,
-                    s_pos.y + 20.0,
+                    s_pos.y + (20.0 * systems.scale as f32).floor(),
                 ),
             )
         };
         header_text
             .set_position(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
             .set_bounds(Some(bounds));
-        header_text.size =
-            Vec2::new(header_text_size.x, header_text_size.y + 4.0);
+        header_text.size = Vec2::new(
+            header_text_size.x,
+            header_text_size.y + (4.0 * systems.scale as f32).floor(),
+        );
         header_text.changed = true;
         let header_text_index = systems.gfx.add_text(
             header_text,
@@ -204,16 +226,19 @@ impl Alert {
         if alert_type != AlertType::Input {
             let pos = Vec2::new(
                 w_pos.x + ((w_size.x - text_size.x) * 0.5).floor(),
-                w_pos.y + 43.0,
+                w_pos.y + (43.0 * systems.scale as f32).floor(),
             );
             text.set_position(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
                 .set_bounds(Some(Bounds::new(
                     pos.x,
                     pos.y,
                     pos.x + text_size.x,
-                    pos.y + text_size.y + 10.0,
+                    pos.y + text_size.y + (10.0 * systems.scale as f32).floor(),
                 )));
-            text.size = Vec2::new(text_size.x, text_size.y + 10.0);
+            text.size = Vec2::new(
+                text_size.x,
+                text_size.y + (10.0 * systems.scale as f32).floor(),
+            );
             text.changed = true;
             self.text.push(systems.gfx.add_text(
                 text,
@@ -226,10 +251,13 @@ impl Alert {
             header
                 .set_position(Vec3::new(
                     w_pos.x,
-                    w_pos.y + w_size.y - 30.0,
+                    w_pos.y + w_size.y - (30.0 * systems.scale as f32).floor(),
                     ORDER_ALERT_HEADER,
                 ))
-                .set_size(Vec2::new(w_size.x, 30.0))
+                .set_size(Vec2::new(
+                    w_size.x,
+                    (30.0 * systems.scale as f32).floor(),
+                ))
                 .set_color(Color::rgba(100, 100, 100, 255));
             self.window.push(systems.gfx.add_rect(
                 header,
@@ -254,7 +282,7 @@ impl Alert {
 
         match alert_type {
             AlertType::Inform => {
-                let pos = Vec2::new(((w_size.x - 60.0) * 0.5).floor(), 10.0);
+                let pos = Vec2::new(((orig_size.x - 60.0) * 0.5).floor(), 10.0);
                 self.button.push(Button::new(
                     systems,
                     ButtonType::Rect(button_detail.clone()),
@@ -277,7 +305,8 @@ impl Alert {
                 ));
             }
             AlertType::Confirm => {
-                let pos = Vec2::new(((w_size.x - 130.0) * 0.5).floor(), 10.0);
+                let pos =
+                    Vec2::new(((orig_size.x - 130.0) * 0.5).floor(), 10.0);
                 self.button.push(Button::new(
                     systems,
                     ButtonType::Rect(button_detail.clone()),
@@ -320,30 +349,28 @@ impl Alert {
                 ));
             }
             AlertType::Input => {
-                let textbox_pos = Vec2::new(
-                    w_pos.x + ((w_size.x - 100.0) * 0.5).floor(),
-                    w_pos.y + 50.0,
-                );
+                let textbox_pos =
+                    Vec2::new(((orig_size.x - 100.0) * 0.5).floor(), 50.0);
 
                 let mut textbox_bg = Rect::new(&mut systems.renderer, 0);
                 textbox_bg
-                    .set_size(Vec2::new(104.0, 24.0))
+                    .set_size(
+                        (Vec2::new(104.0, 24.0) * systems.scale as f32).floor(),
+                    )
                     .set_color(Color::rgba(120, 120, 120, 255))
                     .set_border_width(1.0)
                     .set_border_color(Color::rgba(40, 40, 40, 255))
                     .set_position(Vec3::new(
-                        textbox_pos.x,
-                        textbox_pos.y,
+                        w_pos.x
+                            + (textbox_pos.x * systems.scale as f32).floor(),
+                        w_pos.y
+                            + (textbox_pos.y * systems.scale as f32).floor(),
                         ORDER_ALERT_TEXTBOX_BG,
                     ));
                 let textbox = Textbox::new(
                     systems,
-                    Vec3::new(
-                        textbox_pos.x + 2.0,
-                        textbox_pos.y + 2.0,
-                        ORDER_ALERT_TEXTBOX,
-                    ),
-                    Vec2::new(0.0, 0.0),
+                    Vec3::new(w_pos.x, w_pos.y, ORDER_ALERT_TEXTBOX),
+                    textbox_pos + Vec2::new(2.0, 2.0),
                     (0.001, 3),
                     Vec2::new(100.0, 20.0),
                     Color::rgba(200, 200, 200, 255),
@@ -368,7 +395,8 @@ impl Alert {
                     numeric_only,
                 });
 
-                let pos = Vec2::new(((w_size.x - 150.0) * 0.5).floor(), 10.0);
+                let pos =
+                    Vec2::new(((orig_size.x - 150.0) * 0.5).floor(), 10.0);
                 self.button.push(Button::new(
                     systems,
                     ButtonType::Rect(button_detail.clone()),
@@ -448,10 +476,12 @@ impl Alert {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_hover(systems, true);
             } else {
@@ -470,10 +500,12 @@ impl Alert {
             if is_within_area(
                 screen_pos,
                 Vec2::new(
-                    button.base_pos.x + button.adjust_pos.x,
-                    button.base_pos.y + button.adjust_pos.y,
+                    button.base_pos.x
+                        + (button.adjust_pos.x * systems.scale as f32).floor(),
+                    button.base_pos.y
+                        + (button.adjust_pos.y * systems.scale as f32).floor(),
                 ),
-                button.size,
+                (button.size * systems.scale as f32).floor(),
             ) {
                 button.set_click(systems, true);
                 button_found = Some(index)
@@ -677,8 +709,8 @@ impl Alert {
                 Vec2::new(
                     textbox.textbox.base_pos.x,
                     textbox.textbox.base_pos.y,
-                ) + textbox.textbox.adjust_pos,
-                Vec2::new(textbox.textbox.size.x, textbox.textbox.size.y),
+                ) + (textbox.textbox.adjust_pos * systems.scale as f32).floor(),
+                (textbox.textbox.size * systems.scale as f32).floor(),
             ) {
                 if let Some(msg) = &textbox.textbox.tooltip {
                     tooltip.init_tooltip(systems, screen_pos, msg.clone());
@@ -698,8 +730,8 @@ impl Alert {
                 Vec2::new(
                     textbox.textbox.base_pos.x,
                     textbox.textbox.base_pos.y,
-                ) + textbox.textbox.adjust_pos,
-                textbox.textbox.size,
+                ) + (textbox.textbox.adjust_pos * systems.scale as f32).floor(),
+                (textbox.textbox.size * systems.scale as f32).floor(),
             ) {
                 textbox.textbox.set_select(systems, true);
                 textbox.textbox.set_hold(true);
