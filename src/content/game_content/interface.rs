@@ -10,7 +10,7 @@ use crate::{
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
     send_closestorage, send_closetrade, send_command, send_message,
     send_removetradeitem, send_submittrade, send_unequip,
-    send_updatetrademoney, send_useitem, widget::*, Alert, AlertIndex,
+    send_updatetrademoney, send_useitem, socket, widget::*, Alert, AlertIndex,
     AlertType, GameContent, GfxType, MouseInputType, Result, Socket,
     SystemHolder, TradeStatus, COLOR_WHITE,
 };
@@ -722,9 +722,40 @@ impl Interface {
         game_content: &mut GameContent,
         _world: &mut World,
         systems: &mut SystemHolder,
+        socket: &mut Socket,
         key: &Key,
         pressed: bool,
-    ) {
+    ) -> Result<()> {
+        if pressed && !game_content.interface.trade.visible {
+            if let Key::Named(NamedKey::Enter) = key {
+                if game_content.interface.selected_textbox
+                    == SelectedTextbox::Chatbox
+                {
+                    game_content.interface.selected_textbox =
+                        SelectedTextbox::None;
+                    game_content
+                        .interface
+                        .chatbox
+                        .textbox
+                        .set_select(systems, false);
+                    trigger_chatbox_button(
+                        &mut game_content.interface,
+                        systems,
+                        socket,
+                        2,
+                    )?;
+                } else {
+                    game_content.interface.selected_textbox =
+                        SelectedTextbox::Chatbox;
+                    game_content
+                        .interface
+                        .chatbox
+                        .textbox
+                        .set_select(systems, true);
+                }
+            }
+        }
+
         match game_content.interface.selected_textbox {
             SelectedTextbox::Chatbox => {
                 game_content
@@ -742,6 +773,7 @@ impl Interface {
             }
             _ => {}
         }
+        Ok(())
     }
 
     pub fn hover_buttons(

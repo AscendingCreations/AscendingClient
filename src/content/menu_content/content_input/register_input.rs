@@ -55,9 +55,66 @@ pub fn register_key_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut SystemHolder,
+    socket: &mut Socket,
+    alert: &mut Alert,
     key: &Key,
     pressed: bool,
 ) {
+    if pressed {
+        match key {
+            Key::Named(NamedKey::Tab) => match menu_content.selected_textbox {
+                None => {
+                    menu_content.register.textbox[0].set_select(systems, true);
+
+                    menu_content.selected_textbox = Some(0);
+                }
+                Some(index) => {
+                    menu_content.register.textbox[index]
+                        .set_select(systems, false);
+                    let mut next_index = index + 1;
+                    if next_index >= menu_content.register.textbox.len() {
+                        next_index = 0;
+                    }
+                    menu_content.register.textbox[next_index]
+                        .set_select(systems, true);
+
+                    menu_content.selected_textbox = Some(next_index);
+                }
+            },
+            Key::Named(NamedKey::Enter) => {
+                match menu_content.selected_textbox {
+                    None => {
+                        menu_content.register.textbox[0]
+                            .set_select(systems, true);
+
+                        menu_content.selected_textbox = Some(0);
+                    }
+                    Some(index) => {
+                        menu_content.register.textbox[index]
+                            .set_select(systems, false);
+                        let next_index = index + 1;
+                        if next_index >= menu_content.register.textbox.len() {
+                            menu_content.selected_textbox = None;
+                            trigger_button(
+                                menu_content,
+                                systems,
+                                socket,
+                                alert,
+                                0,
+                            );
+                        } else {
+                            menu_content.register.textbox[next_index]
+                                .set_select(systems, true);
+
+                            menu_content.selected_textbox = Some(next_index);
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
     if let Some(textbox_index) = menu_content.selected_textbox {
         menu_content.register.textbox[textbox_index]
             .enter_text(systems, key, pressed, false);

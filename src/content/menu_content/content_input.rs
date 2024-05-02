@@ -4,8 +4,9 @@ use input::Key;
 use winit::keyboard::NamedKey;
 
 use crate::{
-    content::*, socket::*, Alert, ContentType, MouseInputType, SystemHolder,
-    Tooltip,
+    content::*,
+    socket::{self, *},
+    Alert, ContentType, MouseInputType, SystemHolder, Tooltip,
 };
 
 mod login_input;
@@ -67,7 +68,7 @@ impl MenuContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut SystemHolder,
-        _socket: &mut Socket,
+        socket: &mut Socket,
         alert: &mut Alert,
         key: &Key,
         pressed: bool,
@@ -83,6 +84,8 @@ impl MenuContent {
                     &mut content.menu_content,
                     world,
                     systems,
+                    socket,
+                    alert,
                     key,
                     pressed,
                 );
@@ -92,6 +95,8 @@ impl MenuContent {
                     &mut content.menu_content,
                     world,
                     systems,
+                    socket,
+                    alert,
                     key,
                     pressed,
                 );

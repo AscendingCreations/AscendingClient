@@ -4,8 +4,10 @@ use input::Key;
 use winit::keyboard::NamedKey;
 
 use crate::{
-    content::*, data_types::*, socket::*, Alert, ContentType, MouseInputType,
-    SystemHolder, Tooltip, COLOR_RED,
+    content::*,
+    data_types::*,
+    socket::{self, *},
+    Alert, ContentType, MouseInputType, SystemHolder, Tooltip, COLOR_RED,
 };
 
 use super::{
@@ -105,7 +107,7 @@ impl GameContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut SystemHolder,
-        _socket: &mut Socket,
+        socket: &mut Socket,
         alert: &mut Alert,
         key: &Key,
         pressed: bool,
@@ -119,9 +121,10 @@ impl GameContent {
             &mut content.game_content,
             world,
             systems,
+            socket,
             key,
             pressed,
-        );
+        )?;
 
         if content.game_content.interface.inventory.hold_slot.is_some()
             || content.game_content.interface.storage.hold_slot.is_some()
