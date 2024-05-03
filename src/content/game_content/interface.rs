@@ -931,7 +931,7 @@ impl Interface {
                             hold_interface(
                                 self,
                                 systems,
-                                Window::Setting,
+                                Window::Shop,
                                 screen_pos,
                                 true,
                                 false,
