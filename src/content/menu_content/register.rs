@@ -149,12 +149,12 @@ impl Register {
             );
             let textindex =
                 systems.gfx.add_text(text, 1, "Register Label".into(), true);
-            let msg = match index {
-                1 => "Retype",
-                2 => "Password",
-                3 => "Retype",
-                4 => "Username",
-                _ => "Email",
+            let (msg, hide_content) = match index {
+                1 => ("Retype", false),
+                2 => ("Password", true),
+                3 => ("Retype", true),
+                4 => ("Username", false),
+                _ => ("Email", false),
             };
             systems.gfx.set_text(&mut systems.renderer, &textindex, msg);
             label.push(textindex);
@@ -177,7 +177,7 @@ impl Register {
                 255,
                 Color::rgba(120, 120, 120, 255),
                 Color::rgba(10, 10, 150, 255),
-                false,
+                hide_content,
                 true,
                 tooltip,
                 vec![],
