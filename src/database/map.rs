@@ -5,6 +5,7 @@ use crate::{
 use graphics::*;
 use log::{error, info};
 use serde::{Deserialize, Serialize};
+use speedy::{Endianness, Readable, Writable};
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, Read};
 use std::path::Path;
@@ -17,8 +18,8 @@ use std::path::Path;
     PartialEq,
     Eq,
     Default,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
@@ -39,8 +40,8 @@ pub struct WarpData {
     PartialEq,
     Eq,
     Default,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
@@ -58,8 +59,8 @@ pub struct ItemSpawnData {
     Deserialize,
     PartialEq,
     Eq,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
@@ -85,8 +86,8 @@ pub enum MapAttribute {
     Eq,
     Default,
     Debug,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
@@ -118,8 +119,8 @@ pub struct MapSlotData {
     Debug,
     Serialize,
     Deserialize,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
@@ -132,8 +133,8 @@ pub struct Tile {
     Debug,
     Serialize,
     Deserialize,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
@@ -336,13 +337,9 @@ pub fn load_file(x: i32, y: i32, group: u64) -> Result<MapData> {
     let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
     match OpenOptions::new().read(true).open(&name) {
         Ok(mut file) => {
-            let mut data = Vec::new();
-            file.read_to_end(&mut data)?;
-
-            let mut buf = ByteBuffer::with_capacity(data.len())?;
-            buf.write_slice(&data)?;
-            buf.move_cursor_to_start();
-            Ok(buf.read::<MapData>()?)
+            let mut bytes = Vec::new();
+            file.read_to_end(&mut bytes)?;
+            Ok(MapData::read_from_buffer(&bytes).unwrap())
         }
         Err(e) => {
             error!("Failed to load {}, Err {:?}", name, e);

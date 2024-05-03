@@ -1,12 +1,11 @@
 use crate::{data_types::*, socket::*, Result};
 use log::warn;
 use serde::{Deserialize, Serialize};
+use speedy::{Endianness, Readable, Writable};
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, Read};
 
-#[derive(
-    Clone, Debug, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite,
-)]
+#[derive(Clone, Debug, Deserialize, Serialize, Readable, Writable)]
 pub struct NpcData {
     pub name: String,
     pub level: i32,
@@ -70,15 +69,9 @@ fn load_file(id: usize) -> Result<Option<NpcData>> {
 
     match OpenOptions::new().read(true).open(name) {
         Ok(mut file) => {
-            let mut data = Vec::new();
-            file.read_to_end(&mut data)?;
-
-            let mut buf = ByteBuffer::with_capacity(data.len())?;
-            buf.write(data)?;
-            buf.move_cursor_to_start();
-
-            buf.move_cursor(8)?;
-            Ok(Some(buf.read::<NpcData>()?))
+            let mut bytes = Vec::new();
+            file.read_to_end(&mut bytes)?;
+            Ok(Some(NpcData::read_from_buffer(&bytes).unwrap()))
         }
         Err(e) => {
             warn!("Npc Load File Num {} Err: {}", id, e);

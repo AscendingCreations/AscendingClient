@@ -9,9 +9,7 @@ use crate::{
     get_start_map_pos, SystemHolder,
 };
 
-#[derive(
-    Debug, Copy, Clone, PartialEq, Eq, ByteBufferRead, ByteBufferWrite,
-)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct MapItem {
     pub id: Entity,
     pub item: Item,

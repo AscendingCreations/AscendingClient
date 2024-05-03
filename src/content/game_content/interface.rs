@@ -385,117 +385,19 @@ impl Interface {
                 }
             }
             MouseInputType::MouseLeftDown => {
-                result = Interface::click_window_buttons(
-                    interface, systems, socket, screen_pos,
-                )?;
+                result = interface
+                    .click_window_buttons(systems, socket, screen_pos, alert)?;
 
-                let button_index =
-                    Interface::click_buttons(interface, systems, screen_pos);
-                if let Some(index) = button_index {
-                    interface.did_button_click = true;
-                    trigger_button(interface, systems, index);
-                    result = true;
-                }
-
-                if interface.drag_window.is_none() {
-                    let window =
-                        find_window(systems, interface, screen_pos, None);
-                    if let Some(result_window) = window {
-                        hold_interface(
-                            interface,
-                            systems,
-                            result_window,
-                            screen_pos,
-                            true,
-                            false,
-                        );
+                if !result {
+                    let button_index = Interface::click_buttons(
+                        interface, systems, screen_pos,
+                    );
+                    if let Some(index) = button_index {
+                        interface.did_button_click = true;
+                        trigger_button(interface, systems, index);
                         result = true;
                     }
                 }
-
-                if interface.trade.visible
-                    && interface.trade.order_index == 0
-                    && interface.drag_window.is_none()
-                    && interface.trade.trade_status == TradeStatus::None
-                {
-                    if let Some(slot) =
-                        interface.trade.find_mytrade_slot(systems, screen_pos)
-                    {
-                        if interface.trade.my_items[slot].got_data {
-                            if interface.trade.my_items[slot].count_data > 1 {
-                                alert.show_alert(
-                                    systems,
-                                    AlertType::Input,
-                                    String::new(),
-                                    "Enter the amount to remove".into(),
-                                    250,
-                                    AlertIndex::RemoveTradeItem(slot as u16),
-                                    true,
-                                );
-                            } else {
-                                send_removetradeitem(socket, slot as u16, 1)?;
-                            }
-                        }
-                    }
-                }
-
-                if interface.setting.visible && interface.drag_window.is_none()
-                {
-                    if interface.setting.sfx_scroll.in_scroll(screen_pos) {
-                        interface
-                            .setting
-                            .sfx_scroll
-                            .set_hold(systems, true, screen_pos);
-                        result = true;
-                    }
-                    if interface.setting.bgm_scroll.in_scroll(screen_pos) {
-                        interface
-                            .setting
-                            .bgm_scroll
-                            .set_hold(systems, true, screen_pos);
-                        result = true;
-                    }
-                    if let Some(index) =
-                        interface.setting.click_checkbox(systems, screen_pos)
-                    {
-                        interface.setting.did_checkbox_click = true;
-                        interface.setting.trigger_checkbox(
-                            systems,
-                            index,
-                            &interface.ping_text,
-                            &interface.average_ping,
-                            &interface.frame_loop,
-                        );
-                        result = true;
-                    }
-                }
-                if interface.chatbox.scrollbar.in_scroll(screen_pos) {
-                    interface
-                        .chatbox
-                        .scrollbar
-                        .set_hold(systems, true, screen_pos);
-                    result = true;
-                }
-                if interface.shop.visible
-                    && interface.drag_window.is_none()
-                    && interface.shop.item_scroll.in_scroll(screen_pos)
-                {
-                    interface
-                        .shop
-                        .item_scroll
-                        .set_hold(systems, true, screen_pos);
-                    result = true;
-                }
-
-                let chatbox_button_index =
-                    interface.chatbox.click_buttons(systems, screen_pos);
-                if let Some(index) = chatbox_button_index {
-                    interface.chatbox.did_button_click = true;
-                    trigger_chatbox_button(interface, systems, socket, index)?;
-                    result = true;
-                }
-                interface.chatbox.select_chat_tab(systems, screen_pos);
-                interface.click_textbox(systems, socket, screen_pos)?;
             }
             MouseInputType::MouseLeftDownMove => {
                 if interface.item_desc.visible {
@@ -800,121 +702,355 @@ impl Interface {
     }
 
     pub fn click_window_buttons(
-        interface: &mut Interface,
+        &mut self,
         systems: &mut SystemHolder,
         socket: &mut Socket,
         screen_pos: Vec2,
+        alert: &mut Alert,
     ) -> Result<bool> {
-        if let Some(index) =
-            interface.profile.click_buttons(systems, screen_pos)
-        {
-            if index == 0 {
-                close_interface(interface, systems, Window::Profile);
-            }
-            interface.profile.did_button_click = true;
-            return Ok(true);
-        }
+        let mut did_click = false;
 
-        if let Some(index) =
-            interface.setting.click_buttons(systems, screen_pos)
-        {
-            if index == 0 {
-                close_interface(interface, systems, Window::Setting);
-            }
-            interface.setting.did_button_click = true;
-            return Ok(true);
-        }
+        for index in 0..self.window_order.len() {
+            if !did_click {
+                match self.window_order[index].0 {
+                    Window::Chatbox => {
+                        if self.chatbox.in_window(screen_pos, systems) {
+                            if let Some(index) =
+                                self.chatbox.click_buttons(systems, screen_pos)
+                            {
+                                self.chatbox.did_button_click = true;
+                                trigger_chatbox_button(
+                                    self, systems, socket, index,
+                                )?;
+                            }
+                            self.chatbox.select_chat_tab(systems, screen_pos);
 
-        if let Some(index) =
-            interface.inventory.click_buttons(systems, screen_pos)
-        {
-            if index == 0 {
-                close_interface(interface, systems, Window::Inventory);
-            }
-            interface.inventory.did_button_click = true;
-            return Ok(true);
-        }
+                            self.click_textbox(
+                                systems,
+                                socket,
+                                screen_pos,
+                                SelectedTextbox::Chatbox,
+                            )?;
 
-        if let Some(index) =
-            interface.storage.click_buttons(systems, screen_pos)
-        {
-            if index == 0 {
-                close_interface(interface, systems, Window::Storage);
-                send_closestorage(socket)?;
-            }
-            interface.storage.did_button_click = true;
-            return Ok(true);
-        }
+                            if self.chatbox.scrollbar.in_scroll(screen_pos) {
+                                self.chatbox
+                                    .scrollbar
+                                    .set_hold(systems, true, screen_pos);
+                            }
 
-        if let Some(index) = interface.shop.click_buttons(systems, screen_pos) {
-            match index {
-                0 => {
-                    close_interface(interface, systems, Window::Shop);
-                    send_closeshop(socket)?;
-                } // Close
-                1 => {
-                    // Scroll Up
-                    if interface.shop.item_scroll.max_value == 0 {
-                        return Ok(true);
+                            hold_interface(
+                                self,
+                                systems,
+                                Window::Chatbox,
+                                screen_pos,
+                                true,
+                                false,
+                            );
+
+                            did_click = true;
+                        }
                     }
-                    let scrollbar_value =
-                        interface.shop.item_scroll.value.saturating_sub(1);
-                    interface
-                        .shop
-                        .item_scroll
-                        .set_value(systems, scrollbar_value);
-                    interface.shop.set_shop_scroll_value(systems);
-                }
-                2 => {
-                    // Scroll Down
-                    if interface.shop.item_scroll.max_value == 0 {
-                        return Ok(true);
+                    Window::Inventory => {
+                        if self.inventory.in_window(screen_pos) {
+                            if let Some(index) = self
+                                .inventory
+                                .click_buttons(systems, screen_pos)
+                            {
+                                if index == 0 {
+                                    close_interface(
+                                        self,
+                                        systems,
+                                        Window::Inventory,
+                                    );
+                                }
+                                self.inventory.did_button_click = true;
+                            }
+
+                            hold_interface(
+                                self,
+                                systems,
+                                Window::Inventory,
+                                screen_pos,
+                                true,
+                                false,
+                            );
+
+                            did_click = true;
+                        }
                     }
-                    let scrollbar_value = interface
-                        .shop
-                        .item_scroll
-                        .value
-                        .saturating_add(1)
-                        .min(interface.shop.item_scroll.max_value);
-                    interface
-                        .shop
-                        .item_scroll
-                        .set_value(systems, scrollbar_value);
-                    interface.shop.set_shop_scroll_value(systems);
+                    Window::Profile => {
+                        if self.profile.in_window(screen_pos) {
+                            if let Some(index) =
+                                self.profile.click_buttons(systems, screen_pos)
+                            {
+                                if index == 0 {
+                                    close_interface(
+                                        self,
+                                        systems,
+                                        Window::Profile,
+                                    );
+                                }
+                                self.profile.did_button_click = true;
+                            }
+
+                            hold_interface(
+                                self,
+                                systems,
+                                Window::Profile,
+                                screen_pos,
+                                true,
+                                false,
+                            );
+
+                            did_click = true;
+                        }
+                    }
+                    Window::Setting => {
+                        if self.setting.in_window(screen_pos) {
+                            if let Some(index) =
+                                self.setting.click_buttons(systems, screen_pos)
+                            {
+                                if index == 0 {
+                                    close_interface(
+                                        self,
+                                        systems,
+                                        Window::Setting,
+                                    );
+                                }
+                                self.setting.did_button_click = true;
+                            }
+
+                            if self.setting.sfx_scroll.in_scroll(screen_pos) {
+                                self.setting
+                                    .sfx_scroll
+                                    .set_hold(systems, true, screen_pos);
+                            }
+                            if self.setting.bgm_scroll.in_scroll(screen_pos) {
+                                self.setting
+                                    .bgm_scroll
+                                    .set_hold(systems, true, screen_pos);
+                            }
+                            if let Some(index) =
+                                self.setting.click_checkbox(systems, screen_pos)
+                            {
+                                self.setting.did_checkbox_click = true;
+                                self.setting.trigger_checkbox(
+                                    systems,
+                                    index,
+                                    &self.ping_text,
+                                    &self.average_ping,
+                                    &self.frame_loop,
+                                );
+                            }
+
+                            hold_interface(
+                                self,
+                                systems,
+                                Window::Setting,
+                                screen_pos,
+                                true,
+                                false,
+                            );
+
+                            did_click = true;
+                        }
+                    }
+                    Window::Shop => {
+                        if self.shop.in_window(screen_pos) {
+                            if let Some(index) =
+                                self.shop.click_buttons(systems, screen_pos)
+                            {
+                                match index {
+                                    0 => {
+                                        close_interface(
+                                            self,
+                                            systems,
+                                            Window::Shop,
+                                        );
+                                        send_closeshop(socket)?;
+                                    } // Close
+                                    1 => {
+                                        // Scroll Up
+                                        if self.shop.item_scroll.max_value == 0
+                                        {
+                                            return Ok(true);
+                                        }
+                                        let scrollbar_value = self
+                                            .shop
+                                            .item_scroll
+                                            .value
+                                            .saturating_sub(1);
+                                        self.shop.item_scroll.set_value(
+                                            systems,
+                                            scrollbar_value,
+                                        );
+                                        self.shop
+                                            .set_shop_scroll_value(systems);
+                                    }
+                                    2 => {
+                                        // Scroll Down
+                                        if self.shop.item_scroll.max_value == 0
+                                        {
+                                            return Ok(true);
+                                        }
+                                        let scrollbar_value = self
+                                            .shop
+                                            .item_scroll
+                                            .value
+                                            .saturating_add(1)
+                                            .min(
+                                                self.shop.item_scroll.max_value,
+                                            );
+                                        self.shop.item_scroll.set_value(
+                                            systems,
+                                            scrollbar_value,
+                                        );
+                                        self.shop
+                                            .set_shop_scroll_value(systems);
+                                    }
+                                    3..=7 => {
+                                        let button_index =
+                                            self.shop.shop_start_pos
+                                                + index.saturating_sub(3);
+                                        send_buyitem(
+                                            socket,
+                                            button_index as u16,
+                                        )?;
+                                    }
+                                    _ => {}
+                                }
+                                self.shop.did_button_click = true;
+                            }
+
+                            if self.shop.item_scroll.in_scroll(screen_pos) {
+                                self.shop
+                                    .item_scroll
+                                    .set_hold(systems, true, screen_pos);
+                            }
+
+                            hold_interface(
+                                self,
+                                systems,
+                                Window::Setting,
+                                screen_pos,
+                                true,
+                                false,
+                            );
+
+                            did_click = true;
+                        }
+                    }
+                    Window::Storage => {
+                        if self.storage.in_window(screen_pos) {
+                            if let Some(index) =
+                                self.storage.click_buttons(systems, screen_pos)
+                            {
+                                if index == 0 {
+                                    close_interface(
+                                        self,
+                                        systems,
+                                        Window::Storage,
+                                    );
+                                    send_closestorage(socket)?;
+                                }
+                                self.storage.did_button_click = true;
+                            }
+
+                            hold_interface(
+                                self,
+                                systems,
+                                Window::Storage,
+                                screen_pos,
+                                true,
+                                false,
+                            );
+
+                            did_click = true;
+                        }
+                    }
+                    Window::Trade => {
+                        if self.trade.in_window(screen_pos) {
+                            if let Some(index) =
+                                self.trade.click_buttons(systems, screen_pos)
+                            {
+                                match index {
+                                    0 | 2 => {
+                                        close_interface(
+                                            self,
+                                            systems,
+                                            Window::Trade,
+                                        );
+                                        send_closetrade(socket)?;
+                                    }
+                                    1 => {
+                                        if matches!(
+                                            self.trade.trade_status,
+                                            TradeStatus::None
+                                                | TradeStatus::Accepted
+                                        ) {
+                                            send_submittrade(socket)?;
+                                        }
+                                    }
+                                    _ => {}
+                                }
+                                self.trade.did_button_click = true;
+                            }
+                            self.click_textbox(
+                                systems,
+                                socket,
+                                screen_pos,
+                                SelectedTextbox::Trade,
+                            )?;
+
+                            if self.trade.trade_status == TradeStatus::None {
+                                if let Some(slot) = self
+                                    .trade
+                                    .find_mytrade_slot(systems, screen_pos)
+                                {
+                                    if self.trade.my_items[slot].got_data {
+                                        if self.trade.my_items[slot].count_data
+                                            > 1
+                                        {
+                                            alert.show_alert(
+                                                systems,
+                                                AlertType::Input,
+                                                String::new(),
+                                                "Enter the amount to remove"
+                                                    .into(),
+                                                250,
+                                                AlertIndex::RemoveTradeItem(
+                                                    slot as u16,
+                                                ),
+                                                true,
+                                            );
+                                        } else {
+                                            send_removetradeitem(
+                                                socket,
+                                                slot as u16,
+                                                1,
+                                            )?;
+                                        }
+                                    }
+                                }
+                            }
+
+                            hold_interface(
+                                self,
+                                systems,
+                                Window::Trade,
+                                screen_pos,
+                                true,
+                                false,
+                            );
+
+                            did_click = true;
+                        }
+                    }
                 }
-                3..=7 => {
-                    let button_index =
-                        interface.shop.shop_start_pos + index.saturating_sub(3);
-                    send_buyitem(socket, button_index as u16)?;
-                }
-                _ => {}
             }
-            interface.shop.did_button_click = true;
-            return Ok(true);
         }
 
-        if let Some(index) = interface.trade.click_buttons(systems, screen_pos)
-        {
-            match index {
-                0 | 2 => {
-                    close_interface(interface, systems, Window::Trade);
-                    send_closetrade(socket)?;
-                }
-                1 => {
-                    if matches!(
-                        interface.trade.trade_status,
-                        TradeStatus::None | TradeStatus::Accepted
-                    ) {
-                        send_submittrade(socket)?;
-                    }
-                }
-                _ => {}
-            }
-            interface.trade.did_button_click = true;
-            return Ok(true);
-        }
-
-        Ok(false)
+        Ok(did_click)
     }
 
     pub fn click_buttons(
@@ -957,49 +1093,56 @@ impl Interface {
         systems: &mut SystemHolder,
         socket: &mut Socket,
         screen_pos: Vec2,
+        chatbox_type: SelectedTextbox,
     ) -> Result<()> {
-        if is_within_area(
-            screen_pos,
-            Vec2::new(
-                self.chatbox.textbox.base_pos.x
-                    + (self.chatbox.textbox.adjust_pos.x
-                        * systems.scale as f32)
-                        .floor(),
-                self.chatbox.textbox.base_pos.y
-                    + (self.chatbox.textbox.adjust_pos.y
-                        * systems.scale as f32)
-                        .floor(),
-            ),
-            (self.chatbox.textbox.size * systems.scale as f32).floor(),
-        ) {
-            self.chatbox.textbox.set_select(systems, true);
-            self.chatbox.textbox.set_hold(true);
-            self.chatbox.textbox.select_text(systems, screen_pos);
-            self.selected_textbox = SelectedTextbox::Chatbox;
-            return Ok(());
-        }
-
-        if self.trade.visible
-            & is_within_area(
-                screen_pos,
-                Vec2::new(
-                    self.trade.money_input.base_pos.x
-                        + (self.trade.money_input.adjust_pos.x
-                            * systems.scale as f32)
-                            .floor(),
-                    self.trade.money_input.base_pos.y
-                        + (self.trade.money_input.adjust_pos.y
-                            * systems.scale as f32)
-                            .floor(),
-                ),
-                self.trade.money_input.size,
-            )
-        {
-            self.trade.money_input.set_select(systems, true);
-            self.trade.money_input.set_hold(true);
-            self.trade.money_input.select_text(systems, screen_pos);
-            self.selected_textbox = SelectedTextbox::Trade;
-            return Ok(());
+        match chatbox_type {
+            SelectedTextbox::Chatbox => {
+                if is_within_area(
+                    screen_pos,
+                    Vec2::new(
+                        self.chatbox.textbox.base_pos.x
+                            + (self.chatbox.textbox.adjust_pos.x
+                                * systems.scale as f32)
+                                .floor(),
+                        self.chatbox.textbox.base_pos.y
+                            + (self.chatbox.textbox.adjust_pos.y
+                                * systems.scale as f32)
+                                .floor(),
+                    ),
+                    (self.chatbox.textbox.size * systems.scale as f32).floor(),
+                ) {
+                    self.chatbox.textbox.set_select(systems, true);
+                    self.chatbox.textbox.set_hold(true);
+                    self.chatbox.textbox.select_text(systems, screen_pos);
+                    self.selected_textbox = SelectedTextbox::Chatbox;
+                    return Ok(());
+                }
+            }
+            SelectedTextbox::Trade => {
+                if self.trade.visible
+                    & is_within_area(
+                        screen_pos,
+                        Vec2::new(
+                            self.trade.money_input.base_pos.x
+                                + (self.trade.money_input.adjust_pos.x
+                                    * systems.scale as f32)
+                                    .floor(),
+                            self.trade.money_input.base_pos.y
+                                + (self.trade.money_input.adjust_pos.y
+                                    * systems.scale as f32)
+                                    .floor(),
+                        ),
+                        self.trade.money_input.size,
+                    )
+                {
+                    self.trade.money_input.set_select(systems, true);
+                    self.trade.money_input.set_hold(true);
+                    self.trade.money_input.select_text(systems, screen_pos);
+                    self.selected_textbox = SelectedTextbox::Trade;
+                    return Ok(());
+                }
+            }
+            _ => {}
         }
 
         match self.selected_textbox {

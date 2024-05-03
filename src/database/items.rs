@@ -1,12 +1,11 @@
 use crate::{data_types::*, socket::*, Result};
 use log::warn;
 use serde::{Deserialize, Serialize};
+use speedy::{Endianness, Readable, Writable};
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, Read};
 
-#[derive(
-    Clone, Debug, Deserialize, Serialize, ByteBufferRead, ByteBufferWrite,
-)]
+#[derive(Clone, Debug, Deserialize, Serialize, Readable, Writable)]
 pub struct ItemData {
     pub name: String,
     pub levelreq: u16,
@@ -42,15 +41,9 @@ fn load_file(id: usize) -> Result<Option<ItemData>> {
 
     match OpenOptions::new().read(true).open(name) {
         Ok(mut file) => {
-            let mut data = Vec::new();
-            file.read_to_end(&mut data)?;
-
-            let mut buf = ByteBuffer::with_capacity(data.len())?;
-            buf.write(data)?;
-            buf.move_cursor_to_start();
-
-            buf.move_cursor(8)?;
-            Ok(Some(buf.read::<ItemData>()?))
+            let mut bytes = Vec::new();
+            file.read_to_end(&mut bytes)?;
+            Ok(Some(ItemData::read_from_buffer(&bytes).unwrap()))
         }
         Err(e) => {
             warn!("Item Load File Num {} Err: {}", id, e);

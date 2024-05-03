@@ -1,15 +1,6 @@
 use crate::{data_types::*, data_types::*, socket::*};
 
-#[derive(
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    ByteBufferRead,
-    ByteBufferWrite,
-    MByteBufferRead,
-    MByteBufferWrite,
-)]
+#[derive(Clone, Debug, PartialEq, Eq, MByteBufferRead, MByteBufferWrite)]
 pub enum Command {
     KickPlayer,
     KickPlayerByName(String),
@@ -19,15 +10,7 @@ pub enum Command {
 }
 
 #[derive(
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    ByteBufferRead,
-    ByteBufferWrite,
-    MByteBufferRead,
-    MByteBufferWrite,
+    Copy, Clone, Debug, PartialEq, Eq, MByteBufferRead, MByteBufferWrite,
 )]
 enum ClientPacket {
     OnlineCheck,

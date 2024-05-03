@@ -84,8 +84,6 @@ pub enum VitalTypes {
     Deserialize,
     Serialize,
     Default,
-    ByteBufferRead,
-    ByteBufferWrite,
     MByteBufferRead,
     MByteBufferWrite,
 )]

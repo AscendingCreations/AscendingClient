@@ -1,5 +1,6 @@
 use crate::socket::*;
 use serde::{Deserialize, Serialize};
+use speedy::{Endianness, Readable, Writable};
 
 #[derive(
     Copy,
@@ -10,8 +11,8 @@ use serde::{Deserialize, Serialize};
     Default,
     Deserialize,
     Serialize,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
@@ -45,8 +46,8 @@ pub enum ItemTypes {
     Serialize,
     Deserialize,
     Default,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]

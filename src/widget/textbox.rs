@@ -225,7 +225,9 @@ impl Textbox {
         let b_pos = Vec2::new(self.base_pos.x, self.base_pos.y)
             + (self.adjust_pos * systems.scale as f32).floor();
 
-        systems.gfx.set_pos(&self.bg, self.base_pos);
+        systems
+            .gfx
+            .set_pos(&self.bg, Vec3::new(b_pos.x, b_pos.y, self.base_pos.z));
         systems.gfx.set_pos(
             &self.text_index,
             Vec3::new(b_pos.x + self.adjust_x, b_pos.y, detail_2),

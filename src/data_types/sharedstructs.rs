@@ -1,5 +1,6 @@
 use crate::socket::*;
 use serde::{Deserialize, Serialize};
+use speedy::{Endianness, Readable, Writable};
 
 #[derive(
     Clone,
@@ -10,8 +11,8 @@ use serde::{Deserialize, Serialize};
     Deserialize,
     Serialize,
     Default,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
@@ -31,8 +32,8 @@ pub struct TileBox {
     Default,
     PartialEq,
     Eq,
-    ByteBufferRead,
-    ByteBufferWrite,
+    Readable,
+    Writable,
     MByteBufferRead,
     MByteBufferWrite,
 )]
