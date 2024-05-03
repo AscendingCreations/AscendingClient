@@ -762,6 +762,7 @@ impl Interface {
                                         systems,
                                         Window::Inventory,
                                     );
+                                    return Ok(true);
                                 }
                                 self.inventory.did_button_click = true;
                             }
@@ -789,6 +790,7 @@ impl Interface {
                                         systems,
                                         Window::Profile,
                                     );
+                                    return Ok(true);
                                 }
                                 self.profile.did_button_click = true;
                             }
@@ -816,6 +818,7 @@ impl Interface {
                                         systems,
                                         Window::Setting,
                                     );
+                                    return Ok(true);
                                 }
                                 self.setting.did_button_click = true;
                             }
@@ -868,6 +871,7 @@ impl Interface {
                                             Window::Shop,
                                         );
                                         send_closeshop(socket)?;
+                                        return Ok(true);
                                     } // Close
                                     1 => {
                                         // Scroll Up
@@ -952,6 +956,7 @@ impl Interface {
                                         Window::Storage,
                                     );
                                     send_closestorage(socket)?;
+                                    return Ok(true);
                                 }
                                 self.storage.did_button_click = true;
                             }
@@ -981,6 +986,7 @@ impl Interface {
                                             Window::Trade,
                                         );
                                         send_closetrade(socket)?;
+                                        return Ok(true);
                                     }
                                     1 => {
                                         if matches!(

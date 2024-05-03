@@ -81,15 +81,25 @@ pub fn handle_ping(
 pub fn handle_alertmsg(
     _socket: &mut Socket,
     _world: &mut World,
-    _systems: &mut SystemHolder,
+    systems: &mut SystemHolder,
     _content: &mut Content,
-    _alert: &mut Alert,
+    alert: &mut Alert,
     data: &mut MByteBuffer,
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let _message = data.read::<String>()?;
+    let message = data.read::<String>()?;
     let _close = data.read::<u8>()?;
+
+    alert.show_alert(
+        systems,
+        AlertType::Inform,
+        message,
+        "Alert Message".into(),
+        250,
+        AlertIndex::None,
+        false,
+    );
 
     Ok(())
 }
