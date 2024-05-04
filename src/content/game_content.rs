@@ -77,7 +77,7 @@ impl GameContent {
         let game_lights =
             systems
                 .gfx
-                .add_light(lights, 2, "Game Lights".into(), false);
+                .add_light(lights, 1, "Game Lights".into(), false);
 
         GameContent {
             players: Rc::new(RefCell::new(IndexSet::default())),

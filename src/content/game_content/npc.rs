@@ -63,7 +63,7 @@ pub fn add_npc(
     let name_index =
         systems
             .gfx
-            .add_text(entity_name, 1, "Npc Name".into(), false);
+            .add_text(entity_name, 2, "Npc Name".into(), false);
     let entitynamemap = EntityNameMap(name_index);
 
     let hpbar = HPBar {

@@ -76,7 +76,7 @@ pub fn add_player(
     let name_index =
         systems
             .gfx
-            .add_text(entity_name, 1, "Player Name".into(), false);
+            .add_text(entity_name, 2, "Player Name".into(), false);
     let entitynamemap = EntityNameMap(name_index);
 
     let hpbar = HPBar {

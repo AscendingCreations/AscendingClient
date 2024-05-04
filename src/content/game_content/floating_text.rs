@@ -152,7 +152,7 @@ pub fn add_float_text(
         )))
         .set_default_color(color);
     let text_index =
-        systems.gfx.add_text(text, 1, "Floating Text".into(), true);
+        systems.gfx.add_text(text, 2, "Floating Text".into(), true);
 
     let mut textbg = create_label(
         systems,
@@ -166,7 +166,7 @@ pub fn add_float_text(
     let text_bg =
         systems
             .gfx
-            .add_text(textbg, 1, "Floating Text Shadow".into(), true);
+            .add_text(textbg, 2, "Floating Text Shadow".into(), true);
 
     content.float_text.data.push(FloatingTextData {
         text: text_index,
