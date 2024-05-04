@@ -1,7 +1,7 @@
 [package]
 name = "client"
 version = "0.1.0"
-authors = ["S.J.R. van Schaik", "Andrew Wheeler <genusistimelord@outlook.com"]
+authors = ["Andrew Wheeler <genusistimelord@outlook.com>", "Sherwin Salonga", "S.J.R. van Schaik"]
 license = "MIT OR Apache-2.0"
 edition = "2021"
 
