@@ -15,3 +15,4 @@ Please see Ascending Server for how to Generate the TLS certificates.
 [`Ascending Server`](https://github.com/AscendingCreations/AscendingServer)
 [`Ascending Client`](https://github.com/AscendingCreations/AscendingClient)
 [`Ascending Editors`](https://github.com/AscendingCreations/AscendingEditors)
+[`Ascending Map Editor`](https://github.com/AscendingCreations/AscendingMapEditor)
