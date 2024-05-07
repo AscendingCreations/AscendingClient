@@ -187,6 +187,11 @@ async fn main() -> Result<()> {
 
     // get the screen size.
     let size = renderer.size();
+    let mat = Mat4::from_translation(Vec3 {
+        x: 40.0,
+        y: 0.0,
+        z: 0.0,
+    });
 
     // get the Scale factor the pc currently is using for upscaling or downscaling the rendering.
     let scale = renderer
@@ -297,6 +302,8 @@ async fn main() -> Result<()> {
         },
         FlatControls::new(FlatSettings { zoom: 1.0 }),
         [systems.size.width, systems.size.height],
+        mat,
+        1.5,
     );
 
     // create a Text rendering object.

@@ -1,7 +1,11 @@
 [package]
 name = "client"
 version = "0.1.0"
-authors = ["Andrew Wheeler <genusistimelord@outlook.com>", "Sherwin Salonga", "S.J.R. van Schaik"]
+authors = [
+    "Andrew Wheeler <genusistimelord@outlook.com>",
+    "Sherwin Salonga",
+    "S.J.R. van Schaik",
+]
 license = "MIT OR Apache-2.0"
 edition = "2021"
 
@@ -62,7 +66,7 @@ speedy = "=0.8.7"
 package = "ascending_camera"
 git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/camera"
-version = "0.1.1"
+version = "0.2.0"
 
 [dependencies.input]
 package = "ascending_input"
@@ -74,7 +78,7 @@ version = "0.2.1"
 package = "ascending_graphics"
 git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/graphics"
-version = "0.6.0"
+version = "0.7.0"
 
 [profile.dev]
 opt-level = 0

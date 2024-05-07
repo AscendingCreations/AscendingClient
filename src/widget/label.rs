@@ -24,7 +24,6 @@ pub fn create_label(
     )
     .set_bounds(Some(bounds))
     .set_default_color(color);
-    text.use_camera = true;
     text.changed = true;
     text
 }
@@ -44,7 +43,6 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
     )
     .set_bounds(Some(Bounds::new(0.0, 0.0, 0.0, 0.0)))
     .set_default_color(Color::rgba(255, 255, 255, 255));
-    text.use_camera = true;
     text.changed = true;
     text
 }

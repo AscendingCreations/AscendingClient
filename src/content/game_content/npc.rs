@@ -559,6 +559,7 @@ pub fn create_npc_light(
                 animate: true,
                 anim_speed: 5.0,
                 dither: 0.8,
+                camera_type: CameraType::None,
             },
         )
     }

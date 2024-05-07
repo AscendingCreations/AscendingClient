@@ -1,0 +1,16 @@
+username = ""
+password = ""
+save_password = false
+bgm_volume = 70
+sfx_volume = 70
+reconnect_code = ""
+level_filter = "Info"
+enable_backtrace = false
+graphic_backend = "OpenGL|DX12|Vulkan|Metal"
+show_fps = false
+show_ping = false
+show_average_ping = false
+show_frame_loop = false
+power_settings = "HighPower"
+present_mode = "AutoVsync"
+gpu_instance = "None"
