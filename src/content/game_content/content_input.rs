@@ -1,7 +1,7 @@
 use graphics::*;
 use hecs::World;
 use input::Key;
-use winit::keyboard::NamedKey;
+use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 use crate::{
     content::*,
@@ -21,7 +21,7 @@ impl GameContent {
         world: &mut World,
         systems: &mut SystemHolder,
         socket: &mut Socket,
-        elwt: &winit::event_loop::EventLoopWindowTarget<()>,
+        elwt: &ActiveEventLoop,
         alert: &mut Alert,
         tooltip: &mut Tooltip,
         input_type: MouseInputType,

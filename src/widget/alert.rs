@@ -7,7 +7,7 @@ use crate::{
 };
 use graphics::{cosmic_text::Attrs, *};
 use input::Key;
-use winit::keyboard::NamedKey;
+use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 #[derive(PartialEq, Eq)]
 pub enum AlertType {
@@ -529,7 +529,7 @@ impl Alert {
         &mut self,
         systems: &mut SystemHolder,
         socket: &mut Socket,
-        elwt: &winit::event_loop::EventLoopWindowTarget<()>,
+        elwt: &ActiveEventLoop,
         input_type: MouseInputType,
         tooltip: &mut Tooltip,
         screen_pos: Vec2,
@@ -581,7 +581,7 @@ impl Alert {
         &mut self,
         systems: &mut SystemHolder,
         socket: &mut Socket,
-        _elwt: &winit::event_loop::EventLoopWindowTarget<()>,
+        _elwt: &ActiveEventLoop,
         index: usize,
     ) -> Result<()> {
         match self.alert_type {

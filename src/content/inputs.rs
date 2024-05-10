@@ -1,7 +1,7 @@
 use graphics::*;
 use hecs::World;
 use input::Key;
-use winit::keyboard::NamedKey;
+use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 use crate::{
     content::{menu_content::content_input::*, *},
@@ -24,7 +24,7 @@ pub fn handle_mouse_input(
     world: &mut World,
     systems: &mut SystemHolder,
     socket: &mut Socket,
-    elwt: &winit::event_loop::EventLoopWindowTarget<()>,
+    elwt: &ActiveEventLoop,
     input_type: MouseInputType,
     mouse_pos: &Vec2,
     content: &mut Content,
