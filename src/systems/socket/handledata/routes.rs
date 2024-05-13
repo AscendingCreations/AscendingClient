@@ -564,7 +564,6 @@ pub fn handle_warp(
                     socket.client.sends.clear();
 
                     if old_pos.map != pos.map {
-                        buffer.clear_buffer();
                         content
                             .game_content
                             .init_map(systems, pos.map, buffer)?;
