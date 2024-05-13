@@ -1,4 +1,5 @@
 **/target
+**/.build
 *.lock
 log.txt
 *.txt
