@@ -925,7 +925,10 @@ impl Chatbox {
             )
             .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
 
-        let text = systems.gfx.add_text(text_data, 1, "Chatbox Text".into(), true);
+        let text =
+            systems
+                .gfx
+                .add_text(text_data, 1, "Chatbox Text".into(), true);
         let msg_color = Attrs::new().color(msg.1);
 
         let msg = if let Some(header) = header_msg {
