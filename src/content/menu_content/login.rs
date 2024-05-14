@@ -38,12 +38,7 @@ impl Login {
             .set_color(Color::rgba(160, 160, 160, 255))
             .set_border_color(Color::rgba(10, 10, 10, 255))
             .set_border_width(1.0);
-        window.push(systems.gfx.add_rect(
-            menu_rect,
-            0,
-            "Login Window".into(),
-            true,
-        ));
+        window.push(systems.gfx.add_rect(menu_rect, 0, "Login Window", true));
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         header_rect
@@ -54,12 +49,7 @@ impl Login {
             ))
             .set_size(Vec2::new(size.x, (30.0 * systems.scale as f32).floor()))
             .set_color(Color::rgba(120, 120, 120, 255));
-        window.push(systems.gfx.add_rect(
-            header_rect,
-            0,
-            "Login Header".into(),
-            true,
-        ));
+        window.push(systems.gfx.add_rect(header_rect, 0, "Login Header", true));
 
         let header_text = create_label(
             systems,
@@ -77,12 +67,10 @@ impl Login {
             ),
             Color::rgba(240, 240, 240, 255),
         );
-        let text_index = systems.gfx.add_text(
-            header_text,
-            1,
-            "Login Header Text".into(),
-            true,
-        );
+        let text_index =
+            systems
+                .gfx
+                .add_text(header_text, 1, "Login Header Text", true);
         systems.gfx.set_text(
             &mut systems.renderer,
             &text_index,
@@ -121,13 +109,13 @@ impl Login {
             window.push(systems.gfx.add_rect(
                 labelbox,
                 0,
-                "Login Labelbox".into(),
+                "Login Labelbox",
                 true,
             ));
             window.push(systems.gfx.add_rect(
                 textbox_bg,
                 0,
-                "Login Textbox BG".into(),
+                "Login Textbox BG",
                 true,
             ));
 
@@ -147,8 +135,7 @@ impl Login {
                 ),
                 Color::rgba(100, 100, 100, 255),
             );
-            let textindex =
-                systems.gfx.add_text(text, 1, "Login Label".into(), true);
+            let textindex = systems.gfx.add_text(text, 1, "Login Label", true);
             let (msg, disable_option) = match index {
                 1 => (
                     "Password",

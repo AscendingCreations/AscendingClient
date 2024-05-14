@@ -86,7 +86,7 @@ impl Storage {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Storage BG".into(), false);
+        let bg = systems.gfx.add_rect(rect, 0, "Storage BG", false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos =
@@ -97,12 +97,10 @@ impl Storage {
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size((header_size * systems.scale as f32).floor())
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header = systems.gfx.add_rect(
-            header_rect,
-            0,
-            "Storage Header".into(),
-            false,
-        );
+        let header =
+            systems
+                .gfx
+                .add_rect(header_rect, 0, "Storage Header", false);
 
         let text = create_label(
             systems,
@@ -121,9 +119,7 @@ impl Storage {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems
-                .gfx
-                .add_text(text, 1, "Storage Header Text".into(), false);
+            systems.gfx.add_text(text, 1, "Storage Header Text", false);
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Storage");
@@ -152,12 +148,7 @@ impl Storage {
                     (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
                 )
                 .set_color(Color::rgba(200, 200, 200, 255));
-            *slot = systems.gfx.add_rect(
-                box_rect,
-                0,
-                "Storage Slot BG".into(),
-                false,
-            );
+            *slot = systems.gfx.add_rect(box_rect, 0, "Storage Slot BG", false);
         }
 
         let mut button = Vec::with_capacity(1);
@@ -402,12 +393,10 @@ impl Storage {
             slot_pos.y + (6.0 * systems.scale as f32).floor(),
             item_zpos,
         );
-        let image_index = systems.gfx.add_image(
-            image,
-            0,
-            "Storage Item".into(),
-            self.visible,
-        );
+        let image_index =
+            systems
+                .gfx
+                .add_image(image, 0, "Storage Item", self.visible);
 
         self.item_slot[slot].image = image_index;
         self.item_slot[slot].item_index = data.num as u16;
@@ -426,7 +415,7 @@ impl Storage {
             let text_bg_index = systems.gfx.add_rect(
                 text_bg,
                 1,
-                "Storage Amount BG".into(),
+                "Storage Amount BG",
                 self.visible,
             );
 
@@ -447,12 +436,10 @@ impl Storage {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let text_index = systems.gfx.add_text(
-                text,
-                2,
-                "Storage Amount".into(),
-                self.visible,
-            );
+            let text_index =
+                systems
+                    .gfx
+                    .add_text(text, 2, "Storage Amount", self.visible);
             systems.gfx.set_text(
                 &mut systems.renderer,
                 &text_index,

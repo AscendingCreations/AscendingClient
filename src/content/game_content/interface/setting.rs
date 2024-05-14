@@ -52,7 +52,7 @@ impl Setting {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Settings BG".into(), false);
+        let bg = systems.gfx.add_rect(rect, 0, "Settings BG", false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
@@ -65,12 +65,10 @@ impl Setting {
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size((header_size * systems.scale as f32).floor())
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header = systems.gfx.add_rect(
-            header_rect,
-            0,
-            "Settings Header".into(),
-            false,
-        );
+        let header =
+            systems
+                .gfx
+                .add_rect(header_rect, 0, "Settings Header", false);
 
         let text = create_label(
             systems,
@@ -89,9 +87,7 @@ impl Setting {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems
-                .gfx
-                .add_text(text, 1, "Settings Header Text".into(), false);
+            systems.gfx.add_text(text, 1, "Settings Header Text", false);
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Setting");
@@ -220,9 +216,7 @@ impl Setting {
                 Color::rgba(200, 200, 200, 255),
             );
             let label_index =
-                systems
-                    .gfx
-                    .add_text(text, 1, "Settings Label".into(), false);
+                systems.gfx.add_text(text, 1, "Settings Label", false);
             systems
                 .gfx
                 .set_text(&mut systems.renderer, &label_index, msg);
@@ -243,9 +237,7 @@ impl Setting {
             Color::rgba(200, 200, 200, 255),
         );
         let bgm_label =
-            systems
-                .gfx
-                .add_text(slabel, 1, "Settings BGM Label".into(), false);
+            systems.gfx.add_text(slabel, 1, "Settings BGM Label", false);
         systems.gfx.set_text(
             &mut systems.renderer,
             &bgm_label,
@@ -265,9 +257,7 @@ impl Setting {
             Color::rgba(200, 200, 200, 255),
         );
         let sfx_label =
-            systems
-                .gfx
-                .add_text(slabel, 1, "Settings SFX Label".into(), false);
+            systems.gfx.add_text(slabel, 1, "Settings SFX Label", false);
         systems.gfx.set_text(
             &mut systems.renderer,
             &sfx_label,

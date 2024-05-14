@@ -37,10 +37,7 @@ impl ItemDescription {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let bg =
-            systems
-                .gfx
-                .add_rect(bg_rect, 0, "Item Desc Window".into(), false);
+        let bg = systems.gfx.add_rect(bg_rect, 0, "Item Desc Window", false);
 
         ItemDescription {
             visible: false,
@@ -163,12 +160,10 @@ impl ItemDescription {
                 tpos.y + text_size.y,
             )))
             .set_default_color(Color::rgba(250, 250, 250, 255));
-        let name = systems.gfx.add_text(
-            name_text,
-            1,
-            "Item Desc Name".into(),
-            self.visible,
-        );
+        let name =
+            systems
+                .gfx
+                .add_text(name_text, 1, "Item Desc Name", self.visible);
 
         let mut data = Vec::with_capacity(text_holder.len());
         data.push(DescData {
@@ -200,7 +195,7 @@ impl ItemDescription {
                 let text_index = systems.gfx.add_text(
                     text,
                     1,
-                    "Item Desc Text".into(),
+                    "Item Desc Text",
                     self.visible,
                 );
                 systems

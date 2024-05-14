@@ -45,7 +45,7 @@ impl MenuContent {
         bg_image.pos = Vec3::new(0.0, 0.0, ORDER_MENU_BG);
         bg_image.hw = Vec2::new(800.0, 600.0);
         bg_image.uv = Vec4::new(0.0, 0.0, 800.0, 600.0);
-        let bg = systems.gfx.add_image(bg_image, 0, "Menu BG".into(), true);
+        let bg = systems.gfx.add_image(bg_image, 0, "Menu BG", true);
 
         let label_size = Vec2::new(
             200.0 * systems.scale as f32,
@@ -60,9 +60,7 @@ impl MenuContent {
             Color::rgba(220, 220, 220, 255),
         );
         let server_status =
-            systems
-                .gfx
-                .add_text(text, 1, "Menu Server Status".into(), true);
+            systems.gfx.add_text(text, 1, "Menu Server Status", true);
 
         MenuContent {
             bg,

@@ -212,7 +212,7 @@ pub fn create_map_data(
 ) -> Result<Index> {
     let mut map = Map::new(&mut systems.renderer, TILE_SIZE as u32);
     map.can_render = true;
-    let map_index = systems.gfx.add_map(map, 0, "Map".into(), true);
+    let map_index = systems.gfx.add_map(map, 0, "Map", true);
 
     let mapslotdata = MapSlotData {
         mappos,

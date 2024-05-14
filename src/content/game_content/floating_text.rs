@@ -151,8 +151,7 @@ pub fn add_float_text(
             systems.size.height,
         )))
         .set_default_color(color);
-    let text_index =
-        systems.gfx.add_text(text, 2, "Floating Text".into(), true);
+    let text_index = systems.gfx.add_text(text, 2, "Floating Text", true);
 
     let mut textbg = create_label(
         systems,
@@ -163,10 +162,9 @@ pub fn add_float_text(
     );
     let attrs = Attrs::new().weight(Weight::BOLD);
     textbg.set_text(&mut systems.renderer, &msg, attrs, Shaping::Advanced);
-    let text_bg =
-        systems
-            .gfx
-            .add_text(textbg, 2, "Floating Text Shadow".into(), true);
+    let text_bg = systems
+        .gfx
+        .add_text(textbg, 2, "Floating Text Shadow", true);
 
     content.float_text.data.push(FloatingTextData {
         text: text_index,

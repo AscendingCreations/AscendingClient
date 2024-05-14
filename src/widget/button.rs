@@ -112,7 +112,7 @@ impl Button {
                 let rect_index = systems.gfx.add_rect(
                     rect,
                     render_layer,
-                    "Button Image".into(),
+                    "Button Image",
                     visible,
                 );
                 Some(rect_index)
@@ -126,7 +126,7 @@ impl Button {
                 let image_index = systems.gfx.add_image(
                     image,
                     render_layer,
-                    "Button Image".into(),
+                    "Button Image",
                     visible,
                 );
                 Some(image_index)
@@ -156,7 +156,7 @@ impl Button {
                 let image_index = systems.gfx.add_image(
                     image,
                     render_layer,
-                    "Button Content".into(),
+                    "Button Content",
                     visible,
                 );
                 Some(image_index)
@@ -186,7 +186,7 @@ impl Button {
                 let index = systems.gfx.add_text(
                     text,
                     data.render_layer,
-                    "Button Content".into(),
+                    "Button Content",
                     visible,
                 );
                 systems

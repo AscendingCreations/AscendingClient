@@ -79,19 +79,17 @@ impl Textbox {
         rect.set_color(bg_color)
             .set_position(Vec3::new(b_pos.x, b_pos.y, base_pos.z))
             .set_size((size * systems.scale as f32).floor());
-        let bg = systems.gfx.add_rect(rect, 0, "Textbox BG".into(), false);
+        let bg = systems.gfx.add_rect(rect, 0, "Textbox BG", false);
 
         let mut select_rect = Rect::new(&mut systems.renderer, 0);
         select_rect
             .set_color(selection_bg_color)
             .set_position(Vec3::new(b_pos.x, b_pos.y, detail_1))
             .set_size(Vec2::new(0.0, size.y * systems.scale as f32).floor());
-        let selection = systems.gfx.add_rect(
-            select_rect,
-            0,
-            "Textbox Select".into(),
-            visible,
-        );
+        let selection =
+            systems
+                .gfx
+                .add_rect(select_rect, 0, "Textbox Select", visible);
 
         let mut text_data = create_label(
             systems,
@@ -109,7 +107,7 @@ impl Textbox {
         let text_index = systems.gfx.add_text(
             text_data,
             render_layer,
-            "Textbox Text".into(),
+            "Textbox Text",
             visible,
         );
 
@@ -118,10 +116,7 @@ impl Textbox {
             .set_size((Vec2::new(2.0, size.y) * systems.scale as f32).floor())
             .set_position(Vec3::new(b_pos.x, b_pos.y, detail_2))
             .set_color(text_color);
-        let caret =
-            systems
-                .gfx
-                .add_rect(caret_rect, 0, "Textbox Caret".into(), false);
+        let caret = systems.gfx.add_rect(caret_rect, 0, "Textbox Caret", false);
 
         let mut disable_selection = false;
         let mut disable_copy = false;

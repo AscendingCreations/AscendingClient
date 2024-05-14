@@ -190,12 +190,10 @@ impl Alert {
             header_text_size.y + (4.0 * systems.scale as f32).floor(),
         );
         header_text.changed = true;
-        let header_text_index = systems.gfx.add_text(
-            header_text,
-            5,
-            "Alert Header Text".into(),
-            true,
-        );
+        let header_text_index =
+            systems
+                .gfx
+                .add_text(header_text, 5, "Alert Header Text", true);
         if alert_type == AlertType::Input {
             systems.gfx.center_text(&header_text_index);
         }
@@ -215,13 +213,9 @@ impl Alert {
             .set_color(Color::rgba(160, 160, 160, 255));
 
         self.window
-            .push(systems.gfx.add_rect(bg, 3, "Alert BG".into(), true));
-        self.window.push(systems.gfx.add_rect(
-            window,
-            4,
-            "Alert Window".into(),
-            true,
-        ));
+            .push(systems.gfx.add_rect(bg, 3, "Alert BG", true));
+        self.window
+            .push(systems.gfx.add_rect(window, 4, "Alert Window", true));
 
         if alert_type != AlertType::Input {
             let pos = Vec2::new(
@@ -240,12 +234,8 @@ impl Alert {
                 text_size.y + (10.0 * systems.scale as f32).floor(),
             );
             text.changed = true;
-            self.text.push(systems.gfx.add_text(
-                text,
-                5,
-                "Alert Text".into(),
-                true,
-            ));
+            self.text
+                .push(systems.gfx.add_text(text, 5, "Alert Text", true));
 
             let mut header = Rect::new(&mut systems.renderer, 0);
             header
@@ -262,7 +252,7 @@ impl Alert {
             self.window.push(systems.gfx.add_rect(
                 header,
                 4,
-                "Alert Header BG".into(),
+                "Alert Header BG",
                 true,
             ));
         }
@@ -387,7 +377,7 @@ impl Alert {
                     bg: systems.gfx.add_rect(
                         textbox_bg,
                         4,
-                        "Alert Input BG".into(),
+                        "Alert Input BG",
                         true,
                     ),
                     textbox,

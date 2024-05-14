@@ -62,7 +62,7 @@ impl Profile {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Profile BG".into(), false);
+        let bg = systems.gfx.add_rect(rect, 0, "Profile BG", false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
@@ -78,12 +78,10 @@ impl Profile {
                 (header_size.y * systems.scale as f32).floor(),
             ))
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header = systems.gfx.add_rect(
-            header_rect,
-            0,
-            "Profile Header".into(),
-            false,
-        );
+        let header =
+            systems
+                .gfx
+                .add_rect(header_rect, 0, "Profile Header", false);
 
         let text = create_label(
             systems,
@@ -102,9 +100,7 @@ impl Profile {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems
-                .gfx
-                .add_text(text, 1, "Profile Header Text".into(), false);
+            systems.gfx.add_text(text, 1, "Profile Header Text", false);
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Profile");
@@ -159,12 +155,10 @@ impl Profile {
                     (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
                 )
                 .set_color(Color::rgba(200, 200, 200, 255));
-            *slot = systems.gfx.add_rect(
-                box_rect,
-                0,
-                "Profile EQ Slot BG".into(),
-                false,
-            );
+            *slot =
+                systems
+                    .gfx
+                    .add_rect(box_rect, 0, "Profile EQ Slot BG", false);
         }
 
         let mut fixed_label = Vec::with_capacity(5);
@@ -227,8 +221,7 @@ impl Profile {
                 Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
                 Color::rgba(200, 200, 200, 255),
             );
-            let label =
-                systems.gfx.add_text(text, 1, "Profile Label".into(), false);
+            let label = systems.gfx.add_text(text, 1, "Profile Label", false);
             systems.gfx.set_text(&mut systems.renderer, &label, msg);
             fixed_label.push(label);
         }
@@ -253,12 +246,8 @@ impl Profile {
                 Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
                 Color::rgba(200, 200, 200, 255),
             );
-            let label = systems.gfx.add_text(
-                text,
-                1,
-                "Profile Label Value".into(),
-                false,
-            );
+            let label =
+                systems.gfx.add_text(text, 1, "Profile Label Value", false);
             systems.gfx.set_text(&mut systems.renderer, &label, "0");
             value_label.push(label);
         }
@@ -781,12 +770,10 @@ impl Profile {
             slot_pos.y + (6.0 * systems.scale as f32).floor(),
             z_order,
         );
-        let eq_img = systems.gfx.add_image(
-            img,
-            0,
-            "Profile EQ Image".into(),
-            self.visible,
-        );
+        let eq_img =
+            systems
+                .gfx
+                .add_image(img, 0, "Profile EQ Image", self.visible);
 
         self.eq_data[slot] = Some(EqData {
             img: eq_img,

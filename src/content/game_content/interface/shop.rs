@@ -64,7 +64,7 @@ impl Shop {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Shop BG".into(), false);
+        let bg = systems.gfx.add_rect(rect, 0, "Shop BG", false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
@@ -77,10 +77,7 @@ impl Shop {
             .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
             .set_size((header_size * systems.scale as f32).floor())
             .set_color(Color::rgba(70, 70, 70, 255));
-        let header =
-            systems
-                .gfx
-                .add_rect(header_rect, 0, "Shop Header".into(), false);
+        let header = systems.gfx.add_rect(header_rect, 0, "Shop Header", false);
 
         let text = create_label(
             systems,
@@ -99,9 +96,7 @@ impl Shop {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems
-                .gfx
-                .add_text(text, 1, "Shop Header Text".into(), false);
+            systems.gfx.add_text(text, 1, "Shop Header Text", false);
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Shop");
@@ -217,8 +212,7 @@ impl Shop {
                     (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
                 )
                 .set_color(Color::rgba(200, 200, 200, 255));
-            let icon_bg =
-                systems.gfx.add_rect(bg, 0, "Shop Item BG".into(), false);
+            let icon_bg = systems.gfx.add_rect(bg, 0, "Shop Item BG", false);
 
             let pos = Vec2::new(
                 w_pos.x + (48.0 * systems.scale as f32).floor(),
@@ -238,12 +232,8 @@ impl Shop {
                 ),
                 Color::rgba(200, 200, 200, 255),
             );
-            let name = systems.gfx.add_text(
-                item_name,
-                1,
-                "Shop Item Name".into(),
-                false,
-            );
+            let name =
+                systems.gfx.add_text(item_name, 1, "Shop Item Name", false);
             systems.gfx.set_text(&mut systems.renderer, &name, "");
 
             let pos = Vec2::new(
@@ -264,12 +254,10 @@ impl Shop {
                 ),
                 Color::rgba(200, 200, 200, 255),
             );
-            let price = systems.gfx.add_text(
-                price_text,
-                1,
-                "Shop Item Price".into(),
-                false,
-            );
+            let price =
+                systems
+                    .gfx
+                    .add_text(price_text, 1, "Shop Item Price", false);
             systems.gfx.set_text(&mut systems.renderer, &price, "");
 
             let mut p_icon = Image::new(
@@ -286,12 +274,8 @@ impl Shop {
                 detail_1,
             );
             p_icon.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-            let price_icon = systems.gfx.add_image(
-                p_icon,
-                0,
-                "Shop Price Icon".into(),
-                false,
-            );
+            let price_icon =
+                systems.gfx.add_image(p_icon, 0, "Shop Price Icon", false);
 
             let buy_button = Button::new(
                 systems,
@@ -344,7 +328,7 @@ impl Shop {
             let amount_bg = systems.gfx.add_rect(
                 amount_bg_rect,
                 1,
-                "Shop Item Amount BG".into(),
+                "Shop Item Amount BG",
                 false,
             );
 
@@ -367,9 +351,7 @@ impl Shop {
                 Color::rgba(240, 240, 240, 255),
             );
             let amount =
-                systems
-                    .gfx
-                    .add_text(text, 2, "Shop Item Amount".into(), false);
+                systems.gfx.add_text(text, 2, "Shop Item Amount", false);
 
             item.push(ShopItem {
                 got_data: false,
@@ -1008,7 +990,7 @@ impl Shop {
             let item_index = systems.gfx.add_image(
                 item_sprite,
                 0,
-                "Shop Item".into(),
+                "Shop Item",
                 self.visible,
             );
             self.item[index].icon = Some(item_index);
@@ -1098,7 +1080,7 @@ impl Shop {
             let item_index = systems.gfx.add_image(
                 item_sprite,
                 0,
-                "Shop Item".into(),
+                "Shop Item",
                 self.visible,
             );
             self.item[default_index].icon = Some(item_index);

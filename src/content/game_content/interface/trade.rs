@@ -70,7 +70,7 @@ impl Trade {
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Trade Window".into(), false);
+        let bg = systems.gfx.add_rect(rect, 0, "Trade Window", false);
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
@@ -84,9 +84,7 @@ impl Trade {
             .set_size((header_size * systems.scale as f32).floor())
             .set_color(Color::rgba(70, 70, 70, 255));
         let header =
-            systems
-                .gfx
-                .add_rect(header_rect, 0, "Trade Header".into(), false);
+            systems.gfx.add_rect(header_rect, 0, "Trade Header", false);
 
         let text = create_label(
             systems,
@@ -105,9 +103,7 @@ impl Trade {
             Color::rgba(200, 200, 200, 255),
         );
         let header_text =
-            systems
-                .gfx
-                .add_text(text, 1, "Trade Header Text".into(), false);
+            systems.gfx.add_text(text, 1, "Trade Header Text", false);
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Trade");
@@ -234,12 +230,8 @@ impl Trade {
                     (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
                 )
                 .set_color(Color::rgba(200, 200, 200, 255));
-            slot[index] = systems.gfx.add_rect(
-                box_rect,
-                0,
-                "Trade Slot BG".into(),
-                false,
-            );
+            slot[index] =
+                systems.gfx.add_rect(box_rect, 0, "Trade Slot BG", false);
         });
         (MAX_TRADE_SLOT..MAX_TRADE_SLOT * 2).for_each(|index| {
             let render_index = index - MAX_TRADE_SLOT;
@@ -264,12 +256,8 @@ impl Trade {
                     (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
                 )
                 .set_color(Color::rgba(200, 200, 200, 255));
-            slot[index] = systems.gfx.add_rect(
-                box_rect,
-                0,
-                "Trade Slot BG".into(),
-                false,
-            );
+            slot[index] =
+                systems.gfx.add_rect(box_rect, 0, "Trade Slot BG", false);
         });
 
         let mut my_name_bg = Rect::new(&mut systems.renderer, 0);
@@ -291,12 +279,8 @@ impl Trade {
                 detail_1,
             ));
         let name_bg = [
-            systems
-                .gfx
-                .add_rect(my_name_bg, 0, "Trade Name".into(), false),
-            systems
-                .gfx
-                .add_rect(their_name_bg, 0, "Trade Name".into(), false),
+            systems.gfx.add_rect(my_name_bg, 0, "Trade Name", false),
+            systems.gfx.add_rect(their_name_bg, 0, "Trade Name", false),
         ];
 
         let mystatus = create_label(
@@ -316,9 +300,7 @@ impl Trade {
             Color::rgba(220, 220, 220, 255),
         );
         let my_status_text =
-            systems
-                .gfx
-                .add_text(mystatus, 1, "Trade Status".into(), false);
+            systems.gfx.add_text(mystatus, 1, "Trade Status", false);
         systems.gfx.set_text(
             &mut systems.renderer,
             &my_status_text,
@@ -341,9 +323,7 @@ impl Trade {
             Color::rgba(220, 220, 220, 255),
         );
         let their_status_text =
-            systems
-                .gfx
-                .add_text(theirstatus, 1, "Trade Status".into(), false);
+            systems.gfx.add_text(theirstatus, 1, "Trade Status", false);
         systems.gfx.set_text(
             &mut systems.renderer,
             &their_status_text,
@@ -377,16 +357,13 @@ impl Trade {
             (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
         their_money_icon.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         let money_icon = [
-            systems.gfx.add_image(
-                my_money_icon,
-                0,
-                "Trade Money Icon".into(),
-                false,
-            ),
+            systems
+                .gfx
+                .add_image(my_money_icon, 0, "Trade Money Icon", false),
             systems.gfx.add_image(
                 their_money_icon,
                 0,
-                "Trade Money Icon".into(),
+                "Trade Money Icon",
                 false,
             ),
         ];
@@ -425,12 +402,10 @@ impl Trade {
             ),
             Color::rgba(200, 200, 200, 255),
         );
-        let their_money = systems.gfx.add_text(
-            their_money_text,
-            1,
-            "Trade Money".into(),
-            false,
-        );
+        let their_money =
+            systems
+                .gfx
+                .add_text(their_money_text, 1, "Trade Money", false);
         systems
             .gfx
             .set_text(&mut systems.renderer, &their_money, "0");
@@ -451,12 +426,10 @@ impl Trade {
             ),
             Color::rgba(220, 220, 220, 255),
         );
-        let status_text = systems.gfx.add_text(
-            statustext,
-            1,
-            "Trade Main Status".into(),
-            false,
-        );
+        let status_text =
+            systems
+                .gfx
+                .add_text(statustext, 1, "Trade Main Status", false);
         systems
             .gfx
             .set_text(&mut systems.renderer, &status_text, "");
@@ -1254,9 +1227,7 @@ impl Trade {
             item_zpos,
         );
         let image_index =
-            systems
-                .gfx
-                .add_image(image, 0, "Trade Item".into(), self.visible);
+            systems.gfx.add_image(image, 0, "Trade Item", self.visible);
 
         item_slot[slot].image = image_index;
         item_slot[slot].item_index = data.num as u16;
@@ -1272,12 +1243,10 @@ impl Trade {
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
-            let text_bg_index = systems.gfx.add_rect(
-                text_bg,
-                1,
-                "Trade Item BG".into(),
-                self.visible,
-            );
+            let text_bg_index =
+                systems
+                    .gfx
+                    .add_rect(text_bg, 1, "Trade Item BG", self.visible);
 
             let text_size =
                 (Vec2::new(32.0, 16.0) * systems.scale as f32).floor();
@@ -1300,7 +1269,7 @@ impl Trade {
             let text_index = systems.gfx.add_text(
                 text,
                 2,
-                "Trade Item Amount".into(),
+                "Trade Item Amount",
                 self.visible,
             );
             systems.gfx.set_text(

@@ -1,4 +1,4 @@
-use std::default;
+use std::{borrow::Cow, default};
 
 use crate::info;
 use cosmic_text::Attrs;
@@ -20,7 +20,7 @@ pub enum GfxType {
 pub struct GfxData {
     pub layer: usize,
     pub visible: bool,
-    pub identifier: String,
+    pub identifier: Cow<'static, str>,
 }
 
 pub struct GfxImage {
@@ -74,13 +74,13 @@ impl GfxCollection {
         &mut self,
         gfx: Image,
         layer: usize,
-        identifier: String,
+        identifier: impl Into<Cow<'static, str>>,
         visible: bool,
     ) -> GfxType {
         let data = GfxData {
             layer,
             visible,
-            identifier,
+            identifier: identifier.into(),
         };
         GfxType::Image(self.image_storage.insert(GfxImage { data, gfx }))
     }
@@ -89,13 +89,13 @@ impl GfxCollection {
         &mut self,
         gfx: Rect,
         layer: usize,
-        identifier: String,
+        identifier: impl Into<Cow<'static, str>>,
         visible: bool,
     ) -> GfxType {
         let data = GfxData {
             layer,
             visible,
-            identifier,
+            identifier: identifier.into(),
         };
         GfxType::Rect(self.rect_storage.insert(GfxRect { data, gfx }))
     }
@@ -104,13 +104,13 @@ impl GfxCollection {
         &mut self,
         gfx: Text,
         layer: usize,
-        identifier: String,
+        identifier: impl Into<Cow<'static, str>>,
         visible: bool,
     ) -> GfxType {
         let data = GfxData {
             layer,
             visible,
-            identifier,
+            identifier: identifier.into(),
         };
         GfxType::Text(self.text_storage.insert(GfxText { data, gfx }))
     }
@@ -119,13 +119,13 @@ impl GfxCollection {
         &mut self,
         gfx: Map,
         layer: usize,
-        identifier: String,
+        identifier: impl Into<Cow<'static, str>>,
         visible: bool,
     ) -> GfxType {
         let data = GfxData {
             layer,
             visible,
-            identifier,
+            identifier: identifier.into(),
         };
         GfxType::Map(self.map_storage.insert(GfxMap { data, gfx }))
     }
@@ -134,13 +134,13 @@ impl GfxCollection {
         &mut self,
         gfx: Lights,
         layer: usize,
-        identifier: String,
+        identifier: impl Into<Cow<'static, str>>,
         visible: bool,
     ) -> GfxType {
         let data = GfxData {
             layer,
             visible,
-            identifier,
+            identifier: identifier.into(),
         };
         GfxType::Light(self.light_storage.insert(GfxLight { data, gfx }))
     }

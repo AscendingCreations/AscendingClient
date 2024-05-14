@@ -38,7 +38,7 @@ impl Register {
         window.push(systems.gfx.add_rect(
             menu_rect,
             0,
-            "Register Window".into(),
+            "Register Window",
             true,
         ));
 
@@ -54,7 +54,7 @@ impl Register {
         window.push(systems.gfx.add_rect(
             header_rect,
             0,
-            "Register Header".into(),
+            "Register Header",
             true,
         ));
 
@@ -74,12 +74,10 @@ impl Register {
             ),
             Color::rgba(240, 240, 240, 255),
         );
-        let text_index = systems.gfx.add_text(
-            header_text,
-            1,
-            "Register Header Text".into(),
-            true,
-        );
+        let text_index =
+            systems
+                .gfx
+                .add_text(header_text, 1, "Register Header Text", true);
         systems.gfx.set_text(
             &mut systems.renderer,
             &text_index,
@@ -121,13 +119,13 @@ impl Register {
             window.push(systems.gfx.add_rect(
                 labelbox,
                 0,
-                "Register Labelbox".into(),
+                "Register Labelbox",
                 true,
             ));
             window.push(systems.gfx.add_rect(
                 textbox_bg,
                 0,
-                "Register Textbox BG".into(),
+                "Register Textbox BG",
                 true,
             ));
 
@@ -148,7 +146,7 @@ impl Register {
                 Color::rgba(100, 100, 100, 255),
             );
             let textindex =
-                systems.gfx.add_text(text, 1, "Register Label".into(), true);
+                systems.gfx.add_text(text, 1, "Register Label", true);
             let (msg, hide_content) = match index {
                 1 => ("Retype", false),
                 2 => ("Password", true),
@@ -198,7 +196,7 @@ impl Register {
         window.push(systems.gfx.add_rect(
             sprite_bg,
             0,
-            "Register Sprite BG".into(),
+            "Register Sprite BG",
             true,
         ));
 
@@ -215,12 +213,10 @@ impl Register {
             ORDER_MENU_WINDOW_CONTENT_DETAIL,
         );
         image_texture.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
-        let image = systems.gfx.add_image(
-            image_texture,
-            0,
-            "Register Sprite".into(),
-            true,
-        );
+        let image =
+            systems
+                .gfx
+                .add_image(image_texture, 0, "Register Sprite", true);
 
         let sprite_label = create_label(
             systems,
@@ -241,7 +237,7 @@ impl Register {
         let sprite_index = systems.gfx.add_text(
             sprite_label,
             1,
-            "Register Sprite Label".into(),
+            "Register Sprite Label",
             true,
         );
         systems.gfx.set_text(
@@ -400,7 +396,7 @@ impl Register {
         let unique_label = systems.gfx.add_text(
             sprite_number_text,
             1,
-            "Register Sprite Number".into(),
+            "Register Sprite Number",
             true,
         );
         systems

@@ -97,7 +97,7 @@ impl Scrollbar {
             let bg = systems.gfx.add_rect(
                 scrollbg_rect,
                 data.render_layer,
-                "Scrollbar BG".into(),
+                "Scrollbar BG",
                 visible,
             );
             Some(bg)
@@ -172,7 +172,7 @@ impl Scrollbar {
         let scroll = systems.gfx.add_rect(
             scroll_rect,
             scrollbar.render_layer,
-            "Scrollbar Scroll".into(),
+            "Scrollbar Scroll",
             visible,
         );
 

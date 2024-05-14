@@ -48,8 +48,7 @@ impl Fade {
         rect.set_size(Vec2::new(screen_size.width, screen_size.height))
             .set_position(Vec3::new(0.0, 0.0, ORDER_FADE))
             .set_color(Color::rgba(0, 0, 0, 0));
-        self.f_image =
-            gfx_collection.add_rect(rect, 4, "Fade Image".into(), true);
+        self.f_image = gfx_collection.add_rect(rect, 4, "Fade Image", true);
 
         self.show = false;
         self.f_tmr = 0.0;
@@ -145,8 +144,7 @@ impl MapFade {
         rect.set_size(Vec2::new(screen_size.width, screen_size.height))
             .set_position(Vec3::new(0.0, 0.0, ORDER_MAP_FADE))
             .set_color(Color::rgba(0, 0, 0, 0));
-        self.f_image =
-            gfx_collection.add_rect(rect, 4, "Map Fade Image".into(), true);
+        self.f_image = gfx_collection.add_rect(rect, 4, "Map Fade Image", true);
 
         self.show = false;
         self.f_tmr = 0.0;

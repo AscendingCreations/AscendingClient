@@ -130,7 +130,7 @@ impl Checkbox {
                 systems.gfx.add_rect(
                     rect,
                     render_layer,
-                    "Checkbox Image".into(),
+                    "Checkbox Image",
                     visible,
                 )
             }
@@ -148,7 +148,7 @@ impl Checkbox {
                 systems.gfx.add_image(
                     img,
                     render_layer,
-                    "Checkbox Image".into(),
+                    "Checkbox Image",
                     visible,
                 )
             }
@@ -173,7 +173,7 @@ impl Checkbox {
                 systems.gfx.add_rect(
                     rect,
                     render_layer,
-                    "Checkbox Check".into(),
+                    "Checkbox Check",
                     false,
                 )
             }
@@ -191,7 +191,7 @@ impl Checkbox {
                 systems.gfx.add_image(
                     img,
                     render_layer,
-                    "Checkbox Check".into(),
+                    "Checkbox Check",
                     false,
                 )
             }
@@ -222,7 +222,7 @@ impl Checkbox {
             let txt_index = systems.gfx.add_text(
                 txt,
                 data.render_layer,
-                "Checkbox Text".into(),
+                "Checkbox Text",
                 visible,
             );
             systems
