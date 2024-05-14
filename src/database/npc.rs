@@ -64,7 +64,7 @@ pub struct NpcData {
     pub exp: i64,
 }
 
-pub fn get_npc() -> Result<Vec<NpcData>> {
+pub fn load_npcs() -> Result<Vec<NpcData>> {
     let mut npc_data: Vec<NpcData> = Vec::with_capacity(MAX_NPCS);
     let mut buffer = Vec::with_capacity(2048);
     for i in 0..MAX_NPCS {

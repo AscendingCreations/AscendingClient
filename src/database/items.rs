@@ -24,7 +24,7 @@ pub struct ItemData {
     pub sound_index: Option<String>,
 }
 
-pub fn get_item() -> Result<Vec<ItemData>> {
+pub fn load_items() -> Result<Vec<ItemData>> {
     let mut item_data: Vec<ItemData> = Vec::with_capacity(MAX_ITEMS);
     let mut buffer = Vec::with_capacity(2048);
 

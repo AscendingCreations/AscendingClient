@@ -58,7 +58,7 @@ impl BufferTask {
         if let Some(task) = task_data {
             match task {
                 BufferTaskEnum::ApplyMap(mappos, index) => {
-                    apply_map_data(systems, index, mappos)?;
+                    load_map_data(systems, index, mappos)?;
                 }
             }
         }

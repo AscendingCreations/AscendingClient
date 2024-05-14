@@ -168,7 +168,7 @@ impl MapData {
     }
 }
 
-pub fn apply_map_data(
+pub fn load_map_data(
     systems: &mut SystemHolder,
     key: Index,
     mappos: MapPosition,

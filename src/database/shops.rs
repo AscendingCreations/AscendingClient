@@ -39,7 +39,7 @@ pub struct ShopData {
     pub item: [ShopItem; MAX_SHOP_ITEM],
 }
 
-pub fn get_shop() -> Result<Vec<ShopData>> {
+pub fn load_shops() -> Result<Vec<ShopData>> {
     let mut shop_data: Vec<ShopData> = Vec::with_capacity(MAX_SHOPS);
     let mut buffer = Vec::with_capacity(2048);
 

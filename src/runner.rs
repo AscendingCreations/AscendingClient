@@ -176,9 +176,9 @@ impl winit::application::ApplicationHandler for Runner {
             audio.set_music_volume(volume);
 
             let database_holder = DatabaseHolder {
-                item: get_item().unwrap(),
-                shop: get_shop().unwrap(),
-                npc: get_npc().unwrap(),
+                item: load_items().unwrap(),
+                shop: load_shops().unwrap(),
+                npc: load_npcs().unwrap(),
                 mapdata: SlotMap::with_key(),
                 mappos_key: HashMap::new(),
                 map_cache: LruCache::new(NonZeroUsize::new(64).unwrap()),
