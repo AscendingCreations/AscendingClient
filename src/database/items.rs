@@ -26,9 +26,10 @@ pub struct ItemData {
 
 pub fn get_item() -> Result<Vec<ItemData>> {
     let mut item_data: Vec<ItemData> = Vec::with_capacity(MAX_ITEMS);
+    let mut buffer = Vec::with_capacity(2048);
 
     for i in 0..MAX_ITEMS {
-        if let Some(data) = load_file(i)? {
+        if let Some(data) = load_file(i, &mut buffer)? {
             item_data.push(data);
         }
     }
@@ -36,14 +37,14 @@ pub fn get_item() -> Result<Vec<ItemData>> {
     Ok(item_data)
 }
 
-fn load_file(id: usize) -> Result<Option<ItemData>> {
+fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<ItemData>> {
     let name = format!("./data/items/{}.bin", id);
+    buffer.clear();
 
     match OpenOptions::new().read(true).open(name) {
         Ok(mut file) => {
-            let mut bytes = Vec::new();
-            file.read_to_end(&mut bytes)?;
-            Ok(Some(ItemData::read_from_buffer(&bytes).unwrap()))
+            file.read_to_end(buffer)?;
+            Ok(Some(ItemData::read_from_buffer(buffer).unwrap()))
         }
         Err(e) => {
             warn!("Item Load File Num {} Err: {}", id, e);

@@ -66,9 +66,9 @@ pub struct NpcData {
 
 pub fn get_npc() -> Result<Vec<NpcData>> {
     let mut npc_data: Vec<NpcData> = Vec::with_capacity(MAX_NPCS);
-
+    let mut buffer = Vec::with_capacity(2048);
     for i in 0..MAX_NPCS {
-        if let Some(data) = load_file(i)? {
+        if let Some(data) = load_file(i, &mut buffer)? {
             npc_data.push(data);
         }
     }
@@ -76,14 +76,15 @@ pub fn get_npc() -> Result<Vec<NpcData>> {
     Ok(npc_data)
 }
 
-fn load_file(id: usize) -> Result<Option<NpcData>> {
+fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<NpcData>> {
     let name = format!("./data/npcs/{}.bin", id);
+
+    buffer.clear();
 
     match OpenOptions::new().read(true).open(name) {
         Ok(mut file) => {
-            let mut bytes = Vec::new();
-            file.read_to_end(&mut bytes)?;
-            Ok(Some(NpcData::read_from_buffer(&bytes).unwrap()))
+            file.read_to_end(buffer)?;
+            Ok(Some(NpcData::read_from_buffer(buffer).unwrap()))
         }
         Err(e) => {
             warn!("Npc Load File Num {} Err: {}", id, e);

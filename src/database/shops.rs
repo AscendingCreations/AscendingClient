@@ -41,9 +41,10 @@ pub struct ShopData {
 
 pub fn get_shop() -> Result<Vec<ShopData>> {
     let mut shop_data: Vec<ShopData> = Vec::with_capacity(MAX_SHOPS);
+    let mut buffer = Vec::with_capacity(2048);
 
     for i in 0..MAX_SHOPS {
-        if let Some(data) = load_file(i)? {
+        if let Some(data) = load_file(i, &mut buffer)? {
             shop_data.push(data);
         }
     }
@@ -51,14 +52,15 @@ pub fn get_shop() -> Result<Vec<ShopData>> {
     Ok(shop_data)
 }
 
-fn load_file(id: usize) -> Result<Option<ShopData>> {
+fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<ShopData>> {
     let name = format!("./data/shops/{}.bin", id);
+
+    buffer.clear();
 
     match OpenOptions::new().read(true).open(name) {
         Ok(mut file) => {
-            let mut bytes = Vec::new();
-            file.read_to_end(&mut bytes)?;
-            Ok(Some(ShopData::read_from_buffer(&bytes).unwrap()))
+            file.read_to_end(buffer)?;
+            Ok(Some(ShopData::read_from_buffer(buffer).unwrap()))
         }
         Err(e) => {
             warn!("Shop Load File Num {} Err: {}", id, e);

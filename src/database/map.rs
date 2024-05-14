@@ -105,6 +105,7 @@ pub enum Weather {
     Windy,
 }
 
+#[derive(Clone, Debug, Default)]
 pub struct MapSlotData {
     pub mappos: MapPosition,
     pub map_index: GfxType,
@@ -123,6 +124,7 @@ pub struct MapSlotData {
     Writable,
     MByteBufferRead,
     MByteBufferWrite,
+    Default,
 )]
 pub struct Tile {
     pub id: Vec<u32>,
@@ -137,6 +139,7 @@ pub struct Tile {
     Writable,
     MByteBufferRead,
     MByteBufferWrite,
+    Default,
 )]
 pub struct MapData {
     pub position: MapPosition,
@@ -150,7 +153,7 @@ pub struct MapData {
 }
 
 impl MapData {
-    pub fn default(x: i32, y: i32, group: u64) -> Self {
+    pub fn new(x: i32, y: i32, group: u64) -> Self {
         Self {
             position: MapPosition {
                 x,
@@ -160,10 +163,7 @@ impl MapData {
             tile: vec![Tile { id: vec![0; 1024] }; 9],
             dir_block: vec![0; 1024],
             attribute: vec![MapAttribute::Blocked; 1024],
-            zonespawns: Default::default(),
-            zones: Default::default(),
-            music: None,
-            weather: Weather::default(),
+            ..Default::default()
         }
     }
 }
@@ -174,7 +174,9 @@ pub fn apply_map_data(
     mappos: MapPosition,
 ) -> Result<()> {
     if let Some(mapslotdata) = systems.base.mapdata.get_mut(key) {
-        let mapdata = load_file(mappos.x, mappos.y, mappos.group as u64)?;
+        let mut buffer = Vec::with_capacity(131_072);
+        let mapdata =
+            load_file(mappos.x, mappos.y, mappos.group as u64, &mut buffer)?;
         (0..32).for_each(|x| {
             (0..32).for_each(|y| {
                 let tile_num = get_tile_pos(x, y);
@@ -329,21 +331,27 @@ pub fn get_map_id(
     None
 }
 
-pub fn load_file(x: i32, y: i32, group: u64) -> Result<MapData> {
+pub fn load_file(
+    x: i32,
+    y: i32,
+    group: u64,
+    buffer: &mut Vec<u8>,
+) -> Result<MapData> {
     if !is_map_exist(x, y, group) {
-        return Ok(MapData::default(x, y, group));
+        return Ok(MapData::new(x, y, group));
     }
+
+    buffer.clear();
 
     let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
     match OpenOptions::new().read(true).open(&name) {
         Ok(mut file) => {
-            let mut bytes = Vec::new();
-            file.read_to_end(&mut bytes)?;
-            Ok(MapData::read_from_buffer(&bytes).unwrap())
+            file.read_to_end(buffer)?;
+            Ok(MapData::read_from_buffer(buffer).unwrap())
         }
         Err(e) => {
             error!("Failed to load {}, Err {:?}", name, e);
-            Ok(MapData::default(x, y, group))
+            Ok(MapData::new(x, y, group))
         }
     }
 }

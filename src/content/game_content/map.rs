@@ -26,7 +26,7 @@ impl MapAttributes {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct MapDirBlock {
     pub dir: Vec<u8>,
 }
