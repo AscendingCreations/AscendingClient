@@ -206,16 +206,12 @@ pub fn find_entity(
             {
                 if let Some(myentity) = content.myentity {
                     if myentity.0 != entity {
-                        Some(Entity(entity))
-                    } else {
-                        None
+                        return Some(Entity(entity));
                     }
-                } else {
-                    None
                 }
-            } else {
-                None
             }
+
+            None
         });
 
     target_entity
@@ -228,10 +224,6 @@ pub fn can_move(
     content: &mut GameContent,
     direction: &Direction,
 ) -> Result<bool> {
-    /*if !content.can_move {
-        return Ok(false);
-    }*/
-
     let pos = world.get_or_err::<Position>(entity)?;
     {
         world.get::<&mut Dir>(entity.0)?.0 = match direction {

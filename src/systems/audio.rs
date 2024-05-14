@@ -31,7 +31,6 @@ impl Audio {
     pub fn set_music(&mut self, source: impl AsRef<Path>) -> Result<()> {
         let file = BufReader::new(File::open(source)?);
         let source = Decoder::new(file)?;
-        //self.music.clear();
 
         self.music.append(
             source

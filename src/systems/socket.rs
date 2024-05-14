@@ -1,5 +1,6 @@
 use crate::{
     config::*, Alert, BufferTask, ClientError, Content, Result, SystemHolder,
+    SERVER_ID, SERVER_PORT,
 };
 pub use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use hecs::World;
@@ -107,8 +108,8 @@ impl Socket {
 
         Ok(Socket {
             client: Client::new(
-                "212.47.238.107",
-                7010,
+                SERVER_ID,
+                SERVER_PORT,
                 mio::Token(0),
                 tls_config,
             )?,
@@ -121,7 +122,7 @@ impl Socket {
     pub fn reconnect(&mut self) -> Result<()> {
         let tls_config = build_tls_config()?;
         self.client =
-            Client::new("212.47.238.107", 7010, mio::Token(0), tls_config)?;
+            Client::new(SERVER_ID, SERVER_PORT, mio::Token(0), tls_config)?;
         self.encrypt_state = EncryptionState::ReadWrite;
         self.buffer.truncate(0)?;
         Ok(())

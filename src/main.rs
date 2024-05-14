@@ -70,9 +70,11 @@ enum MouseEvent {
 
 // creates a static global logger type for setting the logger
 static MY_LOGGER: MyLogger = MyLogger(log::Level::Trace);
-pub static APP_MAJOR: u16 = 1;
-pub static APP_MINOR: u16 = 1;
-pub static APP_REV: u16 = 1;
+pub const APP_MAJOR: u16 = 1;
+pub const APP_MINOR: u16 = 1;
+pub const APP_REV: u16 = 1;
+pub const SERVER_ID: &str = "212.47.238.107";
+pub const SERVER_PORT: u16 = 7010;
 
 struct MyLogger(pub log::Level);
 

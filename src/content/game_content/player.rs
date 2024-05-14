@@ -206,18 +206,12 @@ pub fn move_player(
     };
 
     if let Some(p) = content.myentity {
-        if &p == entity {
-            if world.get_or_err::<Attacking>(entity)?.0 {
-                return Ok(());
-            }
-
-            if world.get_or_err::<Movement>(entity)?.is_moving {
-                return Ok(());
-            }
-
-            if !can_move(world, systems, entity, content, &dir)? {
-                return Ok(());
-            }
+        if &p == entity
+            && (world.get_or_err::<Attacking>(entity)?.0
+                || world.get_or_err::<Movement>(entity)?.is_moving
+                || !can_move(world, systems, entity, content, &dir)?)
+        {
+            return Ok(());
         }
     }
 
@@ -442,11 +436,8 @@ pub fn init_player_attack(
     entity: &Entity,
     seconds: f32,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
-        return Ok(());
-    }
-
-    if world.get_or_err::<Attacking>(entity)?.0
+    if !world.contains(entity.0)
+        || world.get_or_err::<Attacking>(entity)?.0
         || world.get_or_err::<Movement>(entity)?.is_moving
     {
         return Ok(());
@@ -471,11 +462,7 @@ pub fn process_player_attack(
     entity: &Entity,
     seconds: f32,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
-        return Ok(());
-    }
-
-    if !world.get_or_err::<Attacking>(entity)?.0 {
+    if !world.contains(entity.0) || !world.get_or_err::<Attacking>(entity)?.0 {
         return Ok(());
     }
 
