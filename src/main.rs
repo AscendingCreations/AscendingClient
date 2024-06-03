@@ -118,7 +118,12 @@ async fn main() -> Result<()> {
 
     //Comment this out if you do not want a backtrace on error to show.
     if config.enable_backtrace {
-        env::set_var("RUST_BACKTRACE", "1");
+        // we will allow this since this is a change coming soon to rust.
+        // This can be removed later when it is marked as unsafe.
+        #[allow(unused_unsafe)]
+        unsafe {
+            env::set_var("RUST_BACKTRACE", "1");
+        }
     }
 
     // This allows us to take control of panic!() so we can send it to a file via the logger.
@@ -128,8 +133,13 @@ async fn main() -> Result<()> {
         error!("PANIC: {}, BACKTRACE: {:?}", panic_info, bt);
     }));
 
-    env::set_var("WGPU_VALIDATION", "0");
-    env::set_var("WGPU_DEBUG", "0");
+    // we will allow this since this is a change coming soon to rust.
+    // This can be removed later when it is marked as unsafe.
+    #[allow(unused_unsafe)]
+    unsafe {
+        env::set_var("WGPU_VALIDATION", "0");
+        env::set_var("WGPU_DEBUG", "0");
+    }
     // Starts an event gathering type for the window.
     let event_loop = EventLoop::new()?;
 
