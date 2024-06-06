@@ -16,6 +16,7 @@ pub fn create_label(
         Vec3::new(pos.x, pos.y, pos.z),
         label_size,
         1.0,
+        0,
     );
     text.set_buffer_size(
         &mut systems.renderer,
@@ -35,6 +36,7 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
         Vec3::new(0.0, 0.0, 0.0),
         Vec2::new(0.0, 0.0),
         1.0,
+        0,
     );
     text.set_buffer_size(
         &mut systems.renderer,
