@@ -9,7 +9,7 @@ use crate::{
 };
 
 pub struct StoredData {
-    pub map_data: IndexMap<String, MapData>,
+    pub map_data: IndexMap<String, MapData, ahash::RandomState>,
 }
 
 pub enum BufferTaskEnum {
@@ -27,7 +27,7 @@ impl Default for BufferTask {
         BufferTask {
             task: VecDeque::new(),
             storage: StoredData {
-                map_data: IndexMap::new(),
+                map_data: IndexMap::default(),
             },
             chatbuffer: ChatBufferTask::new(),
         }

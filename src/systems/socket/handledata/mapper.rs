@@ -1,6 +1,6 @@
 use crate::{data_types::*, fade::*, socket::*, BufferTask};
+use ahash::AHashMap;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 type PacketFunction = fn(
     &mut Socket,
@@ -68,11 +68,11 @@ pub enum ServerPackets {
     Ping,
 }
 
-pub struct PacketRouter(pub HashMap<ServerPackets, PacketFunction>);
+pub struct PacketRouter(pub AHashMap<ServerPackets, PacketFunction>);
 
 impl PacketRouter {
     pub fn init() -> Self {
-        Self(HashMap::from([
+        Self(AHashMap::from([
             (
                 ServerPackets::AlertMsg,
                 routes::handle_alertmsg as PacketFunction,

@@ -10,48 +10,48 @@ license = "MIT OR Apache-2.0"
 edition = "2021"
 
 [dependencies]
-thiserror = "1.0.56"
-winit = { version = "0.30.0", features = ["serde", "rwh_05"] }
-image = "0.24.7"
-tokio = { version = "1.37.0", features = ["full"] }
+thiserror = "1.0.61"
+winit = { version = "0.30.1", features = ["serde", "rwh_05"] }
+image = "0.25.1"
+tokio = { version = "1.38.0", features = ["full"] }
 log = { version = "0.4.21", default-features = false }
-backtrace = "0.3.71"
-chrono = { version = "0.4.30", disable-defaults = true, features = [
+backtrace = "0.3.73"
+chrono = { version = "0.4.38", disable-defaults = true, features = [
     "clock",
     "serde",
     "std",
 ] }
-hecs = { version = "0.10.4", features = [
+hecs = { version = "0.10.5", features = [
     "column-serialize",
     "row-serialize",
     "macros",
 ] }
-serde = { version = "1.0.197", features = ["derive"] }
-serde_json = "1.0.115"
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = "1.0.117"
 indexmap = "2.2.6"
-rodio = "0.17.3"
+rodio = "0.18.1"
 slab = "0.4.9"
-arboard = "3.3.1"
-mio = { version = "0.8.11", features = ["os-poll", "net"] }
+arboard = "3.4.0"
+mio = { version = "1.0.0", features = ["os-poll", "net"] }
 bytey = { version = "0.3.0", git = "https://github.com/Stefanowhb/bytey.git" }
 mmap_bytey = "0.2.0"
-pki-types = { package = "rustls-pki-types", version = "1", features = ["std"] }
-rcgen = { version = "0.12", features = [
+pki-types = { package = "rustls-pki-types", version = "1.7.0", features = ["std"] }
+rcgen = { version = "0.13.1", features = [
     "pem",
     "ring",
 ], default-features = false }
-rustls = { version = "0.23.4", default-features = false, features = [
+rustls = { version = "0.23.10", default-features = false, features = [
     "logging",
     "ring",
     "std",
     "tls12",
 ] }
-toml = "0.8.10"
-rustls-pemfile = "2"
-webpki-roots = "0.26"
+toml = "0.8.14"
+rustls-pemfile = "2.1.2"
+webpki-roots = "0.26.2"
 webpki = "0.22.4"
-regex = "1.10.3"
-educe = { version = "0.5.11", default-features = false, features = [
+regex = "1.10.5"
+educe = { version = "0.6.0", default-features = false, features = [
     "Debug",
     "PartialEq",
     "Default",
@@ -60,8 +60,9 @@ rand = "0.8.5"
 bit_op = "0.1.1"
 slotmap = "1.0.7"
 lru = "0.12.3"
-speedy = "=0.8.7"
-futures = "0.3"
+speedy = "0.8.7"
+futures = "0.3.30"
+ahash = "0.8.11"
 
 [dependencies.camera]
 package = "ascending_camera"

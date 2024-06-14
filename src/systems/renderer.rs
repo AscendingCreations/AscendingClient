@@ -90,7 +90,7 @@ pub struct DatabaseHolder {
     pub shop: Vec<ShopData>,
     pub npc: Vec<NpcData>,
     pub mapdata: SlotMap<Index, MapSlotData>,
-    pub mappos_key: HashMap<MapPosition, Index>,
+    pub mappos_key: HashMap<MapPosition, Index, ahash::RandomState>,
     pub map_cache: LruCache<Index, Index>,
 }
 

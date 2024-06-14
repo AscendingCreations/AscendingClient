@@ -48,9 +48,9 @@ impl Camera {
 }
 
 pub struct GameContent {
-    pub players: Rc<RefCell<IndexSet<Entity>>>,
-    pub npcs: Rc<RefCell<IndexSet<Entity>>>,
-    pub mapitems: Rc<RefCell<IndexSet<Entity>>>,
+    pub players: Rc<RefCell<IndexSet<Entity, ahash::RandomState>>>,
+    pub npcs: Rc<RefCell<IndexSet<Entity, ahash::RandomState>>>,
+    pub mapitems: Rc<RefCell<IndexSet<Entity, ahash::RandomState>>>,
     pub game_lights: GfxType,
     pub map: MapContent,
     camera: Camera,

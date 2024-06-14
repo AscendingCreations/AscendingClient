@@ -180,7 +180,7 @@ impl winit::application::ApplicationHandler for Runner {
                 shop: load_shops().unwrap(),
                 npc: load_npcs().unwrap(),
                 mapdata: SlotMap::with_key(),
-                mappos_key: HashMap::new(),
+                mappos_key: HashMap::default(),
                 map_cache: LruCache::new(NonZeroUsize::new(64).unwrap()),
             };
 
