@@ -65,19 +65,20 @@ pub fn register_key_input(
             Key::Named(NamedKey::Tab) => match menu_content.selected_textbox {
                 None => {
                     menu_content.register.textbox[0].set_select(systems, true);
-
                     menu_content.selected_textbox = Some(0);
                 }
                 Some(index) => {
                     menu_content.register.textbox[index]
                         .set_select(systems, false);
+
                     let mut next_index = index + 1;
+
                     if next_index >= menu_content.register.textbox.len() {
                         next_index = 0;
                     }
+
                     menu_content.register.textbox[next_index]
                         .set_select(systems, true);
-
                     menu_content.selected_textbox = Some(next_index);
                 }
             },
@@ -86,13 +87,14 @@ pub fn register_key_input(
                     None => {
                         menu_content.register.textbox[0]
                             .set_select(systems, true);
-
                         menu_content.selected_textbox = Some(0);
                     }
                     Some(index) => {
                         menu_content.register.textbox[index]
                             .set_select(systems, false);
+
                         let next_index = index + 1;
+
                         if next_index >= menu_content.register.textbox.len() {
                             menu_content.selected_textbox = None;
                             trigger_button(

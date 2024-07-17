@@ -50,15 +50,15 @@ impl BufferTask {
         content: &mut Content,
     ) -> Result<()> {
         self.chatbuffer.process_buffer(systems, content);
-        if self.task.is_empty() {
-            return Ok(());
-        }
 
-        let task_data = self.task.pop_front();
-        if let Some(task) = task_data {
-            match task {
-                BufferTaskEnum::ApplyMap(mappos, index) => {
-                    load_map_data(systems, index, mappos)?;
+        if !self.task.is_empty() {
+            let task_data = self.task.pop_front();
+
+            if let Some(task) = task_data {
+                match task {
+                    BufferTaskEnum::ApplyMap(mappos, index) => {
+                        load_map_data(systems, index, mappos)?;
+                    }
                 }
             }
         }
@@ -105,14 +105,12 @@ impl ChatBufferTask {
         systems: &mut SystemHolder,
         content: &mut Content,
     ) {
-        if self.task.is_empty() {
-            return;
-        }
-        if !content.game_content.finalized {
+        if self.task.is_empty() || !content.game_content.finalized {
             return;
         }
 
         let task_data = self.task.pop_front();
+
         if let Some(task) = task_data {
             content.game_content.interface.chatbox.add_chat(
                 systems,

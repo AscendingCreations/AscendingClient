@@ -79,14 +79,12 @@ pub struct Interface {
 impl Interface {
     pub fn new(systems: &mut SystemHolder) -> Self {
         let menu_button = create_menu_button(systems);
-
         let size = (Vec2::new(150.0, 20.0) * systems.scale as f32).floor();
         let statistic_pos = Vec3::new(
             systems.size.width - size.x,
             systems.size.height - size.y - 30.0 * systems.scale as f32,
             0.0,
         );
-
         let ping = create_label(
             systems,
             statistic_pos,
@@ -105,6 +103,7 @@ impl Interface {
             "Ping".to_string(),
             systems.config.show_ping,
         );
+
         systems
             .gfx
             .set_text(&mut systems.renderer, &ping_text, "Ping: 0");
@@ -127,6 +126,7 @@ impl Interface {
             "Av. Ping".to_string(),
             systems.config.show_average_ping,
         );
+
         systems.gfx.set_text(
             &mut systems.renderer,
             &average_ping,
@@ -151,6 +151,7 @@ impl Interface {
             "Av. Ping".to_string(),
             systems.config.show_frame_loop,
         );
+
         systems.gfx.set_text(
             &mut systems.renderer,
             &frame_loop,
@@ -180,7 +181,6 @@ impl Interface {
         };
 
         interface.add_window_order();
-
         interface
     }
 
@@ -251,9 +251,11 @@ impl Interface {
         screen_pos: Vec2,
     ) -> Result<bool> {
         let mut result = false;
+
         match input_type {
             MouseInputType::MouseMove => {
                 let mut can_hover: bool = true;
+
                 for window in interface.window_order.iter() {
                     if can_hover {
                         match window.0 {
@@ -439,6 +441,7 @@ impl Interface {
 
                     let window =
                         find_window(systems, interface, screen_pos, None);
+
                     if let Some(result_window) = window {
                         match result_window {
                             Window::Storage
@@ -514,10 +517,12 @@ impl Interface {
                             let volume = interface.setting.sfx_scroll.value
                                 as f32
                                 * 0.01;
+
                             systems.audio.set_effect_volume(volume);
                             result = true;
                         }
                     }
+
                     interface
                         .chatbox
                         .scrollbar
@@ -551,6 +556,7 @@ impl Interface {
                     interface.inventory.hold_slot = None;
                     return Ok(true);
                 }
+
                 if let Some(slot) = interface.storage.hold_slot {
                     release_storage_slot(
                         interface, socket, systems, alert, slot, screen_pos,
@@ -575,6 +581,7 @@ impl Interface {
                         Window::Trade => interface.trade.release_window(),
                     }
                 }
+
                 interface.drag_window = None;
 
                 if interface.setting.visible {
@@ -597,16 +604,19 @@ impl Interface {
                         .bgm_scroll
                         .set_hold(systems, false, screen_pos);
                 }
+
                 interface
                     .chatbox
                     .scrollbar
                     .set_hold(systems, false, screen_pos);
+
                 if interface.shop.visible {
                     interface
                         .shop
                         .item_scroll
                         .set_hold(systems, false, screen_pos);
                 }
+
                 interface.chatbox.reset_buttons(systems);
                 interface.profile.reset_buttons(systems);
                 interface.setting.reset_buttons(systems);
@@ -617,6 +627,7 @@ impl Interface {
                 interface.setting.reset_checkbox(systems);
             }
         }
+
         Ok(result)
     }
 
@@ -723,8 +734,8 @@ impl Interface {
                                     self, systems, socket, index,
                                 )?;
                             }
-                            self.chatbox.select_chat_tab(systems, screen_pos);
 
+                            self.chatbox.select_chat_tab(systems, screen_pos);
                             self.click_textbox(
                                 systems,
                                 socket,
@@ -746,7 +757,6 @@ impl Interface {
                                 true,
                                 false,
                             );
-
                             did_click = true;
                         }
                     }
@@ -764,6 +774,7 @@ impl Interface {
                                     );
                                     return Ok(true);
                                 }
+
                                 self.inventory.did_button_click = true;
                             }
 
@@ -775,7 +786,6 @@ impl Interface {
                                 true,
                                 false,
                             );
-
                             did_click = true;
                         }
                     }
@@ -792,6 +802,7 @@ impl Interface {
                                     );
                                     return Ok(true);
                                 }
+
                                 self.profile.did_button_click = true;
                             }
 
@@ -803,7 +814,6 @@ impl Interface {
                                 true,
                                 false,
                             );
-
                             did_click = true;
                         }
                     }
@@ -820,6 +830,7 @@ impl Interface {
                                     );
                                     return Ok(true);
                                 }
+
                                 self.setting.did_button_click = true;
                             }
 
@@ -828,11 +839,13 @@ impl Interface {
                                     .sfx_scroll
                                     .set_hold(systems, true, screen_pos);
                             }
+
                             if self.setting.bgm_scroll.in_scroll(screen_pos) {
                                 self.setting
                                     .bgm_scroll
                                     .set_hold(systems, true, screen_pos);
                             }
+
                             if let Some(index) =
                                 self.setting.click_checkbox(systems, screen_pos)
                             {
@@ -854,7 +867,6 @@ impl Interface {
                                 true,
                                 false,
                             );
-
                             did_click = true;
                         }
                     }
@@ -879,11 +891,13 @@ impl Interface {
                                         {
                                             return Ok(true);
                                         }
+
                                         let scrollbar_value = self
                                             .shop
                                             .item_scroll
                                             .value
                                             .saturating_sub(1);
+
                                         self.shop.item_scroll.set_value(
                                             systems,
                                             scrollbar_value,
@@ -897,6 +911,7 @@ impl Interface {
                                         {
                                             return Ok(true);
                                         }
+
                                         let scrollbar_value = self
                                             .shop
                                             .item_scroll
@@ -905,6 +920,7 @@ impl Interface {
                                             .min(
                                                 self.shop.item_scroll.max_value,
                                             );
+
                                         self.shop.item_scroll.set_value(
                                             systems,
                                             scrollbar_value,
@@ -916,6 +932,7 @@ impl Interface {
                                         let button_index =
                                             self.shop.shop_start_pos
                                                 + index.saturating_sub(3);
+
                                         send_buyitem(
                                             socket,
                                             button_index as u16,
@@ -923,6 +940,7 @@ impl Interface {
                                     }
                                     _ => {}
                                 }
+
                                 self.shop.did_button_click = true;
                             }
 
@@ -940,7 +958,6 @@ impl Interface {
                                 true,
                                 false,
                             );
-
                             did_click = true;
                         }
                     }
@@ -969,7 +986,6 @@ impl Interface {
                                 true,
                                 false,
                             );
-
                             did_click = true;
                         }
                     }
@@ -999,6 +1015,7 @@ impl Interface {
                                     }
                                     _ => {}
                                 }
+
                                 self.trade.did_button_click = true;
                             }
                             self.click_textbox(
@@ -1048,7 +1065,6 @@ impl Interface {
                                 true,
                                 false,
                             );
-
                             did_click = true;
                         }
                     }
@@ -1065,6 +1081,7 @@ impl Interface {
         screen_pos: Vec2,
     ) -> Option<usize> {
         let mut button_found = None;
+
         for (index, button) in interface.menu_button.iter_mut().enumerate() {
             if is_within_area(
                 screen_pos,
@@ -1080,6 +1097,7 @@ impl Interface {
                 button_found = Some(index)
             }
         }
+
         button_found
     }
 
@@ -1087,8 +1105,8 @@ impl Interface {
         if !self.did_button_click {
             return;
         }
-        self.did_button_click = false;
 
+        self.did_button_click = false;
         self.menu_button.iter_mut().for_each(|button| {
             button.set_click(systems, false);
         });
@@ -1165,6 +1183,7 @@ impl Interface {
             }
             _ => {}
         }
+
         self.selected_textbox = SelectedTextbox::None;
         Ok(())
     }
@@ -1241,12 +1260,14 @@ fn trigger_chatbox_button(
             if interface.chatbox.scrollbar.max_value == 0 {
                 return Ok(());
             }
+
             let scrollbar_value = interface
                 .chatbox
                 .scrollbar
                 .value
                 .saturating_add(1)
                 .min(interface.chatbox.scrollbar.max_value);
+
             interface
                 .chatbox
                 .scrollbar
@@ -1258,8 +1279,10 @@ fn trigger_chatbox_button(
             if interface.chatbox.scrollbar.max_value == 0 {
                 return Ok(());
             }
+
             let scrollbar_value =
                 interface.chatbox.scrollbar.value.saturating_sub(1);
+
             interface
                 .chatbox
                 .scrollbar
@@ -1298,60 +1321,54 @@ fn find_window(
         max_z_order = interface.inventory.z_order;
         selected_window = Some(Window::Inventory);
     }
+
     if interface.profile.in_window(screen_pos)
         && can_find_window(Window::Profile, exception)
+        && interface.profile.z_order > max_z_order
     {
-        let z_order = interface.profile.z_order;
-        if z_order > max_z_order {
-            max_z_order = z_order;
-            selected_window = Some(Window::Profile);
-        }
+        max_z_order = interface.profile.z_order;
+        selected_window = Some(Window::Profile);
     }
+
     if interface.setting.in_window(screen_pos)
         && can_find_window(Window::Setting, exception)
+        && interface.setting.z_order > max_z_order
     {
-        let z_order = interface.setting.z_order;
-        if z_order > max_z_order {
-            max_z_order = z_order;
-            selected_window = Some(Window::Setting);
-        }
+        max_z_order = interface.setting.z_order;
+        selected_window = Some(Window::Setting);
     }
+
     if interface.chatbox.in_window(screen_pos, systems)
         && can_find_window(Window::Chatbox, exception)
+        && interface.chatbox.z_order > max_z_order
     {
-        let z_order = interface.chatbox.z_order;
-        if z_order > max_z_order {
-            max_z_order = z_order;
-            selected_window = Some(Window::Chatbox);
-        }
+        max_z_order = interface.chatbox.z_order;
+        selected_window = Some(Window::Chatbox);
     }
+
     if interface.storage.in_window(screen_pos)
         && can_find_window(Window::Storage, exception)
+        && interface.storage.z_order > max_z_order
     {
-        let z_order = interface.storage.z_order;
-        if z_order > max_z_order {
-            max_z_order = z_order;
-            selected_window = Some(Window::Storage);
-        }
+        max_z_order = interface.storage.z_order;
+        selected_window = Some(Window::Storage);
     }
+
     if interface.shop.in_window(screen_pos)
         && can_find_window(Window::Shop, exception)
+        && interface.shop.z_order > max_z_order
     {
-        let z_order = interface.shop.z_order;
-        if z_order > max_z_order {
-            max_z_order = z_order;
-            selected_window = Some(Window::Shop);
-        }
+        max_z_order = interface.shop.z_order;
+        selected_window = Some(Window::Shop);
     }
+
     if interface.trade.in_window(screen_pos)
         && can_find_window(Window::Trade, exception)
+        && interface.trade.z_order > max_z_order
     {
-        let z_order = interface.trade.z_order;
-        if z_order > max_z_order {
-            //max_z_order = z_order;
-            selected_window = Some(Window::Trade);
-        }
+        selected_window = Some(Window::Trade);
     }
+
     selected_window
 }
 
@@ -1365,40 +1382,47 @@ pub fn open_interface(
             if interface.inventory.visible {
                 return;
             }
+
             interface.inventory.set_visible(systems, true);
         }
         Window::Profile => {
             if interface.profile.visible {
                 return;
             }
+
             interface.profile.set_visible(systems, true);
         }
         Window::Setting => {
             if interface.setting.visible {
                 return;
             }
+
             interface.setting.set_visible(systems, true);
         }
         Window::Storage => {
             if interface.storage.visible {
                 return;
             }
+
             interface.storage.set_visible(systems, true);
         }
         Window::Shop => {
             if interface.shop.visible {
                 return;
             }
+
             interface.shop.set_visible(systems, true);
         }
         Window::Trade => {
             if interface.trade.visible {
                 return;
             }
+
             interface.trade.set_visible(systems, true);
         }
         _ => {}
     }
+
     interface_set_to_first(interface, systems, window);
 }
 
@@ -1412,6 +1436,7 @@ pub fn close_interface(
             if !interface.inventory.visible {
                 return;
             }
+
             interface.inventory.set_visible(systems, false);
             interface.item_desc.set_visible(systems, false);
         }
@@ -1419,6 +1444,7 @@ pub fn close_interface(
             if !interface.profile.visible {
                 return;
             }
+
             interface.profile.set_visible(systems, false);
             interface.item_desc.set_visible(systems, false);
         }
@@ -1426,12 +1452,14 @@ pub fn close_interface(
             if !interface.setting.visible {
                 return;
             }
+
             interface.setting.set_visible(systems, false);
         }
         Window::Storage => {
             if !interface.storage.visible {
                 return;
             }
+
             interface.storage.set_visible(systems, false);
             interface.item_desc.set_visible(systems, false);
         }
@@ -1439,6 +1467,7 @@ pub fn close_interface(
             if !interface.shop.visible {
                 return;
             }
+
             interface.shop.set_visible(systems, false);
             interface.item_desc.set_visible(systems, false);
         }
@@ -1446,11 +1475,13 @@ pub fn close_interface(
             if !interface.trade.visible {
                 return;
             }
+
             interface.trade.set_visible(systems, false);
             interface.item_desc.set_visible(systems, false);
         }
         _ => {}
     }
+
     interface_set_to_last(interface, systems, window);
 }
 
@@ -1463,6 +1494,7 @@ fn hold_interface(
     hold_check: bool,
 ) {
     interface_set_to_first(interface, systems, window);
+
     match window {
         Window::Inventory => {
             if interface.inventory.can_hold(systems, screen_pos) && !hold_check
@@ -1487,18 +1519,21 @@ fn hold_interface(
             if !interface.profile.can_hold(systems, screen_pos) {
                 return;
             }
+
             interface.profile.hold_window(screen_pos);
         }
         Window::Setting => {
             if !interface.setting.can_hold(screen_pos) {
                 return;
             }
+
             interface.setting.hold_window(screen_pos);
         }
         Window::Chatbox => {
             if !interface.chatbox.can_hold(screen_pos) {
                 return;
             }
+
             interface.chatbox.hold_window(screen_pos);
         }
         Window::Storage => {
@@ -1513,6 +1548,7 @@ fn hold_interface(
                         .storage
                         .hold_storage_slot(systems, slot, screen_pos);
                 }
+
                 return;
             } else {
                 return;
@@ -1522,12 +1558,14 @@ fn hold_interface(
             if !interface.shop.can_hold(systems, screen_pos) {
                 return;
             }
+
             interface.shop.hold_window(screen_pos);
         }
         Window::Trade => {
             if !interface.trade.can_hold(systems, screen_pos) {
                 return;
             }
+
             interface.trade.hold_window(screen_pos);
         }
     }
@@ -1547,11 +1585,14 @@ fn interface_set_to_first(
         if interface.window_order[index].1 == 0 {
             return;
         }
+
         for i in 0..index {
             interface.window_order[i].1 = i.saturating_add(1);
         }
+
         interface.window_order[index].1 = 0;
     }
+
     interface.window_order.sort_by(|a, b| a.1.cmp(&b.1));
     adjust_window_zorder(interface, systems);
 }
@@ -1562,6 +1603,7 @@ fn interface_set_to_last(
     window: Window,
 ) {
     let last_index = interface.window_order.len() - 1;
+
     if let Some(index) = interface
         .window_order
         .iter()
@@ -1570,17 +1612,21 @@ fn interface_set_to_last(
         if interface.window_order[index].1 == last_index {
             return;
         }
+
         for i in index..(last_index + 1) {
             interface.window_order[i].1 = i.saturating_sub(1);
         }
+
         interface.window_order[index].1 = last_index;
     }
+
     interface.window_order.sort_by(|a, b| a.1.cmp(&b.1));
     adjust_window_zorder(interface, systems);
 }
 
 fn adjust_window_zorder(interface: &mut Interface, systems: &mut SystemHolder) {
     let mut order = 0.99;
+
     for wndw in interface.window_order.iter() {
         match wndw.0 {
             Window::Inventory => {
@@ -1603,6 +1649,7 @@ fn adjust_window_zorder(interface: &mut Interface, systems: &mut SystemHolder) {
                 interface.trade.set_z_order(systems, order, wndw.1)
             }
         }
+
         order -= 0.01;
     }
 }

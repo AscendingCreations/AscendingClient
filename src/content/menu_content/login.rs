@@ -19,15 +19,14 @@ impl Login {
         let mut label = Vec::with_capacity(3);
         let mut button = Vec::with_capacity(2);
         let mut textbox = Vec::with_capacity(2);
-
         let size = Vec2::new(
             348.0 * systems.scale as f32,
             226.0 * systems.scale as f32,
         )
         .floor();
         let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 80.0).floor();
-
         let mut menu_rect = Rect::new(&mut systems.renderer, 0);
+
         menu_rect
             .set_position(Vec3::new(
                 pos.x - 1.0,
@@ -41,6 +40,7 @@ impl Login {
         window.push(systems.gfx.add_rect(menu_rect, 0, "Login Window", true));
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
+
         header_rect
             .set_position(Vec3::new(
                 pos.x,
@@ -71,6 +71,7 @@ impl Login {
             systems
                 .gfx
                 .add_text(header_text, 1, "Login Header Text", true);
+
         systems.gfx.set_text(
             &mut systems.renderer,
             &text_index,
@@ -86,6 +87,7 @@ impl Login {
                 1 => 123.0,
                 _ => 154.0,
             };
+
             labelbox
                 .set_position(Vec3::new(
                     pos.x + (24.0 * systems.scale as f32).floor(),
@@ -147,11 +149,11 @@ impl Login {
                 ),
                 _ => ("Email", vec![]),
             };
+
             systems.gfx.set_text(&mut systems.renderer, &textindex, msg);
             label.push(textindex);
 
             let is_hidden = index == 1;
-
             let mut txtbox = Textbox::new(
                 systems,
                 Vec3::new(pos.x, pos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
@@ -173,10 +175,11 @@ impl Login {
                 1 => txtbox.set_text(systems, systems.config.password.clone()),
                 _ => txtbox.set_text(systems, systems.config.username.clone()),
             }
+
             textbox.push(txtbox);
         }
 
-        let btn = Button::new(
+        button.push(Button::new(
             systems,
             ButtonType::Rect(ButtonRect {
                 rect_color: Color::rgba(100, 100, 100, 255),
@@ -210,10 +213,8 @@ impl Login {
             0,
             true,
             None,
-        );
-        button.push(btn);
-
-        let btn = Button::new(
+        ));
+        button.push(Button::new(
             systems,
             ButtonType::None,
             ButtonContentType::Text(ButtonContentText {
@@ -236,8 +237,7 @@ impl Login {
             0,
             true,
             None,
-        );
-        button.push(btn);
+        ));
 
         let mut checkbox = Checkbox::new(
             systems,
@@ -283,6 +283,7 @@ impl Login {
             true,
             None,
         );
+
         checkbox.set_value(systems, systems.config.save_password);
 
         Login {
@@ -450,6 +451,7 @@ pub fn click_login_textbox(
     screen_pos: Vec2,
 ) {
     let mut textbox_found = None;
+
     for (index, textbox) in menu_content.login.textbox.iter_mut().enumerate() {
         if is_within_area(
             screen_pos,
@@ -460,14 +462,17 @@ pub fn click_login_textbox(
             textbox_found = Some(index)
         }
     }
+
     if let Some(index) = menu_content.selected_textbox {
         menu_content.login.textbox[index].set_select(systems, false);
     }
+
     if let Some(index) = textbox_found {
         menu_content.login.textbox[index].set_select(systems, true);
         menu_content.login.textbox[index].set_hold(true);
         menu_content.login.textbox[index].select_text(systems, screen_pos);
     }
+
     menu_content.selected_textbox = textbox_found;
 }
 
@@ -494,8 +499,8 @@ pub fn reset_login_buttons(
     if !menu_content.did_button_click {
         return;
     }
-    menu_content.did_button_click = false;
 
+    menu_content.did_button_click = false;
     menu_content.login.button.iter_mut().for_each(|button| {
         button.set_click(systems, false);
     });
@@ -508,7 +513,7 @@ pub fn reset_login_checkbox(
     if !menu_content.did_checkbox_click {
         return;
     }
-    menu_content.did_checkbox_click = false;
 
+    menu_content.did_checkbox_click = false;
     menu_content.login.checkbox.set_click(systems, false);
 }

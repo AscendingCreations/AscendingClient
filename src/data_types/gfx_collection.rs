@@ -82,6 +82,7 @@ impl GfxCollection {
             visible,
             identifier: identifier.into(),
         };
+
         GfxType::Image(self.image_storage.insert(GfxImage { data, gfx }))
     }
 
@@ -97,6 +98,7 @@ impl GfxCollection {
             visible,
             identifier: identifier.into(),
         };
+
         GfxType::Rect(self.rect_storage.insert(GfxRect { data, gfx }))
     }
 
@@ -112,6 +114,7 @@ impl GfxCollection {
             visible,
             identifier: identifier.into(),
         };
+
         GfxType::Text(self.text_storage.insert(GfxText { data, gfx }))
     }
 
@@ -127,6 +130,7 @@ impl GfxCollection {
             visible,
             identifier: identifier.into(),
         };
+
         GfxType::Map(self.map_storage.insert(GfxMap { data, gfx }))
     }
 
@@ -142,40 +146,36 @@ impl GfxCollection {
             visible,
             identifier: identifier.into(),
         };
+
         GfxType::Light(self.light_storage.insert(GfxLight { data, gfx }))
     }
 
     pub fn remove_gfx(&mut self, renderer: &mut GpuRenderer, index: &GfxType) {
         match index {
             GfxType::Image(gfx_index) => {
-                if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
+                if let Some(gfx) = self.image_storage.remove(*gfx_index) {
                     gfx.gfx.unload(renderer);
                 }
-                self.image_storage.remove(*gfx_index);
             }
             GfxType::Rect(gfx_index) => {
-                if let Some(gfx) = self.rect_storage.get_mut(*gfx_index) {
+                if let Some(gfx) = self.rect_storage.remove(*gfx_index) {
                     gfx.gfx.unload(renderer);
                 }
-                self.rect_storage.remove(*gfx_index);
             }
             GfxType::Text(gfx_index) => {
-                if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
+                if let Some(gfx) = self.text_storage.remove(*gfx_index) {
                     gfx.gfx.unload(renderer);
                 }
-                self.text_storage.remove(*gfx_index);
             }
             GfxType::Map(gfx_index) => {
-                if let Some(gfx) = self.map_storage.get_mut(*gfx_index) {
+                if let Some(gfx) = self.map_storage.remove(*gfx_index) {
                     gfx.gfx.unload(renderer);
                 }
-                self.map_storage.remove(*gfx_index);
             }
             GfxType::Light(gfx_index) => {
-                if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
+                if let Some(gfx) = self.light_storage.remove(*gfx_index) {
                     gfx.gfx.unload(renderer);
                 }
-                self.light_storage.remove(*gfx_index);
             }
             _ => {}
         }

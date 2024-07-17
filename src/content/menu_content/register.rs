@@ -20,11 +20,10 @@ impl Register {
         let mut label = Vec::with_capacity(7);
         let mut button = Vec::with_capacity(4);
         let mut textbox = Vec::with_capacity(5);
-
         let size = (Vec2::new(348.0, 375.0) * systems.scale as f32).floor();
         let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 20.0).floor();
-
         let mut menu_rect = Rect::new(&mut systems.renderer, 0);
+
         menu_rect
             .set_position(Vec3::new(
                 pos.x - 1.0,
@@ -43,6 +42,7 @@ impl Register {
         ));
 
         let mut header_rect = Rect::new(&mut systems.renderer, 0);
+
         header_rect
             .set_position(Vec3::new(
                 pos.x,
@@ -74,10 +74,12 @@ impl Register {
             ),
             Color::rgba(240, 240, 240, 255),
         );
+
         let text_index =
             systems
                 .gfx
                 .add_text(header_text, 1, "Register Header Text", true);
+
         systems.gfx.set_text(
             &mut systems.renderer,
             &text_index,
@@ -96,6 +98,7 @@ impl Register {
                 4 => 191.0,
                 _ => 303.0,
             };
+
             labelbox
                 .set_position(Vec3::new(
                     pos.x + (24.0 * systems.scale as f32).floor(),
@@ -154,6 +157,7 @@ impl Register {
                 4 => ("Username", false),
                 _ => ("Email", false),
             };
+
             systems.gfx.set_text(&mut systems.renderer, &textindex, msg);
             label.push(textindex);
 
@@ -185,6 +189,7 @@ impl Register {
         }
 
         let mut sprite_bg = Rect::new(&mut systems.renderer, 0);
+
         sprite_bg
             .set_position(Vec3::new(
                 pos.x + (34.0 * systems.scale as f32).floor(),
@@ -205,6 +210,7 @@ impl Register {
             &mut systems.renderer,
             0,
         );
+
         image_texture.hw =
             (Vec2::new(80.0, 80.0) * systems.scale as f32).floor();
         image_texture.pos = Vec3::new(
@@ -213,6 +219,7 @@ impl Register {
             ORDER_MENU_WINDOW_CONTENT_DETAIL,
         );
         image_texture.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
+
         let image =
             systems
                 .gfx
@@ -240,6 +247,7 @@ impl Register {
             "Register Sprite Label",
             true,
         );
+
         systems.gfx.set_text(
             &mut systems.renderer,
             &sprite_index,
@@ -248,7 +256,7 @@ impl Register {
         systems.gfx.center_text(&sprite_index);
         label.push(sprite_index);
 
-        let btn = Button::new(
+        button.push(Button::new(
             systems,
             ButtonType::Rect(ButtonRect {
                 rect_color: Color::rgba(100, 100, 100, 255),
@@ -282,10 +290,8 @@ impl Register {
             0,
             true,
             None,
-        );
-        button.push(btn);
-
-        let btn = Button::new(
+        ));
+        button.push(Button::new(
             systems,
             ButtonType::None,
             ButtonContentType::Text(ButtonContentText {
@@ -308,10 +314,8 @@ impl Register {
             0,
             true,
             None,
-        );
-        button.push(btn);
-
-        let btn = Button::new(
+        ));
+        button.push(Button::new(
             systems,
             ButtonType::Rect(ButtonRect {
                 rect_color: Color::rgba(100, 100, 100, 255),
@@ -341,10 +345,8 @@ impl Register {
             0,
             true,
             None,
-        );
-        button.push(btn);
-
-        let btn = Button::new(
+        ));
+        button.push(Button::new(
             systems,
             ButtonType::Rect(ButtonRect {
                 rect_color: Color::rgba(100, 100, 100, 255),
@@ -374,8 +376,7 @@ impl Register {
             0,
             true,
             None,
-        );
-        button.push(btn);
+        ));
 
         let sprite_number_text = create_label(
             systems,
@@ -399,6 +400,7 @@ impl Register {
             "Register Sprite Number",
             true,
         );
+
         systems
             .gfx
             .set_text(&mut systems.renderer, &unique_label, "0");
@@ -527,14 +529,17 @@ pub fn click_register_textbox(
             textbox_found = Some(index)
         }
     }
+
     if let Some(index) = menu_content.selected_textbox {
         menu_content.register.textbox[index].set_select(systems, false);
     }
+
     if let Some(index) = textbox_found {
         menu_content.register.textbox[index].set_select(systems, true);
         menu_content.register.textbox[index].set_hold(true);
         menu_content.register.textbox[index].select_text(systems, screen_pos);
     }
+
     menu_content.selected_textbox = textbox_found;
 }
 
@@ -558,12 +563,10 @@ pub fn reset_register_buttons(
     menu_content: &mut MenuContent,
     systems: &mut SystemHolder,
 ) {
-    if !menu_content.did_button_click {
-        return;
+    if menu_content.did_button_click {
+        menu_content.did_button_click = false;
+        menu_content.register.button.iter_mut().for_each(|button| {
+            button.set_click(systems, false);
+        });
     }
-    menu_content.did_button_click = false;
-
-    menu_content.register.button.iter_mut().for_each(|button| {
-        button.set_click(systems, false);
-    });
 }

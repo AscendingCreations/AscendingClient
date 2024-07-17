@@ -16,9 +16,11 @@ impl Target {
             &mut systems.renderer,
             0,
         );
+
         image.hw = Vec2::new(40.0, 40.0);
         image.pos = Vec3::new(0.0, 0.0, ORDER_TARGET);
         image.uv = Vec4::new(0.0, 40.0, 40.0, 40.0);
+
         let img_index = systems.gfx.add_image(image, 0, "Target Image", false);
 
         Target {
@@ -33,9 +35,11 @@ impl Target {
             &mut systems.renderer,
             0,
         );
+
         image.hw = Vec2::new(40.0, 40.0);
         image.pos = Vec3::new(0.0, 0.0, ORDER_TARGET);
         image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
+
         let img_index = systems.gfx.add_image(image, 0, "Target Image", false);
 
         self.img_index = img_index;
@@ -56,8 +60,7 @@ impl Target {
     ) -> Result<()> {
         self.entity = Some(*target);
         systems.gfx.set_visible(&self.img_index, true);
-        send_settarget(socket, self.entity)?;
-        Ok(())
+        send_settarget(socket, self.entity)
     }
 
     pub fn clear_target(
@@ -73,8 +76,7 @@ impl Target {
         systems.gfx.set_visible(&hpbar.bar_index, false);
         systems.gfx.set_visible(&hpbar.bg_index, false);
 
-        send_settarget(socket, self.entity)?;
-        Ok(())
+        send_settarget(socket, self.entity)
     }
 
     pub fn set_target_pos(
@@ -97,6 +99,7 @@ impl Target {
         {
             self.clear_target(socket, systems, hpbar)?;
         }
+
         Ok(())
     }
 }

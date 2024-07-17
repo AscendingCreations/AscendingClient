@@ -53,6 +53,7 @@ impl MapPosition {
         if x == 0 {
             return y.abs();
         }
+
         if y == 0 {
             return x.abs();
         }

@@ -177,6 +177,7 @@ pub fn load_map_data(
         let mut buffer = Vec::with_capacity(131_072);
         let mapdata =
             load_file(mappos.x, mappos.y, mappos.group as u64, &mut buffer)?;
+
         (0..32).for_each(|x| {
             (0..32).for_each(|y| {
                 let tile_num = get_tile_pos(x, y);
@@ -195,6 +196,7 @@ pub fn load_map_data(
                 });
             });
         });
+
         mapslotdata.dir_block = MapDirBlock {
             dir: mapdata.dir_block,
         };
@@ -213,7 +215,6 @@ pub fn create_map_data(
     let mut map = Map::new(&mut systems.renderer, TILE_SIZE as u32);
     map.can_render = true;
     let map_index = systems.gfx.add_map(map, 0, "Map", true);
-
     let mapslotdata = MapSlotData {
         mappos,
         map_index,
@@ -248,6 +249,7 @@ pub fn get_map_key(
                 let mappos = mapdata.mappos;
                 systems.base.mappos_key.remove(&mappos);
             }
+
             systems.base.mapdata.remove(key.0);
         }
     }
@@ -266,6 +268,7 @@ pub fn clear_map_data(systems: &mut SystemHolder) {
             .gfx
             .remove_gfx(&mut systems.renderer, &mapslotdata.1.map_index);
     }
+
     systems.base.mapdata.clear();
     systems.base.mappos_key.clear();
 }
@@ -291,6 +294,7 @@ pub fn get_map_pos(systems: &mut SystemHolder, key: Index) -> Vec2 {
     } else {
         error!("Failed to get map pos of Key: {:?}", key);
     }
+
     Vec2::default()
 }
 
@@ -301,6 +305,7 @@ pub fn get_map_dir_block(
     if let Some(mapslotdata) = systems.base.mapdata.get(key) {
         return mapslotdata.dir_block.clone();
     }
+
     MapDirBlock::default()
 }
 
@@ -311,6 +316,7 @@ pub fn get_map_attributes(
     if let Some(mapslotdata) = systems.base.mapdata.get(key) {
         return mapslotdata.attributes.clone();
     }
+
     MapAttributes::default()
 }
 
@@ -318,6 +324,7 @@ pub fn get_map_music(systems: &mut SystemHolder, key: Index) -> Option<String> {
     if let Some(mapslotdata) = systems.base.mapdata.get(key) {
         return mapslotdata.music.clone();
     }
+
     None
 }
 
@@ -328,6 +335,7 @@ pub fn get_map_id(
     if let Some(mapslotdata) = systems.base.mapdata.get(key) {
         return Some(mapslotdata.mappos);
     }
+
     None
 }
 
@@ -344,6 +352,7 @@ pub fn load_file(
     buffer.clear();
 
     let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
+
     match OpenOptions::new().read(true).open(&name) {
         Ok(mut file) => {
             file.read_to_end(buffer)?;

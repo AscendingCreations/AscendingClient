@@ -107,6 +107,7 @@ pub fn handle_key_input(
 
 fn count_npc(world: &mut World) -> usize {
     let mut count = 0;
+
     for (_, _) in world
         .query_mut::<&WorldEntityType>()
         .into_iter()
@@ -114,11 +115,13 @@ fn count_npc(world: &mut World) -> usize {
     {
         count += 1
     }
+
     count
 }
 
 fn count_player(world: &mut World) -> usize {
     let mut count = 0;
+
     for (_, _) in world
         .query_mut::<&WorldEntityType>()
         .into_iter()
@@ -126,11 +129,13 @@ fn count_player(world: &mut World) -> usize {
     {
         count += 1
     }
+
     count
 }
 
 fn count_mapitems(world: &mut World) -> usize {
     let mut count = 0;
+
     for (_, _) in world
         .query_mut::<&WorldEntityType>()
         .into_iter()
@@ -138,5 +143,6 @@ fn count_mapitems(world: &mut World) -> usize {
     {
         count += 1
     }
+
     count
 }

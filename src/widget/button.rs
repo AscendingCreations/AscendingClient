@@ -97,45 +97,46 @@ impl Button {
     ) -> Self {
         let pos = base_pos + (adjust_pos * systems.scale as f32).floor();
 
-        let buttontype = button_type.clone();
-        let index = match buttontype {
+        let index = match &button_type {
             ButtonType::Rect(data) => {
                 let mut rect = Rect::new(&mut systems.renderer, 0);
+
                 rect.set_position(Vec3::new(pos.x, pos.y, z_order))
                     .set_size((size * systems.scale as f32).floor())
                     .set_color(data.rect_color)
                     .set_radius(data.border_radius);
+
                 if data.got_border {
                     rect.set_border_width(1.0)
                         .set_border_color(data.border_color);
                 }
-                let rect_index = systems.gfx.add_rect(
+
+                Some(systems.gfx.add_rect(
                     rect,
                     render_layer,
                     "Button Image",
                     visible,
-                );
-                Some(rect_index)
+                ))
             }
             ButtonType::Image(data) => {
                 let mut image =
                     Image::new(Some(data.res), &mut systems.renderer, 0);
+
                 image.pos = Vec3::new(pos.x, pos.y, z_order);
                 image.hw = (size * systems.scale as f32).floor();
                 image.uv = Vec4::new(0.0, 0.0, size.x, size.y);
-                let image_index = systems.gfx.add_image(
+
+                Some(systems.gfx.add_image(
                     image,
                     render_layer,
                     "Button Image",
                     visible,
-                );
-                Some(image_index)
+                ))
             }
             _ => None,
         };
 
-        let contenttype = content_type.clone();
-        let content = match contenttype {
+        let content = match &content_type {
             ButtonContentType::None => None,
             ButtonContentType::Image(data) => {
                 let mut image =
@@ -145,6 +146,7 @@ impl Button {
                     pos.y,
                     z_order.sub_f32(z_step.0, z_step.1),
                 );
+
                 image.pos = Vec3::new(
                     spos.x + (data.pos.x * systems.scale as f32).floor(),
                     spos.y + (data.pos.y * systems.scale as f32).floor(),
@@ -153,13 +155,13 @@ impl Button {
                 image.hw = (data.size * systems.scale as f32).floor();
                 image.uv =
                     Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
-                let image_index = systems.gfx.add_image(
+
+                Some(systems.gfx.add_image(
                     image,
                     render_layer,
                     "Button Content",
                     visible,
-                );
-                Some(image_index)
+                ))
             }
             ButtonContentType::Text(data) => {
                 let spos = Vec3::new(
@@ -189,10 +191,12 @@ impl Button {
                     "Button Content",
                     visible,
                 );
+
                 systems
                     .gfx
                     .set_text(&mut systems.renderer, &index, &data.text);
                 systems.gfx.center_text(&index);
+
                 Some(index)
             }
         };
@@ -218,6 +222,7 @@ impl Button {
         if let Some(index) = self.index {
             systems.gfx.remove_gfx(&mut systems.renderer, &index);
         }
+
         if let Some(content_index) = self.content {
             systems
                 .gfx
@@ -226,32 +231,38 @@ impl Button {
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
-        if self.visible == visible {
-            return;
-        }
-        if !visible {
-            self.set_click(systems, false);
-            self.set_hover(systems, false);
-        }
-        self.visible = visible;
-        if let Some(index) = self.index {
-            systems.gfx.set_visible(&index, visible);
-        }
-        if let Some(index) = self.content {
-            systems.gfx.set_visible(&index, visible);
+        if self.visible != visible {
+            if !visible {
+                self.set_click(systems, false);
+                self.set_hover(systems, false);
+            }
+
+            self.visible = visible;
+
+            if let Some(index) = self.index {
+                systems.gfx.set_visible(&index, visible);
+            }
+
+            if let Some(index) = self.content {
+                systems.gfx.set_visible(&index, visible);
+            }
         }
     }
 
     pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
         self.z_order = z_order;
+
         if let Some(index) = self.index {
             let pos = systems.gfx.get_pos(&index);
+
             systems
                 .gfx
                 .set_pos(&index, Vec3::new(pos.x, pos.y, self.z_order));
         }
+
         if let Some(content_index) = self.content {
             let pos = systems.gfx.get_pos(&content_index);
+
             systems.gfx.set_pos(
                 &content_index,
                 Vec3::new(
@@ -265,6 +276,7 @@ impl Button {
 
     pub fn set_pos(&mut self, systems: &mut SystemHolder, new_pos: Vec2) {
         self.base_pos = new_pos;
+
         if let Some(index) = self.index {
             let pos = Vec3::new(
                 self.base_pos.x
@@ -273,11 +285,12 @@ impl Button {
                     + (self.adjust_pos.y * systems.scale as f32).floor(),
                 self.z_order,
             );
+
             systems.gfx.set_pos(&index, pos);
         }
+
         if let Some(content_index) = self.content {
-            let contenttype = self.content_type.clone();
-            match contenttype {
+            match &self.content_type {
                 ButtonContentType::Image(data) => {
                     let pos = Vec3::new(
                         self.base_pos.x
@@ -290,6 +303,7 @@ impl Button {
                                 .floor(),
                         self.z_order.sub_f32(self.z_step.0, self.z_step.1),
                     );
+
                     systems.gfx.set_pos(&content_index, pos);
                 }
                 ButtonContentType::Text(data) => {
@@ -304,6 +318,7 @@ impl Button {
                                 .floor(),
                         self.z_order.sub_f32(self.z_step.0, self.z_step.1),
                     );
+
                     systems.gfx.set_pos(&content_index, pos);
                     systems.gfx.set_bound(
                         &content_index,
@@ -324,31 +339,30 @@ impl Button {
     }
 
     pub fn set_hover(&mut self, systems: &mut SystemHolder, state: bool) {
-        if self.in_hover == state || !self.visible {
-            return;
-        }
-        self.in_hover = state;
-        if !self.in_click {
-            if self.in_hover {
-                self.apply_hover(systems);
-            } else {
-                self.apply_normal(systems);
+        if self.in_hover != state && self.visible {
+            self.in_hover = state;
+
+            if !self.in_click {
+                if self.in_hover {
+                    self.apply_hover(systems);
+                } else {
+                    self.apply_normal(systems);
+                }
             }
         }
     }
 
     pub fn set_click(&mut self, systems: &mut SystemHolder, state: bool) {
-        if self.in_click == state || !self.visible {
-            return;
-        }
-        self.in_click = state;
+        if self.in_click != state && self.visible {
+            self.in_click = state;
 
-        if self.in_click {
-            self.apply_click(systems);
-        } else if self.in_hover {
-            self.apply_hover(systems);
-        } else {
-            self.apply_normal(systems);
+            if self.in_click {
+                self.apply_click(systems);
+            } else if self.in_hover {
+                self.apply_hover(systems);
+            } else {
+                self.apply_normal(systems);
+            }
         }
     }
 
@@ -369,9 +383,9 @@ impl Button {
     fn apply_click(&mut self, systems: &mut SystemHolder) {
         let pos =
             self.base_pos + (self.adjust_pos * systems.scale as f32).floor();
+
         if let Some(index) = self.index {
-            let buttontype = self.button_type.clone();
-            match buttontype {
+            match &self.button_type {
                 ButtonType::Rect(data) => match data.click_change {
                     ButtonChangeType::AdjustY(adjusty) => {
                         systems.gfx.set_pos(
@@ -421,8 +435,7 @@ impl Button {
         }
 
         if let Some(content_data) = self.content {
-            let contenttype = self.content_type.clone();
-            match contenttype {
+            match &self.content_type {
                 ButtonContentType::Text(data) => match data.click_change {
                     ButtonChangeType::AdjustY(adjusty) => {
                         systems.gfx.set_pos(
@@ -484,9 +497,9 @@ impl Button {
     fn apply_hover(&mut self, systems: &mut SystemHolder) {
         let pos =
             self.base_pos + (self.adjust_pos * systems.scale as f32).floor();
+
         if let Some(index) = self.index {
-            let buttontype = self.button_type.clone();
-            match buttontype {
+            match &self.button_type {
                 ButtonType::Rect(data) => match data.hover_change {
                     ButtonChangeType::AdjustY(adjusty) => {
                         systems.gfx.set_pos(
@@ -536,8 +549,7 @@ impl Button {
         }
 
         if let Some(content_data) = self.content {
-            let contenttype = self.content_type.clone();
-            match contenttype {
+            match &self.content_type {
                 ButtonContentType::Text(data) => match data.hover_change {
                     ButtonChangeType::AdjustY(adjusty) => {
                         systems.gfx.set_pos(
@@ -599,12 +611,13 @@ impl Button {
     fn apply_normal(&mut self, systems: &mut SystemHolder) {
         let pos =
             self.base_pos + (self.adjust_pos * systems.scale as f32).floor();
+
         if let Some(index) = self.index {
-            let buttontype = self.button_type.clone();
             systems
                 .gfx
                 .set_pos(&index, Vec3::new(pos.x, pos.y, self.z_order));
-            match buttontype {
+
+            match &self.button_type {
                 ButtonType::Rect(data) => {
                     systems.gfx.set_color(&index, data.rect_color);
                 }
@@ -619,8 +632,7 @@ impl Button {
         }
 
         if let Some(content_data) = self.content {
-            let contenttype = self.content_type.clone();
-            match contenttype {
+            match &self.content_type {
                 ButtonContentType::Text(data) => {
                     systems.gfx.set_pos(
                         &content_data,

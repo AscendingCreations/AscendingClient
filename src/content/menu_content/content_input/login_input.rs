@@ -36,6 +36,7 @@ pub fn login_mouse_input(
         MouseInputType::MouseLeftDown => {
             let button_index =
                 menu_content.login.click_buttons(systems, screen_pos);
+
             if let Some(index) = button_index {
                 menu_content.did_button_click = true;
                 trigger_button(menu_content, systems, socket, alert, index);
@@ -75,19 +76,20 @@ pub fn login_key_input(
             Key::Named(NamedKey::Tab) => match menu_content.selected_textbox {
                 None => {
                     menu_content.login.textbox[0].set_select(systems, true);
-
                     menu_content.selected_textbox = Some(0);
                 }
                 Some(index) => {
                     menu_content.login.textbox[index]
                         .set_select(systems, false);
+
                     let mut next_index = index + 1;
+
                     if next_index >= menu_content.login.textbox.len() {
                         next_index = 0;
                     }
+
                     menu_content.login.textbox[next_index]
                         .set_select(systems, true);
-
                     menu_content.selected_textbox = Some(next_index);
                 }
             },
@@ -95,13 +97,14 @@ pub fn login_key_input(
                 match menu_content.selected_textbox {
                     None => {
                         menu_content.login.textbox[0].set_select(systems, true);
-
                         menu_content.selected_textbox = Some(0);
                     }
                     Some(index) => {
                         menu_content.login.textbox[index]
                             .set_select(systems, false);
+
                         let next_index = index + 1;
+
                         if next_index >= menu_content.login.textbox.len() {
                             menu_content.selected_textbox = None;
                             trigger_button(
@@ -114,7 +117,6 @@ pub fn login_key_input(
                         } else {
                             menu_content.login.textbox[next_index]
                                 .set_select(systems, true);
-
                             menu_content.selected_textbox = Some(next_index);
                         }
                     }

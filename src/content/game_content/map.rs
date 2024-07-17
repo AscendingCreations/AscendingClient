@@ -65,6 +65,7 @@ impl MapContent {
     pub fn move_pos(&mut self, systems: &mut SystemHolder, pos: Vec2) {
         self.mapindex.iter().enumerate().for_each(|(index, key)| {
             let add_pos = get_mapindex_base_pos(index);
+
             set_map_pos(
                 systems,
                 *key,
@@ -101,19 +102,25 @@ impl MapContent {
             (_, _, _, true) => 7,
             _ => 0,
         };
+
         if new_pos.x < 0.0 {
             new_pos.x = 31.0;
         }
+
         if new_pos.y < 0.0 {
             new_pos.y = 31.0;
         }
+
         if new_pos.x >= 32.0 {
             new_pos.x = 0.0;
         }
+
         if new_pos.y >= 32.0 {
             new_pos.y = 0.0;
         }
+
         let tile_num = get_tile_pos(new_pos.x as i32, new_pos.y as i32);
+
         get_map_attributes(systems, self.mapindex[map_index]).attribute
             [tile_num]
             .clone()
@@ -125,28 +132,34 @@ impl MapContent {
         direction: &Direction,
     ) -> Position {
         let mut new_pos = pos;
+
         match direction {
             Direction::Down => new_pos.y -= 1,
             Direction::Left => new_pos.x -= 1,
             Direction::Right => new_pos.x += 1,
             Direction::Up => new_pos.y += 1,
         };
+
         if new_pos.x < 0 {
             new_pos.x = 31;
             new_pos.map.x -= 1;
         }
+
         if new_pos.y < 0 {
             new_pos.y = 31;
             new_pos.map.y -= 1;
         }
+
         if new_pos.x >= 32 {
             new_pos.x = 0;
             new_pos.map.x += 1;
         }
+
         if new_pos.y >= 32 {
             new_pos.y = 0;
             new_pos.map.x += 1;
         }
+
         new_pos
     }
 
@@ -157,6 +170,7 @@ impl MapContent {
         map_index: usize,
     ) -> u8 {
         let tile_num = get_tile_pos(pos.x as i32, pos.y as i32);
+
         get_map_dir_block(systems, self.mapindex[map_index]).dir[tile_num]
     }
 }
@@ -183,14 +197,17 @@ pub fn find_entity(
         target_pos.x -= 32;
         target_pos.map.x += 1;
     }
+
     if target_pos.y >= 32 {
         target_pos.y -= 32;
         target_pos.map.y += 1;
     }
+
     if target_pos.x < 0 {
         target_pos.x += 32;
         target_pos.map.x -= 1;
     }
+
     if target_pos.y < 0 {
         target_pos.y += 32;
         target_pos.map.y -= 1;
@@ -225,6 +242,7 @@ pub fn can_move(
     direction: &Direction,
 ) -> Result<bool> {
     let pos = world.get_or_err::<Position>(entity)?;
+
     {
         world.get::<&mut Dir>(entity.0)?.0 = match direction {
             Direction::Up => 2,
@@ -233,20 +251,25 @@ pub fn can_move(
             Direction::Right => 1,
         };
     }
+
     let entity_type = world.get_or_err::<EntityType>(entity)?;
+
     match entity_type {
         EntityType::Player(_) => {
             let frame = world.get_or_err::<Dir>(entity)?.0
                 * PLAYER_SPRITE_FRAME_X as u8;
+
             set_player_frame(world, systems, entity, frame as usize)?;
         }
         EntityType::Npc(_) => {
             let frame =
                 world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+
             set_npc_frame(world, systems, entity, frame as usize)?;
         }
         _ => {}
     }
+
     if content.player_data.is_using_type.inuse() {
         return Ok(false);
     }
@@ -256,6 +279,7 @@ pub fn can_move(
         Vec2::new(pos.x as f32, pos.y as f32),
         0,
     );
+
     if match direction {
         Direction::Down => dir_block.get(B0) == 0b00000001,
         Direction::Right => dir_block.get(B3) == 0b00001000,
@@ -284,6 +308,7 @@ pub fn can_move(
         Vec2::new(pos.x as f32, pos.y as f32),
         direction,
     );
+
     Ok(!matches!(
         attribute,
         MapAttribute::Blocked | MapAttribute::Storage | MapAttribute::Shop(_)
@@ -329,6 +354,7 @@ pub fn get_start_map_pos(from: MapPosition, to: MapPosition) -> Option<Vec2> {
     }
     let from_vec = Vec2::new(from.x as f32, from.y as f32);
     let to_vec = Vec2::new(to.x as f32, to.y as f32);
+
     match from_vec {
         Vec2 { x, y } if x + 1.0 == to_vec.x && y + 1.0 == to_vec.y => {
             Some(get_mapindex_base_pos(8))
@@ -365,6 +391,7 @@ pub fn is_map_connected(from: MapPosition, to: MapPosition) -> bool {
     if from.group != to.group {
         return false;
     }
+
     to.x >= from.x - 1
         && to.x <= from.x + 1
         && to.y >= from.y - 1

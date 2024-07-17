@@ -18,6 +18,7 @@ pub fn create_label(
         1.0,
         0,
     );
+
     text.set_buffer_size(
         &mut systems.renderer,
         systems.size.width as i32,
@@ -38,6 +39,7 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
         1.0,
         0,
     );
+
     text.set_buffer_size(
         &mut systems.renderer,
         systems.size.width as i32,

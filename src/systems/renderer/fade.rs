@@ -45,11 +45,11 @@ impl Fade {
         screen_size: &PhysicalSize<f32>,
     ) {
         let mut rect = Rect::new(renderer, 0);
+
         rect.set_size(Vec2::new(screen_size.width, screen_size.height))
             .set_position(Vec3::new(0.0, 0.0, ORDER_FADE))
             .set_color(Color::rgba(0, 0, 0, 0));
         self.f_image = gfx_collection.add_rect(rect, 4, "Fade Image", true);
-
         self.show = false;
         self.f_tmr = 0.0;
         self.f_alpha = 0;
@@ -71,6 +71,7 @@ impl Fade {
             match self.f_type {
                 FadeType::In => {
                     self.f_alpha = (self.f_alpha + 8).min(255);
+
                     if self.f_alpha >= 255 {
                         self.show = false;
                         did_end = true;
@@ -78,12 +79,14 @@ impl Fade {
                 }
                 FadeType::Out => {
                     self.f_alpha = (self.f_alpha - 8).max(0);
+
                     if self.f_alpha <= 0 {
                         self.show = false;
                         did_end = true;
                     }
                 }
             }
+
             gfx_collection.set_color(
                 &self.f_image,
                 Color::rgba(0, 0, 0, self.f_alpha as u8),
@@ -109,6 +112,7 @@ impl Fade {
                 self.f_alpha = 255;
             }
         }
+
         gfx_collection
             .set_color(&self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
         self.f_type = fade_type;
@@ -141,11 +145,11 @@ impl MapFade {
         screen_size: &PhysicalSize<f32>,
     ) {
         let mut rect = Rect::new(renderer, 0);
+
         rect.set_size(Vec2::new(screen_size.width, screen_size.height))
             .set_position(Vec3::new(0.0, 0.0, ORDER_MAP_FADE))
             .set_color(Color::rgba(0, 0, 0, 0));
         self.f_image = gfx_collection.add_rect(rect, 4, "Map Fade Image", true);
-
         self.show = false;
         self.f_tmr = 0.0;
         self.f_alpha = 0;
@@ -167,6 +171,7 @@ impl MapFade {
             match self.f_type {
                 FadeType::In => {
                     self.f_alpha = (self.f_alpha + 8).min(255);
+
                     if self.f_alpha >= 255 {
                         self.show = false;
                         did_end = true;
@@ -174,6 +179,7 @@ impl MapFade {
                 }
                 FadeType::Out => {
                     self.f_alpha = (self.f_alpha - 8).max(0);
+
                     if self.f_alpha <= 0 {
                         self.show = false;
                         did_end = true;
@@ -203,6 +209,7 @@ impl MapFade {
                 self.f_alpha = 0;
             }
         }
+
         gfx_collection
             .set_color(&self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
     }
@@ -222,6 +229,7 @@ impl MapFade {
                 self.f_alpha = 255;
             }
         }
+
         gfx_collection
             .set_color(&self.f_image, Color::rgba(0, 0, 0, self.f_alpha as u8));
         self.f_type = fade_type;
@@ -252,6 +260,7 @@ pub fn fade_end(
             } else {
                 Position::default()
             };
+
             content.game_content.init_map(systems, pos.map, buffer)?;
             content
                 .game_content

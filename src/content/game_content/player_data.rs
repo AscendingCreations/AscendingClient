@@ -15,12 +15,15 @@ pub struct PlayerData {
 impl PlayerData {
     pub fn new() -> Self {
         let mut storage = Vec::with_capacity(MAX_STORAGE);
+
         storage.resize_with(MAX_STORAGE, Item::default);
 
         let mut inventory = Vec::with_capacity(MAX_INV);
+
         inventory.resize_with(MAX_INV, Item::default);
 
         let mut equipment = Vec::with_capacity(MAX_EQPT);
+
         equipment.resize_with(MAX_EQPT, Item::default);
 
         PlayerData {

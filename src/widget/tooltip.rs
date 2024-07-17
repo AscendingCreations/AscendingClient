@@ -100,21 +100,19 @@ impl Tooltip {
     }
 
     pub fn hide_tooltip(&mut self, systems: &mut SystemHolder) {
-        if !self.visible {
-            return;
+        if self.visible {
+            self.visible = false;
+            systems.gfx.set_visible(&self.window, self.visible);
+            systems.gfx.set_visible(&self.text, self.visible);
         }
-        self.visible = false;
-        systems.gfx.set_visible(&self.window, self.visible);
-        systems.gfx.set_visible(&self.text, self.visible);
     }
 
     pub fn show_tooltip(&mut self, systems: &mut SystemHolder) {
-        if self.visible {
-            return;
+        if !self.visible {
+            self.visible = true;
+            systems.gfx.set_visible(&self.window, self.visible);
+            systems.gfx.set_visible(&self.text, self.visible);
         }
-        self.visible = true;
-        systems.gfx.set_visible(&self.window, self.visible);
-        systems.gfx.set_visible(&self.text, self.visible);
     }
 
     pub fn check_tooltip(

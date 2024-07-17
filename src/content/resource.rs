@@ -39,6 +39,7 @@ impl TextureAllocation {
         // within the texture. its x, y, w, h.  Texture loads the file. group_uploads sends it to the Texture
         // renderer is used to upload it to the GPU when done.
         let mut textures = Vec::with_capacity(4);
+
         for (name, path) in [
             ("bg.png", "images/gui/bg.png"),
             ("horizontal_arrow.png", "images/gui/horizontal_arrow.png"),
@@ -124,7 +125,6 @@ impl TextureAllocation {
 
 pub fn get_dir_files(path: &str) -> Vec<DirEntry> {
     let mut files = Vec::new();
-
     let is_file = |path: &DirEntry| {
         if let Ok(meta) = path.metadata() {
             if meta.is_file() {

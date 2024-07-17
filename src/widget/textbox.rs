@@ -162,23 +162,23 @@ impl Textbox {
     }
 
     pub fn set_select(&mut self, systems: &mut SystemHolder, is_select: bool) {
-        if self.is_selected == is_select || !self.visible {
-            return;
-        }
-        self.is_selected = is_select;
-        systems.gfx.set_visible(&self.bg, self.is_selected);
-        if self.is_selected {
-            systems.caret.index = Some(self.caret);
-        } else {
-            systems.gfx.set_visible(&self.caret, false);
-            if let Some(index) = systems.caret.index {
-                if index == self.caret {
-                    systems.caret.index = None;
+        if self.is_selected != is_select || self.visible {
+            self.is_selected = is_select;
+            systems.gfx.set_visible(&self.bg, self.is_selected);
+
+            if self.is_selected {
+                systems.caret.index = Some(self.caret);
+            } else {
+                systems.gfx.set_visible(&self.caret, false);
+                if let Some(index) = systems.caret.index {
+                    if index == self.caret {
+                        systems.caret.index = None;
+                    }
                 }
+                self.hold_initial_index = self.caret_pos;
+                self.hold_final_index = self.caret_pos;
+                self.update_selection(systems);
             }
-            self.hold_initial_index = self.caret_pos;
-            self.hold_final_index = self.caret_pos;
-            self.update_selection(systems);
         }
     }
 
@@ -199,16 +199,15 @@ impl Textbox {
     }
 
     pub fn set_visible(&mut self, systems: &mut SystemHolder, visible: bool) {
-        if self.visible == visible {
-            return;
+        if self.visible != visible {
+            self.visible = visible;
+            systems
+                .gfx
+                .set_visible(&self.bg, self.is_selected && visible);
+            systems.gfx.set_visible(&self.text_index, visible);
+            systems.gfx.set_visible(&self.caret, false);
+            systems.gfx.set_visible(&self.selection, visible);
         }
-        self.visible = visible;
-        systems
-            .gfx
-            .set_visible(&self.bg, self.is_selected && visible);
-        systems.gfx.set_visible(&self.text_index, visible);
-        systems.gfx.set_visible(&self.caret, false);
-        systems.gfx.set_visible(&self.selection, visible);
     }
 
     pub fn set_z_order(&mut self, systems: &mut SystemHolder, z_order: f32) {
@@ -344,13 +343,12 @@ impl Textbox {
             if !numeric_only {
                 match key {
                     Key::Character('c') => {
-                        if self.disable_copy {
+                        if self.disable_copy
+                            || self.hold_initial_index == self.hold_final_index
+                        {
                             return;
                         }
 
-                        if self.hold_initial_index == self.hold_final_index {
-                            return;
-                        }
                         let first = cmp::min(
                             self.hold_initial_index,
                             self.hold_final_index,
@@ -457,6 +455,7 @@ impl Textbox {
                     if self.data_text.chars().count() >= self.limit {
                         return;
                     }
+
                     let key_char = if let Key::Character(char) = key {
                         Some(*char)
                     } else if Key::Named(NamedKey::Space) == *key {
@@ -471,6 +470,7 @@ impl Textbox {
                         } else {
                             true
                         };
+
                         if can_proceed {
                             self.remove_selection(systems);
 
@@ -515,14 +515,17 @@ impl Textbox {
         if self.hold_initial_index == self.hold_final_index {
             return;
         }
+
         let first = cmp::min(self.hold_initial_index, self.hold_final_index);
         let second = cmp::max(self.hold_initial_index, self.hold_final_index);
         let count = second - first;
+
         if self.hold_initial_index < self.hold_final_index {
             self.move_caret_pos(systems, true, count, true);
         } else {
             self.update_caret_pos(systems);
         }
+
         for _ in first..first + count {
             self.text = remove_text(self.text.clone(), first);
             self.data_text = remove_text(self.data_text.clone(), first);
@@ -549,6 +552,7 @@ impl Textbox {
                 .min(self.data_text.chars().count());
             (start, self.caret_pos)
         };
+
         let edit_text: String = self
             .data_text
             .chars()
@@ -576,6 +580,7 @@ impl Textbox {
 
         if remove_content {
             let mut text = self.data_text.clone();
+
             if self.hold_initial_index != self.hold_final_index {
                 let first =
                     cmp::min(self.hold_initial_index, self.hold_final_index);
@@ -590,9 +595,12 @@ impl Textbox {
                     String::new(),
                 );
             };
+
             let total_size = measure_string(systems, text).x;
+
             if total_size > (self.size.x * systems.scale as f32).floor() {
                 let visible_size = total_size + self.adjust_x;
+
                 if visible_size > 0.0 {
                     let leftover = (self.size.x * systems.scale as f32).floor()
                         - visible_size;
@@ -630,6 +638,7 @@ impl Textbox {
 
     pub fn update_caret_pos(&mut self, systems: &mut SystemHolder) {
         let mut text = self.data_text.clone();
+
         if self.hold_initial_index != self.hold_final_index {
             let first =
                 cmp::min(self.hold_initial_index, self.hold_final_index);
@@ -644,7 +653,9 @@ impl Textbox {
                 String::new(),
             );
         };
+
         let total_size = measure_string(systems, text).x;
+
         if total_size > self.size.x {
             let visible_size = total_size + self.adjust_x;
             if visible_size > 0.0 {
@@ -697,6 +708,7 @@ impl Textbox {
         }
 
         let mut found_index = None;
+
         for (index, pos) in self.char_pos.iter().enumerate() {
             if is_within_area(
                 screen_pos,
@@ -707,9 +719,11 @@ impl Textbox {
                 break;
             }
         }
+
         if found_index.is_none() {
             found_index = Some(self.data_text.chars().count());
         }
+
         if let Some(index) = found_index {
             let offset = index as i32 - self.caret_pos as i32;
             match offset.cmp(&0) {
@@ -737,10 +751,13 @@ impl Textbox {
         if self.in_hold == is_hold {
             return;
         }
+
         self.in_hold = is_hold;
+
         if self.in_hold {
             self.char_pos.clear();
             let mut pos_x = 0.0;
+
             for size in self.char_size.iter() {
                 self.char_pos.push(pos_x);
                 pos_x += size;
@@ -757,6 +774,7 @@ impl Textbox {
             + (self.adjust_pos * systems.scale as f32).floor();
 
         let mut found_index = None;
+
         for (index, pos) in self.char_pos.iter().enumerate() {
             if is_within_area(
                 screen_pos,
@@ -767,6 +785,7 @@ impl Textbox {
                 break;
             }
         }
+
         if found_index.is_none() {
             if screen_pos.x > b_pos.x + self.size.x {
                 found_index = Some(self.data_text.chars().count());
@@ -774,8 +793,10 @@ impl Textbox {
                 found_index = Some(0);
             }
         }
+
         if let Some(index) = found_index {
             let offset = index as i32 - self.caret_pos as i32;
+
             match offset.cmp(&0) {
                 std::cmp::Ordering::Less => {
                     let move_count = offset.abs();
@@ -840,6 +861,7 @@ impl Textbox {
 pub fn insert_text(text: String, pos: usize, insert_text: &str) -> String {
     let mut first_text = String::new();
     let mut second_text = String::new();
+
     for (cur_pos, char) in text.chars().enumerate() {
         if cur_pos < pos {
             first_text.push(char);
@@ -847,12 +869,14 @@ pub fn insert_text(text: String, pos: usize, insert_text: &str) -> String {
             second_text.push(char);
         }
     }
+
     format!("{}{}{}", first_text, insert_text, second_text)
 }
 
 pub fn insert_char(text: String, pos: usize, insert_text: char) -> String {
     let mut first_text = String::new();
     let mut second_text = String::new();
+
     for (cur_pos, char) in text.chars().enumerate() {
         if cur_pos < pos {
             first_text.push(char);
@@ -860,6 +884,7 @@ pub fn insert_char(text: String, pos: usize, insert_text: char) -> String {
             second_text.push(char);
         }
     }
+
     format!("{}{}{}", first_text, insert_text, second_text)
 }
 
@@ -871,6 +896,7 @@ pub fn replace_text(
 ) -> String {
     let mut first_text = String::new();
     let mut second_text = String::new();
+
     for (cur_pos, char) in text.chars().enumerate() {
         if cur_pos < from_pos {
             first_text.push(char);
@@ -878,12 +904,14 @@ pub fn replace_text(
             second_text.push(char);
         }
     }
+
     format!("{}{}{}", first_text, replace_to, second_text)
 }
 
 pub fn remove_text(text: String, pos: usize) -> String {
     let mut first_text = String::new();
     let mut second_text = String::new();
+
     for (cur_pos, char) in text.chars().enumerate() {
         match cur_pos.cmp(&pos) {
             std::cmp::Ordering::Less => first_text.push(char),
@@ -891,6 +919,7 @@ pub fn remove_text(text: String, pos: usize) -> String {
             std::cmp::Ordering::Equal => {}
         }
     }
+
     format!("{}{}", first_text, second_text)
 }
 
@@ -900,6 +929,7 @@ pub fn is_numeric(char: &str) -> bool {
 
 pub fn get_clipboard_text() -> String {
     let mut clipboard = Clipboard::new().unwrap();
+
     match clipboard.get_text() {
         Ok(data) => data,
         Err(e) => {
@@ -911,10 +941,8 @@ pub fn get_clipboard_text() -> String {
 
 pub fn set_clipboard_text(message: String) {
     let mut clipboard = Clipboard::new().unwrap();
-    match clipboard.set_text(message) {
-        Ok(_) => {}
-        Err(e) => {
-            warn!("Set Clipboard Err: {}", e);
-        }
+
+    if let Err(e) = clipboard.set_text(message) {
+        warn!("Set Clipboard Err: {}", e);
     }
 }

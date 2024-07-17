@@ -34,6 +34,7 @@ pub fn add_player(
         &mut systems.renderer,
         0,
     );
+
     image.pos = Vec3::new(
         start_pos.x + texture_pos.x,
         start_pos.y + texture_pos.y,
@@ -41,23 +42,26 @@ pub fn add_player(
     );
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
-    let sprite = systems.gfx.add_image(image, 0, "Player Sprite", false);
 
+    let sprite = systems.gfx.add_image(image, 0, "Player Sprite", false);
     let mut bg_image = Rect::new(&mut systems.renderer, 0);
+
     bg_image
         .set_size(Vec2::new(20.0, 6.0))
         .set_position(Vec3::new(0.0, 0.0, ORDER_HPBAR_BG))
         .set_color(Color::rgba(80, 80, 80, 255))
         .set_border_width(1.0)
         .set_border_color(Color::rgba(10, 10, 10, 255));
+
     let bg_index = systems.gfx.add_rect(bg_image, 0, "Player HP BG", false);
     let mut bar_image = Rect::new(&mut systems.renderer, 0);
+
     bar_image
         .set_size(Vec2::new(18.0, 4.0))
         .set_position(Vec3::new(1.0, 1.0, ORDER_HPBAR))
         .set_color(Color::rgba(180, 30, 30, 255));
-    let bar_index = systems.gfx.add_rect(bar_image, 0, "Player HP Bar", false);
 
+    let bar_index = systems.gfx.add_rect(bar_image, 0, "Player HP Bar", false);
     let entity_name = create_label(
         systems,
         Vec3::new(0.0, 0.0, ORDER_ENTITY_NAME),
@@ -67,13 +71,11 @@ pub fn add_player(
     );
     let name_index = systems.gfx.add_text(entity_name, 2, "Player Name", false);
     let entitynamemap = EntityNameMap(name_index);
-
     let hpbar = HPBar {
         visible: false,
         bg_index,
         bar_index,
     };
-
     let component1 = (
         pos,
         PositionOffset::default(),
@@ -125,6 +127,7 @@ pub fn player_finalized(
     if !world.contains(entity.0) {
         return Ok(());
     }
+
     let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     let hpbar = world.get_or_err::<HPBar>(entity)?;
     let name = world.get_or_err::<EntityNameMap>(entity)?.0;
@@ -140,7 +143,6 @@ pub fn player_finalized_data(
 ) {
     systems.gfx.set_visible(&sprite, true);
     systems.gfx.set_visible(&name, true);
-
     systems.gfx.set_visible(&hpbar.bg_index, hpbar.visible);
     systems.gfx.set_visible(&hpbar.bar_index, hpbar.visible);
 }
@@ -152,25 +154,32 @@ pub fn unload_player(
     entity: &Entity,
 ) -> Result<()> {
     let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
+
     systems
         .gfx
         .remove_gfx(&mut systems.renderer, &player_sprite);
+
     let hpbar = world.get_or_err::<HPBar>(entity)?;
+
     systems
         .gfx
         .remove_gfx(&mut systems.renderer, &hpbar.bar_index);
     systems
         .gfx
         .remove_gfx(&mut systems.renderer, &hpbar.bg_index);
+
     let entitynamemap = world.get_or_err::<EntityNameMap>(entity)?;
+
     systems
         .gfx
         .remove_gfx(&mut systems.renderer, &entitynamemap.0);
+
     if let Some(entitylight) = world.get_or_err::<EntityLight>(entity)?.0 {
         systems
             .gfx
             .remove_area_light(&content.game_lights, entitylight);
     }
+
     world.despawn(entity.0)?;
     Ok(())
 }
@@ -219,7 +228,6 @@ pub fn move_player(
         world.get::<&mut EndMovement>(entity.0)?.0 = end_pos;
     } else {
         let pos = world.get_or_err::<Position>(entity)?;
-
         let adj = [(0, -1), (1, 0), (0, 1), (-1, 0)];
         let dir_index = enum_to_dir(dir) as usize;
         let mut end_move = Position {
@@ -239,6 +247,7 @@ pub fn move_player(
                 (end_move.x, 0),
                 (31, end_move.y),
             ];
+
             end_move.x = new_pos[dir_index].0;
             end_move.y = new_pos[dir_index].1;
             end_move.map.x += adj[dir_index].0;
@@ -258,11 +267,13 @@ pub fn move_player(
                 Vec2::new(pos.x as f32, pos.y as f32),
                 &dir,
             );
+
             if matches!(attribute, MapAttribute::Warp(_)) {
                 systems.map_fade.force_fade(&mut systems.gfx, FadeType::In);
             }
 
             let end_pos = world.get_or_err::<EndMovement>(entity)?.0;
+
             if pos.map != end_pos.map {
                 content.refresh_map = false;
             }
@@ -282,17 +293,20 @@ pub fn move_player(
     {
         world.get::<&mut Dir>(entity.0)?.0 = dir_u8;
     }
+
     let last_frame = if world.get_or_err::<LastMoveFrame>(entity)?.0 == 1 {
         2
     } else {
         1
     };
+
     {
         world.get::<&mut LastMoveFrame>(entity.0)?.0 = last_frame;
     }
 
     let frame =
         world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+
     set_player_frame(world, systems, entity, frame as usize + last_frame)
 }
 
@@ -312,6 +326,7 @@ pub fn end_player_move(
         if !movement.is_moving {
             return Ok(());
         }
+
         movement.is_moving = false;
         movement.move_offset = 0.0;
         movement.move_timer = 0.0;
@@ -328,6 +343,7 @@ pub fn end_player_move(
                 move_map = true;
             }
         }
+
         world.get::<&mut PositionOffset>(entity.0)?.offset =
             Vec2::new(0.0, 0.0);
     }
@@ -365,7 +381,6 @@ pub fn update_player_position(
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset.offset
         - Vec2::new(10.0, 4.0);
-
     let pos =
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
 
@@ -387,6 +402,7 @@ pub fn update_player_position(
 
     let sprite_size = systems.gfx.get_size(&sprite);
     let bar_pos = pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
+
     systems.gfx.set_pos(
         &hpbar.bar_index,
         Vec3::new(bar_pos.x + 1.0, bar_pos.y + 1.0, ORDER_HPBAR),
@@ -399,11 +415,11 @@ pub fn update_player_position(
     let textsize = systems.gfx.get_measure(&entitynamemap.0).floor();
     let name_pos =
         pos + Vec2::new(((sprite_size.x - textsize.x) * 0.5).floor(), 40.0);
+
     systems.gfx.set_pos(
         &entitynamemap.0,
         Vec3::new(name_pos.x, name_pos.y, ORDER_ENTITY_NAME),
     );
-
     Ok(())
 }
 
@@ -423,6 +439,7 @@ pub fn set_player_frame(
         frame_index as f32 % PLAYER_SPRITE_FRAME_X,
         (frame_index as f32 / PLAYER_SPRITE_FRAME_X).floor(),
     );
+
     systems.gfx.set_uv(
         &sprite_index,
         Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y),
@@ -451,8 +468,10 @@ pub fn init_player_attack(
             attackframe.timer = seconds + 0.16;
         }
     }
+
     let frame =
         world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+
     set_player_frame(world, systems, entity, frame as usize + 3)
 }
 
@@ -475,11 +494,14 @@ pub fn process_player_attack(
 
             let mut attackframe =
                 world.get_or_err::<AttackFrame>(entity)?.frame;
+
             if attackframe > 2 {
                 attackframe = 2;
             }
+
             let frame = world.get_or_err::<Dir>(entity)?.0
                 * PLAYER_SPRITE_FRAME_X as u8;
+
             set_player_frame(
                 world,
                 systems,
@@ -491,8 +513,10 @@ pub fn process_player_attack(
         {
             world.get::<&mut Attacking>(entity.0)?.0 = false;
         }
+
         let frame =
             world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+
         set_player_frame(world, systems, entity, frame as usize)?;
     }
     Ok(())
@@ -511,6 +535,7 @@ pub fn process_player_movement(
     }
 
     let movement = world.get_or_err::<Movement>(entity)?;
+
     if !movement.is_moving {
         return Ok(());
     };
@@ -521,7 +546,9 @@ pub fn process_player_movement(
         {
             world.get::<&mut Movement>(entity.0)?.move_offset += add_offset;
         }
+
         let moveoffset = world.get_or_err::<Movement>(entity)?.move_offset;
+
         {
             let offset = match movement.move_direction {
                 Direction::Up => Vec2::new(0.0, moveoffset),
@@ -529,6 +556,7 @@ pub fn process_player_movement(
                 Direction::Left => Vec2::new(-moveoffset, 0.0),
                 Direction::Right => Vec2::new(moveoffset, 0.0),
             };
+
             world.get::<&mut PositionOffset>(entity.0)?.offset = offset;
         }
     } else {
@@ -586,13 +614,16 @@ pub fn update_player_camera(
         } else {
             false
         };
+
         if is_target {
             if !hpbar.visible {
                 hpbar.visible = true;
                 systems.gfx.set_visible(&hpbar.bar_index, true);
                 systems.gfx.set_visible(&hpbar.bg_index, true);
             }
+
             let pos = systems.gfx.get_pos(&spriteindex.0);
+
             content.target.set_target_pos(
                 socket,
                 systems,

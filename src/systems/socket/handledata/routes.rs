@@ -1584,7 +1584,7 @@ pub fn handle_playitemsfx(
         let volume = systems.config.sfx_volume as f32 * 0.01;
         systems
             .audio
-            .play_effect(&format!("./audio/{}", sfx_name), volume)?;
+            .play_effect(format!("./audio/{}", sfx_name), volume)?;
     }
 
     Ok(())

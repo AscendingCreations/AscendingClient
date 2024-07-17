@@ -121,6 +121,7 @@ impl Socket {
 
     pub fn reconnect(&mut self) -> Result<()> {
         let tls_config = build_tls_config()?;
+
         self.client =
             Client::new(SERVER_ID, SERVER_PORT, mio::Token(0), tls_config)?;
         self.encrypt_state = EncryptionState::ReadWrite;
@@ -181,6 +182,7 @@ impl Socket {
 
     fn tls_read(&mut self) -> Result<()> {
         let pos = self.buffer.cursor();
+
         self.buffer.move_cursor_to_end();
 
         loop {
@@ -242,7 +244,9 @@ impl Socket {
 
     fn read(&mut self) -> Result<()> {
         let pos = self.buffer.cursor();
+
         self.buffer.move_cursor_to_end();
+
         let mut buf: [u8; 4096] = [0; 4096];
 
         loop {

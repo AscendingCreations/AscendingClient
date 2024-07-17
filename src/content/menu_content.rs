@@ -42,11 +42,12 @@ impl MenuContent {
             &mut systems.renderer,
             0,
         );
+
         bg_image.pos = Vec3::new(0.0, 0.0, ORDER_MENU_BG);
         bg_image.hw = Vec2::new(800.0, 600.0);
         bg_image.uv = Vec4::new(0.0, 0.0, 800.0, 600.0);
-        let bg = systems.gfx.add_image(bg_image, 0, "Menu BG", true);
 
+        let bg = systems.gfx.add_image(bg_image, 0, "Menu BG", true);
         let label_size = Vec2::new(
             200.0 * systems.scale as f32,
             20.0 * systems.scale as f32,

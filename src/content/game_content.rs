@@ -263,7 +263,7 @@ impl GameContent {
         if let Some(music) = &get_map_music(systems, self.map.mapindex[0]) {
             if self.current_music != *music {
                 self.current_music.clone_from(music);
-                systems.audio.set_music(&format!("./audio/{}", music))?;
+                systems.audio.set_music(format!("./audio/{}", music))?;
             }
         }
 
