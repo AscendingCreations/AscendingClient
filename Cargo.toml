@@ -1,6 +1,6 @@
 [package]
 name = "client"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
     "Andrew Wheeler <genusistimelord@outlook.com>",
     "Sherwin Salonga",
@@ -68,7 +68,7 @@ ahash = "0.8.11"
 package = "ascending_camera"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/camera"
-version = "0.4.1"
+version = "0.5.0"
 
 [dependencies.input]
 package = "ascending_input"
@@ -80,7 +80,7 @@ version = "0.3.1"
 package = "ascending_graphics"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/graphics"
-version = "0.12.0"
+version = "0.13.0"
 
 [profile.dev]
 opt-level = 0

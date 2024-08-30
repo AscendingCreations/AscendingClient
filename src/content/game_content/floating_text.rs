@@ -144,12 +144,12 @@ pub fn add_float_text(
     let tpos = start_pos + texture_pos + adjust_pos;
 
     text.set_position(Vec3::new(tpos.x, tpos.y, ORDER_FLOAT_TEXT))
-        .set_bounds(Some(Bounds::new(
+        .set_bounds(Bounds::new(
             0.0,
             0.0,
             systems.size.width,
             systems.size.height,
-        )))
+        ))
         .set_default_color(color);
     let text_index = systems.gfx.add_text(text, 2, "Floating Text", true);
 

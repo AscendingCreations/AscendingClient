@@ -304,7 +304,7 @@ impl GfxCollection {
     pub fn set_bound(&mut self, index: &GfxType, bound: Bounds) {
         if let GfxType::Text(gfx_index) = index {
             if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
-                gfx.gfx.set_bounds(Some(bound));
+                gfx.gfx.set_bounds(bound);
             }
         }
     }
@@ -400,7 +400,7 @@ impl GfxCollection {
         if let GfxType::Text(gfx_index) = index {
             if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
                 let size = gfx.gfx.measure();
-                let bound = gfx.gfx.bounds.unwrap_or_default();
+                let bound = gfx.gfx.bounds;
                 let textbox_size = bound.right - bound.left;
                 gfx.gfx.pos.x =
                     bound.left + ((textbox_size * 0.5) - (size.x * 0.5));

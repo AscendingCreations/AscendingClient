@@ -24,7 +24,7 @@ pub fn create_label(
         Some(systems.size.width),
         Some(systems.size.height),
     )
-    .set_bounds(Some(bounds))
+    .set_bounds(bounds)
     .set_default_color(color);
     text.changed = true;
     text
@@ -45,7 +45,7 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
         Some(systems.size.width),
         Some(systems.size.height),
     )
-    .set_bounds(Some(Bounds::new(0.0, 0.0, 0.0, 0.0)))
+    .set_bounds(Bounds::new(0.0, 0.0, 0.0, 0.0))
     .set_default_color(Color::rgba(255, 255, 255, 255));
     text.changed = true;
     text
