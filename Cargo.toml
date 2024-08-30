@@ -10,11 +10,11 @@ license = "MIT OR Apache-2.0"
 edition = "2021"
 
 [dependencies]
-thiserror = "1.0.61"
-winit = { version = "0.30.4", features = ["serde", "rwh_05"] }
-image = "0.25.1"
-tokio = { version = "1.38.0", features = ["full"] }
-log = { version = "0.4.21", default-features = false }
+thiserror = "1.0.63"
+winit = { version = "0.30.5", features = ["serde", "rwh_05"] }
+image = "0.25.2"
+tokio = { version = "1.40.0", features = ["full"] }
+log = { version = "0.4.22", default-features = false }
 backtrace = "0.3.73"
 chrono = { version = "0.4.38", disable-defaults = true, features = [
     "clock",
@@ -26,31 +26,31 @@ hecs = { version = "0.10.5", features = [
     "row-serialize",
     "macros",
 ] }
-serde = { version = "1.0.203", features = ["derive"] }
-serde_json = "1.0.117"
-indexmap = "2.2.6"
+serde = { version = "1.0.209", features = ["derive"] }
+serde_json = "1.0.127"
+indexmap = "2.4.0"
 rodio = "0.19.0"
 slab = "0.4.9"
 arboard = "3.4.0"
-mio = { version = "1.0.0", features = ["os-poll", "net"] }
+mio = { version = "1.0.2", features = ["os-poll", "net"] }
 bytey = { version = "0.3.0", git = "https://github.com/Stefanowhb/bytey.git" }
 mmap_bytey = "0.2.0"
-pki-types = { package = "rustls-pki-types", version = "1.7.0", features = ["std"] }
+pki-types = { package = "rustls-pki-types", version = "1.8.0", features = ["std"] }
 rcgen = { version = "0.13.1", features = [
     "pem",
     "ring",
 ], default-features = false }
-rustls = { version = "0.23.10", default-features = false, features = [
+rustls = { version = "0.23.12", default-features = false, features = [
     "logging",
     "ring",
     "std",
     "tls12",
 ] }
-toml = "0.8.14"
-rustls-pemfile = "2.1.2"
-webpki-roots = "0.26.2"
+toml = "0.8.19"
+rustls-pemfile = "2.1.3"
+webpki-roots = "0.26.3"
 webpki = "0.22.4"
-regex = "1.10.5"
+regex = "1.10.6"
 educe = { version = "0.6.0", default-features = false, features = [
     "Debug",
     "PartialEq",
@@ -59,7 +59,7 @@ educe = { version = "0.6.0", default-features = false, features = [
 rand = "0.8.5"
 bit_op = "0.1.1"
 slotmap = "1.0.7"
-lru = "0.12.3"
+lru = "0.12.4"
 speedy = "0.8.7"
 futures = "0.3.30"
 ahash = "0.8.11"
