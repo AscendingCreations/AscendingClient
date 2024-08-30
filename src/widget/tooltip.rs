@@ -39,8 +39,8 @@ impl Tooltip {
         );
         text_label.set_buffer_size(
             &mut systems.renderer,
-            300,
-            systems.size.height as i32,
+            Some(300.0),
+            Some(systems.size.height),
         );
         let text =
             systems

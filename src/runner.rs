@@ -122,6 +122,7 @@ impl winit::application::ApplicationHandler for Runner {
                         required_features: wgpu::Features::default(),
                         required_limits: wgpu::Limits::default(),
                         label: None,
+                        memory_hints: wgpu::MemoryHints::Performance,
                     },
                     None,
                     // How we are presenting the screen which causes it to either clip to a FPS limit or be unlimited.
@@ -134,19 +135,33 @@ impl winit::application::ApplicationHandler for Runner {
             println!("{:?}", renderer.adapter().get_info());
 
             // We generate Texture atlases to use with out types.
-            let mut atlases: Vec<AtlasSet> = iter::from_fn(|| {
-                Some(AtlasSet::new(
+            let mut atlases: Vec<AtlasSet> = vec![
+                //image
+                AtlasSet::new(
                     &mut renderer,
                     wgpu::TextureFormat::Rgba8UnormSrgb,
                     true,
-                ))
-            })
-            .take(4)
-            .collect();
+                    8192,
+                ),
+                //map tiles
+                AtlasSet::new(
+                    &mut renderer,
+                    wgpu::TextureFormat::Rgba8UnormSrgb,
+                    true,
+                    2048,
+                ),
+                //ui
+                AtlasSet::new(
+                    &mut renderer,
+                    wgpu::TextureFormat::Rgba8UnormSrgb,
+                    true,
+                    1024,
+                ),
+            ];
 
             // we generate the Text atlas seperatly since it contains a special texture that only has the red color to it.
             // and another for emojicons.
-            let text_atlas = TextAtlas::new(&mut renderer).unwrap();
+            let text_atlas = TextAtlas::new(&mut renderer, 1024).unwrap();
 
             let mut audio = Audio::new(0.15).unwrap();
 

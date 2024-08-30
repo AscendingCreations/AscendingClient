@@ -908,8 +908,8 @@ impl Chatbox {
         text_data
             .set_buffer_size(
                 &mut systems.renderer,
-                self.chat_areasize.x as i32,
-                self.chat_areasize.y as i32,
+                Some(self.chat_areasize.x),
+                Some(self.chat_areasize.y),
             )
             .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
 

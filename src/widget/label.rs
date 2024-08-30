@@ -21,8 +21,8 @@ pub fn create_label(
 
     text.set_buffer_size(
         &mut systems.renderer,
-        systems.size.width as i32,
-        systems.size.height as i32,
+        Some(systems.size.width),
+        Some(systems.size.height),
     )
     .set_bounds(Some(bounds))
     .set_default_color(color);
@@ -42,8 +42,8 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
 
     text.set_buffer_size(
         &mut systems.renderer,
-        systems.size.width as i32,
-        systems.size.height as i32,
+        Some(systems.size.width),
+        Some(systems.size.height),
     )
     .set_bounds(Some(Bounds::new(0.0, 0.0, 0.0, 0.0)))
     .set_default_color(Color::rgba(255, 255, 255, 255));
@@ -59,7 +59,8 @@ pub fn measure_string(systems: &mut SystemHolder, text: String) -> Vec2 {
         TextOptions {
             shaping: Shaping::Advanced,
             metrics: Some(Metrics::new(16.0, 16.0).scale(systems.scale as f32)),
-            buffer_size: Vec2::new(4096.0, systems.size.height),
+            buffer_height: Some(systems.size.height),
+            buffer_width: Some(4096.0),
             scale: 1.0,
             wrap: Wrap::None,
         },

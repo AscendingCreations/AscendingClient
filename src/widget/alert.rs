@@ -111,8 +111,8 @@ impl Alert {
 
         text.set_buffer_size(
             &mut systems.renderer,
-            (max_text_width as f32 * systems.scale as f32).floor() as i32,
-            128,
+            Some((max_text_width as f32 * systems.scale as f32).floor()),
+            Some(128.0),
         )
         .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
         text.set_text(
