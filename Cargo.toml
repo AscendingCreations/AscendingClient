@@ -33,9 +33,11 @@ rodio = "0.19.0"
 slab = "0.4.9"
 arboard = "3.4.0"
 mio = { version = "1.0.2", features = ["os-poll", "net"] }
-bytey = { version = "0.3.0", git = "https://github.com/Stefanowhb/bytey.git" }
+bytey = "0.4.0"
 mmap_bytey = "0.2.0"
-pki-types = { package = "rustls-pki-types", version = "1.8.0", features = ["std"] }
+pki-types = { package = "rustls-pki-types", version = "1.8.0", features = [
+    "std",
+] }
 rcgen = { version = "0.13.1", features = [
     "pem",
     "ring",
@@ -80,7 +82,7 @@ version = "0.3.1"
 package = "ascending_graphics"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/graphics"
-version = "0.13.0"
+version = "0.16.0"
 
 [profile.dev]
 opt-level = 0

@@ -78,29 +78,42 @@ impl<'de> Deserialize<'de> for MyInstant {
 }
 
 impl ByteBufferRead for MyInstant {
-    fn read_from_buffer(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
+    fn read_from_bytey_buffer(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
         Ok(MyInstant::from_dur(buffer.read::<i64>()?))
     }
 
-    fn read_from_buffer_le(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
+    fn read_from_bytey_buffer_le(
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<Self> {
         Ok(MyInstant::from_dur(buffer.read_le::<i64>()?))
     }
 
-    fn read_from_buffer_be(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
+    fn read_from_bytey_buffer_be(
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<Self> {
         Ok(MyInstant::from_dur(buffer.read_be::<i64>()?))
     }
 }
 
 impl ByteBufferWrite for &MyInstant {
-    fn write_to_buffer(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+    fn write_to_bytey_buffer(
+        &self,
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<()> {
         buffer.write(self.to_dur())?;
         Ok(())
     }
-    fn write_to_buffer_le(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+    fn write_to_bytey_buffer_le(
+        &self,
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<()> {
         buffer.write_le(self.to_dur())?;
         Ok(())
     }
-    fn write_to_buffer_be(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+    fn write_to_bytey_buffer_be(
+        &self,
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<()> {
         buffer.write_be(self.to_dur())?;
         Ok(())
     }

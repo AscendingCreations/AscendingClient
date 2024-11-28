@@ -62,21 +62,25 @@ impl<'de> Deserialize<'de> for MyDuration {
 }
 
 impl ByteBufferRead for MyDuration {
-    fn read_from_buffer(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
+    fn read_from_bytey_buffer(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
         Ok(MyDuration(
             chrono::Duration::try_milliseconds(buffer.read::<i64>()?)
                 .unwrap_or_default(),
         ))
     }
 
-    fn read_from_buffer_le(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
+    fn read_from_bytey_buffer_le(
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<Self> {
         Ok(MyDuration(
             chrono::Duration::try_milliseconds(buffer.read_le::<i64>()?)
                 .unwrap_or_default(),
         ))
     }
 
-    fn read_from_buffer_be(buffer: &mut ByteBuffer) -> bytey::Result<Self> {
+    fn read_from_bytey_buffer_be(
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<Self> {
         Ok(MyDuration(
             chrono::Duration::try_milliseconds(buffer.read_be::<i64>()?)
                 .unwrap_or_default(),
@@ -85,15 +89,24 @@ impl ByteBufferRead for MyDuration {
 }
 
 impl ByteBufferWrite for &MyDuration {
-    fn write_to_buffer(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+    fn write_to_bytey_buffer(
+        &self,
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<()> {
         buffer.write(self.num_milliseconds())?;
         Ok(())
     }
-    fn write_to_buffer_le(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+    fn write_to_bytey_buffer_le(
+        &self,
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<()> {
         buffer.write_le(self.num_milliseconds())?;
         Ok(())
     }
-    fn write_to_buffer_be(&self, buffer: &mut ByteBuffer) -> bytey::Result<()> {
+    fn write_to_bytey_buffer_be(
+        &self,
+        buffer: &mut ByteBuffer,
+    ) -> bytey::Result<()> {
         buffer.write_be(self.num_milliseconds())?;
         Ok(())
     }
