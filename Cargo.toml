@@ -82,7 +82,7 @@ version = "0.3.1"
 package = "ascending_graphics"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/graphics"
-version = "0.16.0"
+version = "0.17.0"
 
 [profile.dev]
 opt-level = 0
