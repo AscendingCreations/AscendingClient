@@ -1,112 +1,112 @@
 [package]
+authors = [
+  "Andrew Wheeler <genusistimelord@outlook.com>",
+  "Sherwin Salonga",
+  "S.J.R. van Schaik",
+]
+edition = "2024"
+license = "MIT OR Apache-2.0"
 name = "client"
 version = "0.1.1"
-authors = [
-    "Andrew Wheeler <genusistimelord@outlook.com>",
-    "Sherwin Salonga",
-    "S.J.R. van Schaik",
-]
-license = "MIT OR Apache-2.0"
-edition = "2021"
 
 [dependencies]
-thiserror = "1.0.63"
-winit = { version = "0.30.5", features = ["serde", "rwh_05"] }
-image = "0.25.2"
-tokio = { version = "1.40.0", features = ["full"] }
-log = { version = "0.4.22", default-features = false }
-backtrace = "0.3.73"
-chrono = { version = "0.4.38", disable-defaults = true, features = [
-    "clock",
-    "serde",
-    "std",
-] }
-hecs = { version = "0.10.5", features = [
-    "column-serialize",
-    "row-serialize",
-    "macros",
-] }
-serde = { version = "1.0.209", features = ["derive"] }
-serde_json = "1.0.127"
-indexmap = "2.4.0"
-rodio = "0.19.0"
-slab = "0.4.9"
-arboard = "3.4.0"
-mio = { version = "1.0.2", features = ["os-poll", "net"] }
-bytey = "0.4.0"
-mmap_bytey = "0.2.0"
-pki-types = { package = "rustls-pki-types", version = "1.8.0", features = [
-    "std",
-] }
-rcgen = { version = "0.13.1", features = [
-    "pem",
-    "ring",
-], default-features = false }
-rustls = { version = "0.23.12", default-features = false, features = [
-    "logging",
-    "ring",
-    "std",
-    "tls12",
-] }
-toml = "0.8.19"
-rustls-pemfile = "2.1.3"
-webpki-roots = "0.26.3"
-webpki = "0.22.4"
-regex = "1.10.6"
-educe = { version = "0.6.0", default-features = false, features = [
-    "Debug",
-    "PartialEq",
-    "Default",
-] }
-rand = "0.8.5"
-bit_op = "0.1.1"
-slotmap = "1.0.7"
-lru = "0.12.4"
-speedy = "0.8.7"
-futures = "0.3.30"
 ahash = "0.8.11"
+arboard = "3.4.0"
+backtrace = "0.3.73"
+bit_op = "0.1.1"
+bytey = "0.4.0"
+chrono = {version = "0.4.38", disable-defaults = true, features = [
+  "clock",
+  "serde",
+  "std",
+]}
+educe = {version = "0.6.0", default-features = false, features = [
+  "Debug",
+  "PartialEq",
+  "Default",
+]}
+futures = "0.3.30"
+hecs = {version = "0.10.5", features = [
+  "column-serialize",
+  "row-serialize",
+  "macros",
+]}
+image = "0.25.2"
+indexmap = "2.4.0"
+log = {version = "0.4.22", default-features = false}
+lru = "0.12.4"
+mio = {version = "1.0.2", features = ["os-poll", "net"]}
+mmap_bytey = "0.2.0"
+pki-types = {package = "rustls-pki-types", version = "1.8.0", features = [
+  "std",
+]}
+rand = "0.8.5"
+rcgen = {version = "0.13.1", features = [
+  "pem",
+  "ring",
+], default-features = false}
+regex = "1.10.6"
+rodio = "0.19.0"
+rustls = {version = "0.23.12", default-features = false, features = [
+  "logging",
+  "ring",
+  "std",
+  "tls12",
+]}
+rustls-pemfile = "2.1.3"
+serde = {version = "1.0.209", features = ["derive"]}
+serde_json = "1.0.127"
+slab = "0.4.9"
+slotmap = "1.0.7"
+speedy = "0.8.7"
+thiserror = "1.0.63"
+tokio = {version = "1.40.0", features = ["full"]}
+toml = "0.8.19"
+webpki = "0.22.4"
+webpki-roots = "0.26.3"
+winit = {version = "0.30.5", features = ["serde", "rwh_05"]}
 
 [dependencies.camera]
 package = "ascending_camera"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/camera"
-version = "0.5.0"
+version = "0.6.0"
 
 [dependencies.input]
 package = "ascending_input"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/input"
-version = "0.3.1"
+version = "0.4.1"
 
 [dependencies.graphics]
 package = "ascending_graphics"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/graphics"
-version = "0.17.0"
+version = "0.21.0"
 
 [profile.dev]
-opt-level = 0
+codegen-units = 256
 debug = true
 debug-assertions = true
-overflow-checks = true
-strip = "none"
-lto = false
 incremental = true
+lto = false
+opt-level = 0
+overflow-checks = true
 panic = 'unwind'
-codegen-units = 256
 rpath = false
+strip = "none"
 
 [profile.release]
-opt-level = 3
-debug = false
-strip = "none"
-debug-assertions = false
-overflow-checks = true
-lto = true
-panic = 'unwind'
-incremental = true
 codegen-units = 256
+debug = false
+debug-assertions = false
+incremental = true
+lto = true
+opt-level = 3
+overflow-checks = true
+panic = 'unwind'
 rpath = false
+strip = "none"
 
 [profile.dev.package."*"]
 opt-level = 2

@@ -374,6 +374,7 @@ impl GfxCollection {
                     msg,
                     Attrs::new(),
                     Shaping::Advanced,
+                    None,
                 );
             }
         }

@@ -1,23 +1,26 @@
 use crate::{
-    content::*, data_types::*, database::*, systems::*, widget::*, Action,
+    Action, content::*, data_types::*, database::*, systems::*, widget::*,
 };
 use backtrace::Backtrace;
 use camera::{
-    controls::{Controls, FlatControls, FlatSettings},
     Projection,
+    controls::{Controls, FlatControls, FlatSettings},
 };
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
+use graphics::{
+    wgpu::{BackendOptions, Dx12BackendOptions},
+    *,
+};
 use hecs::World;
 use input::{Axis, Bindings, FrameTime, InputHandler, Key};
-use log::{error, info, warn, LevelFilter, Metadata, Record};
+use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
 use serde::{Deserialize, Serialize};
 use slotmap::SlotMap;
 use std::{collections::HashMap, env, num::NonZeroUsize};
 use std::{
     fs::{self, File},
-    io::{prelude::*, Read, Write},
+    io::{Read, Write, prelude::*},
     iter, panic,
     sync::Arc,
     time::{Duration, Instant},
@@ -89,11 +92,17 @@ impl winit::application::ApplicationHandler for Runner {
             // Generates an Instance for WGPU. Sets WGPU to be allowed on all possible supported backends
             // These are DX12, DX11, Vulkan, Metal and Gles. if none of these work on a system they cant
             // play the game basically.
-            let instance = wgpu::Instance::new(InstanceDescriptor {
+            let instance = wgpu::Instance::new(&InstanceDescriptor {
                 backends: backend,
                 flags: InstanceFlags::empty(),
-                dx12_shader_compiler: Dx12Compiler::default(),
-                gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
+                backend_options: BackendOptions {
+                    gl: wgpu::GlBackendOptions {
+                        gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
+                    },
+                    dx12: Dx12BackendOptions {
+                        shader_compiler: Dx12Compiler::default(),
+                    },
+                },
             });
 
             info!("after wgpu instance initiation");
@@ -409,24 +418,20 @@ impl winit::application::ApplicationHandler for Runner {
             }
 
             // update our inputs.
-            input_handler.window_updates(
-                systems.renderer.window(),
-                &event,
-                1.0,
-            );
+            input_handler.window_updates(systems.renderer.window(), &event);
 
             for input in input_handler.events() {
                 match input {
                     input::InputEvent::KeyInput { key, pressed, .. } => {
                         handle_key_input(
-                            world, systems, socket, content, alert, key,
-                            *pressed,
+                            world, systems, socket, content, alert, &key,
+                            pressed,
                         )
                         .unwrap();
                     }
                     input::InputEvent::MouseButton { button, pressed } => {
-                        if *button == MouseButton::Left {
-                            if *pressed {
+                        if button == MouseButton::Left {
+                            if pressed {
                                 handle_mouse_input(
                                     world,
                                     systems,
@@ -463,45 +468,35 @@ impl winit::application::ApplicationHandler for Runner {
                             }
                         }
                     }
-                    input::InputEvent::MousePosition => {
-                        if let Some(position) =
-                            input_handler.physical_mouse_position()
-                        {
-                            *mouse_pos = position;
+                    input::InputEvent::MousePosition { x, y } => {
+                        *mouse_pos = PhysicalPosition { x, y };
 
-                            if *mouse_press {
-                                handle_mouse_input(
-                                    world,
-                                    systems,
-                                    socket,
-                                    event_loop,
-                                    MouseInputType::MouseLeftDownMove,
-                                    &Vec2::new(
-                                        position.x as f32,
-                                        position.y as f32,
-                                    ),
-                                    content,
-                                    alert,
-                                    tooltip,
-                                )
-                                .unwrap();
-                            } else {
-                                handle_mouse_input(
-                                    world,
-                                    systems,
-                                    socket,
-                                    event_loop,
-                                    MouseInputType::MouseMove,
-                                    &Vec2::new(
-                                        position.x as f32,
-                                        position.y as f32,
-                                    ),
-                                    content,
-                                    alert,
-                                    tooltip,
-                                )
-                                .unwrap();
-                            }
+                        if *mouse_press {
+                            handle_mouse_input(
+                                world,
+                                systems,
+                                socket,
+                                event_loop,
+                                MouseInputType::MouseLeftDownMove,
+                                &Vec2::new(x as f32, y as f32),
+                                content,
+                                alert,
+                                tooltip,
+                            )
+                            .unwrap();
+                        } else {
+                            handle_mouse_input(
+                                world,
+                                systems,
+                                socket,
+                                event_loop,
+                                MouseInputType::MouseMove,
+                                &Vec2::new(x as f32, y as f32),
+                                content,
+                                alert,
+                                tooltip,
+                            )
+                            .unwrap();
                         }
                     }
                     input::InputEvent::MouseButtonAction(action) => {
@@ -577,10 +572,10 @@ impl winit::application::ApplicationHandler for Runner {
             graphics.system.update(&systems.renderer, frame_time);
 
             // update our systems data to the gpu. this is the Screen in the shaders.
-            graphics.system.update_screen(
-                &systems.renderer,
-                [new_size.width, new_size.height],
-            );
+            graphics.system.update_screen(&systems.renderer, [
+                new_size.width,
+                new_size.height,
+            ]);
 
             // This adds the Image data to the Buffer for rendering.
             add_image_to_buffer(systems, graphics);
