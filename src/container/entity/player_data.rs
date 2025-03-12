@@ -6,7 +6,7 @@ use mmap_bytey::{MByteBuffer, MByteBufferRead, MByteBufferWrite};
 use crate::{
     AttackFrame, Attacking, DeathType, EntityName, EntityNameMap, Equipment,
     HPBar, Movement, MovementData, Physical, Position, SpriteImage,
-    SpriteIndex, Vitals,
+    SpriteIndex, Vitals, content::PlayerPvP,
 };
 
 #[derive(Debug, Clone, Default)]
@@ -14,6 +14,7 @@ pub struct PlayerEntity {
     // General
     pub user_access: UserAccess,
     pub entity_name: EntityName,
+    pub pvp: PlayerPvP,
 
     // Map
     pub hp_bar: HPBar,

@@ -3,7 +3,7 @@ use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
 use mmap_bytey::{MByteBuffer, MByteBufferRead, MByteBufferWrite};
 use slotmap::{Key, KeyData, SecondaryMap, SlotMap, new_key_type};
 
-use super::{NpcEntity, PlayerEntity};
+use super::{MapItemEntity, NpcEntity, PlayerEntity};
 
 new_key_type! {
     pub struct GlobalKey;
@@ -15,7 +15,7 @@ pub enum Entity {
     None,
     Player(Box<PlayerEntity>),
     Npc(Box<NpcEntity>),
-    MapItem(Box<MapItem>),
+    MapItem(Box<MapItemEntity>),
 }
 
 #[derive(Default)]

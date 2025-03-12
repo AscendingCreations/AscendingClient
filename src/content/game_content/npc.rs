@@ -263,7 +263,7 @@ pub fn update_npc_position(
     content: &mut GameContent,
     sprite: GfxType,
     pos: &Position,
-    pos_offset: &PositionOffset,
+    pos_offset: Vec2,
     hpbar: &HPBar,
     entitynamemap: &EntityNameMap,
     light_key: Option<Index>,

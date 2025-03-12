@@ -88,7 +88,7 @@ pub fn update_mapitem_position(
     content: &GameContent,
     sprite: GfxType,
     pos: &Position,
-    pos_offset: &PositionOffset,
+    pos_offset: Vec2,
     light_key: Option<Index>,
 ) {
     let start_pos = get_start_map_pos(content.map.map_pos, pos.map)

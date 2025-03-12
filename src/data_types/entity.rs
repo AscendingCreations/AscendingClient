@@ -226,16 +226,6 @@ pub struct Equipment {
     pub items: Vec<Item>,
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
-pub enum WorldEntityType {
-    #[default]
-    None,
-    Player,
-    Npc,
-    MapItem,
-    Map,
-}
-
 #[derive(
     Copy,
     Clone,
