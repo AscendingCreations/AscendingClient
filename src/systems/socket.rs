@@ -1,9 +1,9 @@
 use crate::{
-    config::*, Alert, BufferTask, ClientError, Content, Result, SystemHolder,
-    SERVER_ID, SERVER_PORT,
+    Alert, BufferTask, ClientError, Content, Result, SERVER_ID, SERVER_PORT,
+    SystemHolder, World, config::*,
 };
 pub use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
-use hecs::World;
+
 use log::{info, trace, warn};
 use mio::net::TcpStream;
 use mio::{Events, Interest, Poll};
@@ -12,6 +12,7 @@ pub use mmap_bytey::{
 };
 use pki_types::ServerName;
 use serde::{Deserialize, Serialize};
+use snafu::Backtrace;
 use std::{
     collections::VecDeque,
     convert::TryFrom,
@@ -218,13 +219,17 @@ impl Socket {
             if io_state.plaintext_bytes_to_read() > 0 {
                 let mut buf = vec![0u8; io_state.plaintext_bytes_to_read()];
                 if self.client.tls.reader().read_exact(&mut buf).is_err() {
-                    log::error!("Disconnected on tls plaintext_bytes_to_read read exact");
+                    log::error!(
+                        "Disconnected on tls plaintext_bytes_to_read read exact"
+                    );
                     self.client.state = ClientState::Closing;
                     return Ok(());
                 }
 
                 if self.buffer.write_slice(&buf).is_err() {
-                    log::error!("Disconnected on tls plaintext_bytes_to_read write slice");
+                    log::error!(
+                        "Disconnected on tls plaintext_bytes_to_read write slice"
+                    );
                     self.client.state = ClientState::Closing;
                     return Ok(());
                 }
@@ -252,10 +257,10 @@ impl Socket {
         loop {
             match self.client.socket.read(&mut buf) {
                 Err(ref err) if err.kind() == io::ErrorKind::WouldBlock => {
-                    break
+                    break;
                 }
                 Err(ref err) if err.kind() == io::ErrorKind::Interrupted => {
-                    continue
+                    continue;
                 }
                 Ok(0) | Err(_) => {
                     log::error!("Disconnected on Socket read");
@@ -521,6 +526,7 @@ fn connect(host: &str, port: u16) -> Result<TcpStream> {
     Err(ClientError::BadConnection {
         num: port as usize,
         message: format!("Cannot connect to {}:{}", host, port),
+        backtrace: Backtrace::new(),
     })
 }
 

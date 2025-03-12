@@ -1,4 +1,4 @@
-use crate::{data_types::*, data_types::*, socket::*};
+use crate::{GlobalKey, data_types::*, data_types::*, socket::*};
 
 #[derive(Clone, Debug, PartialEq, Eq, MByteBufferRead, MByteBufferWrite)]
 pub enum Command {
@@ -125,7 +125,7 @@ pub fn send_dir(socket: &mut Socket, dir: u8) -> Result<()> {
 pub fn send_attack(
     socket: &mut Socket,
     dir: u8,
-    entity: Option<Entity>,
+    entity: Option<GlobalKey>,
 ) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
@@ -298,7 +298,7 @@ pub fn send_command(socket: &mut Socket, command: Command) -> Result<()> {
 
 pub fn send_settarget(
     socket: &mut Socket,
-    entity: Option<Entity>,
+    entity: Option<GlobalKey>,
 ) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 

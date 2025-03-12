@@ -1,11 +1,11 @@
 use crate::{
-    data_types::*, send_settarget, Result, Socket, SystemHolder, ORDER_TARGET,
+    GlobalKey, ORDER_TARGET, Result, Socket, SystemHolder, data_types::*,
+    send_settarget,
 };
 use graphics::*;
-use hecs::World;
 
 pub struct Target {
-    pub entity: Option<Entity>,
+    pub entity: Option<GlobalKey>,
     img_index: GfxType,
 }
 
@@ -56,7 +56,7 @@ impl Target {
         &mut self,
         socket: &mut Socket,
         systems: &mut SystemHolder,
-        target: &Entity,
+        target: GlobalKey,
     ) -> Result<()> {
         self.entity = Some(*target);
         systems.gfx.set_visible(&self.img_index, true);

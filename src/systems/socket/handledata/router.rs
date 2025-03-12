@@ -1,6 +1,6 @@
 use log::{error, trace};
 
-use crate::{data_types::*, fade::*, socket::*, BufferTask};
+use crate::{BufferTask, data_types::*, fade::*, socket::*};
 
 #[allow(clippy::too_many_arguments)]
 pub fn handle_data(
@@ -24,7 +24,11 @@ pub fn handle_data(
 
     let fun = match router.0.get(&id) {
         Some(fun) => fun,
-        None => return Err(ClientError::InvalidPacket),
+        None => {
+            return Err(ClientError::InvalidPacket {
+                backtrace: Backtrace::new(),
+            });
+        }
     };
 
     match fun(

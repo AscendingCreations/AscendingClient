@@ -7,14 +7,13 @@ use input::Key;
 use winit::keyboard::NamedKey;
 
 use crate::{
+    Alert, AlertIndex, AlertType, COLOR_WHITE, GameContent, GfxType,
+    MouseInputType, Result, Socket, SystemHolder, TradeStatus, World,
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
     send_closestorage, send_closetrade, send_command, send_message,
     send_removetradeitem, send_submittrade, send_unequip,
-    send_updatetrademoney, send_useitem, socket, widget::*, Alert, AlertIndex,
-    AlertType, GameContent, GfxType, MouseInputType, Result, Socket,
-    SystemHolder, TradeStatus, COLOR_WHITE,
+    send_updatetrademoney, send_useitem, socket, widget::*,
 };
-use hecs::World;
 
 pub mod chatbox;
 mod inventory;

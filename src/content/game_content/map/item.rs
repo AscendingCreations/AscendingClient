@@ -1,17 +1,18 @@
 use bytey::{ByteBufferRead, ByteBufferWrite};
 use graphics::*;
-use hecs::World;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    SystemHolder,
     data_types::*,
     game_content::{Camera, *},
-    get_start_map_pos, SystemHolder,
+    get_start_map_pos,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct MapItem {
-    pub id: Entity,
+    pub id: GlobalKey,
     pub item: Item,
     pub pos: Position,
 }
@@ -23,8 +24,8 @@ impl MapItem {
         sprite: usize,
         pos: Position,
         cur_map: MapPosition,
-        entity: Option<&Entity>,
-    ) -> Result<Entity> {
+        entity: Option<GlobalKey>,
+    ) -> Result<GlobalKey> {
         let start_pos = get_start_map_pos(cur_map, pos.map)
             .unwrap_or_else(|| Vec2::new(0.0, 0.0));
         let mut image = Image::new(
@@ -67,9 +68,9 @@ impl MapItem {
     pub fn finalized(
         world: &mut World,
         systems: &mut SystemHolder,
-        entity: &Entity,
+        entity: GlobalKey,
     ) -> Result<()> {
-        if !world.contains(entity.0) {
+        if !world.contains(entity) {
             return Ok(());
         }
         let sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
@@ -121,7 +122,7 @@ pub fn unload_mapitems(
     world: &mut World,
     systems: &mut SystemHolder,
     content: &GameContent,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<()> {
     let item_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
     systems.gfx.remove_gfx(&mut systems.renderer, &item_sprite);
@@ -130,6 +131,6 @@ pub fn unload_mapitems(
             .gfx
             .remove_area_light(&content.game_lights, entitylight);
     }
-    world.despawn(entity.0)?;
+    world.despawn(entity)?;
     Ok(())
 }

@@ -1,6 +1,6 @@
 use bit_op::{bit_u8::*, BitOp};
 use graphics::*;
-use hecs::World;
+
 
 use crate::{
     content::game_content::player::*, content::game_content::*, data_types::*,
@@ -180,7 +180,7 @@ pub fn find_entity(
     systems: &mut SystemHolder,
     content: &mut GameContent,
     screen_pos: Vec2,
-) -> Option<Entity> {
+) -> Option<GlobalKey> {
     let center_pos = get_map_pos(systems, content.map.mapindex[0]);
     let adjusted_pos = screen_pos - center_pos;
     let tile_pos = Vec2::new(
@@ -237,14 +237,14 @@ pub fn find_entity(
 pub fn can_move(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
     content: &mut GameContent,
     direction: &Direction,
 ) -> Result<bool> {
     let pos = world.get_or_err::<Position>(entity)?;
 
     {
-        world.get::<&mut Dir>(entity.0)?.0 = match direction {
+        world.get::<&mut Dir>(entity)?.0 = match direction {
             Direction::Up => 2,
             Direction::Down => 0,
             Direction::Left => 3,
@@ -294,7 +294,7 @@ pub fn can_move(
         if world.query::<(&WorldEntityType, &Position)>().iter().any(
             |(target, (worldtype, pos))| {
                 *pos == next_pos
-                    && target != entity.0
+                    && target != entity
                     && (*worldtype == WorldEntityType::Npc
                         || *worldtype == WorldEntityType::Player)
             },

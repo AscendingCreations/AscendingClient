@@ -1,13 +1,13 @@
 use graphics::*;
-use hecs::World;
+
 use input::Key;
 use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 use crate::{
+    Alert, COLOR_RED, ContentType, MouseInputType, SystemHolder, Tooltip,
     content::*,
     data_types::*,
     socket::{self, *},
-    Alert, ContentType, MouseInputType, SystemHolder, Tooltip, COLOR_RED,
 };
 
 use super::{
@@ -75,14 +75,14 @@ impl GameContent {
                 content
                     .game_content
                     .target
-                    .set_target(socket, systems, &entity)?;
-                match world.get_or_err::<WorldEntityType>(&entity)? {
+                    .set_target(socket, systems, entity)?;
+                match world.get_or_err::<WorldEntityType>(entity)? {
                     WorldEntityType::Player => {
                         update_player_camera(
                             world,
                             systems,
                             socket,
-                            &entity,
+                            entity,
                             &mut content.game_content,
                         )?;
                     }
@@ -90,7 +90,7 @@ impl GameContent {
                         update_npc_camera(
                             world,
                             systems,
-                            &entity,
+                            entity,
                             socket,
                             &mut content.game_content,
                         )?;

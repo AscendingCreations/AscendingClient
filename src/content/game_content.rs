@@ -11,10 +11,9 @@ pub use content_input::*;
 pub use interface::*;
 
 use crate::{
-    content::*, data_types::*, database::*, logic::*, send_attack, send_pickup,
-    systems::*, Direction, Result, Socket, SystemHolder, TILE_SIZE,
+    Direction, GlobalKey, Result, Socket, SystemHolder, TILE_SIZE, content::*,
+    data_types::*, database::*, logic::*, send_attack, send_pickup, systems::*,
 };
-use hecs::World;
 
 pub mod floating_text;
 pub mod map;
@@ -48,15 +47,15 @@ impl Camera {
 }
 
 pub struct GameContent {
-    pub players: Rc<RefCell<IndexSet<Entity, ahash::RandomState>>>,
-    pub npcs: Rc<RefCell<IndexSet<Entity, ahash::RandomState>>>,
-    pub mapitems: Rc<RefCell<IndexSet<Entity, ahash::RandomState>>>,
+    pub players: Rc<RefCell<IndexSet<GlobalKey, ahash::RandomState>>>,
+    pub npcs: Rc<RefCell<IndexSet<GlobalKey, ahash::RandomState>>>,
+    pub mapitems: Rc<RefCell<IndexSet<GlobalKey, ahash::RandomState>>>,
     pub game_lights: GfxType,
     pub map: MapContent,
     camera: Camera,
     pub interface: Interface,
     pub keyinput: [bool; MAX_KEY],
-    pub myentity: Option<Entity>,
+    pub myentity: Option<GlobalKey>,
     pub in_game: bool,
     pub player_data: PlayerData,
     pub finalized: bool,
@@ -640,8 +639,8 @@ pub fn update_camera(
     socket: &mut Socket,
 ) -> Result<()> {
     let player_pos = if let Some(entity) = content.myentity {
-        let pos_offset = world.get_or_err::<PositionOffset>(&entity)?;
-        let pos = world.get_or_err::<Position>(&entity)?;
+        let pos_offset = world.get_or_err::<PositionOffset>(entity)?;
+        let pos = world.get_or_err::<Position>(entity)?;
         (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
             + pos_offset.offset
     } else {

@@ -1,7 +1,6 @@
-use crate::{create_label, Result};
+use crate::{Result, create_label};
 use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use graphics::*;
-use hecs::World;
 
 pub const PLAYER_SPRITE_FRAME_X: f32 = 6.0;
 
@@ -14,8 +13,8 @@ pub struct PlayerPvP {
 }
 
 use crate::{
-    data_types::*, fade::*, game_content::*, send_move, Direction, Socket,
-    SystemHolder,
+    Direction, Socket, SystemHolder, data_types::*, fade::*, game_content::*,
+    send_move,
 };
 
 pub fn add_player(
@@ -23,9 +22,9 @@ pub fn add_player(
     systems: &mut SystemHolder,
     pos: Position,
     cur_map: MapPosition,
-    entity: Option<&Entity>,
+    entity: Option<GlobalKey>,
     sprite: usize,
-) -> Result<Entity> {
+) -> Result<GlobalKey> {
     let start_pos = get_start_map_pos(cur_map, pos.map)
         .unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
@@ -76,55 +75,14 @@ pub fn add_player(
         bg_index,
         bar_index,
     };
-    let component1 = (
-        pos,
-        PositionOffset::default(),
-        SpriteIndex(sprite),
-        Movement::default(),
-        EndMovement::default(),
-        Dir::default(),
-        LastMoveFrame::default(),
-        Attacking::default(),
-        AttackTimer::default(),
-        AttackFrame::default(),
-        EntityName::default(),
-        UserAccess::default(),
-        Equipment::default(),
-        Hidden::default(),
-        WorldEntityType::Player,
-    );
-    let component2 = (
-        Level::default(),
-        DeathType::default(),
-        Physical::default(),
-        Vitals::default(),
-        SpriteImage::default(),
-        MovementBuffer::default(),
-        hpbar,
-        Finalized::default(),
-        entitynamemap,
-        EntityLight::default(),
-    );
-
-    if let Some(data) = entity {
-        world.spawn_at(data.0, component1);
-        world.insert(data.0, component2)?;
-        world.insert_one(data.0, EntityType::Player(Entity(data.0)))?;
-        Ok(Entity(data.0))
-    } else {
-        let entity = world.spawn(component1);
-        world.insert(entity, component2)?;
-        world.insert_one(entity, EntityType::Player(Entity(entity)))?;
-        Ok(Entity(entity))
-    }
 }
 
 pub fn player_finalized(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.contains(entity) {
         return Ok(());
     }
 
@@ -151,7 +109,7 @@ pub fn unload_player(
     world: &mut World,
     systems: &mut SystemHolder,
     content: &GameContent,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<()> {
     let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
 
@@ -180,7 +138,7 @@ pub fn unload_player(
             .remove_area_light(&content.game_lights, entitylight);
     }
 
-    world.despawn(entity.0)?;
+    world.despawn(entity)?;
     Ok(())
 }
 
@@ -188,18 +146,18 @@ pub fn move_player(
     world: &mut World,
     systems: &mut SystemHolder,
     socket: &mut Socket,
-    entity: &Entity,
+    entity: GlobalKey,
     content: &mut GameContent,
     move_type: MovementType,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.contains(entity) {
         return Ok(());
     }
 
     let (dir, end) = match move_type {
         MovementType::MovementBuffer => {
             let mut movementbuffer =
-                world.get::<&mut MovementBuffer>(entity.0)?;
+                world.get::<&mut MovementBuffer>(entity)?;
             let movement = world.get_or_err::<Movement>(entity)?;
             if movementbuffer.data.is_empty() || movement.is_moving {
                 return Ok(());
@@ -225,7 +183,7 @@ pub fn move_player(
     }
 
     if let Some(end_pos) = end {
-        world.get::<&mut EndMovement>(entity.0)?.0 = end_pos;
+        world.get::<&mut EndMovement>(entity)?.0 = end_pos;
     } else {
         let pos = world.get_or_err::<Position>(entity)?;
         let adj = [(0, -1), (1, 0), (0, 1), (-1, 0)];
@@ -254,7 +212,7 @@ pub fn move_player(
             end_move.map.y += adj[dir_index].1;
         }
 
-        world.get::<&mut EndMovement>(entity.0)?.0 = end_move;
+        world.get::<&mut EndMovement>(entity)?.0 = end_move;
     }
 
     let dir_u8 = enum_to_dir(dir);
@@ -283,7 +241,7 @@ pub fn move_player(
         }
     }
 
-    if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
+    if let Ok(mut movement) = world.get::<&mut Movement>(entity) {
         movement.is_moving = true;
         movement.move_direction = dir;
         movement.move_offset = 0.0;
@@ -291,7 +249,7 @@ pub fn move_player(
     }
 
     {
-        world.get::<&mut Dir>(entity.0)?.0 = dir_u8;
+        world.get::<&mut Dir>(entity)?.0 = dir_u8;
     }
 
     let last_frame = if world.get_or_err::<LastMoveFrame>(entity)?.0 == 1 {
@@ -301,7 +259,7 @@ pub fn move_player(
     };
 
     {
-        world.get::<&mut LastMoveFrame>(entity.0)?.0 = last_frame;
+        world.get::<&mut LastMoveFrame>(entity)?.0 = last_frame;
     }
 
     let frame =
@@ -315,14 +273,14 @@ pub fn end_player_move(
     systems: &mut SystemHolder,
     content: &mut GameContent,
     socket: &mut Socket,
-    entity: &Entity,
+    entity: GlobalKey,
     buffer: &mut BufferTask,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.contains(entity) {
         return Ok(());
     }
 
-    if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
+    if let Ok(mut movement) = world.get::<&mut Movement>(entity) {
         if !movement.is_moving {
             return Ok(());
         }
@@ -335,7 +293,7 @@ pub fn end_player_move(
     let mut move_map: bool = false;
     let end_pos = world.get_or_err::<EndMovement>(entity)?.0;
     {
-        if let Ok(mut pos) = world.get::<&mut Position>(entity.0) {
+        if let Ok(mut pos) = world.get::<&mut Position>(entity) {
             pos.x = end_pos.x;
             pos.y = end_pos.y;
             if pos.map != end_pos.map {
@@ -344,8 +302,7 @@ pub fn end_player_move(
             }
         }
 
-        world.get::<&mut PositionOffset>(entity.0)?.offset =
-            Vec2::new(0.0, 0.0);
+        world.get::<&mut PositionOffset>(entity)?.offset = Vec2::new(0.0, 0.0);
     }
 
     if let Some(p) = &content.myentity {
@@ -426,10 +383,10 @@ pub fn update_player_position(
 pub fn set_player_frame(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
     frame_index: usize,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.contains(entity) {
         return Ok(());
     }
 
@@ -450,10 +407,10 @@ pub fn set_player_frame(
 pub fn init_player_attack(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
     seconds: f32,
 ) -> Result<()> {
-    if !world.contains(entity.0)
+    if !world.contains(entity)
         || world.get_or_err::<Attacking>(entity)?.0
         || world.get_or_err::<Movement>(entity)?.is_moving
     {
@@ -461,9 +418,9 @@ pub fn init_player_attack(
     }
 
     {
-        world.get::<&mut Attacking>(entity.0)?.0 = true;
-        world.get::<&mut AttackTimer>(entity.0)?.0 = seconds + 0.5;
-        if let Ok(mut attackframe) = world.get::<&mut AttackFrame>(entity.0) {
+        world.get::<&mut Attacking>(entity)?.0 = true;
+        world.get::<&mut AttackTimer>(entity)?.0 = seconds + 0.5;
+        if let Ok(mut attackframe) = world.get::<&mut AttackFrame>(entity) {
             attackframe.frame = 0;
             attackframe.timer = seconds + 0.16;
         }
@@ -478,18 +435,18 @@ pub fn init_player_attack(
 pub fn process_player_attack(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
     seconds: f32,
 ) -> Result<()> {
-    if !world.contains(entity.0) || !world.get_or_err::<Attacking>(entity)?.0 {
+    if !world.contains(entity) || !world.get_or_err::<Attacking>(entity)?.0 {
         return Ok(());
     }
 
     if seconds < world.get_or_err::<AttackTimer>(entity)?.0 {
         if seconds > world.get_or_err::<AttackFrame>(entity)?.timer {
             {
-                world.get::<&mut AttackFrame>(entity.0)?.frame += 1;
-                world.get::<&mut AttackFrame>(entity.0)?.timer = seconds + 0.16;
+                world.get::<&mut AttackFrame>(entity)?.frame += 1;
+                world.get::<&mut AttackFrame>(entity)?.timer = seconds + 0.16;
             }
 
             let mut attackframe =
@@ -511,7 +468,7 @@ pub fn process_player_attack(
         }
     } else {
         {
-            world.get::<&mut Attacking>(entity.0)?.0 = false;
+            world.get::<&mut Attacking>(entity)?.0 = false;
         }
 
         let frame =
@@ -526,11 +483,11 @@ pub fn process_player_movement(
     world: &mut World,
     systems: &mut SystemHolder,
     socket: &mut Socket,
-    entity: &Entity,
+    entity: GlobalKey,
     content: &mut GameContent,
     buffer: &mut BufferTask,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.contains(entity) {
         return Ok(());
     }
 
@@ -544,7 +501,7 @@ pub fn process_player_movement(
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         {
-            world.get::<&mut Movement>(entity.0)?.move_offset += add_offset;
+            world.get::<&mut Movement>(entity)?.move_offset += add_offset;
         }
 
         let moveoffset = world.get_or_err::<Movement>(entity)?.move_offset;
@@ -557,11 +514,10 @@ pub fn process_player_movement(
                 Direction::Right => Vec2::new(moveoffset, 0.0),
             };
 
-            world.get::<&mut PositionOffset>(entity.0)?.offset = offset;
+            world.get::<&mut PositionOffset>(entity)?.offset = offset;
         }
     } else {
-        world.get::<&mut PositionOffset>(entity.0)?.offset =
-            Vec2::new(0.0, 0.0);
+        world.get::<&mut PositionOffset>(entity)?.offset = Vec2::new(0.0, 0.0);
         end_player_move(world, systems, content, socket, entity, buffer)?;
     }
 
@@ -577,7 +533,7 @@ pub fn update_player_camera(
     world: &mut World,
     systems: &mut SystemHolder,
     socket: &mut Socket,
-    entity: &Entity,
+    entity: GlobalKey,
     content: &mut GameContent,
 ) -> Result<()> {
     let mut query = world.query_one::<(
@@ -587,7 +543,7 @@ pub fn update_player_camera(
         &PositionOffset,
         &EntityNameMap,
         &EntityLight,
-    )>(entity.0)?;
+    )>(entity)?;
 
     if let Some((
         hpbar,
@@ -610,7 +566,7 @@ pub fn update_player_camera(
         )?;
 
         let is_target = if let Some(target) = content.target.entity {
-            target.0 == entity.0
+            target.0 == entity
         } else {
             false
         };
@@ -641,9 +597,9 @@ pub fn update_player_camera(
 
 pub fn player_get_next_lvl_exp(
     world: &mut World,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<u64> {
-    let mut query = world.query_one::<&Level>(entity.0)?;
+    let mut query = world.query_one::<&Level>(entity)?;
 
     if let Some(player_level) = query.get() {
         let exp_per_level = match player_level.0 {
@@ -673,20 +629,17 @@ pub fn create_player_light(
     world: &mut World,
     systems: &mut SystemHolder,
     game_light: &GfxType,
-    entity: &Entity,
+    entity: GlobalKey,
 ) {
-    if let Ok(mut entitylight) = world.get::<&mut EntityLight>(entity.0) {
-        entitylight.0 = systems.gfx.add_area_light(
-            game_light,
-            AreaLight {
-                pos: Vec2::new(0.0, 0.0),
-                color: Color::rgba(100, 100, 100, 20),
-                max_distance: 60.0,
-                animate: true,
-                anim_speed: 5.0,
-                dither: 0.8,
-                camera_type: CameraType::None,
-            },
-        )
+    if let Ok(mut entitylight) = world.get::<&mut EntityLight>(entity) {
+        entitylight.0 = systems.gfx.add_area_light(game_light, AreaLight {
+            pos: Vec2::new(0.0, 0.0),
+            color: Color::rgba(100, 100, 100, 20),
+            max_distance: 60.0,
+            animate: true,
+            anim_speed: 5.0,
+            dither: 0.8,
+            camera_type: CameraType::None,
+        })
     }
 }

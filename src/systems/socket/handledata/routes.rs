@@ -1,7 +1,11 @@
 use std::ops::Range;
 
 use crate::{
-    add_float_text, add_npc, close_interface,
+    Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
+    EncryptionState, EntityType, FtlType, GlobalKey, IsUsingType, MAX_EQPT,
+    MapItem, MessageChannel, NPC_SPRITE_FRAME_X, ProfileLabel, Result, Socket,
+    SystemHolder, TradeStatus, VITALS_MAX, Window, World, add_float_text,
+    add_npc, close_interface,
     content::game_content::{interface::chatbox::*, player::*},
     create_npc_light,
     data_types::*,
@@ -11,13 +15,10 @@ use crate::{
     is_map_connected, npc_finalized, open_interface, player_get_armor_defense,
     player_get_weapon_damage, send_handshake, set_npc_frame, unload_mapitems,
     unload_npc, update_camera, update_mapitem_position, update_npc_camera,
-    update_player, Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
-    EncryptionState, EntityType, FtlType, IsUsingType, MapItem, MessageChannel,
-    ProfileLabel, Result, Socket, SystemHolder, TradeStatus, Window, MAX_EQPT,
-    NPC_SPRITE_FRAME_X, VITALS_MAX,
+    update_player,
 };
 use graphics::*;
-use hecs::World;
+
 use log::info;
 use mmap_bytey::MByteBuffer;
 
@@ -174,14 +175,14 @@ pub fn handle_mapitems(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
         let pos = data.read::<Position>()?;
         let item = data.read::<Item>()?;
-        let _owner = data.read::<Option<Entity>>()?;
+        let _owner = data.read::<Option<GlobalKey>>()?;
         let _did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
-            if !world.contains(entity.0) {
+            if !world.contains(entity) {
                 let client_map = world.get_or_err::<Position>(&myentity)?.map;
                 let sprite = if let Some(itemdata) =
                     systems.base.item.get(item.num as usize)
@@ -196,20 +197,20 @@ pub fn handle_mapitems(
                     sprite,
                     pos,
                     client_map,
-                    Some(&entity),
+                    Some(entity),
                 )?;
 
                 content.game_content.mapitems.borrow_mut().insert(mapitem);
 
                 if content.game_content.finalized {
-                    MapItem::finalized(world, systems, &entity)?;
+                    MapItem::finalized(world, systems, entity)?;
                     update_mapitem_position(
                         systems,
                         &content.game_content,
-                        world.get_or_err::<SpriteIndex>(&entity)?.0,
+                        world.get_or_err::<SpriteIndex>(entity)?.0,
                         &pos,
-                        &world.get_or_err::<PositionOffset>(&entity)?,
-                        world.get_or_err::<EntityLight>(&entity)?.0,
+                        &world.get_or_err::<PositionOffset>(entity)?,
+                        world.get_or_err::<EntityLight>(entity)?.0,
                     );
                 }
             }
@@ -229,7 +230,7 @@ pub fn handle_myindex(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let entity = data.read::<Entity>()?;
+    let entity = data.read::<GlobalKey>()?;
     content.game_content.myentity = Some(entity);
     Ok(())
 }
@@ -281,13 +282,13 @@ pub fn handle_playerdata(
         let mut vitalmax = [0; VITALS_MAX];
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
 
-        if !world.contains(entity.0) || !content.game_content.in_game {
+        if !world.contains(entity) || !content.game_content.in_game {
             let player = add_player(
                 world,
                 systems,
                 pos,
                 pos.map,
-                Some(&entity),
+                Some(entity),
                 sprite as usize,
             )?;
             // Create Lights
@@ -295,7 +296,7 @@ pub fn handle_playerdata(
                 world,
                 systems,
                 &content.game_content.game_lights,
-                &entity,
+                entity,
             );
 
             content.game_content.players.borrow_mut().insert(player);
@@ -305,32 +306,31 @@ pub fn handle_playerdata(
         content.game_content.player_data.equipment[..]
             .copy_from_slice(&equipment.items);
 
-        let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
+        let entity_name = world.get_or_err::<EntityNameMap>(entity)?;
         systems
             .gfx
             .set_text(&mut systems.renderer, &entity_name.0, &username);
 
         {
-            world.get::<&mut HPBar>(entity.0)?.visible =
-                vitals[0] != vitalmax[0];
-            world.get::<&mut EntityName>(entity.0)?.0 = username;
-            *world.get::<&mut UserAccess>(entity.0)? = useraccess;
-            world.get::<&mut Dir>(entity.0)?.0 = dir;
-            *world.get::<&mut Equipment>(entity.0)? = equipment;
-            world.get::<&mut Hidden>(entity.0)?.0 = hidden;
-            world.get::<&mut Level>(entity.0)?.0 = level;
-            *world.get::<&mut DeathType>(entity.0)? = deathtype;
-            if let Ok(mut physical) = world.get::<&mut Physical>(entity.0) {
+            world.get::<&mut HPBar>(entity)?.visible = vitals[0] != vitalmax[0];
+            world.get::<&mut EntityName>(entity)?.0 = username;
+            *world.get::<&mut UserAccess>(entity)? = useraccess;
+            world.get::<&mut Dir>(entity)?.0 = dir;
+            *world.get::<&mut Equipment>(entity)? = equipment;
+            world.get::<&mut Hidden>(entity)?.0 = hidden;
+            world.get::<&mut Level>(entity)?.0 = level;
+            *world.get::<&mut DeathType>(entity)? = deathtype;
+            if let Ok(mut physical) = world.get::<&mut Physical>(entity) {
                 physical.damage = pdamage;
                 physical.defense = pdefense;
             }
-            *world.get::<&mut Position>(entity.0)? = pos;
-            if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity.0) {
+            *world.get::<&mut Position>(entity)? = pos;
+            if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity) {
                 pvp.pk = pk;
                 pvp.pvpon = pvpon;
             }
-            world.get::<&mut SpriteImage>(entity.0)?.0 = sprite;
-            if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
+            world.get::<&mut SpriteImage>(entity)?.0 = sprite;
+            if let Ok(mut vital) = world.get::<&mut Vitals>(entity) {
                 vital.vital = vitals;
                 vital.vitalmax = vitalmax;
             }
@@ -355,7 +355,7 @@ pub fn handle_playerspawn(
         let username = data.read::<String>()?;
         let dir = data.read::<u8>()?;
         let hidden = data.read::<bool>()?;
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
         let level = data.read::<i32>()?;
         let deathtype = data.read::<DeathType>()?;
         let pdamage = data.read::<u32>()?;
@@ -373,26 +373,26 @@ pub fn handle_playerspawn(
         let _did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
-            if myentity != entity && !world.contains(entity.0) {
+            if myentity != entity && !world.contains(entity) {
                 let client_map = world.get_or_err::<Position>(&myentity)?.map;
                 let player = add_player(
                     world,
                     systems,
                     pos,
                     client_map,
-                    Some(&entity),
+                    Some(entity),
                     sprite as usize,
                 )?;
                 create_player_light(
                     world,
                     systems,
                     &content.game_content.game_lights,
-                    &entity,
+                    entity,
                 );
 
                 content.game_content.players.borrow_mut().insert(player);
 
-                let entity_name = world.get_or_err::<EntityNameMap>(&entity)?;
+                let entity_name = world.get_or_err::<EntityNameMap>(entity)?;
                 systems.gfx.set_text(
                     &mut systems.renderer,
                     &entity_name.0,
@@ -400,38 +400,37 @@ pub fn handle_playerspawn(
                 );
 
                 {
-                    world.get::<&mut EntityName>(entity.0)?.0 = username;
-                    *world.get::<&mut UserAccess>(entity.0)? = useraccess;
-                    world.get::<&mut Dir>(entity.0)?.0 = dir;
-                    *world.get::<&mut Equipment>(entity.0)? = equipment;
-                    world.get::<&mut Hidden>(entity.0)?.0 = hidden;
-                    world.get::<&mut Level>(entity.0)?.0 = level;
-                    *world.get::<&mut DeathType>(entity.0)? = deathtype;
-                    if let Ok(mut physical) =
-                        world.get::<&mut Physical>(entity.0)
+                    world.get::<&mut EntityName>(entity)?.0 = username;
+                    *world.get::<&mut UserAccess>(entity)? = useraccess;
+                    world.get::<&mut Dir>(entity)?.0 = dir;
+                    *world.get::<&mut Equipment>(entity)? = equipment;
+                    world.get::<&mut Hidden>(entity)?.0 = hidden;
+                    world.get::<&mut Level>(entity)?.0 = level;
+                    *world.get::<&mut DeathType>(entity)? = deathtype;
+                    if let Ok(mut physical) = world.get::<&mut Physical>(entity)
                     {
                         physical.damage = pdamage;
                         physical.defense = pdefense;
                     }
-                    *world.get::<&mut Position>(entity.0)? = pos;
-                    if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity.0) {
+                    *world.get::<&mut Position>(entity)? = pos;
+                    if let Ok(mut pvp) = world.get::<&mut PlayerPvP>(entity) {
                         pvp.pk = pk;
                         pvp.pvpon = pvpon;
                     }
-                    world.get::<&mut SpriteImage>(entity.0)?.0 = sprite as u8;
-                    if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
+                    world.get::<&mut SpriteImage>(entity)?.0 = sprite as u8;
+                    if let Ok(mut vital) = world.get::<&mut Vitals>(entity) {
                         vital.vital = vitals;
                         vital.vitalmax = vitalmax;
                     }
                 }
 
                 if content.game_content.finalized {
-                    player_finalized(world, systems, &entity)?;
+                    player_finalized(world, systems, entity)?;
                     update_player_camera(
                         world,
                         systems,
                         socket,
-                        &entity,
+                        entity,
                         &mut content.game_content,
                     )?;
                 }
@@ -455,18 +454,18 @@ pub fn handle_move(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
         let pos = data.read::<Position>()?;
         let _warp = data.read::<bool>()?;
         let _switch = data.read::<bool>()?;
         let dir = data.read::<u8>()?;
 
         if let Some(myentity) = content.game_content.myentity {
-            if myentity != entity && world.contains(entity.0) {
+            if myentity != entity && world.contains(entity) {
                 let player_pos = world.get_or_err::<Position>(&myentity)?;
                 if is_map_connected(player_pos.map, pos.map) {
                     let mut movementbuffer =
-                        world.get::<&mut MovementBuffer>(entity.0)?;
+                        world.get::<&mut MovementBuffer>(entity)?;
                     let movement_data = MovementData { end_pos: pos, dir };
                     if movementbuffer.data.is_empty() {
                         movementbuffer.data.push_back(movement_data);
@@ -476,32 +475,32 @@ pub fn handle_move(
                         }
                     }
                 } else {
-                    match world.get_or_err::<WorldEntityType>(&entity)? {
+                    match world.get_or_err::<WorldEntityType>(entity)? {
                         WorldEntityType::Player => {
                             unload_player(
                                 world,
                                 systems,
                                 &content.game_content,
-                                &entity,
+                                entity,
                             )?;
                             content
                                 .game_content
                                 .players
                                 .borrow_mut()
-                                .swap_remove(&entity);
+                                .swap_remove(entity);
                         }
                         WorldEntityType::Npc => {
                             unload_npc(
                                 world,
                                 systems,
                                 &content.game_content,
-                                &entity,
+                                entity,
                             )?;
                             content
                                 .game_content
                                 .npcs
                                 .borrow_mut()
-                                .swap_remove(&entity);
+                                .swap_remove(entity);
                         }
                         _ => {}
                     }
@@ -526,37 +525,37 @@ pub fn handle_warp(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
         let pos = data.read::<Position>()?;
 
-        if !world.contains(entity.0) {
+        if !world.contains(entity) {
             continue;
         }
 
-        let old_pos = world.get_or_err::<Position>(&entity)?;
+        let old_pos = world.get_or_err::<Position>(entity)?;
 
         {
-            world.get::<&mut Movement>(entity.0)?.is_moving = false;
-            *world.get::<&mut Position>(entity.0)? = pos;
-            world.get::<&mut PositionOffset>(entity.0)?.offset =
+            world.get::<&mut Movement>(entity)?.is_moving = false;
+            *world.get::<&mut Position>(entity)? = pos;
+            world.get::<&mut PositionOffset>(entity)?.offset =
                 Vec2::new(0.0, 0.0);
         }
 
-        if world.get_or_err::<WorldEntityType>(&entity)?
+        if world.get_or_err::<WorldEntityType>(entity)?
             == WorldEntityType::Player
         {
-            let frame = world.get_or_err::<Dir>(&entity)?.0
+            let frame = world.get_or_err::<Dir>(entity)?.0
                 * PLAYER_SPRITE_FRAME_X as u8;
-            set_player_frame(world, systems, &entity, frame as usize)?;
-        } else if world.get_or_err::<WorldEntityType>(&entity)?
+            set_player_frame(world, systems, entity, frame as usize)?;
+        } else if world.get_or_err::<WorldEntityType>(entity)?
             == WorldEntityType::Npc
         {
             let frame =
-                world.get_or_err::<Dir>(&entity)?.0 * NPC_SPRITE_FRAME_X as u8;
-            set_npc_frame(world, systems, &entity, frame as usize)?;
+                world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+            set_npc_frame(world, systems, entity, frame as usize)?;
         }
 
-        if world.get_or_err::<WorldEntityType>(&entity)?
+        if world.get_or_err::<WorldEntityType>(entity)?
             == WorldEntityType::Player
         {
             if let Some(myentity) = content.game_content.myentity {
@@ -622,19 +621,19 @@ pub fn handle_warp(
                             world,
                             systems,
                             &content.game_content,
-                            &entity,
+                            entity,
                         )?;
                         content
                             .game_content
                             .players
                             .borrow_mut()
-                            .swap_remove(&entity);
+                            .swap_remove(entity);
                     } else {
                         update_player_camera(
                             world,
                             systems,
                             socket,
-                            &entity,
+                            entity,
                             &mut content.game_content,
                         )?;
                     }
@@ -659,26 +658,26 @@ pub fn handle_dir(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
         let dir = data.read::<u8>()?;
 
-        if world.contains(entity.0) {
+        if world.contains(entity) {
             {
-                world.get::<&mut Dir>(entity.0)?.0 = dir;
+                world.get::<&mut Dir>(entity)?.0 = dir;
             }
 
-            if world.get_or_err::<WorldEntityType>(&entity)?
+            if world.get_or_err::<WorldEntityType>(entity)?
                 == WorldEntityType::Player
             {
-                let frame = world.get_or_err::<Dir>(&entity)?.0
+                let frame = world.get_or_err::<Dir>(entity)?.0
                     * PLAYER_SPRITE_FRAME_X as u8;
-                set_player_frame(world, systems, &entity, frame as usize)?;
-            } else if world.get_or_err::<WorldEntityType>(&entity)?
+                set_player_frame(world, systems, entity, frame as usize)?;
+            } else if world.get_or_err::<WorldEntityType>(entity)?
                 == WorldEntityType::Npc
             {
-                let frame = world.get_or_err::<Dir>(&entity)?.0
+                let frame = world.get_or_err::<Dir>(entity)?.0
                     * NPC_SPRITE_FRAME_X as u8;
-                set_npc_frame(world, systems, &entity, frame as usize)?;
+                set_npc_frame(world, systems, entity, frame as usize)?;
             };
         }
     }
@@ -699,29 +698,29 @@ pub fn handle_vitals(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
         let mut vitals = [0; VITALS_MAX];
         vitals.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
         let mut vitalmax = [0; VITALS_MAX];
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
 
-        if world.contains(entity.0) {
-            if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
+        if world.contains(entity) {
+            if let Ok(mut vital) = world.get::<&mut Vitals>(entity) {
                 vital.vital = vitals;
                 vital.vitalmax = vitalmax;
             }
 
-            let hpbar = world.get_or_err::<HPBar>(&entity)?;
+            let hpbar = world.get_or_err::<HPBar>(entity)?;
             let mut size = systems.gfx.get_size(&hpbar.bar_index);
             size.x = get_percent(vitals[0], vitalmax[0], 18) as f32;
             systems.gfx.set_size(&hpbar.bar_index, size);
 
-            if world.get_or_err::<WorldEntityType>(&entity)?
+            if world.get_or_err::<WorldEntityType>(entity)?
                 == WorldEntityType::Player
             {
                 if let Some(myentity) = content.game_content.myentity {
                     if entity == myentity {
-                        world.get::<&mut HPBar>(entity.0)?.visible =
+                        world.get::<&mut HPBar>(entity)?.visible =
                             vitals[0] != vitalmax[0];
 
                         systems.gfx.set_visible(
@@ -879,21 +878,19 @@ pub fn handle_attack(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
 
-        if world.contains(entity.0) {
-            match world.get_or_err::<WorldEntityType>(&entity)? {
+        if world.contains(entity) {
+            match world.get_or_err::<WorldEntityType>(entity)? {
                 WorldEntityType::Player => {
                     if let Some(myentity) = content.game_content.myentity {
                         if myentity != entity {
-                            init_player_attack(
-                                world, systems, &entity, seconds,
-                            )?
+                            init_player_attack(world, systems, entity, seconds)?
                         }
                     }
                 }
                 WorldEntityType::Npc => {
-                    init_npc_attack(world, systems, &entity, seconds)?;
+                    init_npc_attack(world, systems, entity, seconds)?;
                 }
                 _ => {}
             }
@@ -913,11 +910,11 @@ pub fn handle_playerequipment(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let entity = data.read::<Entity>()?;
+    let entity = data.read::<GlobalKey>()?;
     let equipment = data.read::<Equipment>()?;
 
     {
-        *world.get::<&mut Equipment>(entity.0)? = equipment.clone();
+        *world.get::<&mut Equipment>(entity)? = equipment.clone();
     }
 
     if let Some(myentity) = content.game_content.myentity {
@@ -1055,7 +1052,7 @@ pub fn handle_death(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let _entity = data.read::<Entity>()?;
+        let _entity = data.read::<GlobalKey>()?;
         let _deathtype = data.read::<DeathType>()?;
     }
 
@@ -1090,7 +1087,7 @@ pub fn handle_npcdata(
     for _ in 0..count {
         let dir = data.read::<u8>()?;
         let hidden = data.read::<bool>()?;
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
         let level = data.read::<i32>()?;
         let deathtype = data.read::<DeathType>()?;
         let mode = data.read::<NpcMode>()?;
@@ -1106,28 +1103,28 @@ pub fn handle_npcdata(
         let _did_spawn = data.read::<bool>()?;
 
         if let Some(myentity) = content.game_content.myentity {
-            if !world.contains(entity.0) {
+            if !world.contains(entity) {
                 let client_map = world.get_or_err::<Position>(&myentity)?.map;
                 let npc = add_npc(
                     world,
                     systems,
                     pos,
                     client_map,
-                    Some(&entity),
+                    Some(entity),
                     num as usize,
                 )?;
                 create_npc_light(
                     world,
                     systems,
                     &content.game_content.game_lights,
-                    &entity,
+                    entity,
                 );
 
                 content.game_content.npcs.borrow_mut().insert(npc);
 
                 if let Some(npc_data) = systems.base.npc.get(num as usize) {
                     let entity_name =
-                        world.get_or_err::<EntityNameMap>(&entity)?;
+                        world.get_or_err::<EntityNameMap>(entity)?;
                     systems.gfx.set_text(
                         &mut systems.renderer,
                         &entity_name.0,
@@ -1136,33 +1133,32 @@ pub fn handle_npcdata(
                 }
 
                 {
-                    world.get::<&mut Dir>(entity.0)?.0 = dir;
-                    world.get::<&mut Hidden>(entity.0)?.0 = hidden;
-                    world.get::<&mut Level>(entity.0)?.0 = level;
-                    *world.get::<&mut DeathType>(entity.0)? = deathtype;
-                    *world.get::<&mut NpcMode>(entity.0)? = mode;
-                    world.get::<&mut NpcIndex>(entity.0)?.0 = num;
-                    if let Ok(mut physical) =
-                        world.get::<&mut Physical>(entity.0)
+                    world.get::<&mut Dir>(entity)?.0 = dir;
+                    world.get::<&mut Hidden>(entity)?.0 = hidden;
+                    world.get::<&mut Level>(entity)?.0 = level;
+                    *world.get::<&mut DeathType>(entity)? = deathtype;
+                    *world.get::<&mut NpcMode>(entity)? = mode;
+                    world.get::<&mut NpcIndex>(entity)?.0 = num;
+                    if let Ok(mut physical) = world.get::<&mut Physical>(entity)
                     {
                         physical.damage = pdamage;
                         physical.defense = pdefense;
                     }
-                    *world.get::<&mut Position>(entity.0)? = pos;
-                    world.get::<&mut SpriteImage>(entity.0)?.0 = sprite as u8;
-                    if let Ok(mut vital) = world.get::<&mut Vitals>(entity.0) {
+                    *world.get::<&mut Position>(entity)? = pos;
+                    world.get::<&mut SpriteImage>(entity)?.0 = sprite as u8;
+                    if let Ok(mut vital) = world.get::<&mut Vitals>(entity) {
                         vital.vital = vitals;
                         vital.vitalmax = vitalmax;
                     }
                 }
 
                 if content.game_content.finalized {
-                    npc_finalized(world, systems, &entity)?;
+                    npc_finalized(world, systems, entity)?;
 
                     update_npc_camera(
                         world,
                         systems,
-                        &entity,
+                        entity,
                         socket,
                         &mut content.game_content,
                     )?;
@@ -1227,9 +1223,9 @@ pub fn handle_entityunload(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let entity = data.read::<Entity>()?;
+        let entity = data.read::<GlobalKey>()?;
 
-        if world.contains(entity.0) {
+        if world.contains(entity) {
             if let Some(target_entity) = content.game_content.target.entity {
                 if target_entity == entity {
                     if let Ok(mut hpbar) =
@@ -1244,37 +1240,37 @@ pub fn handle_entityunload(
             }
 
             let world_entity_type =
-                world.get_or_default::<WorldEntityType>(&entity);
+                world.get_or_default::<WorldEntityType>(entity);
             match world_entity_type {
                 WorldEntityType::Player => {
                     unload_player(
                         world,
                         systems,
                         &content.game_content,
-                        &entity,
+                        entity,
                     )?;
                     content
                         .game_content
                         .players
                         .borrow_mut()
-                        .swap_remove(&entity);
+                        .swap_remove(entity);
                 }
                 WorldEntityType::Npc => {
-                    unload_npc(world, systems, &content.game_content, &entity)?;
-                    content.game_content.npcs.borrow_mut().swap_remove(&entity);
+                    unload_npc(world, systems, &content.game_content, entity)?;
+                    content.game_content.npcs.borrow_mut().swap_remove(entity);
                 }
                 WorldEntityType::MapItem => {
                     unload_mapitems(
                         world,
                         systems,
                         &content.game_content,
-                        &entity,
+                        entity,
                     )?;
                     content
                         .game_content
                         .mapitems
                         .borrow_mut()
-                        .swap_remove(&entity);
+                        .swap_remove(entity);
                 }
                 _ => {}
             }
@@ -1442,7 +1438,7 @@ pub fn handle_inittrade(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let target_entity = data.read::<Entity>()?;
+    let target_entity = data.read::<GlobalKey>()?;
 
     content.game_content.player_data.is_using_type =
         IsUsingType::Trading(target_entity);
@@ -1548,12 +1544,12 @@ pub fn handle_traderequest(
     _seconds: f32,
     _buffer: &mut BufferTask,
 ) -> Result<()> {
-    let entity = data.read::<Entity>()?;
-    if !world.contains(entity.0) {
+    let entity = data.read::<GlobalKey>()?;
+    if !world.contains(entity) {
         return Ok(());
     }
 
-    let name = world.cloned_get_or_err::<EntityName>(&entity)?.0;
+    let name = world.cloned_get_or_err::<EntityName>(entity)?.0;
 
     alert.show_alert(
         systems,
@@ -1603,7 +1599,7 @@ pub fn handle_damage(
     let count = data.read::<u32>()?;
 
     for _ in 0..count {
-        let _entity = data.read::<Entity>()?;
+        let _entity = data.read::<GlobalKey>()?;
         let amount = data.read::<u16>()?;
         let pos = data.read::<Position>()?;
         let is_damage = data.read::<bool>()?;

@@ -1,4 +1,4 @@
-use crate::{data_types::*, socket::*};
+use crate::{GlobalKey, data_types::*, socket::*};
 use graphics::*;
 use serde::{Deserialize, Serialize};
 
@@ -13,17 +13,6 @@ pub enum Direction {
     Down,
     Left,
     Right,
-}
-
-#[derive(
-    Copy, Clone, Debug, PartialEq, Eq, Default, Deserialize, Serialize,
-)]
-pub enum EntityType {
-    #[default]
-    None,
-    Player(Entity),
-    Npc(Entity),
-    MapItem(Entity),
 }
 
 #[derive(
@@ -93,7 +82,7 @@ pub enum IsUsingType {
     Bank,
     Fishing(i64),
     Crafting(i64),
-    Trading(Entity),
+    Trading(GlobalKey),
     Store(i64),
     Other(i64),
 }

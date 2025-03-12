@@ -26,11 +26,6 @@ educe = {version = "0.6.0", default-features = false, features = [
   "Default",
 ]}
 futures = "0.3.30"
-hecs = {version = "0.10.5", features = [
-  "column-serialize",
-  "row-serialize",
-  "macros",
-]}
 image = "0.25.2"
 indexmap = "2.4.0"
 log = {version = "0.4.22", default-features = false}
@@ -58,10 +53,19 @@ serde = {version = "1.0.209", features = ["derive"]}
 serde_json = "1.0.127"
 slab = "0.4.9"
 slotmap = "1.0.7"
+snafu = {version = "0.8.5", features = [
+  "backtraces-impl-backtrace-crate",
+  "rust_1_81",
+]}
 speedy = "0.8.7"
 thiserror = "1.0.63"
 tokio = {version = "1.40.0", features = ["full"]}
 toml = "0.8.19"
+uuid = {version = "1.11.0", features = [
+  "v7", # Lets you generate random UUIDs
+  "fast-rng", # Use a faster (but still sufficiently random) RNG
+  "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]}
 webpki = "0.22.4"
 webpki-roots = "0.26.3"
 winit = {version = "0.30.5", features = ["serde", "rwh_05"]}

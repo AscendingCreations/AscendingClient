@@ -1,5 +1,6 @@
 use crate::{
-    Action, content::*, data_types::*, database::*, systems::*, widget::*,
+    Action, World, content::*, data_types::*, database::*, systems::*,
+    widget::*,
 };
 use backtrace::Backtrace;
 use camera::{
@@ -11,7 +12,7 @@ use graphics::{
     wgpu::{BackendOptions, Dx12BackendOptions},
     *,
 };
-use hecs::World;
+
 use input::{Axis, Bindings, FrameTime, InputHandler, Key};
 use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
@@ -249,7 +250,7 @@ impl winit::application::ApplicationHandler for Runner {
                 LightRenderer::new(&mut systems.renderer).unwrap();
             let ui_renderer = RectRenderer::new(&systems.renderer).unwrap();
 
-            let mut world = World::new();
+            let mut world = World::default();
             let buffertask = BufferTask::new();
 
             // Initiate Game Content

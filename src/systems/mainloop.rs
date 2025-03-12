@@ -1,9 +1,9 @@
-use hecs::World;
 use log::info;
 
 use crate::{
-    content::*, dir_to_enum, send_gameping, BufferTask, Entity, MyInstant,
-    Position, Result, Socket, SystemHolder, WorldEntityType,
+    BufferTask, Entity, EntityKind, MyInstant, Position, Result, Socket,
+    SystemHolder, World, WorldEntityType, content::*, dir_to_enum,
+    send_gameping,
 };
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -79,33 +79,54 @@ pub fn update_map_refresh(
     if !content.refresh_map {
         return Ok(());
     }
+
+    let myentity = if let Some(myentity) = content.myentity {
+        myentity
+    } else {
+        return Ok(());
+    };
+
     content.refresh_map = false;
 
     let mut entity_to_remove = Vec::with_capacity(1000);
 
-    for (entity, (_, worldentitytype)) in world
-        .query::<(&Position, &WorldEntityType)>()
-        .iter()
-        .filter(|(_, (pos, _))| content.map.map_pos.checkdistance(pos.map) > 1)
-    {
-        entity_to_remove.push((entity, *worldentitytype));
+    for (global_key, _) in world.entities.iter().filter(|(key, data)| {
+        if *key != myentity {
+            match data {
+                Entity::Player(e_data) => {
+                    content.map.map_pos.checkdistance(e_data.pos.map) > 1
+                }
+                Entity::Npc(e_data) => {
+                    content.map.map_pos.checkdistance(e_data.pos.map) > 1
+                }
+                Entity::MapItem(e_data) => {
+                    content.map.map_pos.checkdistance(e_data.pos.map) > 1
+                }
+                Entity::None => false,
+            }
+        } else {
+            false
+        }
+    }) {
+        entity_to_remove.push(global_key);
     }
 
-    for (entity, worldtype) in entity_to_remove {
-        match worldtype {
-            WorldEntityType::Player => {
-                unload_player(world, systems, content, &Entity(entity))?;
-                content.players.borrow_mut().swap_remove(&Entity(entity));
+    for entity in entity_to_remove {
+        let entity_kind = world.get_kind(entity)?;
+        match entity_kind {
+            EntityKind::Player => {
+                unload_player(world, systems, content, entity)?;
+                content.players.borrow_mut().swap_remove(&entity);
             }
-            WorldEntityType::Npc => {
-                unload_npc(world, systems, content, &Entity(entity))?;
-                content.npcs.borrow_mut().swap_remove(&Entity(entity));
+            EntityKind::Npc => {
+                unload_npc(world, systems, content, entity)?;
+                content.npcs.borrow_mut().swap_remove(&entity);
             }
-            WorldEntityType::MapItem => {
-                unload_mapitems(world, systems, content, &Entity(entity))?;
-                content.mapitems.borrow_mut().swap_remove(&Entity(entity));
+            EntityKind::MapItem => {
+                unload_mapitems(world, systems, content, entity)?;
+                content.mapitems.borrow_mut().swap_remove(&entity);
             }
-            _ => {}
+            EntityKind::None => {}
         }
     }
 

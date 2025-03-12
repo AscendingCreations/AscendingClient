@@ -1,134 +1,268 @@
 use graphics::*;
-use std::backtrace::Backtrace;
-use thiserror::Error;
-
+use snafu::{Backtrace, Whatever, prelude::*};
+use std::sync::{PoisonError, TryLockError};
 pub type Result<T> = std::result::Result<T, ClientError>;
 
-#[derive(Error, Debug)]
+#[allow(unreachable_code)]
+#[derive(Debug, snafu::Snafu)]
 pub enum ClientError {
-    #[error("Currently Unhandled data error")]
-    Unhandled,
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(display(
+        "Currently Unhandled data error. BACKTRACE: {backtrace:?}"
+    ))]
+    Unhandled {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
     AddrParseError {
-        #[from]
-        error: std::net::AddrParseError,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: std::net::AddrParseError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(transparent)]
+    GraphicsError {
+        source: GraphicsError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
     Io {
-        #[from]
-        error: std::io::Error,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: std::io::Error,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(transparent)]
     UnicodeError {
-        #[from]
-        error: std::str::Utf8Error,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: std::str::Utf8Error,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(transparent)]
     ParseError {
-        #[from]
-        error: std::string::ParseError,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: std::string::ParseError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error(transparent)]
-    ParseNum(#[from] std::num::ParseIntError),
-    #[error(transparent)]
-    RodioAudio(#[from] rodio::PlayError),
-    #[error(transparent)]
-    RodioStreamError(#[from] rodio::StreamError),
-    #[error(transparent)]
-    RodioDecoderError(#[from] rodio::decoder::DecoderError),
-    #[error(transparent)]
-    Surface(#[from] wgpu::SurfaceError),
-    #[error(transparent)]
-    WGpu(#[from] wgpu::Error),
-    #[error(transparent)]
-    Device(#[from] wgpu::RequestDeviceError),
-    #[error(transparent)]
-    ImageError(#[from] image::ImageError),
-    #[error(transparent)]
-    Other(#[from] OtherError),
-    #[error(transparent)]
-    EventLoop(#[from] winit::error::EventLoopError),
-    #[error(transparent)]
-    EventLoopExternal(#[from] winit::error::ExternalError),
-    #[error(transparent)]
-    OsError(#[from] winit::error::OsError),
-    #[error("Multiple Logins Detected")]
-    MultiLogin,
-    #[error("Failed to register account")]
-    RegisterFail,
-    #[error("Failed to find the user account")]
-    UserNotFound,
-    #[error("Attempted usage of Socket when connection was not accepted")]
-    InvalidSocket,
-    #[error("Packet Manipulation detect from {name}")]
-    PacketManipulation { name: String },
-    #[error("Failed Packet Handling at {num} with message: {message}")]
-    PacketReject { num: usize, message: String },
-    #[error("Failed Packet Handling at {num} with message: {message}")]
-    BadConnection { num: usize, message: String },
-    #[error("Packet id was invalid")]
-    InvalidPacket,
-    #[error("Password was incorrect")]
-    IncorrectPassword,
-    #[error("No username was set.")]
-    NoUsernameSet,
-    #[error("No password was set")]
-    NoPasswordSet,
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(transparent)]
+    ParseNum {
+        source: std::num::ParseIntError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    RodioAudio {
+        source: rodio::PlayError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    RodioStreamError {
+        source: rodio::StreamError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    RodioDecoderError {
+        source: rodio::decoder::DecoderError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    Surface {
+        source: wgpu::SurfaceError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    WGpu {
+        source: wgpu::Error,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    Device {
+        source: wgpu::RequestDeviceError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    ImageError {
+        source: image::ImageError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    Other {
+        source: OtherError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    EventLoop {
+        source: winit::error::EventLoopError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    EventLoopExternal {
+        source: winit::error::ExternalError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    OsError {
+        source: winit::error::OsError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display("Multiple Logins Detected. BACKTRACE: {backtrace:?}"))]
+    MultiLogin {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display("Failed to register account. BACKTRACE: {backtrace:?}"))]
+    RegisterFail {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display(
+        "Failed to find the user account. BACKTRACE: {backtrace:?}"
+    ))]
+    UserNotFound {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display(
+        "Attempted usage of Socket when connection was not accepted. BACKTRACE: {backtrace:?}"
+    ))]
+    InvalidSocket {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display(
+        "Packet Manipulation detect from {name}. BACKTRACE: {backtrace:?}"
+    ))]
+    PacketManipulation {
+        name: String,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display(
+        "Failed Packet Handling at {num} with message: {message}. BACKTRACE: {backtrace:?}"
+    ))]
+    PacketReject {
+        num: usize,
+        message: String,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display(
+        "Failed Packet Handling at {num} with message: {message}. BACKTRACE: {backtrace:?}"
+    ))]
+    BadConnection {
+        num: usize,
+        message: String,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display("Packet id was invalid. BACKTRACE: {backtrace:?}"))]
+    InvalidPacket {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display("Password was incorrect. BACKTRACE: {backtrace:?}"))]
+    IncorrectPassword {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display("No username was set. BACKTRACE: {backtrace:?}"))]
+    NoUsernameSet {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display("No password was set. BACKTRACE: {backtrace:?}"))]
+    NoPasswordSet {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
     ByteyError {
-        #[from]
-        error: bytey::ByteBufferError,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: bytey::ByteBufferError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(transparent)]
     MByteyError {
-        #[from]
-        error: mmap_bytey::MByteBufferError,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: mmap_bytey::MByteBufferError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(transparent)]
     Rustls {
-        #[from]
-        error: rustls::Error,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: rustls::Error,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(transparent)]
     TomlDe {
-        #[from]
-        error: toml::de::Error,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: toml::de::Error,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
-    HecsComponent {
-        #[from]
-        error: hecs::ComponentError,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+    #[snafu(display("Missing Kind. BACKTRACE: {backtrace:?}"))]
+    MissingKind {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
-    HecNoEntity {
-        #[from]
-        error: hecs::NoSuchEntity,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+    #[snafu(display("Missing Entity. BACKTRACE: {backtrace:?}"))]
+    MissingEntity {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
-    #[error("Error: {error}, BackTrace: {backtrace}")]
+    #[snafu(transparent)]
     RustlsInvalidDns {
-        #[from]
-        error: pki_types::InvalidDnsNameError,
-        #[backtrace]
-        backtrace: Box<Backtrace>,
+        source: pki_types::InvalidDnsNameError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
     },
+    #[snafu(display("Mutex PoisonError Occured. BACKTRACE: {backtrace:?}"))]
+    MutexLockError {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(display("TryLock Error. BACKTRACE: {backtrace:?}"))]
+    TryLockError {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+}
+
+impl<T> From<TryLockError<T>> for ClientError {
+    fn from(_: TryLockError<T>) -> Self {
+        Self::TryLockError {
+            backtrace: Backtrace::new(),
+        }
+    }
+}
+
+impl<T> From<PoisonError<T>> for ClientError {
+    fn from(_: PoisonError<T>) -> Self {
+        Self::MutexLockError {
+            backtrace: Backtrace::new(),
+        }
+    }
+}
+
+impl ClientError {
+    pub fn missing_kind() -> Self {
+        ClientError::MissingKind {
+            backtrace: Backtrace::new(),
+        }
+    }
+
+    pub fn missing_entity() -> Self {
+        ClientError::MissingEntity {
+            backtrace: Backtrace::new(),
+        }
+    }
 }

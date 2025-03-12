@@ -1,6 +1,7 @@
-use hecs::World;
-
-use crate::{data_types::*, EquipmentType, IsUsingType, Result, SystemHolder};
+use crate::{
+    EquipmentType, GlobalKey, IsUsingType, Result, SystemHolder, World,
+    data_types::*,
+};
 
 #[derive(Default)]
 pub struct PlayerData {
@@ -49,9 +50,9 @@ impl PlayerData {
 pub fn player_get_weapon_damage(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<(i16, i16)> {
-    let mut query = world.query_one::<&mut Equipment>(entity.0)?;
+    let mut query = world.query_one::<&mut Equipment>(entity)?;
 
     Ok(if let Some(player_equipment) = query.get() {
         let mut dmg = (0, 0);
@@ -74,9 +75,9 @@ pub fn player_get_weapon_damage(
 pub fn player_get_armor_defense(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<(i16, i16)> {
-    let mut query = world.query_one::<&mut Equipment>(entity.0)?;
+    let mut query = world.query_one::<&mut Equipment>(entity)?;
 
     Ok(if let Some(player_equipment) = query.get() {
         let mut defense = (0i16, 0i16);

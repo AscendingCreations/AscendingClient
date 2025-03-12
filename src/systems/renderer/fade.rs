@@ -1,10 +1,9 @@
 use graphics::*;
 
-use hecs::World;
 use winit::dpi::PhysicalSize;
 
 use crate::{
-    content::*, data_types::*, BufferTask, Result, Socket, SystemHolder,
+    BufferTask, Result, Socket, SystemHolder, World, content::*, data_types::*,
 };
 
 #[derive(Default)]
@@ -253,7 +252,7 @@ pub fn fade_end(
 
             let pos = if let Some(entity) = content.game_content.myentity {
                 if content.game_content.in_game {
-                    world.get_or_err::<Position>(&entity)?
+                    world.get_or_err::<Position>(entity)?
                 } else {
                     Position::default()
                 }
