@@ -11,8 +11,10 @@ pub use content_input::*;
 pub use interface::*;
 
 use crate::{
-    Direction, GlobalKey, Result, Socket, SystemHolder, TILE_SIZE, content::*,
-    data_types::*, database::*, logic::*, send_attack, send_pickup, systems::*,
+    Direction, Entity, EntityKind, GlobalKey, IsUsingType, MapPosition,
+    MovementType, Position, Result, Socket, SystemHolder, TILE_SIZE,
+    content::*, data_types::*, database::*, logic::*, send_attack, send_pickup,
+    systems::*,
 };
 
 pub mod floating_text;
@@ -115,13 +117,13 @@ impl GameContent {
         systems: &mut SystemHolder,
     ) -> Result<()> {
         for entity in self.players.borrow().iter() {
-            unload_player(world, systems, self, entity)?;
+            unload_player(world, systems, self, *entity)?;
         }
         for entity in self.npcs.borrow().iter() {
-            unload_npc(world, systems, self, entity)?;
+            unload_npc(world, systems, self, *entity)?;
         }
         for entity in self.mapitems.borrow().iter() {
-            unload_mapitems(world, systems, self, entity)?;
+            unload_mapitems(world, systems, self, *entity)?;
         }
         systems.gfx.set_visible(&self.game_lights, false);
         self.players.borrow_mut().clear();
@@ -145,13 +147,13 @@ impl GameContent {
         socket: &mut Socket,
     ) -> Result<()> {
         for entity in self.players.borrow().iter() {
-            player_finalized(world, systems, entity)?;
+            player_finalized(world, systems, *entity)?;
         }
         for entity in self.npcs.borrow().iter() {
-            npc_finalized(world, systems, entity)?;
+            npc_finalized(world, systems, *entity)?;
         }
         for entity in self.mapitems.borrow().iter() {
-            MapItem::finalized(world, systems, entity)?;
+            MapItem::finalized(world, systems, *entity)?;
         }
         update_camera(world, self, systems, socket)?;
 
@@ -182,71 +184,71 @@ impl GameContent {
         );
 
         if let Some(myindex) = self.myentity {
-            self.interface.profile.set_profile_label_value(
-                systems,
-                ProfileLabel::Level,
-                world.get_or_err::<Level>(&myindex)?.0 as u64,
-            );
-            self.interface.profile.set_profile_label_value(
-                systems,
-                ProfileLabel::Money,
-                self.player_data.player_money,
-            );
-            let damage = world
-                .get_or_err::<Physical>(&myindex)?
-                .damage
-                .saturating_add(
-                    player_get_weapon_damage(world, systems, &myindex)?.0
-                        as u32,
+            if let Some(Entity::Player(p_data)) = world.entities.get(myindex) {
+                self.interface.profile.set_profile_label_value(
+                    systems,
+                    ProfileLabel::Level,
+                    p_data.level as u64,
                 );
-            self.interface.profile.set_profile_label_value(
-                systems,
-                ProfileLabel::Damage,
-                damage as u64,
-            );
-            let defense = world
-                .get_or_err::<Physical>(&myindex)?
-                .defense
-                .saturating_add(
-                    player_get_armor_defense(world, systems, &myindex)?.0
-                        as u32,
+                self.interface.profile.set_profile_label_value(
+                    systems,
+                    ProfileLabel::Money,
+                    self.player_data.player_money,
                 );
-            self.interface.profile.set_profile_label_value(
-                systems,
-                ProfileLabel::Defense,
-                defense as u64,
-            );
+                let damage = p_data.physical.damage.saturating_add(
+                    player_get_weapon_damage(world, systems, myindex)?.0 as u32,
+                );
+                self.interface.profile.set_profile_label_value(
+                    systems,
+                    ProfileLabel::Damage,
+                    damage as u64,
+                );
+                let defense = p_data.physical.defense.saturating_add(
+                    player_get_armor_defense(world, systems, myindex)?.0 as u32,
+                );
+                self.interface.profile.set_profile_label_value(
+                    systems,
+                    ProfileLabel::Defense,
+                    defense as u64,
+                );
 
-            let vitals = world.get_or_err::<Vitals>(&myindex)?;
-            self.interface.vitalbar.update_bar_size(
-                systems,
-                0,
-                vitals.vital[0],
-                vitals.vitalmax[0],
-            );
-            self.interface.vitalbar.update_bar_size(
-                systems,
-                1,
-                vitals.vital[2],
-                vitals.vitalmax[2],
-            );
+                self.interface.vitalbar.update_bar_size(
+                    systems,
+                    0,
+                    p_data.vitals.vital[0],
+                    p_data.vitals.vitalmax[0],
+                );
+                self.interface.vitalbar.update_bar_size(
+                    systems,
+                    1,
+                    p_data.vitals.vital[2],
+                    p_data.vitals.vitalmax[2],
+                );
 
-            let nextexp = player_get_next_lvl_exp(world, &myindex)?;
-            self.interface.vitalbar.update_bar_size(
-                systems,
-                2,
-                self.player_data.levelexp as i32,
-                nextexp as i32,
-            );
+                let nextexp = player_get_next_lvl_exp(world, myindex)?;
+                self.interface.vitalbar.update_bar_size(
+                    systems,
+                    2,
+                    self.player_data.levelexp as i32,
+                    nextexp as i32,
+                );
 
-            let hpbar = world.get_or_err::<HPBar>(&myindex)?;
-            let vitals = world.get_or_err::<Vitals>(&myindex)?;
-            let mut size = systems.gfx.get_size(&hpbar.bar_index);
-            size.x =
-                get_percent(vitals.vital[0], vitals.vitalmax[0], 18) as f32;
-            systems.gfx.set_size(&hpbar.bar_index, size);
-            systems.gfx.set_visible(&hpbar.bar_index, hpbar.visible);
-            systems.gfx.set_visible(&hpbar.bg_index, hpbar.visible);
+                let mut size = systems.gfx.get_size(&p_data.hp_bar.bar_index);
+                size.x = get_percent(
+                    p_data.vitals.vital[0],
+                    p_data.vitals.vitalmax[0],
+                    18,
+                ) as f32;
+                systems.gfx.set_size(&p_data.hp_bar.bar_index, size);
+                systems.gfx.set_visible(
+                    &p_data.hp_bar.bar_index,
+                    p_data.hp_bar.visible,
+                );
+                systems.gfx.set_visible(
+                    &p_data.hp_bar.bg_index,
+                    p_data.hp_bar.visible,
+                );
+            }
         }
 
         for i in 0..MAX_EQPT {
@@ -402,7 +404,7 @@ impl GameContent {
                 world,
                 systems,
                 socket,
-                &myentity,
+                myentity,
                 self,
                 MovementType::Manual(enum_to_dir(*dir), None),
             )?;
@@ -418,14 +420,17 @@ impl GameContent {
         seconds: f32,
     ) -> Result<()> {
         if let Some(myentity) = self.myentity {
-            if world.get_or_err::<Attacking>(&myentity)?.0
-                || world.get_or_err::<Movement>(&myentity)?.is_moving
+            let (pos, dir) = if let Some(Entity::Player(p_data)) =
+                world.entities.get(myentity)
             {
-                return Ok(());
-            }
+                if p_data.attacking.0 || p_data.movement.is_moving {
+                    return Ok(());
+                }
 
-            let pos = world.get_or_err::<Position>(&myentity)?;
-            let dir = world.get_or_err::<Dir>(&myentity)?.0;
+                (p_data.pos, p_data.dir)
+            } else {
+                return Ok(());
+            };
 
             let target_pos = match dir_to_enum(dir) {
                 Direction::Down => {
@@ -466,29 +471,36 @@ impl GameContent {
                 }
             };
 
-            let target_entity = world
-                .query::<(&Position, &EntityKind)>()
-                .iter()
-                .find_map(|(entity, (pos, world_type))| {
-                    if *pos == target_pos
-                        && (*world_type == EntityKind::Npc
-                            || *world_type == EntityKind::Player)
-                    {
-                        Some(Entity(entity))
-                    } else {
-                        None
+            let target_entity =
+                world.entities.iter().find_map(|(key, entity_data)| {
+                    match entity_data {
+                        Entity::Player(p_data) => {
+                            if p_data.pos == target_pos {
+                                return Some(key);
+                            }
+                        }
+                        Entity::Npc(n_data) => {
+                            if n_data.pos == target_pos {
+                                return Some(key);
+                            }
+                        }
+                        _ => {}
                     }
+                    None
                 });
 
             if let Some(got_target) = target_entity {
                 let proceed_target = if let Some(t_entity) = self.target.entity
                 {
                     if t_entity != got_target {
-                        if let Ok(mut hpbar) =
-                            world.get::<&mut HPBar>(t_entity.0)
+                        if let Some(Entity::Player(p_data)) =
+                            world.entities.get_mut(t_entity)
                         {
-                            self.target
-                                .clear_target(socket, systems, &mut hpbar)?;
+                            self.target.clear_target(
+                                socket,
+                                systems,
+                                &mut p_data.hp_bar,
+                            )?;
                         }
                         true
                     } else {
@@ -499,24 +511,17 @@ impl GameContent {
                 };
 
                 if proceed_target {
-                    self.target.set_target(socket, systems, &got_target)?;
-                    match world.get_or_err::<EntityKind>(&got_target)? {
+                    self.target.set_target(socket, systems, got_target)?;
+                    let entity_kind = world.get_kind(got_target)?;
+                    match entity_kind {
                         EntityKind::Player => {
                             update_player_camera(
-                                world,
-                                systems,
-                                socket,
-                                &got_target,
-                                self,
+                                world, systems, socket, got_target, self,
                             )?;
                         }
                         EntityKind::Npc => {
                             update_npc_camera(
-                                world,
-                                systems,
-                                &got_target,
-                                socket,
-                                self,
+                                world, systems, got_target, socket, self,
                             )?;
                         }
                         _ => {}
@@ -525,7 +530,7 @@ impl GameContent {
             }
 
             send_attack(socket, dir, target_entity)?;
-            init_player_attack(world, systems, &myentity, seconds)?;
+            init_player_attack(world, systems, myentity, seconds)?;
         }
 
         Ok(())
@@ -548,7 +553,7 @@ pub fn update_player(
                     world,
                     systems,
                     socket,
-                    entity,
+                    *entity,
                     content,
                     MovementType::MovementBuffer,
                 )?;
@@ -556,9 +561,9 @@ pub fn update_player(
         }
 
         process_player_movement(
-            world, systems, socket, entity, content, buffer,
+            world, systems, socket, *entity, content, buffer,
         )?;
-        process_player_attack(world, systems, entity, seconds)?
+        process_player_attack(world, systems, *entity, seconds)?
     }
     Ok(())
 }
@@ -572,9 +577,9 @@ pub fn update_npc(
 ) -> Result<()> {
     let npcs = content.npcs.clone();
     for entity in npcs.borrow().iter() {
-        move_npc(world, systems, entity, MovementType::MovementBuffer)?;
-        process_npc_movement(world, systems, entity, socket, content)?;
-        process_npc_attack(world, systems, entity, seconds)?;
+        move_npc(world, systems, *entity, MovementType::MovementBuffer)?;
+        process_npc_movement(world, systems, *entity, socket, content)?;
+        process_npc_attack(world, systems, *entity, seconds)?;
     }
     Ok(())
 }
@@ -583,50 +588,37 @@ pub fn finalize_entity(
     world: &mut World,
     systems: &mut SystemHolder,
 ) -> Result<()> {
-    for (_, (worldentitytype, sprite, finalized, hpbar, entitynamemap)) in world
-        .query_mut::<(
-            &EntityKind,
-            &SpriteIndex,
-            &mut Finalized,
-            Option<&HPBar>,
-            Option<&EntityNameMap>,
-        )>()
-        .into_iter()
-    {
-        if !finalized.0 {
-            match worldentitytype {
-                EntityKind::Player => {
-                    if let Some(hp_bar) = hpbar {
-                        if let Some(nameindex) = entitynamemap {
-                            player_finalized_data(
-                                systems,
-                                sprite.0,
-                                nameindex.0,
-                                hp_bar,
-                            );
-                            finalized.0 = true;
-                        }
-                    }
+    for (key, entity) in world.entities.iter_mut() {
+        match entity {
+            Entity::Player(p_data) => {
+                if !p_data.finalized {
+                    player_finalized_data(
+                        systems,
+                        p_data.sprite_index.0,
+                        p_data.name_map.0,
+                        &p_data.hp_bar,
+                    );
+                    p_data.finalized = true;
                 }
-                EntityKind::Npc => {
-                    if let Some(hp_bar) = hpbar {
-                        if let Some(nameindex) = entitynamemap {
-                            npc_finalized_data(
-                                systems,
-                                sprite.0,
-                                nameindex.0,
-                                hp_bar,
-                            );
-                            finalized.0 = true;
-                        }
-                    }
-                }
-                EntityKind::MapItem => {
-                    MapItem::finalized_data(systems, sprite.0);
-                    finalized.0 = true;
-                }
-                _ => {}
             }
+            Entity::Npc(n_data) => {
+                if !n_data.finalized {
+                    npc_finalized_data(
+                        systems,
+                        n_data.sprite_index.0,
+                        n_data.name_map.0,
+                        &n_data.hp_bar,
+                    );
+                    n_data.finalized = true;
+                }
+            }
+            Entity::MapItem(i_data) => {
+                if !i_data.finalized {
+                    MapItem::finalized_data(systems, i_data.sprite_index);
+                    i_data.finalized = true;
+                }
+            }
+            _ => {}
         }
     }
     Ok(())
@@ -639,13 +631,17 @@ pub fn update_camera(
     socket: &mut Socket,
 ) -> Result<()> {
     let player_pos = if let Some(entity) = content.myentity {
-        let pos_offset = world.get_or_err::<PositionOffset>(entity)?;
-        let pos = world.get_or_err::<Position>(entity)?;
-        (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
-            + pos_offset.offset
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            (Vec2::new(p_data.pos.x as f32, p_data.pos.y as f32)
+                * TILE_SIZE as f32)
+                + p_data.pos_offset
+        } else {
+            return Ok(());
+        }
     } else {
         Vec2::new(0.0, 0.0)
     };
+
     let adjust_pos = get_screen_center(&systems.size) - player_pos;
     if content.camera.0 == adjust_pos {
         return Ok(());
@@ -655,116 +651,79 @@ pub fn update_camera(
 
     content.map.move_pos(systems, content.camera.0);
 
-    for (
-        entity,
-        (
-            worldentitytype,
-            sprite,
-            pos,
-            pos_offset,
-            hp_bar,
-            entitynamemap,
-            entitylight,
-        ),
-    ) in world
-        .query_mut::<(
-            &EntityKind,
-            &SpriteIndex,
-            &Position,
-            &PositionOffset,
-            Option<&mut HPBar>,
-            Option<&mut EntityNameMap>,
-            &EntityLight,
-        )>()
-        .into_iter()
-    {
-        let is_target = if let Some(target) = content.target.entity {
-            target.0 == entity
-        } else {
-            false
-        };
-        let is_my_entity = if let Some(myentity) = content.myentity {
-            myentity.0 == entity
-        } else {
-            false
-        };
-        match worldentitytype {
-            EntityKind::Player => {
-                if let Some(hpbar) = hp_bar {
-                    if let Some(namemap) = entitynamemap {
-                        update_player_position(
-                            systems,
-                            content,
-                            sprite.0,
-                            pos,
-                            pos_offset,
-                            hpbar,
-                            namemap,
-                            entitylight.0,
-                        )?;
-                        if is_target {
-                            if !hpbar.visible {
-                                hpbar.visible = true;
-                                systems.gfx.set_visible(&hpbar.bar_index, true);
-                                systems.gfx.set_visible(&hpbar.bg_index, true);
-                            }
-                            let spritepos = systems.gfx.get_pos(&sprite.0);
-                            content.target.set_target_pos(
-                                socket,
-                                systems,
-                                Vec2::new(spritepos.x, spritepos.y),
-                                hpbar,
-                            )?;
-                        } else if hpbar.visible && !is_my_entity {
-                            hpbar.visible = false;
-                            systems.gfx.set_visible(&hpbar.bar_index, false);
-                            systems.gfx.set_visible(&hpbar.bg_index, false);
-                        }
+    for (key, entity) in world.entities.iter_mut() {
+        let is_target = content.target.entity == Some(key);
+        let is_my_entity = content.myentity == Some(key);
+
+        match entity {
+            Entity::Player(p_data) => {
+                update_player_position(
+                    systems,
+                    content,
+                    p_data.sprite_index.0,
+                    &p_data.pos,
+                    p_data.pos_offset,
+                    &p_data.hp_bar,
+                    &p_data.name_map,
+                    p_data.light,
+                )?;
+                if is_target {
+                    if !p_data.hp_bar.visible {
+                        p_data.hp_bar.visible = true;
+                        systems.gfx.set_visible(&p_data.hp_bar.bar_index, true);
+                        systems.gfx.set_visible(&p_data.hp_bar.bg_index, true);
                     }
+                    let spritepos = systems.gfx.get_pos(&p_data.sprite_index.0);
+                    content.target.set_target_pos(
+                        socket,
+                        systems,
+                        Vec2::new(spritepos.x, spritepos.y),
+                        &mut p_data.hp_bar,
+                    )?;
+                } else if p_data.hp_bar.visible && !is_my_entity {
+                    p_data.hp_bar.visible = false;
+                    systems.gfx.set_visible(&p_data.hp_bar.bar_index, false);
+                    systems.gfx.set_visible(&p_data.hp_bar.bg_index, false);
                 }
             }
-            EntityKind::Npc => {
-                if let Some(hpbar) = hp_bar {
-                    if let Some(namemap) = entitynamemap {
-                        update_npc_position(
-                            systems,
-                            content,
-                            sprite.0,
-                            pos,
-                            pos_offset,
-                            hpbar,
-                            namemap,
-                            entitylight.0,
-                        )?;
-                        if is_target {
-                            if !hpbar.visible {
-                                hpbar.visible = true;
-                                systems.gfx.set_visible(&hpbar.bar_index, true);
-                                systems.gfx.set_visible(&hpbar.bg_index, true);
-                            }
-                            let spritepos = systems.gfx.get_pos(&sprite.0);
-                            content.target.set_target_pos(
-                                socket,
-                                systems,
-                                Vec2::new(spritepos.x, spritepos.y),
-                                hpbar,
-                            )?;
-                        } else if hpbar.visible {
-                            hpbar.visible = false;
-                            systems.gfx.set_visible(&hpbar.bar_index, false);
-                            systems.gfx.set_visible(&hpbar.bg_index, false);
-                        }
+            Entity::Npc(n_data) => {
+                update_npc_position(
+                    systems,
+                    content,
+                    n_data.sprite_index.0,
+                    &n_data.pos,
+                    n_data.pos_offset,
+                    &n_data.hp_bar,
+                    &n_data.name_map,
+                    n_data.light,
+                )?;
+                if is_target {
+                    if !n_data.hp_bar.visible {
+                        n_data.hp_bar.visible = true;
+                        systems.gfx.set_visible(&n_data.hp_bar.bar_index, true);
+                        systems.gfx.set_visible(&n_data.hp_bar.bg_index, true);
                     }
+                    let spritepos = systems.gfx.get_pos(&n_data.sprite_index.0);
+                    content.target.set_target_pos(
+                        socket,
+                        systems,
+                        Vec2::new(spritepos.x, spritepos.y),
+                        &mut n_data.hp_bar,
+                    )?;
+                } else if n_data.hp_bar.visible {
+                    n_data.hp_bar.visible = false;
+                    systems.gfx.set_visible(&n_data.hp_bar.bar_index, false);
+                    systems.gfx.set_visible(&n_data.hp_bar.bg_index, false);
                 }
             }
-            EntityKind::MapItem => {
+            Entity::MapItem(i_data) => {
                 update_mapitem_position(
                     systems,
                     content,
-                    sprite.0,
-                    pos,
-                    pos_offset,
-                    entitylight.0,
+                    i_data.sprite_index,
+                    &i_data.pos,
+                    i_data.pos_offset,
+                    i_data.light,
                 );
             }
             _ => {}
