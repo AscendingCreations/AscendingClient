@@ -5,20 +5,19 @@ use log::error;
 use winit::keyboard::NamedKey;
 
 use crate::{
-    alert, button,
+    APP_MAJOR, APP_MINOR, APP_REV, Alert, AlertIndex, AlertType, ContentType,
+    MouseInputType, SystemHolder, Tooltip, alert, button,
     content::*,
     fade::*,
     logic::FloatFix,
     socket::{self, *},
-    Alert, AlertIndex, AlertType, ContentType, MouseInputType, SystemHolder,
-    Tooltip, APP_MAJOR, APP_MINOR, APP_REV,
 };
 
 pub fn login_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     tooltip: &mut Tooltip,
     input_type: MouseInputType,
@@ -66,7 +65,7 @@ pub fn login_key_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     key: &Key,
     pressed: bool,
@@ -135,7 +134,7 @@ pub fn login_key_input(
 fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     index: usize,
 ) {

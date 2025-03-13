@@ -15,7 +15,7 @@ pub fn register_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     tooltip: &mut Tooltip,
     input_type: MouseInputType,
@@ -55,7 +55,7 @@ pub fn register_key_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     key: &Key,
     pressed: bool,
@@ -126,7 +126,7 @@ pub fn register_key_input(
 fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     index: usize,
 ) {

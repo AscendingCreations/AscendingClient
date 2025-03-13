@@ -4,9 +4,9 @@ use input::Key;
 use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 use crate::{
+    Alert, ContentType, MouseInputType, SystemHolder, Tooltip,
     content::*,
     socket::{self, *},
-    Alert, ContentType, MouseInputType, SystemHolder, Tooltip,
 };
 
 mod login_input;
@@ -20,7 +20,7 @@ impl MenuContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         elwt: &ActiveEventLoop,
         alert: &mut Alert,
         tooltip: &mut Tooltip,
@@ -29,7 +29,7 @@ impl MenuContent {
     ) -> Result<()> {
         if alert.visible {
             return alert.alert_mouse_input(
-                systems, socket, elwt, input_type, tooltip, screen_pos,
+                systems, socket, content, elwt, input_type, tooltip, screen_pos,
             );
         }
 
@@ -68,7 +68,7 @@ impl MenuContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         alert: &mut Alert,
         key: &Key,
         pressed: bool,

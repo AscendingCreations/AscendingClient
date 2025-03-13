@@ -1,8 +1,8 @@
 use graphics::*;
 
 use crate::{
-    Alert, AlertIndex, AlertType, Interface, Item, Result, Socket,
-    SystemHolder, data_types::*, is_within_area, logic::*, socket::sends::*,
+    Alert, AlertIndex, AlertType, Interface, Item, Result, SystemHolder,
+    data_types::*, is_within_area, logic::*, socket::sends::*, systems::Poller,
     widget::*,
 };
 
@@ -782,7 +782,7 @@ impl Inventory {
 
 pub fn release_inv_slot(
     interface: &mut Interface,
-    socket: &mut Socket,
+    socket: &mut Poller,
     systems: &mut SystemHolder,
     alert: &mut Alert,
     slot: usize,

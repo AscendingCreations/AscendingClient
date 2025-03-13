@@ -12,9 +12,8 @@ pub use interface::*;
 
 use crate::{
     Direction, Entity, EntityKind, GlobalKey, IsUsingType, MapPosition,
-    MovementType, Position, Result, Socket, SystemHolder, TILE_SIZE,
-    content::*, data_types::*, database::*, logic::*, send_attack, send_pickup,
-    systems::*,
+    MovementType, Position, Result, SystemHolder, TILE_SIZE, content::*,
+    data_types::*, database::*, logic::*, send_attack, send_pickup, systems::*,
 };
 
 pub mod floating_text;
@@ -67,6 +66,7 @@ pub struct GameContent {
     pub float_text: FloatingText,
     pub refresh_map: bool,
     pub can_move: bool,
+    pub reconnect_count: usize,
 }
 
 impl GameContent {
@@ -97,6 +97,7 @@ impl GameContent {
             float_text: FloatingText::new(),
             refresh_map: false,
             can_move: true,
+            reconnect_count: 0,
         }
     }
 
@@ -111,7 +112,7 @@ impl GameContent {
         self.finalized = false;
     }
 
-    pub fn hide(
+    pub fn clear_data(
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
@@ -140,11 +141,19 @@ impl GameContent {
         Ok(())
     }
 
+    pub fn hide(
+        &mut self,
+        world: &mut World,
+        systems: &mut SystemHolder,
+    ) -> Result<()> {
+        self.clear_data(world, systems)
+    }
+
     pub fn finalize_entity(
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
     ) -> Result<()> {
         for entity in self.players.borrow().iter() {
             player_finalized(world, systems, *entity)?;
@@ -164,7 +173,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
     ) -> Result<()> {
         self.finalize_entity(world, systems, socket)?;
 
@@ -305,7 +314,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         dir: Direction,
         buffer: &mut BufferTask,
     ) -> Result<()> {
@@ -325,7 +334,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         seconds: f32,
     ) -> Result<()> {
         if self.interface.selected_textbox != SelectedTextbox::None {
@@ -379,7 +388,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         dir: &Direction,
     ) -> Result<()> {
         if let Some(myentity) = self.myentity {
@@ -405,7 +414,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         seconds: f32,
     ) -> Result<()> {
         if let Some(myentity) = self.myentity {
@@ -529,7 +538,7 @@ impl GameContent {
 pub fn update_player(
     world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     content: &mut GameContent,
     buffer: &mut BufferTask,
     seconds: f32,
@@ -560,7 +569,7 @@ pub fn update_player(
 pub fn update_npc(
     world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     content: &mut GameContent,
     seconds: f32,
 ) -> Result<()> {
@@ -617,7 +626,7 @@ pub fn update_camera(
     world: &mut World,
     content: &mut GameContent,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
 ) -> Result<()> {
     let player_pos = if let Some(entity) = content.myentity {
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {

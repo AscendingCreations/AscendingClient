@@ -1,5 +1,9 @@
 use crate::{
-    Action, World, content::*, data_types::*, database::*, systems::*,
+    Action, World,
+    content::*,
+    data_types::*,
+    database::*,
+    systems::{states::ClientState, *},
     widget::*,
 };
 use backtrace::Backtrace;
@@ -46,13 +50,14 @@ pub enum Runner {
         graphics: State<FlatControls>,
         alert: Alert,
         tooltip: Tooltip,
-        socket: Socket,
+        socket: Poller,
         router: PacketRouter,
         buffertask: BufferTask,
         input_handler: InputHandler<Action, Axis>,
         frame_time: FrameTime,
         time: f32,
         reconnect_time: f32,
+        reconnect_time2: f32,
         reset_timer: f32,
         fps: u32,
         start_ping: bool,
@@ -260,10 +265,8 @@ impl winit::application::ApplicationHandler for Runner {
 
             let tooltip = Tooltip::new(&mut systems);
 
-            let mut socket = Socket::new(&systems.config).unwrap();
+            let socket = Poller::new().unwrap();
             let router = PacketRouter::init();
-            socket.register().unwrap();
-            content.menu_content.set_status_offline(&mut systems);
 
             // setup our system which includes Camera and projection as well as our controls.
             // for the camera.
@@ -353,6 +356,7 @@ impl winit::application::ApplicationHandler for Runner {
                 frame_time: FrameTime::new(),
                 time: 0.0f32,
                 reconnect_time: 0.0f32,
+                reconnect_time2: 0.0f32,
                 reset_timer: 0.0f32,
                 fps: 0u32,
                 start_ping: true,
@@ -384,6 +388,7 @@ impl winit::application::ApplicationHandler for Runner {
             frame_time,
             time,
             reconnect_time,
+            reconnect_time2,
             reset_timer,
             fps,
             start_ping,
@@ -609,41 +614,61 @@ impl winit::application::ApplicationHandler for Runner {
                 .queue()
                 .submit(std::iter::once(encoder.finish()));
 
-            let disconnect = match poll_events(socket) {
-                Ok(d) => d,
-                Err(e) => {
-                    error!("Poll event error: {:?}", e);
-                    true
+            if let Err(e) = socket.poll_events() {
+                error!("Poll event error: {:?}", e);
+            }
+
+            if socket.tls_socket.state == ClientState::Closed
+                && *reconnect_time < seconds
+            {
+                println!("Connecting TLS");
+                socket.reconnect(true).unwrap();
+
+                if content.content_type == ContentType::Game {
+                    send_tls_reconnect(socket, &systems.config.reconnect_code)
+                        .unwrap();
                 }
-            };
 
-            if disconnect || socket.client.state == ClientState::Closed {
-                if *reconnect_time < seconds {
-                    if content.content_type == ContentType::Game {
-                        alert.show_alert(
-                            systems,
-                            AlertType::Inform,
-                            "You have been disconnected".into(),
-                            "Alert Message".into(),
-                            250,
-                            AlertIndex::None,
-                            false,
-                        );
+                *reconnect_time = seconds + 1.0;
+            }
 
-                        content
-                            .switch_content(world, systems, ContentType::Menu)
+            if socket.socket.state == ClientState::Closed
+                && *reconnect_time2 < seconds
+            {
+                println!("Connecting Non TLS");
+                socket.reconnect(false).unwrap();
+
+                if content.content_type == ContentType::Game {
+                    match content.game_content.reconnect_count {
+                        3 => {
+                            alert.show_alert(
+                                systems,
+                                AlertType::Inform,
+                                "You have been disconnected".into(),
+                                "Alert Message".into(),
+                                250,
+                                AlertIndex::Disconnect,
+                                false,
+                            );
+                        }
+                        i if (i < 3) => {
+                            send_reconnect(
+                                socket,
+                                &systems.config.reconnect_code,
+                            )
                             .unwrap();
+                        }
+                        _ => {}
                     }
 
-                    *start_ping = true;
-                    socket.reconnect().unwrap();
-                    socket.register().unwrap();
+                    content.game_content.reconnect_count = content
+                        .game_content
+                        .reconnect_count
+                        .saturating_add(1)
+                        .min(4);
                 }
-                content.menu_content.set_status_offline(systems);
-                *reconnect_time = seconds + 1.0;
-            } else if *reset_timer < seconds && *reset_status {
-                *reset_status = false;
-                content.menu_content.set_status_online(systems);
+
+                *reconnect_time2 = seconds + 1.0;
             }
 
             if *start_ping {
@@ -653,11 +678,11 @@ impl winit::application::ApplicationHandler for Runner {
                 send_ping(socket).unwrap();
             }
 
-            process_packets(
-                socket, router, world, systems, content, alert, seconds,
-                buffertask,
-            )
-            .unwrap();
+            socket
+                .process_packets(
+                    router, world, systems, content, alert, seconds, buffertask,
+                )
+                .unwrap();
 
             buffertask.process_buffer(systems, content).unwrap();
 
@@ -766,6 +791,7 @@ impl winit::application::ApplicationHandler for Runner {
             frame_time: _,
             time: _,
             reconnect_time: _,
+            reconnect_time2: _,
             reset_timer: _,
             fps: _,
             start_ping: _,
@@ -794,6 +820,7 @@ impl winit::application::ApplicationHandler for Runner {
             frame_time: _,
             time: _,
             reconnect_time: _,
+            reconnect_time2: _,
             reset_timer: _,
             fps: _,
             start_ping: _,

@@ -2,8 +2,8 @@ use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
 use crate::{
-    Interface, MapPosition, Position, Result, Socket, SystemHolder,
-    data_types::*, is_within_area, logic::*, send_command, send_message,
+    Interface, MapPosition, Position, Result, SystemHolder, data_types::*,
+    is_within_area, logic::*, send_command, send_message, systems::Poller,
     widget::*,
 };
 
@@ -1062,7 +1062,7 @@ pub fn can_channel_show(channel: MessageChannel, selected_tab: usize) -> bool {
 pub fn send_chat(
     interface: &mut Interface,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
 ) -> Result<()> {
     let input_string = interface.chatbox.textbox.text.clone();
     if input_string.is_empty() {

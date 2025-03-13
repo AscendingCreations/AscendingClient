@@ -1,6 +1,6 @@
 use crate::{
-    GlobalKey, HPBar, ORDER_TARGET, Result, Socket, SystemHolder,
-    data_types::*, send_settarget,
+    GlobalKey, HPBar, ORDER_TARGET, Result, SystemHolder, data_types::*,
+    send_settarget, systems::Poller,
 };
 use graphics::*;
 
@@ -54,7 +54,7 @@ impl Target {
 
     pub fn set_target(
         &mut self,
-        socket: &mut Socket,
+        socket: &mut Poller,
         systems: &mut SystemHolder,
         target: GlobalKey,
     ) -> Result<()> {
@@ -65,7 +65,7 @@ impl Target {
 
     pub fn clear_target(
         &mut self,
-        socket: &mut Socket,
+        socket: &mut Poller,
         systems: &mut SystemHolder,
         hpbar: &mut HPBar,
     ) -> Result<()> {
@@ -81,7 +81,7 @@ impl Target {
 
     pub fn set_target_pos(
         &mut self,
-        socket: &mut Socket,
+        socket: &mut Poller,
         systems: &mut SystemHolder,
         pos: Vec2,
         hpbar: &mut HPBar,

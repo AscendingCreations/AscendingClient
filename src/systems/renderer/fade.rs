@@ -3,8 +3,8 @@ use graphics::*;
 use winit::dpi::PhysicalSize;
 
 use crate::{
-    BufferTask, Entity, Position, Result, Socket, SystemHolder, World,
-    content::*, data_types::*,
+    BufferTask, Entity, Position, Result, SystemHolder, World, content::*,
+    data_types::*, systems::Poller,
 };
 
 #[derive(Default)]
@@ -21,13 +21,14 @@ pub enum FadeType {
 }
 
 pub const FADE_SWITCH_TO_GAME: usize = 1;
+pub const FADE_SWITCH_TO_TITLE: usize = 2;
 
 #[derive(Default)]
 pub struct Fade {
     show: bool,
-    f_image: GfxType,
+    pub f_image: GfxType,
     f_tmr: f32,
-    f_alpha: isize,
+    pub f_alpha: isize,
     f_type: FadeType,
     f_end_index: usize,
     f_data: FadeData,
@@ -243,7 +244,7 @@ pub fn fade_end(
     systems: &mut SystemHolder,
     world: &mut World,
     content: &mut Content,
-    socket: &mut Socket,
+    socket: &mut Poller,
     buffer: &mut BufferTask,
 ) -> Result<()> {
     #[allow(clippy::single_match)]
@@ -266,6 +267,16 @@ pub fn fade_end(
             content
                 .game_content
                 .init_finalized_data(world, systems, socket)?;
+
+            systems.fade.init_fade(
+                &mut systems.gfx,
+                FadeType::Out,
+                0,
+                FadeData::None,
+            );
+        }
+        FADE_SWITCH_TO_TITLE => {
+            content.switch_content(world, systems, ContentType::Menu)?;
 
             systems.fade.init_fade(
                 &mut systems.gfx,

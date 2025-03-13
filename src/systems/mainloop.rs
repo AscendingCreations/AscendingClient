@@ -1,9 +1,11 @@
 use log::info;
 
 use crate::{
-    BufferTask, Entity, EntityKind, MyInstant, Position, Result, Socket,
-    SystemHolder, World, content::*, dir_to_enum, send_gameping,
+    BufferTask, Entity, EntityKind, MyInstant, Position, Result, SystemHolder,
+    World, content::*, dir_to_enum, send_gameping,
 };
+
+use super::Poller;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct LoopTimer {
@@ -14,7 +16,7 @@ pub struct LoopTimer {
 }
 
 pub fn game_loop(
-    socket: &mut Socket,
+    socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,

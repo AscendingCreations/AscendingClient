@@ -2,11 +2,11 @@ use std::ops::Range;
 
 use crate::{
     Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content, DeathType,
-    EncryptionState, Entity, EntityKind, Equipment, FtlType, GlobalKey,
-    IsUsingType, Item, MAX_EQPT, MapItem, MessageChannel, MovementData,
-    NPC_SPRITE_FRAME_X, NpcMode, Position, ProfileLabel, Result, Socket,
-    SystemHolder, TradeStatus, UserAccess, VITALS_MAX, Window, World,
-    add_float_text, add_npc, close_interface,
+    Entity, EntityKind, Equipment, FtlType, GlobalKey, IsUsingType, Item,
+    MAX_EQPT, MapItem, MessageChannel, MovementData, NPC_SPRITE_FRAME_X,
+    NpcMode, Position, ProfileLabel, Result, SystemHolder, TradeStatus,
+    UserAccess, VITALS_MAX, Window, World, add_float_text, add_npc,
+    close_interface,
     content::game_content::{interface::chatbox::*, player::*},
     create_npc_light,
     data_types::*,
@@ -14,9 +14,10 @@ use crate::{
     fade::*,
     finalize_entity, get_percent, get_start_map_pos, init_npc_attack,
     is_map_connected, npc_finalized, open_interface, player_get_armor_defense,
-    player_get_weapon_damage, send_handshake, set_npc_frame, unload_mapitems,
-    unload_npc, update_camera, update_mapitem_position, update_npc_camera,
-    update_player,
+    player_get_weapon_damage, send_handshake, set_npc_frame,
+    systems::{Poller, send_login_ok, send_tls_handshake},
+    unload_mapitems, unload_npc, update_camera, update_mapitem_position,
+    update_npc_camera, update_player,
 };
 use graphics::*;
 
@@ -24,7 +25,7 @@ use log::info;
 use mmap_bytey::MByteBuffer;
 
 pub fn handle_ping(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -81,7 +82,7 @@ pub fn handle_ping(
 }
 
 pub fn handle_alertmsg(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     _content: &mut Content,
@@ -107,7 +108,7 @@ pub fn handle_alertmsg(
 }
 
 pub fn handle_fltalert(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     _systems: &mut SystemHolder,
     _content: &mut Content,
@@ -123,10 +124,10 @@ pub fn handle_fltalert(
 }
 
 pub fn handle_handshake(
-    socket: &mut Socket,
+    socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
-    _content: &mut Content,
+    content: &mut Content,
     _alert: &mut Alert,
     data: &mut MByteBuffer,
     _seconds: f32,
@@ -136,13 +137,12 @@ pub fn handle_handshake(
     let handshake = data.read::<String>()?;
     systems.config.reconnect_code = code;
     systems.config.save_config("settings.toml");
-    socket.encrypt_state = EncryptionState::None;
-    socket.client.socket.set_nodelay(true)?;
+    content.game_content.reconnect_count = 0;
     send_handshake(socket, handshake)
 }
 
 pub fn handle_loginok(
-    _socket: &mut Socket,
+    socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     _content: &mut Content,
@@ -160,11 +160,12 @@ pub fn handle_loginok(
         FADE_SWITCH_TO_GAME,
         FadeData::None,
     );
-    Ok(())
+
+    send_login_ok(socket, &systems.config.reconnect_code)
 }
 
 pub fn handle_mapitems(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -233,7 +234,7 @@ pub fn handle_mapitems(
 }
 
 pub fn handle_myindex(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     _systems: &mut SystemHolder,
     content: &mut Content,
@@ -248,7 +249,7 @@ pub fn handle_myindex(
 }
 
 pub fn handle_move_ok(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     _systems: &mut SystemHolder,
     content: &mut Content,
@@ -266,7 +267,7 @@ pub fn handle_move_ok(
 }
 
 pub fn handle_playerdata(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -345,7 +346,7 @@ pub fn handle_playerdata(
 }
 
 pub fn handle_playerspawn(
-    socket: &mut Socket,
+    socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -445,7 +446,7 @@ pub fn handle_playerspawn(
 }
 
 pub fn handle_move(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -552,7 +553,7 @@ pub fn handle_move(
 }
 
 pub fn handle_warp(
-    socket: &mut Socket,
+    socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -621,7 +622,8 @@ pub fn handle_warp(
                 };
 
                 if myentity == entity {
-                    socket.client.sends.clear();
+                    //Removed Sends clear...
+                    //socket.client.sends.clear();
 
                     if old_pos.map != pos.map {
                         content
@@ -767,7 +769,7 @@ pub fn handle_warp(
 }
 
 pub fn handle_dir(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     _content: &mut Content,
@@ -822,7 +824,7 @@ pub fn handle_dir(
 }
 
 pub fn handle_vitals(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -918,7 +920,7 @@ pub fn handle_vitals(
 }
 
 pub fn handle_playerinv(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -945,7 +947,7 @@ pub fn handle_playerinv(
 }
 
 pub fn handle_playerinvslot(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -967,7 +969,7 @@ pub fn handle_playerinvslot(
 }
 
 pub fn handle_playerstorage(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1000,7 +1002,7 @@ pub fn handle_playerstorage(
 }
 
 pub fn handle_playerstorageslot(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1022,7 +1024,7 @@ pub fn handle_playerstorageslot(
 }
 
 pub fn handle_attack(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1059,7 +1061,7 @@ pub fn handle_attack(
 }
 
 pub fn handle_playerequipment(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1127,7 +1129,7 @@ pub fn handle_playerequipment(
 }
 
 pub fn handle_playerlevel(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1176,7 +1178,7 @@ pub fn handle_playerlevel(
 }
 
 pub fn handle_playermoney(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1198,7 +1200,7 @@ pub fn handle_playermoney(
 }
 
 pub fn handle_death(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     _systems: &mut SystemHolder,
     _content: &mut Content,
@@ -1218,7 +1220,7 @@ pub fn handle_death(
 }
 
 pub fn handle_playerpk(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     _systems: &mut SystemHolder,
     _content: &mut Content,
@@ -1231,7 +1233,7 @@ pub fn handle_playerpk(
 }
 
 pub fn handle_npcdata(
-    socket: &mut Socket,
+    socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1329,7 +1331,7 @@ pub fn handle_npcdata(
 }
 
 pub fn handle_chatmsg(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     _systems: &mut SystemHolder,
     _content: &mut Content,
@@ -1369,7 +1371,7 @@ pub fn handle_chatmsg(
 }
 
 pub fn handle_entityunload(
-    socket: &mut Socket,
+    socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1451,7 +1453,7 @@ pub fn handle_entityunload(
 }
 
 pub fn handle_openstorage(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1480,7 +1482,7 @@ pub fn handle_openstorage(
 }
 
 pub fn handle_openshop(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1511,7 +1513,7 @@ pub fn handle_openshop(
 }
 
 pub fn handle_clearisusingtype(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1554,7 +1556,7 @@ pub fn handle_clearisusingtype(
 }
 
 pub fn handle_updatetradeitem(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1578,7 +1580,7 @@ pub fn handle_updatetradeitem(
 }
 
 pub fn handle_updatetrademoney(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1599,7 +1601,7 @@ pub fn handle_updatetrademoney(
 }
 
 pub fn handle_inittrade(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1630,7 +1632,7 @@ pub fn handle_inittrade(
 }
 
 pub fn handle_tradestatus(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1705,7 +1707,7 @@ pub fn handle_tradestatus(
 }
 
 pub fn handle_traderequest(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
     _content: &mut Content,
@@ -1740,7 +1742,7 @@ pub fn handle_traderequest(
 }
 
 pub fn handle_playitemsfx(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     _content: &mut Content,
@@ -1762,7 +1764,7 @@ pub fn handle_playitemsfx(
 }
 
 pub fn handle_damage(
-    _socket: &mut Socket,
+    _socket: &mut Poller,
     _world: &mut World,
     systems: &mut SystemHolder,
     content: &mut Content,
@@ -1788,5 +1790,45 @@ pub fn handle_damage(
         add_float_text(systems, &mut content.game_content, pos, text, color);
     }
 
+    Ok(())
+}
+
+pub fn handle_tls_handshake(
+    socket: &mut Poller,
+    _world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut MByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    let code = data.read::<String>()?;
+    let handshake = data.read::<String>()?;
+    systems.config.reconnect_code = code;
+    systems.config.save_config("settings.toml");
+    content.game_content.reconnect_count = 0;
+    send_tls_handshake(socket, handshake)
+}
+
+pub fn handle_clear_data(
+    _socket: &mut Poller,
+    world: &mut World,
+    systems: &mut SystemHolder,
+    content: &mut Content,
+    _alert: &mut Alert,
+    data: &mut MByteBuffer,
+    _seconds: f32,
+    _buffer: &mut BufferTask,
+) -> Result<()> {
+    let _ = data.read::<u32>()?;
+
+    systems
+        .gfx
+        .set_color(&systems.fade.f_image, Color::rgba(0, 0, 0, 255));
+    systems.fade.f_alpha = 255;
+
+    content.game_content.clear_data(world, systems)?;
+    content.game_content.show(systems);
     Ok(())
 }

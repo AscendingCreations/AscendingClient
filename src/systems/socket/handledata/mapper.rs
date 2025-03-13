@@ -1,9 +1,9 @@
-use crate::{data_types::*, fade::*, socket::*, BufferTask};
+use crate::{BufferTask, data_types::*, fade::*, socket::*};
 use ahash::AHashMap;
 use serde::{Deserialize, Serialize};
 
 type PacketFunction = fn(
-    &mut Socket,
+    &mut Poller,
     &mut World,
     &mut SystemHolder,
     &mut Content,
@@ -66,6 +66,8 @@ pub enum ServerPackets {
     PlayItemSfx,
     Damage,
     Ping,
+    TlsHandShake,
+    ClearData,
 }
 
 pub struct PacketRouter(pub AHashMap<ServerPackets, PacketFunction>);
@@ -206,6 +208,14 @@ impl PacketRouter {
                 routes::handle_damage as PacketFunction,
             ),
             (ServerPackets::Ping, routes::handle_ping as PacketFunction),
+            (
+                ServerPackets::TlsHandShake,
+                routes::handle_tls_handshake as PacketFunction,
+            ),
+            (
+                ServerPackets::ClearData,
+                routes::handle_clear_data as PacketFunction,
+            ),
         ]))
     }
 }

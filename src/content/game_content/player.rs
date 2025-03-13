@@ -15,8 +15,7 @@ pub struct PlayerPvP {
 }
 
 use crate::{
-    Direction, Socket, SystemHolder, data_types::*, fade::*, game_content::*,
-    send_move,
+    Direction, SystemHolder, data_types::*, fade::*, game_content::*, send_move,
 };
 
 pub fn add_player(
@@ -157,7 +156,7 @@ pub fn unload_player(
 pub fn move_player(
     world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     entity: GlobalKey,
     content: &mut GameContent,
     move_type: MovementType,
@@ -278,7 +277,7 @@ pub fn end_player_move(
     world: &mut World,
     systems: &mut SystemHolder,
     content: &mut GameContent,
-    socket: &mut Socket,
+    socket: &mut Poller,
     entity: GlobalKey,
     buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -479,7 +478,7 @@ pub fn process_player_attack(
 pub fn process_player_movement(
     world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     entity: GlobalKey,
     content: &mut GameContent,
     buffer: &mut BufferTask,
@@ -534,7 +533,7 @@ pub fn process_player_movement(
 pub fn update_player_camera(
     world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     entity: GlobalKey,
     content: &mut GameContent,
 ) -> Result<()> {

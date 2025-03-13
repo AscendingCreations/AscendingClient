@@ -23,7 +23,7 @@ pub enum MouseInputType {
 pub fn handle_mouse_input(
     world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     elwt: &ActiveEventLoop,
     input_type: MouseInputType,
     mouse_pos: &Vec2,
@@ -56,7 +56,7 @@ pub fn handle_mouse_input(
 pub fn handle_key_input(
     world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     content: &mut Content,
     alert: &mut Alert,
     key: &Key,

@@ -8,11 +8,11 @@ use winit::keyboard::NamedKey;
 
 use crate::{
     Alert, AlertIndex, AlertType, COLOR_WHITE, GameContent, GfxType,
-    MouseInputType, Result, Socket, SystemHolder, TradeStatus, World,
+    MouseInputType, Result, SystemHolder, TradeStatus, World,
     interface::chatbox::*, is_within_area, send_buyitem, send_closeshop,
     send_closestorage, send_closetrade, send_command, send_message,
     send_removetradeitem, send_submittrade, send_unequip,
-    send_updatetrademoney, send_useitem, socket, widget::*,
+    send_updatetrademoney, send_useitem, socket, systems::Poller, widget::*,
 };
 
 pub mod chatbox;
@@ -243,7 +243,7 @@ impl Interface {
         interface: &mut Interface,
         _world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         alert: &mut Alert,
         input_type: MouseInputType,
         tooltip: &mut Tooltip,
@@ -634,7 +634,7 @@ impl Interface {
         game_content: &mut GameContent,
         _world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         key: &Key,
         pressed: bool,
     ) -> Result<()> {
@@ -714,7 +714,7 @@ impl Interface {
     pub fn click_window_buttons(
         &mut self,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         screen_pos: Vec2,
         alert: &mut Alert,
     ) -> Result<bool> {
@@ -1114,7 +1114,7 @@ impl Interface {
     pub fn click_textbox(
         &mut self,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         screen_pos: Vec2,
         chatbox_type: SelectedTextbox,
     ) -> Result<()> {
@@ -1250,7 +1250,7 @@ fn trigger_button(
 fn trigger_chatbox_button(
     interface: &mut Interface,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     index: usize,
 ) -> Result<()> {
     match index {

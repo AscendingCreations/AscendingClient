@@ -422,7 +422,7 @@ pub fn process_npc_movement(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: GlobalKey,
-    socket: &mut Socket,
+    socket: &mut Poller,
     content: &mut GameContent,
 ) -> Result<()> {
     if !world.entities.contains_key(entity) {
@@ -471,7 +471,7 @@ pub fn update_npc_camera(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: GlobalKey,
-    socket: &mut Socket,
+    socket: &mut Poller,
     content: &mut GameContent,
 ) -> Result<()> {
     if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {

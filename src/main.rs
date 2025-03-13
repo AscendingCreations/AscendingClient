@@ -77,6 +77,7 @@ pub const APP_MINOR: u16 = 1;
 pub const APP_REV: u16 = 1;
 pub const SERVER_ID: &str = "127.0.0.1";
 pub const SERVER_PORT: u16 = 7010;
+pub const TLS_SERVER_PORT: u16 = 7011;
 
 struct MyLogger(pub log::Level);
 
