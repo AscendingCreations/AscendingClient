@@ -416,7 +416,12 @@ impl winit::application::ApplicationHandler for Runner {
                                 |key| {
                                     *key = false;
                                 },
-                            )
+                            );
+
+                            content
+                                .game_content
+                                .reset_key_input(world, socket)
+                                .unwrap();
                         }
                     }
                     _ => {}

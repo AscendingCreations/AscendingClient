@@ -67,6 +67,7 @@ pub struct GameContent {
     pub refresh_map: bool,
     pub can_move: bool,
     pub reconnect_count: usize,
+    pub move_keypressed: Vec<ControlKey>,
 }
 
 impl GameContent {
@@ -98,6 +99,7 @@ impl GameContent {
             refresh_map: false,
             can_move: true,
             reconnect_count: 0,
+            move_keypressed: Vec::with_capacity(4),
         }
     }
 
@@ -347,30 +349,6 @@ impl GameContent {
                     KEY_ATTACK => {
                         self.player_attack(world, systems, socket, seconds)?
                     }
-                    KEY_MOVEDOWN => self.move_player(
-                        world,
-                        systems,
-                        socket,
-                        &Direction::Down,
-                    )?,
-                    KEY_MOVELEFT => self.move_player(
-                        world,
-                        systems,
-                        socket,
-                        &Direction::Left,
-                    )?,
-                    KEY_MOVEUP => self.move_player(
-                        world,
-                        systems,
-                        socket,
-                        &Direction::Up,
-                    )?,
-                    KEY_MOVERIGHT => self.move_player(
-                        world,
-                        systems,
-                        socket,
-                        &Direction::Right,
-                    )?,
                     KEY_PICKUP => {
                         if self.pick_up_timer < seconds {
                             send_pickup(socket)?;
@@ -386,26 +364,25 @@ impl GameContent {
 
     pub fn move_player(
         &mut self,
-        world: &mut World,
-        systems: &mut SystemHolder,
+        _world: &mut World,
         socket: &mut Poller,
-        dir: &Direction,
+        dir: Option<Direction>,
     ) -> Result<()> {
-        if let Some(myentity) = self.myentity {
+        if let Some(_myentity) = self.myentity {
+            let dir = if let Some(dir) = dir {
+                enum_to_dir(dir)
+            } else {
+                send_move(socket, None)?;
+                return Ok(());
+            };
+
             match self.player_data.is_using_type {
                 IsUsingType::Bank => send_closestorage(socket)?,
                 IsUsingType::Store(_) => send_closeshop(socket)?,
                 _ => {}
             }
 
-            move_player(
-                world,
-                systems,
-                socket,
-                myentity,
-                self,
-                MovementType::Manual(enum_to_dir(*dir), None),
-            )?;
+            send_move(socket, Some(dir))?;
         }
         Ok(())
     }
@@ -533,6 +510,15 @@ impl GameContent {
 
         Ok(())
     }
+
+    pub fn reset_key_input(
+        &mut self,
+        world: &mut World,
+        socket: &mut Poller,
+    ) -> Result<()> {
+        self.move_keypressed.clear();
+        self.move_player(world, socket, None)
+    }
 }
 
 pub fn update_player(
@@ -546,16 +532,7 @@ pub fn update_player(
     let players = content.players.clone();
     for entity in players.borrow().iter() {
         if let Some(myentity) = content.myentity {
-            if entity != &myentity {
-                move_player(
-                    world,
-                    systems,
-                    socket,
-                    *entity,
-                    content,
-                    MovementType::MovementBuffer,
-                )?;
-            }
+            move_player(world, systems, *entity, MovementType::MovementBuffer)?;
         }
 
         process_player_movement(

@@ -108,12 +108,11 @@ pub fn send_handshake(socket: &mut Poller, handshake: String) -> Result<()> {
     socket.send(buf, false)
 }
 
-pub fn send_move(socket: &mut Poller, dir: u8, pos: Position) -> Result<()> {
+pub fn send_move(socket: &mut Poller, dir: Option<u8>) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::Move)?;
     buf.write(dir)?;
-    buf.write(pos)?;
     buf.finish()?;
 
     socket.send(buf, false)

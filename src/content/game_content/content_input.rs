@@ -151,21 +151,78 @@ impl GameContent {
             content.game_content.keyinput.iter_mut().for_each(|key| {
                 *key = false;
             });
+            content.game_content.move_keypressed.clear();
             return Ok(());
         }
 
         match key {
             Key::Named(NamedKey::ArrowUp) => {
-                content.game_content.keyinput[KEY_MOVEUP] = pressed;
+                if let Some(index) = content
+                    .game_content
+                    .move_keypressed
+                    .iter()
+                    .position(|key| *key == ControlKey::MoveUp)
+                {
+                    let _ = content.game_content.move_keypressed.remove(index);
+                }
+
+                if pressed {
+                    content
+                        .game_content
+                        .move_keypressed
+                        .insert(0, ControlKey::MoveUp);
+                }
             }
             Key::Named(NamedKey::ArrowDown) => {
-                content.game_content.keyinput[KEY_MOVEDOWN] = pressed;
+                if let Some(index) = content
+                    .game_content
+                    .move_keypressed
+                    .iter()
+                    .position(|key| *key == ControlKey::MoveDown)
+                {
+                    let _ = content.game_content.move_keypressed.remove(index);
+                }
+
+                if pressed {
+                    content
+                        .game_content
+                        .move_keypressed
+                        .insert(0, ControlKey::MoveDown);
+                }
             }
             Key::Named(NamedKey::ArrowLeft) => {
-                content.game_content.keyinput[KEY_MOVELEFT] = pressed;
+                if let Some(index) = content
+                    .game_content
+                    .move_keypressed
+                    .iter()
+                    .position(|key| *key == ControlKey::MoveLeft)
+                {
+                    let _ = content.game_content.move_keypressed.remove(index);
+                }
+
+                if pressed {
+                    content
+                        .game_content
+                        .move_keypressed
+                        .insert(0, ControlKey::MoveLeft);
+                }
             }
             Key::Named(NamedKey::ArrowRight) => {
-                content.game_content.keyinput[KEY_MOVERIGHT] = pressed;
+                if let Some(index) = content
+                    .game_content
+                    .move_keypressed
+                    .iter()
+                    .position(|key| *key == ControlKey::MoveRight)
+                {
+                    let _ = content.game_content.move_keypressed.remove(index);
+                }
+
+                if pressed {
+                    content
+                        .game_content
+                        .move_keypressed
+                        .insert(0, ControlKey::MoveRight);
+                }
             }
             Key::Named(NamedKey::Control) => {
                 content.game_content.keyinput[KEY_ATTACK] = pressed;
@@ -174,6 +231,24 @@ impl GameContent {
                 content.game_content.keyinput[KEY_PICKUP] = pressed;
             }
             _ => {}
+        }
+
+        if !content.game_content.move_keypressed.is_empty() {
+            let key = content.game_content.move_keypressed[0];
+
+            let move_dir = match key {
+                ControlKey::MoveDown => Some(Direction::Down),
+                ControlKey::MoveUp => Some(Direction::Up),
+                ControlKey::MoveLeft => Some(Direction::Left),
+                ControlKey::MoveRight => Some(Direction::Right),
+                _ => None,
+            };
+
+            if let Some(dir) = move_dir {
+                content.game_content.move_player(world, socket, Some(dir))?;
+            }
+        } else {
+            content.game_content.move_player(world, socket, None)?;
         }
         Ok(())
     }

@@ -304,7 +304,7 @@ pub fn handle_move(
         let dir = data.read::<u8>()?;
 
         if let Some(myentity) = content.game_content.myentity {
-            if myentity != entity && world.entities.contains_key(entity) {
+            if world.entities.contains_key(entity) {
                 let player_pos = if let Some(Entity::Player(p_data)) =
                     world.entities.get(myentity)
                 {
@@ -351,7 +351,7 @@ pub fn handle_move(
                             _ => {}
                         }
                     }
-                } else {
+                } else if myentity != entity {
                     let entity_kind = world.get_kind(entity)?;
 
                     match entity_kind {

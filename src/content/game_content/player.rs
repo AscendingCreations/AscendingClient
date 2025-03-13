@@ -156,23 +156,21 @@ pub fn unload_player(
 pub fn move_player(
     world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Poller,
     entity: GlobalKey,
-    content: &mut GameContent,
     move_type: MovementType,
 ) -> Result<()> {
     if !world.entities.contains_key(entity) {
         return Ok(());
     }
 
-    let (dir, end) = if let Some(Entity::Player(p_data)) =
+    let (frame, last_frame) = if let Some(Entity::Player(p_data)) =
         world.entities.get_mut(entity)
     {
         if p_data.attacking.0 || p_data.movement.is_moving {
             return Ok(());
         }
 
-        match move_type {
+        let (dir, end) = match move_type {
             MovementType::MovementBuffer => {
                 if p_data.movement_buffer.is_empty() {
                     return Ok(());
@@ -186,20 +184,8 @@ pub fn move_player(
                 }
             }
             MovementType::Manual(m_dir, m_end) => (dir_to_enum(m_dir), m_end),
-        }
-    } else {
-        return Ok(());
-    };
+        };
 
-    if let Some(p) = content.myentity {
-        if p == entity || !can_move(world, systems, entity, content, &dir)? {
-            return Ok(());
-        }
-    }
-
-    let (frame, last_frame) = if let Some(Entity::Player(p_data)) =
-        world.entities.get_mut(entity)
-    {
         if let Some(end_pos) = end {
             p_data.end_movement = end_pos;
         } else {
@@ -233,27 +219,6 @@ pub fn move_player(
         }
 
         let dir_u8 = enum_to_dir(dir);
-
-        if let Some(p) = content.myentity {
-            if p == entity {
-                let attribute = content.map.get_attribute(
-                    systems,
-                    Vec2::new(p_data.pos.x as f32, p_data.pos.y as f32),
-                    &dir,
-                );
-
-                if matches!(attribute, MapAttribute::Warp(_)) {
-                    systems.map_fade.force_fade(&mut systems.gfx, FadeType::In);
-                }
-
-                if p_data.pos.map != p_data.end_movement.map {
-                    content.refresh_map = false;
-                }
-
-                send_move(socket, dir_u8, p_data.pos)?;
-                content.can_move = false;
-            }
-        }
 
         p_data.movement.is_moving = true;
         p_data.movement.move_direction = dir;

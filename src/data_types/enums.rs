@@ -62,3 +62,12 @@ pub enum AIBehavior {
     AgressiveHealer, //Will attack on sight and heal
     ReactiveHealer, //Will attack when attacked and heal
 }
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub enum ControlKey {
+    MoveUp,
+    MoveDown,
+    MoveLeft,
+    MoveRight,
+    Count,
+}
