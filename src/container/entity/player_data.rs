@@ -1,11 +1,13 @@
 use std::collections::VecDeque;
 
+use educe::Educe;
 use graphics::*;
 use mmap_bytey::{MByteBuffer, MByteBufferRead, MByteBufferWrite};
+use serde::{Deserialize, Serialize};
 
 use crate::{
-    AttackFrame, Attacking, DeathType, EntityName, EntityNameMap, Equipment,
-    HPBar, Movement, MovementData, Physical, Position, SpriteImage,
+    AttackFrame, Attacking, DeathType, EntityName, EntityNameMap, GlobalKey,
+    HPBar, MAX_EQPT, Movement, MovementData, Physical, Position, SpriteImage,
     SpriteIndex, Vitals, content::PlayerPvP,
 };
 
@@ -56,4 +58,69 @@ pub enum UserAccess {
     None,
     Monitor,
     Admin,
+}
+
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+)]
+pub enum IsUsingType {
+    #[default]
+    None,
+    Bank,
+    Fishing(i64),
+    Crafting(i64),
+    Trading(GlobalKey),
+    Store(i64),
+    Other(i64),
+}
+
+impl IsUsingType {
+    pub fn inuse(self) -> bool {
+        !matches!(self, IsUsingType::None)
+    }
+}
+
+#[derive(
+    Debug,
+    Copy,
+    Clone,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Educe,
+    MByteBufferRead,
+    MByteBufferWrite,
+)]
+#[educe(Default)]
+pub struct Item {
+    pub num: u32,
+    pub val: u16,
+    #[educe(Default = 1)]
+    pub level: u8,
+    pub data: [i16; 5],
+}
+
+#[derive(
+    PartialEq,
+    Eq,
+    Clone,
+    Debug,
+    Educe,
+    Deserialize,
+    Serialize,
+    MByteBufferRead,
+    MByteBufferWrite,
+)]
+#[educe(Default)]
+pub struct Equipment {
+    #[educe(Default = (0..MAX_EQPT).map(|_| Item::default()).collect())]
+    pub items: Vec<Item>,
 }

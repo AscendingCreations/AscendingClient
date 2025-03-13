@@ -2,8 +2,7 @@ use log::info;
 
 use crate::{
     BufferTask, Entity, EntityKind, MyInstant, Position, Result, Socket,
-    SystemHolder, World, WorldEntityType, content::*, dir_to_enum,
-    send_gameping,
+    SystemHolder, World, content::*, dir_to_enum, send_gameping,
 };
 
 #[derive(Copy, Clone, Debug, Default)]

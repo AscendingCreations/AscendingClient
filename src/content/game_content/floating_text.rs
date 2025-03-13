@@ -1,12 +1,12 @@
 use crate::{
-    data_types::*, get_start_map_pos, label::*, GameContent, SystemHolder,
-    ORDER_FLOAT_TEXT, ORDER_FLOAT_TEXT_BG, TILE_SIZE,
+    GameContent, ORDER_FLOAT_TEXT, ORDER_FLOAT_TEXT_BG, Position, SystemHolder,
+    TILE_SIZE, data_types::*, get_start_map_pos, label::*,
 };
 use graphics::{
     cosmic_text::{Attrs, Metrics, Stretch, Style, Weight},
     *,
 };
-use rand::{thread_rng, Rng};
+use rand::{Rng, thread_rng};
 
 struct FloatingTextData {
     text_bg: GfxType,

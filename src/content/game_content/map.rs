@@ -1,10 +1,10 @@
-use bit_op::{bit_u8::*, BitOp};
+use bit_op::{BitOp, bit_u8::*};
 use graphics::*;
 
-
 use crate::{
+    Direction, EntityType, MapAttribute, SystemHolder,
     content::game_content::player::*, content::game_content::*, data_types::*,
-    database::map::*, Direction, EntityType, MapAttribute, SystemHolder,
+    database::map::*,
 };
 
 pub mod item;
@@ -214,12 +214,12 @@ pub fn find_entity(
     }
 
     let target_entity = world
-        .query::<(&Position, &WorldEntityType)>()
+        .query::<(&Position, &EntityKind)>()
         .iter()
         .find_map(|(entity, (pos, world_type))| {
             if *pos == target_pos
-                && (*world_type == WorldEntityType::Npc
-                    || *world_type == WorldEntityType::Player)
+                && (*world_type == EntityKind::Npc
+                    || *world_type == EntityKind::Player)
             {
                 if let Some(myentity) = content.myentity {
                     if myentity.0 != entity {
@@ -291,12 +291,12 @@ pub fn can_move(
 
     let next_pos = content.map.get_next_pos(pos, direction);
     {
-        if world.query::<(&WorldEntityType, &Position)>().iter().any(
+        if world.query::<(&EntityKind, &Position)>().iter().any(
             |(target, (worldtype, pos))| {
                 *pos == next_pos
                     && target != entity
-                    && (*worldtype == WorldEntityType::Npc
-                        || *worldtype == WorldEntityType::Player)
+                    && (*worldtype == EntityKind::Npc
+                        || *worldtype == EntityKind::Player)
             },
         ) {
             return Ok(false);

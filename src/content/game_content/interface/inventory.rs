@@ -1,8 +1,9 @@
 use graphics::*;
 
 use crate::{
-    data_types::*, is_within_area, logic::*, socket::sends::*, widget::*,
-    Alert, AlertIndex, AlertType, Interface, Result, Socket, SystemHolder,
+    Alert, AlertIndex, AlertType, Interface, Item, Result, Socket,
+    SystemHolder, data_types::*, is_within_area, logic::*, socket::sends::*,
+    widget::*,
 };
 
 use super::ItemDescription;
@@ -822,18 +823,12 @@ pub fn release_inv_slot(
                         interface.inventory.item_slot[slot].count_data,
                     )?;
 
-                    interface.inventory.update_inv_slot(
-                        systems,
-                        slot,
-                        &Item {
-                            num: interface.inventory.item_slot[new_slot]
-                                .item_index
-                                as u32,
-                            val: interface.inventory.item_slot[new_slot]
-                                .count_data,
-                            ..Default::default()
-                        },
-                    );
+                    interface.inventory.update_inv_slot(systems, slot, &Item {
+                        num: interface.inventory.item_slot[new_slot].item_index
+                            as u32,
+                        val: interface.inventory.item_slot[new_slot].count_data,
+                        ..Default::default()
+                    });
                     interface.inventory.update_inv_slot(
                         systems,
                         new_slot,

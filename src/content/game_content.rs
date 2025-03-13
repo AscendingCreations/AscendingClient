@@ -467,12 +467,12 @@ impl GameContent {
             };
 
             let target_entity = world
-                .query::<(&Position, &WorldEntityType)>()
+                .query::<(&Position, &EntityKind)>()
                 .iter()
                 .find_map(|(entity, (pos, world_type))| {
                     if *pos == target_pos
-                        && (*world_type == WorldEntityType::Npc
-                            || *world_type == WorldEntityType::Player)
+                        && (*world_type == EntityKind::Npc
+                            || *world_type == EntityKind::Player)
                     {
                         Some(Entity(entity))
                     } else {
@@ -500,8 +500,8 @@ impl GameContent {
 
                 if proceed_target {
                     self.target.set_target(socket, systems, &got_target)?;
-                    match world.get_or_err::<WorldEntityType>(&got_target)? {
-                        WorldEntityType::Player => {
+                    match world.get_or_err::<EntityKind>(&got_target)? {
+                        EntityKind::Player => {
                             update_player_camera(
                                 world,
                                 systems,
@@ -510,7 +510,7 @@ impl GameContent {
                                 self,
                             )?;
                         }
-                        WorldEntityType::Npc => {
+                        EntityKind::Npc => {
                             update_npc_camera(
                                 world,
                                 systems,
@@ -585,7 +585,7 @@ pub fn finalize_entity(
 ) -> Result<()> {
     for (_, (worldentitytype, sprite, finalized, hpbar, entitynamemap)) in world
         .query_mut::<(
-            &WorldEntityType,
+            &EntityKind,
             &SpriteIndex,
             &mut Finalized,
             Option<&HPBar>,
@@ -595,7 +595,7 @@ pub fn finalize_entity(
     {
         if !finalized.0 {
             match worldentitytype {
-                WorldEntityType::Player => {
+                EntityKind::Player => {
                     if let Some(hp_bar) = hpbar {
                         if let Some(nameindex) = entitynamemap {
                             player_finalized_data(
@@ -608,7 +608,7 @@ pub fn finalize_entity(
                         }
                     }
                 }
-                WorldEntityType::Npc => {
+                EntityKind::Npc => {
                     if let Some(hp_bar) = hpbar {
                         if let Some(nameindex) = entitynamemap {
                             npc_finalized_data(
@@ -621,7 +621,7 @@ pub fn finalize_entity(
                         }
                     }
                 }
-                WorldEntityType::MapItem => {
+                EntityKind::MapItem => {
                     MapItem::finalized_data(systems, sprite.0);
                     finalized.0 = true;
                 }
@@ -668,7 +668,7 @@ pub fn update_camera(
         ),
     ) in world
         .query_mut::<(
-            &WorldEntityType,
+            &EntityKind,
             &SpriteIndex,
             &Position,
             &PositionOffset,
@@ -689,7 +689,7 @@ pub fn update_camera(
             false
         };
         match worldentitytype {
-            WorldEntityType::Player => {
+            EntityKind::Player => {
                 if let Some(hpbar) = hp_bar {
                     if let Some(namemap) = entitynamemap {
                         update_player_position(
@@ -723,7 +723,7 @@ pub fn update_camera(
                     }
                 }
             }
-            WorldEntityType::Npc => {
+            EntityKind::Npc => {
                 if let Some(hpbar) = hp_bar {
                     if let Some(namemap) = entitynamemap {
                         update_npc_position(
@@ -757,7 +757,7 @@ pub fn update_camera(
                     }
                 }
             }
-            WorldEntityType::MapItem => {
+            EntityKind::MapItem => {
                 update_mapitem_position(
                     systems,
                     content,

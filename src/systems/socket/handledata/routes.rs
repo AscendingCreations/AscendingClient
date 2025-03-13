@@ -1,11 +1,12 @@
 use std::ops::Range;
 
 use crate::{
-    Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content,
-    EncryptionState, Entity, EntityKind, FtlType, GlobalKey, IsUsingType,
-    MAX_EQPT, MapItem, MessageChannel, NPC_SPRITE_FRAME_X, ProfileLabel,
-    Result, Socket, SystemHolder, TradeStatus, UserAccess, VITALS_MAX, Window,
-    World, add_float_text, add_npc, close_interface,
+    Alert, AlertIndex, AlertType, BufferTask, ChatTask, Content, DeathType,
+    EncryptionState, Entity, EntityKind, Equipment, FtlType, GlobalKey,
+    IsUsingType, Item, MAX_EQPT, MapItem, MessageChannel, MovementData,
+    NPC_SPRITE_FRAME_X, NpcMode, Position, ProfileLabel, Result, Socket,
+    SystemHolder, TradeStatus, UserAccess, VITALS_MAX, Window, World,
+    add_float_text, add_npc, close_interface,
     content::game_content::{interface::chatbox::*, player::*},
     create_npc_light,
     data_types::*,

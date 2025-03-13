@@ -4,9 +4,11 @@ use graphics::*;
 
 use crate::{
     AttackFrame, Attacking, DeathType, EntityName, EntityNameMap, HPBar,
-    Movement, MovementData, NpcMode, Physical, Position, SpriteImage,
-    SpriteIndex, Vitals,
+    Movement, MovementData, Physical, Position, SpriteImage, SpriteIndex,
+    Vitals,
 };
+use mmap_bytey::{MByteBuffer, MByteBufferRead, MByteBufferWrite};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Default)]
 pub struct NpcEntity {
@@ -47,3 +49,27 @@ pub struct NpcEntity {
     pub pos: Position,
     pub pos_offset: Vec2,
 }
+
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Serialize,
+    Deserialize,
+    PartialEq,
+    Eq,
+    Default,
+    MByteBufferRead,
+    MByteBufferWrite,
+)]
+pub enum NpcMode {
+    None,
+    #[default]
+    Normal,
+    Pet,
+    Summon,
+    Boss,
+}
+
+#[derive(Copy, Clone, Debug, Default, MByteBufferRead, MByteBufferWrite)]
+pub struct NpcIndex(pub u64);

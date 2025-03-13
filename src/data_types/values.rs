@@ -65,29 +65,6 @@ pub enum VitalTypes {
 }
 
 #[derive(
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    Deserialize,
-    Serialize,
-    Default,
-    MByteBufferRead,
-    MByteBufferWrite,
-)]
-pub enum IsUsingType {
-    #[default]
-    None,
-    Bank,
-    Fishing(i64),
-    Crafting(i64),
-    Trading(GlobalKey),
-    Store(i64),
-    Other(i64),
-}
-
-#[derive(
     PartialEq,
     Eq,
     Copy,
@@ -106,12 +83,6 @@ pub enum TradeStatus {
     None,
     Accepted,
     Submitted,
-}
-
-impl IsUsingType {
-    pub fn inuse(self) -> bool {
-        !matches!(self, IsUsingType::None)
-    }
 }
 
 #[derive(

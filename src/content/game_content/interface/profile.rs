@@ -1,6 +1,8 @@
 use graphics::*;
 
-use crate::{data_types::*, is_within_area, logic::*, widget::*, SystemHolder};
+use crate::{
+    Item, SystemHolder, data_types::*, is_within_area, logic::*, widget::*,
+};
 
 use super::ItemDescription;
 

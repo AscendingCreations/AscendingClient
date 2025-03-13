@@ -1,6 +1,6 @@
 use crate::{
-    GlobalKey, ORDER_TARGET, Result, Socket, SystemHolder, data_types::*,
-    send_settarget,
+    GlobalKey, HPBar, ORDER_TARGET, Result, Socket, SystemHolder,
+    data_types::*, send_settarget,
 };
 use graphics::*;
 
@@ -58,7 +58,7 @@ impl Target {
         systems: &mut SystemHolder,
         target: GlobalKey,
     ) -> Result<()> {
-        self.entity = Some(*target);
+        self.entity = Some(target);
         systems.gfx.set_visible(&self.img_index, true);
         send_settarget(socket, self.entity)
     }

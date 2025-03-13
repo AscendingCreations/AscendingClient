@@ -1,6 +1,6 @@
 use crate::{
-    data_types::*, socket::*, BufferTask, BufferTaskEnum, MapAttributes,
-    MapDirBlock, Result, SystemHolder,
+    BufferTask, BufferTaskEnum, MapAttributes, MapDirBlock, MapPosition,
+    Result, SystemHolder, data_types::*, socket::*,
 };
 use graphics::*;
 use log::{error, info};

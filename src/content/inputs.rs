@@ -4,9 +4,9 @@ use input::Key;
 use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 use crate::{
+    Alert, Direction, EntityKind, Result, SystemHolder, Tooltip,
     content::{menu_content::content_input::*, *},
     socket::*,
-    Alert, Direction, Result, SystemHolder, Tooltip, WorldEntityType,
 };
 
 #[derive(Clone, Debug)]
@@ -106,43 +106,25 @@ pub fn handle_key_input(
 }
 
 fn count_npc(world: &mut World) -> usize {
-    let mut count = 0;
-
-    for (_, _) in world
-        .query_mut::<&WorldEntityType>()
-        .into_iter()
-        .filter(|(_, worldtype)| **worldtype == WorldEntityType::Npc)
-    {
-        count += 1
-    }
-
-    count
+    world
+        .kinds
+        .iter()
+        .filter(|(_, entity_kind)| **entity_kind == EntityKind::Npc)
+        .count()
 }
 
 fn count_player(world: &mut World) -> usize {
-    let mut count = 0;
-
-    for (_, _) in world
-        .query_mut::<&WorldEntityType>()
-        .into_iter()
-        .filter(|(_, worldtype)| **worldtype == WorldEntityType::Player)
-    {
-        count += 1
-    }
-
-    count
+    world
+        .kinds
+        .iter()
+        .filter(|(_, entity_kind)| **entity_kind == EntityKind::Player)
+        .count()
 }
 
 fn count_mapitems(world: &mut World) -> usize {
-    let mut count = 0;
-
-    for (_, _) in world
-        .query_mut::<&WorldEntityType>()
-        .into_iter()
-        .filter(|(_, worldtype)| **worldtype == WorldEntityType::MapItem)
-    {
-        count += 1
-    }
-
-    count
+    world
+        .kinds
+        .iter()
+        .filter(|(_, entity_kind)| **entity_kind == EntityKind::MapItem)
+        .count()
 }

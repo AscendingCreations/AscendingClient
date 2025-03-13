@@ -76,8 +76,8 @@ impl GameContent {
                     .game_content
                     .target
                     .set_target(socket, systems, entity)?;
-                match world.get_or_err::<WorldEntityType>(entity)? {
-                    WorldEntityType::Player => {
+                match world.get_or_err::<EntityKind>(entity)? {
+                    EntityKind::Player => {
                         update_player_camera(
                             world,
                             systems,
@@ -86,7 +86,7 @@ impl GameContent {
                             &mut content.game_content,
                         )?;
                     }
-                    WorldEntityType::Npc => {
+                    EntityKind::Npc => {
                         update_npc_camera(
                             world,
                             systems,

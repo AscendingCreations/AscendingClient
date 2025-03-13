@@ -46,7 +46,7 @@ impl MapItem {
 
         let component1 = (
             pos,
-            WorldEntityType::MapItem,
+            EntityKind::MapItem,
             SpriteIndex(index),
             SpriteImage(sprite as u8),
             PositionOffset::default(),

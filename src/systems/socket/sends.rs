@@ -1,4 +1,4 @@
-use crate::{GlobalKey, data_types::*, data_types::*, socket::*};
+use crate::{GlobalKey, Position, data_types::*, data_types::*, socket::*};
 
 #[derive(Clone, Debug, PartialEq, Eq, MByteBufferRead, MByteBufferWrite)]
 pub enum Command {
