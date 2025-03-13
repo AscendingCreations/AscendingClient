@@ -4,7 +4,7 @@ use graphics::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    SystemHolder,
+    Item, MapItemEntity, SystemHolder,
     data_types::*,
     game_content::{Camera, *},
     get_start_map_pos,
@@ -24,7 +24,7 @@ impl MapItem {
         sprite: usize,
         pos: Position,
         cur_map: MapPosition,
-        entity: Option<GlobalKey>,
+        entity: GlobalKey,
     ) -> Result<GlobalKey> {
         let start_pos = get_start_map_pos(cur_map, pos.map)
             .unwrap_or_else(|| Vec2::new(0.0, 0.0));
@@ -42,27 +42,20 @@ impl MapItem {
         );
         image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
         image.hw = Vec2::new(20.0, 20.0);
-        let index = systems.gfx.add_image(image, 0, "Map Item", false);
+        let sprite_index = systems.gfx.add_image(image, 0, "Map Item", false);
 
-        let component1 = (
-            pos,
-            EntityKind::MapItem,
-            SpriteIndex(index),
-            SpriteImage(sprite as u8),
-            PositionOffset::default(),
-            Finalized::default(),
-            EntityLight::default(),
+        let _ = world.kinds.insert(entity, EntityKind::MapItem);
+        let _ = world.entities.insert(
+            entity,
+            Entity::MapItem(Box::new(MapItemEntity {
+                pos,
+                sprite_image: sprite as u16,
+                sprite_index,
+                ..Default::default()
+            })),
         );
 
-        if let Some(data) = entity {
-            world.spawn_at(data.0, component1);
-            world.insert_one(data.0, EntityType::MapItem(Entity(data.0)))?;
-            Ok(Entity(data.0))
-        } else {
-            let entity = world.spawn(component1);
-            world.insert_one(entity, EntityType::MapItem(Entity(entity)))?;
-            Ok(Entity(entity))
-        }
+        Ok(entity)
     }
 
     pub fn finalized(
@@ -70,11 +63,9 @@ impl MapItem {
         systems: &mut SystemHolder,
         entity: GlobalKey,
     ) -> Result<()> {
-        if !world.contains(entity) {
-            return Ok(());
+        if let Some(Entity::MapItem(i_data)) = world.entities.get(entity) {
+            Self::finalized_data(systems, i_data.sprite_index);
         }
-        let sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-        Self::finalized_data(systems, sprite);
         Ok(())
     }
 
@@ -98,7 +89,7 @@ pub fn update_mapitem_position(
     let cur_pos = systems.gfx.get_pos(&sprite);
     let texture_pos = content.camera.0
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
-        + pos_offset.offset;
+        + pos_offset;
     if start_pos + texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return;
     }
@@ -124,13 +115,18 @@ pub fn unload_mapitems(
     content: &GameContent,
     entity: GlobalKey,
 ) -> Result<()> {
-    let item_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-    systems.gfx.remove_gfx(&mut systems.renderer, &item_sprite);
-    if let Some(entitylight) = world.get_or_err::<EntityLight>(entity)?.0 {
+    if let Some(Entity::MapItem(i_data)) = world.entities.get(entity) {
         systems
             .gfx
-            .remove_area_light(&content.game_lights, entitylight);
+            .remove_gfx(&mut systems.renderer, &i_data.sprite_index);
+        if let Some(entitylight) = i_data.light {
+            systems
+                .gfx
+                .remove_area_light(&content.game_lights, entitylight);
+        }
     }
-    world.despawn(entity)?;
+
+    let _ = world.entities.remove(entity);
+    let _ = world.kinds.remove(entity);
     Ok(())
 }
