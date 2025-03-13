@@ -2,9 +2,8 @@ use bit_op::{BitOp, bit_u8::*};
 use graphics::*;
 
 use crate::{
-    Direction, EntityType, MapAttribute, SystemHolder,
-    content::game_content::player::*, content::game_content::*, data_types::*,
-    database::map::*,
+    Direction, MapAttribute, SystemHolder, content::game_content::player::*,
+    content::game_content::*, data_types::*, database::map::*,
 };
 
 pub mod item;
@@ -213,23 +212,26 @@ pub fn find_entity(
         target_pos.map.y -= 1;
     }
 
-    let target_entity = world
-        .query::<(&Position, &EntityKind)>()
-        .iter()
-        .find_map(|(entity, (pos, world_type))| {
-            if *pos == target_pos
-                && (*world_type == EntityKind::Npc
-                    || *world_type == EntityKind::Player)
-            {
-                if let Some(myentity) = content.myentity {
-                    if myentity.0 != entity {
-                        return Some(Entity(entity));
+    let target_entity = world.entities.iter().find_map(|(key, entity_data)| {
+        match entity_data {
+            Entity::Player(p_data) => {
+                if p_data.pos == target_pos {
+                    if let Some(myentity) = content.myentity {
+                        if myentity != key {
+                            return Some(key);
+                        }
                     }
                 }
             }
-
-            None
-        });
+            Entity::Npc(n_data) => {
+                if n_data.pos == target_pos {
+                    return Some(key);
+                }
+            }
+            _ => {}
+        }
+        None
+    });
 
     target_entity
 }
@@ -241,34 +243,23 @@ pub fn can_move(
     content: &mut GameContent,
     direction: &Direction,
 ) -> Result<bool> {
-    let pos = world.get_or_err::<Position>(entity)?;
+    let (pos, dir) =
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            p_data.dir = match direction {
+                Direction::Up => 2,
+                Direction::Down => 0,
+                Direction::Left => 3,
+                Direction::Right => 1,
+            };
 
-    {
-        world.get::<&mut Dir>(entity)?.0 = match direction {
-            Direction::Up => 2,
-            Direction::Down => 0,
-            Direction::Left => 3,
-            Direction::Right => 1,
+            (p_data.pos, p_data.dir)
+        } else {
+            return Ok(false);
         };
-    }
 
-    let entity_type = world.get_or_err::<EntityType>(entity)?;
+    let frame = dir * PLAYER_SPRITE_FRAME_X as u8;
 
-    match entity_type {
-        EntityType::Player(_) => {
-            let frame = world.get_or_err::<Dir>(entity)?.0
-                * PLAYER_SPRITE_FRAME_X as u8;
-
-            set_player_frame(world, systems, entity, frame as usize)?;
-        }
-        EntityType::Npc(_) => {
-            let frame =
-                world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
-
-            set_npc_frame(world, systems, entity, frame as usize)?;
-        }
-        _ => {}
-    }
+    set_player_frame(world, systems, entity, frame as usize)?;
 
     if content.player_data.is_using_type.inuse() {
         return Ok(false);
@@ -290,17 +281,31 @@ pub fn can_move(
     }
 
     let next_pos = content.map.get_next_pos(pos, direction);
-    {
-        if world.query::<(&EntityKind, &Position)>().iter().any(
-            |(target, (worldtype, pos))| {
-                *pos == next_pos
-                    && target != entity
-                    && (*worldtype == EntityKind::Npc
-                        || *worldtype == EntityKind::Player)
-            },
-        ) {
-            return Ok(false);
+
+    if world.entities.iter().any(|(key, entity_data)| {
+        let mut result = false;
+
+        match entity_data {
+            Entity::Player(p_data) => {
+                if p_data.pos == next_pos {
+                    if let Some(myentity) = content.myentity {
+                        if myentity != key {
+                            result = true
+                        }
+                    }
+                }
+            }
+            Entity::Npc(n_data) => {
+                if n_data.pos == next_pos {
+                    result = true
+                }
+            }
+            _ => {}
         }
+
+        result
+    }) {
+        return Ok(false);
     }
 
     let attribute = content.map.get_attribute(
