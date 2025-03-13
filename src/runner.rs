@@ -671,12 +671,12 @@ impl winit::application::ApplicationHandler for Runner {
                 *reconnect_time2 = seconds + 1.0;
             }
 
-            if *start_ping {
+            /*if *start_ping {
                 *start_ping = false;
                 *reset_status = true;
                 *reset_timer = seconds + 3.0;
                 send_ping(socket).unwrap();
-            }
+            }*/
 
             socket
                 .process_packets(
