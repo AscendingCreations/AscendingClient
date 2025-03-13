@@ -4,7 +4,8 @@ use input::Key;
 use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 use crate::{
-    Alert, COLOR_RED, ContentType, MouseInputType, SystemHolder, Tooltip,
+    Alert, COLOR_RED, ContentType, Entity, EntityKind, MouseInputType,
+    SystemHolder, Tooltip,
     content::*,
     data_types::*,
     socket::{self, *},
@@ -61,12 +62,27 @@ impl GameContent {
 
             if let Some(entity) = target_entity {
                 if let Some(t_entity) = content.game_content.target.entity {
-                    if let Ok(mut hpbar) = world.get::<&mut HPBar>(t_entity.0) {
-                        content
-                            .game_content
-                            .target
-                            .clear_target(socket, systems, &mut hpbar)?;
+                    let entity_data = world.entities.get_mut(t_entity);
+                    if let Some(entity_data) = entity_data {
+                        match entity_data {
+                            Entity::Player(p_data) => {
+                                content.game_content.target.clear_target(
+                                    socket,
+                                    systems,
+                                    &mut p_data.hp_bar,
+                                )?;
+                            }
+                            Entity::Npc(n_data) => {
+                                content.game_content.target.clear_target(
+                                    socket,
+                                    systems,
+                                    &mut n_data.hp_bar,
+                                )?;
+                            }
+                            _ => {}
+                        }
                     }
+
                     if t_entity == entity {
                         return Ok(());
                     }
@@ -76,7 +92,9 @@ impl GameContent {
                     .game_content
                     .target
                     .set_target(socket, systems, entity)?;
-                match world.get_or_err::<EntityKind>(entity)? {
+
+                let entity_kind = world.get_kind(entity)?;
+                match entity_kind {
                     EntityKind::Player => {
                         update_player_camera(
                             world,
