@@ -68,6 +68,7 @@
             "cwd": "${workspaceRoot}",
             "environment": [],
             "preLaunchTask": "rust: cargo build",
+            "console": "integratedTerminal",
             "externalConsole": false
         },
     ]
