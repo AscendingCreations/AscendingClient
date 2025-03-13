@@ -1,4 +1,6 @@
-use crate::{Result, create_label};
+use crate::{
+    EntityNameMap, HPBar, PlayerEntity, Result, SpriteIndex, create_label,
+};
 use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
 use graphics::*;
 
@@ -22,7 +24,7 @@ pub fn add_player(
     systems: &mut SystemHolder,
     pos: Position,
     cur_map: MapPosition,
-    entity: Option<GlobalKey>,
+    entity: GlobalKey,
     sprite: usize,
 ) -> Result<GlobalKey> {
     let start_pos = get_start_map_pos(cur_map, pos.map)
@@ -42,7 +44,7 @@ pub fn add_player(
     image.hw = Vec2::new(40.0, 40.0);
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
 
-    let sprite = systems.gfx.add_image(image, 0, "Player Sprite", false);
+    let sprite_index = systems.gfx.add_image(image, 0, "Player Sprite", false);
     let mut bg_image = Rect::new(&mut systems.renderer, 0);
 
     bg_image
@@ -69,12 +71,26 @@ pub fn add_player(
         Color::rgba(230, 230, 230, 255),
     );
     let name_index = systems.gfx.add_text(entity_name, 2, "Player Name", false);
-    let entitynamemap = EntityNameMap(name_index);
-    let hpbar = HPBar {
+    let name_map = EntityNameMap(name_index);
+    let hp_bar = HPBar {
         visible: false,
         bg_index,
         bar_index,
     };
+
+    let _ = world.kinds.insert(entity, EntityKind::Player);
+    let _ = world.entities.insert(
+        entity,
+        Entity::Player(Box::new(PlayerEntity {
+            pos,
+            sprite_index: SpriteIndex(sprite_index),
+            hp_bar,
+            name_map,
+            ..Default::default()
+        })),
+    );
+
+    Ok(entity)
 }
 
 pub fn player_finalized(
@@ -82,14 +98,14 @@ pub fn player_finalized(
     systems: &mut SystemHolder,
     entity: GlobalKey,
 ) -> Result<()> {
-    if !world.contains(entity) {
-        return Ok(());
+    if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+        player_finalized_data(
+            systems,
+            p_data.sprite_index.0,
+            p_data.name_map.0,
+            &p_data.hp_bar,
+        );
     }
-
-    let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-    let hpbar = world.get_or_err::<HPBar>(entity)?;
-    let name = world.get_or_err::<EntityNameMap>(entity)?.0;
-    player_finalized_data(systems, player_sprite, name, &hpbar);
     Ok(())
 }
 
@@ -111,34 +127,30 @@ pub fn unload_player(
     content: &GameContent,
     entity: GlobalKey,
 ) -> Result<()> {
-    let player_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-
-    systems
-        .gfx
-        .remove_gfx(&mut systems.renderer, &player_sprite);
-
-    let hpbar = world.get_or_err::<HPBar>(entity)?;
-
-    systems
-        .gfx
-        .remove_gfx(&mut systems.renderer, &hpbar.bar_index);
-    systems
-        .gfx
-        .remove_gfx(&mut systems.renderer, &hpbar.bg_index);
-
-    let entitynamemap = world.get_or_err::<EntityNameMap>(entity)?;
-
-    systems
-        .gfx
-        .remove_gfx(&mut systems.renderer, &entitynamemap.0);
-
-    if let Some(entitylight) = world.get_or_err::<EntityLight>(entity)?.0 {
+    if let Some(Entity::Player(p_data)) = world.entities.get(entity) {
         systems
             .gfx
-            .remove_area_light(&content.game_lights, entitylight);
+            .remove_gfx(&mut systems.renderer, &p_data.sprite_index.0);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, &p_data.hp_bar.bar_index);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, &p_data.hp_bar.bg_index);
+
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, &p_data.name_map.0);
+
+        if let Some(entitylight) = p_data.light {
+            systems
+                .gfx
+                .remove_area_light(&content.game_lights, entitylight);
+        }
     }
 
-    world.despawn(entity)?;
+    let _ = world.entities.remove(entity);
+    let _ = world.kinds.remove(entity);
     Ok(())
 }
 
@@ -150,120 +162,114 @@ pub fn move_player(
     content: &mut GameContent,
     move_type: MovementType,
 ) -> Result<()> {
-    if !world.contains(entity) {
+    if !world.entities.contains_key(entity) {
         return Ok(());
     }
 
-    let (dir, end) = match move_type {
-        MovementType::MovementBuffer => {
-            let mut movementbuffer =
-                world.get::<&mut MovementBuffer>(entity)?;
-            let movement = world.get_or_err::<Movement>(entity)?;
-            if movementbuffer.data.is_empty() || movement.is_moving {
-                return Ok(());
-            }
-            let movement_data = movementbuffer.data.pop_front();
-            if let Some(data) = movement_data {
-                (dir_to_enum(data.dir), Some(data.end_pos))
-            } else {
-                return Ok(());
-            }
+    let (dir, end) = if let Some(Entity::Player(p_data)) =
+        world.entities.get_mut(entity)
+    {
+        if p_data.attacking.0 || p_data.movement.is_moving {
+            return Ok(());
         }
-        MovementType::Manual(m_dir, m_end) => (dir_to_enum(m_dir), m_end),
+
+        match move_type {
+            MovementType::MovementBuffer => {
+                if p_data.movement_buffer.is_empty() {
+                    return Ok(());
+                }
+                let movement_data = p_data.movement_buffer.pop_front();
+
+                if let Some(data) = movement_data {
+                    (dir_to_enum(data.dir), Some(data.end_pos))
+                } else {
+                    return Ok(());
+                }
+            }
+            MovementType::Manual(m_dir, m_end) => (dir_to_enum(m_dir), m_end),
+        }
+    } else {
+        return Ok(());
     };
 
     if let Some(p) = content.myentity {
-        if &p == entity
-            && (world.get_or_err::<Attacking>(entity)?.0
-                || world.get_or_err::<Movement>(entity)?.is_moving
-                || !can_move(world, systems, entity, content, &dir)?)
-        {
+        if p == entity || !can_move(world, systems, entity, content, &dir)? {
             return Ok(());
         }
     }
 
-    if let Some(end_pos) = end {
-        world.get::<&mut EndMovement>(entity)?.0 = end_pos;
-    } else {
-        let pos = world.get_or_err::<Position>(entity)?;
-        let adj = [(0, -1), (1, 0), (0, 1), (-1, 0)];
-        let dir_index = enum_to_dir(dir) as usize;
-        let mut end_move = Position {
-            x: pos.x + adj[dir_index].0,
-            y: pos.y + adj[dir_index].1,
-            map: pos.map,
-        };
-
-        if end_move.x < 0
-            || end_move.x >= 32
-            || end_move.y < 0
-            || end_move.y >= 32
-        {
-            let new_pos = [
-                (end_move.x, 31),
-                (0, end_move.y),
-                (end_move.x, 0),
-                (31, end_move.y),
-            ];
-
-            end_move.x = new_pos[dir_index].0;
-            end_move.y = new_pos[dir_index].1;
-            end_move.map.x += adj[dir_index].0;
-            end_move.map.y += adj[dir_index].1;
-        }
-
-        world.get::<&mut EndMovement>(entity)?.0 = end_move;
-    }
-
-    let dir_u8 = enum_to_dir(dir);
-
-    if let Some(p) = content.myentity {
-        if &p == entity {
-            let pos = world.get_or_err::<Position>(entity)?;
-            let attribute = content.map.get_attribute(
-                systems,
-                Vec2::new(pos.x as f32, pos.y as f32),
-                &dir,
-            );
-
-            if matches!(attribute, MapAttribute::Warp(_)) {
-                systems.map_fade.force_fade(&mut systems.gfx, FadeType::In);
-            }
-
-            let end_pos = world.get_or_err::<EndMovement>(entity)?.0;
-
-            if pos.map != end_pos.map {
-                content.refresh_map = false;
-            }
-
-            send_move(socket, dir_u8, pos)?;
-            content.can_move = false;
-        }
-    }
-
-    if let Ok(mut movement) = world.get::<&mut Movement>(entity) {
-        movement.is_moving = true;
-        movement.move_direction = dir;
-        movement.move_offset = 0.0;
-        movement.move_timer = 0.0;
-    }
-
+    let (frame, last_frame) = if let Some(Entity::Player(p_data)) =
+        world.entities.get_mut(entity)
     {
-        world.get::<&mut Dir>(entity)?.0 = dir_u8;
-    }
+        if let Some(end_pos) = end {
+            p_data.end_movement = end_pos;
+        } else {
+            let adj = [(0, -1), (1, 0), (0, 1), (-1, 0)];
+            let dir_index = enum_to_dir(dir) as usize;
+            let mut end_move = Position {
+                x: p_data.pos.x + adj[dir_index].0,
+                y: p_data.pos.y + adj[dir_index].1,
+                map: p_data.pos.map,
+            };
 
-    let last_frame = if world.get_or_err::<LastMoveFrame>(entity)?.0 == 1 {
-        2
+            if end_move.x < 0
+                || end_move.x >= 32
+                || end_move.y < 0
+                || end_move.y >= 32
+            {
+                let new_pos = [
+                    (end_move.x, 31),
+                    (0, end_move.y),
+                    (end_move.x, 0),
+                    (31, end_move.y),
+                ];
+
+                end_move.x = new_pos[dir_index].0;
+                end_move.y = new_pos[dir_index].1;
+                end_move.map.x += adj[dir_index].0;
+                end_move.map.y += adj[dir_index].1;
+            }
+
+            p_data.end_movement = end_move;
+        }
+
+        let dir_u8 = enum_to_dir(dir);
+
+        if let Some(p) = content.myentity {
+            if p == entity {
+                let attribute = content.map.get_attribute(
+                    systems,
+                    Vec2::new(p_data.pos.x as f32, p_data.pos.y as f32),
+                    &dir,
+                );
+
+                if matches!(attribute, MapAttribute::Warp(_)) {
+                    systems.map_fade.force_fade(&mut systems.gfx, FadeType::In);
+                }
+
+                if p_data.pos.map != p_data.end_movement.map {
+                    content.refresh_map = false;
+                }
+
+                send_move(socket, dir_u8, p_data.pos)?;
+                content.can_move = false;
+            }
+        }
+
+        p_data.movement.is_moving = true;
+        p_data.movement.move_direction = dir;
+        p_data.movement.move_offset = 0.0;
+        p_data.movement.move_timer = 0.0;
+        p_data.dir = dir_u8;
+
+        let last_frame = if p_data.last_move_frame == 1 { 2 } else { 1 };
+
+        p_data.last_move_frame = last_frame;
+
+        (p_data.dir * PLAYER_SPRITE_FRAME_X as u8, last_frame)
     } else {
-        1
+        return Ok(());
     };
-
-    {
-        world.get::<&mut LastMoveFrame>(entity)?.0 = last_frame;
-    }
-
-    let frame =
-        world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
 
     set_player_frame(world, systems, entity, frame as usize + last_frame)
 }
@@ -276,46 +282,44 @@ pub fn end_player_move(
     entity: GlobalKey,
     buffer: &mut BufferTask,
 ) -> Result<()> {
-    if !world.contains(entity) {
+    if !world.entities.contains_key(entity) {
         return Ok(());
     }
 
-    if let Ok(mut movement) = world.get::<&mut Movement>(entity) {
-        if !movement.is_moving {
-            return Ok(());
-        }
-
-        movement.is_moving = false;
-        movement.move_offset = 0.0;
-        movement.move_timer = 0.0;
-    }
-
     let mut move_map: bool = false;
-    let end_pos = world.get_or_err::<EndMovement>(entity)?.0;
-    {
-        if let Ok(mut pos) = world.get::<&mut Position>(entity) {
-            pos.x = end_pos.x;
-            pos.y = end_pos.y;
-            if pos.map != end_pos.map {
-                pos.map = end_pos.map;
+
+    let (direction, dir) =
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            if !p_data.movement.is_moving {
+                return Ok(());
+            }
+            p_data.movement.is_moving = false;
+            p_data.movement.move_offset = 0.0;
+            p_data.movement.move_timer = 0.0;
+
+            p_data.pos.x = p_data.end_movement.x;
+            p_data.pos.y = p_data.end_movement.y;
+            if p_data.pos.map != p_data.end_movement.map {
+                p_data.pos.map = p_data.end_movement.map;
                 move_map = true;
             }
-        }
 
-        world.get::<&mut PositionOffset>(entity)?.offset = Vec2::new(0.0, 0.0);
-    }
+            p_data.pos_offset = Vec2::new(0.0, 0.0);
+
+            (p_data.movement.move_direction, p_data.dir)
+        } else {
+            return Ok(());
+        };
 
     if let Some(p) = &content.myentity {
-        if p == entity && move_map {
-            let dir = world.get_or_err::<Movement>(entity)?.move_direction;
-            content.move_map(world, systems, socket, dir, buffer)?;
+        if *p == entity && move_map {
+            content.move_map(world, systems, socket, direction, buffer)?;
             finalize_entity(world, systems)?;
             content.refresh_map = true;
         }
     }
 
-    let frame =
-        world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+    let frame = dir * PLAYER_SPRITE_FRAME_X as u8;
     set_player_frame(world, systems, entity, frame as usize)
 }
 
@@ -336,7 +340,7 @@ pub fn update_player_position(
     let cur_pos = systems.gfx.get_pos(&sprite);
     let texture_pos = content.camera.0
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
-        + pos_offset.offset
+        + pos_offset
         - Vec2::new(10.0, 4.0);
     let pos =
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
@@ -386,21 +390,23 @@ pub fn set_player_frame(
     entity: GlobalKey,
     frame_index: usize,
 ) -> Result<()> {
-    if !world.contains(entity) {
-        return Ok(());
+    if let Some(Entity::Player(p_data)) = world.entities.get(entity) {
+        let size = systems.gfx.get_size(&p_data.sprite_index.0);
+        let frame_pos = Vec2::new(
+            frame_index as f32 % PLAYER_SPRITE_FRAME_X,
+            (frame_index as f32 / PLAYER_SPRITE_FRAME_X).floor(),
+        );
+
+        systems.gfx.set_uv(
+            &p_data.sprite_index.0,
+            Vec4::new(
+                size.x * frame_pos.x,
+                size.y * frame_pos.y,
+                size.x,
+                size.y,
+            ),
+        );
     }
-
-    let sprite_index = world.get_or_err::<SpriteIndex>(entity)?.0;
-    let size = systems.gfx.get_size(&sprite_index);
-    let frame_pos = Vec2::new(
-        frame_index as f32 % PLAYER_SPRITE_FRAME_X,
-        (frame_index as f32 / PLAYER_SPRITE_FRAME_X).floor(),
-    );
-
-    systems.gfx.set_uv(
-        &sprite_index,
-        Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y),
-    );
     Ok(())
 }
 
@@ -410,24 +416,21 @@ pub fn init_player_attack(
     entity: GlobalKey,
     seconds: f32,
 ) -> Result<()> {
-    if !world.contains(entity)
-        || world.get_or_err::<Attacking>(entity)?.0
-        || world.get_or_err::<Movement>(entity)?.is_moving
-    {
-        return Ok(());
-    }
-
-    {
-        world.get::<&mut Attacking>(entity)?.0 = true;
-        world.get::<&mut AttackTimer>(entity)?.0 = seconds + 0.5;
-        if let Ok(mut attackframe) = world.get::<&mut AttackFrame>(entity) {
-            attackframe.frame = 0;
-            attackframe.timer = seconds + 0.16;
-        }
-    }
-
     let frame =
-        world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            if p_data.attacking.0 || p_data.movement.is_moving {
+                return Ok(());
+            }
+
+            p_data.attacking.0 = true;
+            p_data.attack_timer = seconds + 0.5;
+            p_data.attack_frame.frame = 0;
+            p_data.attack_frame.timer = seconds + 0.16;
+
+            p_data.dir * PLAYER_SPRITE_FRAME_X as u8
+        } else {
+            return Ok(());
+        };
 
     set_player_frame(world, systems, entity, frame as usize + 3)
 }
@@ -438,44 +441,39 @@ pub fn process_player_attack(
     entity: GlobalKey,
     seconds: f32,
 ) -> Result<()> {
-    if !world.contains(entity) || !world.get_or_err::<Attacking>(entity)?.0 {
-        return Ok(());
-    }
-
-    if seconds < world.get_or_err::<AttackTimer>(entity)?.0 {
-        if seconds > world.get_or_err::<AttackFrame>(entity)?.timer {
-            {
-                world.get::<&mut AttackFrame>(entity)?.frame += 1;
-                world.get::<&mut AttackFrame>(entity)?.timer = seconds + 0.16;
+    let frame =
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            if !p_data.attacking.0 {
+                return Ok(());
             }
 
-            let mut attackframe =
-                world.get_or_err::<AttackFrame>(entity)?.frame;
+            if seconds < p_data.attack_timer {
+                if seconds > p_data.attack_frame.timer {
+                    p_data.attack_frame.frame += 1;
+                    p_data.attack_frame.timer = seconds + 0.16;
 
-            if attackframe > 2 {
-                attackframe = 2;
+                    let mut attackframe = p_data.attack_frame.frame;
+
+                    if attackframe > 2 {
+                        attackframe = 2;
+                    }
+
+                    let frame = p_data.dir * PLAYER_SPRITE_FRAME_X as u8;
+
+                    frame as usize + 3 + attackframe
+                } else {
+                    return Ok(());
+                }
+            } else {
+                p_data.attacking.0 = false;
+
+                (p_data.dir * PLAYER_SPRITE_FRAME_X as u8) as usize
             }
+        } else {
+            return Ok(());
+        };
 
-            let frame = world.get_or_err::<Dir>(entity)?.0
-                * PLAYER_SPRITE_FRAME_X as u8;
-
-            set_player_frame(
-                world,
-                systems,
-                entity,
-                frame as usize + 3 + attackframe,
-            )?;
-        }
-    } else {
-        {
-            world.get::<&mut Attacking>(entity)?.0 = false;
-        }
-
-        let frame =
-            world.get_or_err::<Dir>(entity)?.0 * PLAYER_SPRITE_FRAME_X as u8;
-
-        set_player_frame(world, systems, entity, frame as usize)?;
-    }
+    set_player_frame(world, systems, entity, frame)?;
     Ok(())
 }
 
@@ -487,11 +485,16 @@ pub fn process_player_movement(
     content: &mut GameContent,
     buffer: &mut BufferTask,
 ) -> Result<()> {
-    if !world.contains(entity) {
+    if !world.entities.contains_key(entity) {
         return Ok(());
     }
 
-    let movement = world.get_or_err::<Movement>(entity)?;
+    let movement =
+        if let Some(Entity::Player(p_data)) = world.entities.get(entity) {
+            p_data.movement
+        } else {
+            return Ok(());
+        };
 
     if !movement.is_moving {
         return Ok(());
@@ -500,13 +503,11 @@ pub fn process_player_movement(
     let add_offset = 4.0;
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
-        {
-            world.get::<&mut Movement>(entity)?.move_offset += add_offset;
-        }
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            p_data.movement.move_offset += add_offset;
 
-        let moveoffset = world.get_or_err::<Movement>(entity)?.move_offset;
+            let moveoffset = p_data.movement.move_offset;
 
-        {
             let offset = match movement.move_direction {
                 Direction::Up => Vec2::new(0.0, moveoffset),
                 Direction::Down => Vec2::new(0.0, -moveoffset),
@@ -514,15 +515,17 @@ pub fn process_player_movement(
                 Direction::Right => Vec2::new(moveoffset, 0.0),
             };
 
-            world.get::<&mut PositionOffset>(entity)?.offset = offset;
+            p_data.pos_offset = offset;
         }
     } else {
-        world.get::<&mut PositionOffset>(entity)?.offset = Vec2::new(0.0, 0.0);
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            p_data.pos_offset = Vec2::new(0.0, 0.0);
+        }
         end_player_move(world, systems, content, socket, entity, buffer)?;
     }
 
     if let Some(myindex) = content.myentity {
-        if myindex != *entity {
+        if myindex != entity {
             update_player_camera(world, systems, socket, entity, content)?;
         }
     }
@@ -536,60 +539,43 @@ pub fn update_player_camera(
     entity: GlobalKey,
     content: &mut GameContent,
 ) -> Result<()> {
-    let mut query = world.query_one::<(
-        &mut HPBar,
-        &SpriteIndex,
-        &Position,
-        &PositionOffset,
-        &EntityNameMap,
-        &EntityLight,
-    )>(entity)?;
-
-    if let Some((
-        hpbar,
-        spriteindex,
-        position,
-        positionoffset,
-        entitymapname,
-        entitylight,
-    )) = query.get()
-    {
+    if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
         update_player_position(
             systems,
             content,
-            spriteindex.0,
-            position,
-            positionoffset,
-            hpbar,
-            entitymapname,
-            entitylight.0,
+            p_data.sprite_index.0,
+            &p_data.pos,
+            p_data.pos_offset,
+            &p_data.hp_bar,
+            &p_data.name_map,
+            p_data.light,
         )?;
 
         let is_target = if let Some(target) = content.target.entity {
-            target.0 == entity
+            target == entity
         } else {
             false
         };
 
         if is_target {
-            if !hpbar.visible {
-                hpbar.visible = true;
-                systems.gfx.set_visible(&hpbar.bar_index, true);
-                systems.gfx.set_visible(&hpbar.bg_index, true);
+            if !p_data.hp_bar.visible {
+                p_data.hp_bar.visible = true;
+                systems.gfx.set_visible(&p_data.hp_bar.bar_index, true);
+                systems.gfx.set_visible(&p_data.hp_bar.bg_index, true);
             }
 
-            let pos = systems.gfx.get_pos(&spriteindex.0);
+            let pos = systems.gfx.get_pos(&p_data.sprite_index.0);
 
             content.target.set_target_pos(
                 socket,
                 systems,
                 Vec2::new(pos.x, pos.y),
-                hpbar,
+                &mut p_data.hp_bar,
             )?;
-        } else if hpbar.visible {
-            hpbar.visible = false;
-            systems.gfx.set_visible(&hpbar.bar_index, false);
-            systems.gfx.set_visible(&hpbar.bg_index, false);
+        } else if p_data.hp_bar.visible {
+            p_data.hp_bar.visible = false;
+            systems.gfx.set_visible(&p_data.hp_bar.bar_index, false);
+            systems.gfx.set_visible(&p_data.hp_bar.bg_index, false);
         }
     }
     Ok(())
@@ -599,10 +585,8 @@ pub fn player_get_next_lvl_exp(
     world: &mut World,
     entity: GlobalKey,
 ) -> Result<u64> {
-    let mut query = world.query_one::<&Level>(entity)?;
-
-    if let Some(player_level) = query.get() {
-        let exp_per_level = match player_level.0 {
+    if let Some(Entity::Player(p_data)) = world.entities.get(entity) {
+        let exp_per_level = match p_data.level {
             1..=10 => 100,
             11..=20 => 250,
             21..=30 => 400,
@@ -619,7 +603,7 @@ pub fn player_get_next_lvl_exp(
             _ => 0,
         };
 
-        Ok(player_level.0 as u64 * exp_per_level as u64)
+        Ok(p_data.level as u64 * exp_per_level as u64)
     } else {
         Ok(0)
     }
@@ -631,8 +615,8 @@ pub fn create_player_light(
     game_light: &GfxType,
     entity: GlobalKey,
 ) {
-    if let Ok(mut entitylight) = world.get::<&mut EntityLight>(entity) {
-        entitylight.0 = systems.gfx.add_area_light(game_light, AreaLight {
+    if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+        p_data.light = systems.gfx.add_area_light(game_light, AreaLight {
             pos: Vec2::new(0.0, 0.0),
             color: Color::rgba(100, 100, 100, 20),
             max_distance: 60.0,

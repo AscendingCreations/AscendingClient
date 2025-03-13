@@ -375,20 +375,6 @@ impl GameContent {
         Ok(())
     }
 
-    pub fn spawn_item(
-        &mut self,
-        world: &mut World,
-        systems: &mut SystemHolder,
-        pos: Position,
-        cur_map: MapPosition,
-        sprite: usize,
-    ) -> Result<()> {
-        let entity =
-            MapItem::create(world, systems, sprite, pos, cur_map, None)?;
-        self.mapitems.borrow_mut().insert(entity);
-        Ok(())
-    }
-
     pub fn move_player(
         &mut self,
         world: &mut World,
