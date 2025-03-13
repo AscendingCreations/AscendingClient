@@ -6,9 +6,9 @@ use regex::Regex;
 use winit::keyboard::NamedKey;
 
 use crate::{
-    button, content::*, logic::*, socket::*, Alert, AlertIndex, AlertType,
-    ContentType, MouseInputType, SystemHolder, Tooltip, APP_MAJOR, APP_MINOR,
-    APP_REV,
+    APP_MAJOR, APP_MINOR, APP_REV, Alert, AlertIndex, AlertType, ContentType,
+    MouseInputType, SystemHolder, Tooltip, button, content::*, logic::*,
+    socket::*,
 };
 
 pub fn register_mouse_input(
@@ -133,6 +133,7 @@ fn trigger_button(
     match index {
         0 => {
             // Register
+            /*
             let email_regex = Regex::new(
                 r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})",
             ).unwrap();
@@ -227,12 +228,13 @@ fn trigger_button(
                 );
                 return;
             }
+             */
 
             match send_register(
                 socket,
-                username,
-                password,
-                email,
+                "test3".to_string(),           //username,
+                "test".to_string(),            //password,
+                "test3@email.com".to_string(), //email,
                 menu_content.content_data as u8,
                 (APP_MAJOR, APP_MINOR, APP_REV),
             ) {

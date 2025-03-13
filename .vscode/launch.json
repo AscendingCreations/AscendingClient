@@ -58,5 +58,17 @@
             },
             "cwd": "${workspaceFolder}"
         },
+        {
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/target/debug/client.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "preLaunchTask": "rust: cargo build",
+            "externalConsole": false
+        },
     ]
 }
