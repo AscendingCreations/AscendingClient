@@ -577,7 +577,7 @@ pub fn finalize_entity(
     world: &mut World,
     systems: &mut SystemHolder,
 ) -> Result<()> {
-    for (key, entity) in world.entities.iter_mut() {
+    for (_, entity) in world.entities.iter_mut() {
         match entity {
             Entity::Player(p_data) => {
                 if !p_data.finalized {

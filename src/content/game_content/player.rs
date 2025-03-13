@@ -473,8 +473,7 @@ pub fn process_player_attack(
             return Ok(());
         };
 
-    set_player_frame(world, systems, entity, frame)?;
-    Ok(())
+    set_player_frame(world, systems, entity, frame)
 }
 
 pub fn process_player_movement(

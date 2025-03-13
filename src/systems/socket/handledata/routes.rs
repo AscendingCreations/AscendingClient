@@ -205,7 +205,7 @@ pub fn handle_mapitems(
                     sprite,
                     pos,
                     client_pos.map,
-                    Some(entity),
+                    entity,
                 )?;
 
                 content.game_content.mapitems.borrow_mut().insert(mapitem);
@@ -300,7 +300,7 @@ pub fn handle_playerdata(
                 systems,
                 pos,
                 pos.map,
-                Some(entity),
+                entity,
                 sprite as usize,
             )?;
             // Create Lights
@@ -391,7 +391,7 @@ pub fn handle_playerspawn(
                     systems,
                     pos,
                     client_pos.map,
-                    Some(entity),
+                    entity,
                     sprite as usize,
                 )?;
                 create_player_light(
@@ -1274,7 +1274,7 @@ pub fn handle_npcdata(
                     systems,
                     pos,
                     client_pos.map,
-                    Some(entity),
+                    entity,
                     num as usize,
                 )?;
                 create_npc_light(
