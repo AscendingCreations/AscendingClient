@@ -184,6 +184,12 @@ impl GameContent {
         );
 
         if let Some(myindex) = self.myentity {
+            let weapon_damage =
+                player_get_weapon_damage(world, systems, myindex)?.0 as u32;
+            let armor_defense =
+                player_get_armor_defense(world, systems, myindex)?.0 as u32;
+            let nextexp = player_get_next_lvl_exp(world, myindex)?;
+
             if let Some(Entity::Player(p_data)) = world.entities.get(myindex) {
                 self.interface.profile.set_profile_label_value(
                     systems,
@@ -195,17 +201,15 @@ impl GameContent {
                     ProfileLabel::Money,
                     self.player_data.player_money,
                 );
-                let damage = p_data.physical.damage.saturating_add(
-                    player_get_weapon_damage(world, systems, myindex)?.0 as u32,
-                );
+                let damage =
+                    p_data.physical.damage.saturating_add(weapon_damage);
                 self.interface.profile.set_profile_label_value(
                     systems,
                     ProfileLabel::Damage,
                     damage as u64,
                 );
-                let defense = p_data.physical.defense.saturating_add(
-                    player_get_armor_defense(world, systems, myindex)?.0 as u32,
-                );
+                let defense =
+                    p_data.physical.defense.saturating_add(armor_defense);
                 self.interface.profile.set_profile_label_value(
                     systems,
                     ProfileLabel::Defense,
@@ -225,7 +229,6 @@ impl GameContent {
                     p_data.vitals.vitalmax[2],
                 );
 
-                let nextexp = player_get_next_lvl_exp(world, myindex)?;
                 self.interface.vitalbar.update_bar_size(
                     systems,
                     2,
