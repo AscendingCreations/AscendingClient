@@ -81,6 +81,26 @@ pub struct Position {
     pub map: MapPosition,
 }
 
+impl Position {
+    pub fn convert_to_screen_tile(&self, cur_map: MapPosition) -> Self {
+        let mut cur_pos = *self;
+
+        cur_pos.x = match self.map.x.cmp(&cur_map.x) {
+            std::cmp::Ordering::Greater => cur_pos.x + 64,
+            std::cmp::Ordering::Less => cur_pos.x,
+            std::cmp::Ordering::Equal => cur_pos.x + 32,
+        };
+
+        cur_pos.y = match self.map.y.cmp(&cur_map.y) {
+            std::cmp::Ordering::Greater => cur_pos.y + 64,
+            std::cmp::Ordering::Less => cur_pos.y,
+            std::cmp::Ordering::Equal => cur_pos.y + 32,
+        };
+
+        cur_pos
+    }
+}
+
 #[derive(Copy, Clone, Debug, Default)]
 pub struct PositionOffset {
     pub offset: Vec2,

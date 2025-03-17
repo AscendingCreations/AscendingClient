@@ -34,6 +34,14 @@ pub fn add_npc(
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
 
     let sprite = systems.gfx.add_image(image, 0, "Npc Sprite", false);
+
+    let screen_pos = pos.convert_to_screen_tile(cur_map);
+
+    systems.gfx.set_override_pos(
+        &sprite,
+        Vec3::new(screen_pos.x as f32, screen_pos.y as f32, ORDER_NPC),
+    );
+
     let mut bg_image = Rect::new(&mut systems.renderer, 0);
 
     bg_image
@@ -283,27 +291,35 @@ pub fn update_npc_position(
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset
         - Vec2::new(10.0, 4.0);
-    let pos =
+    let t_pos =
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
 
-    if pos == Vec2::new(cur_pos.x, cur_pos.y) {
+    let screen_pos = pos.convert_to_screen_tile(content.map.map_pos);
+
+    systems.gfx.set_override_pos(
+        &sprite,
+        Vec3::new(screen_pos.x as f32, screen_pos.y as f32, ORDER_NPC),
+    );
+
+    if t_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return Ok(());
     }
 
     systems
         .gfx
-        .set_pos(&sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+        .set_pos(&sprite, Vec3::new(t_pos.x, t_pos.y, cur_pos.z));
 
     if let Some(light) = light_key {
         systems.gfx.set_area_light_pos(
             &content.game_lights,
             light,
-            pos + TILE_SIZE as f32,
+            t_pos + TILE_SIZE as f32,
         )
     }
 
     let sprite_size = systems.gfx.get_size(&sprite);
-    let bar_pos = pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
+    let bar_pos =
+        t_pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
 
     systems.gfx.set_pos(
         &hpbar.bar_index,
@@ -316,7 +332,7 @@ pub fn update_npc_position(
 
     let textsize = systems.gfx.get_measure(&entitynamemap.0).floor();
     let name_pos =
-        pos + Vec2::new(((sprite_size.x - textsize.x) * 0.5).floor(), 40.0);
+        t_pos + Vec2::new(((sprite_size.x - textsize.x) * 0.5).floor(), 40.0);
 
     systems.gfx.set_pos(
         &entitynamemap.0,
