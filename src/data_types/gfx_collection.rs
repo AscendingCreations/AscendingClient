@@ -301,6 +301,50 @@ impl GfxCollection {
         }
     }
 
+    pub fn set_override_pos(&mut self, index: &GfxType, pos: Vec3) {
+        match index {
+            GfxType::Image(gfx_index) => {
+                if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
+                    gfx.gfx.set_order_override(pos);
+                }
+            }
+            GfxType::Rect(gfx_index) => {
+                if let Some(gfx) = self.rect_storage.get_mut(*gfx_index) {
+                    gfx.gfx.set_order_pos(pos);
+                }
+            }
+            GfxType::Text(gfx_index) => {
+                if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
+                    gfx.gfx.set_order_override(pos);
+                }
+            }
+            GfxType::Map(_) => {}
+            _ => {}
+        }
+    }
+
+    pub fn set_render_layer(&mut self, index: &GfxType, render_layer: u32) {
+        match index {
+            GfxType::Image(gfx_index) => {
+                if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
+                    gfx.gfx.set_order_layer(render_layer);
+                }
+            }
+            GfxType::Rect(gfx_index) => {
+                if let Some(gfx) = self.rect_storage.get_mut(*gfx_index) {
+                    gfx.gfx.set_order_layer(render_layer);
+                }
+            }
+            GfxType::Text(gfx_index) => {
+                if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
+                    gfx.gfx.set_order_layer(render_layer);
+                }
+            }
+            GfxType::Map(_) => {}
+            _ => {}
+        }
+    }
+
     pub fn set_bound(&mut self, index: &GfxType, bound: Bounds) {
         if let GfxType::Text(gfx_index) = index {
             if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
