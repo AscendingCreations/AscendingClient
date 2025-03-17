@@ -61,7 +61,10 @@ pub fn game_loop(
                 loop_timer.input_tmr = seconds + 0.032;
             }
 
-            if seconds > loop_timer.ping_tmr && systems.config.show_ping {
+            if seconds > loop_timer.ping_tmr
+                && systems.config.show_ping
+                && !systems.fade.show
+            {
                 send_gameping(socket)?;
                 content.ping_start = MyInstant::now();
                 loop_timer.ping_tmr = seconds + 1.0;

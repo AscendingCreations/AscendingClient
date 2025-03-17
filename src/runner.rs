@@ -60,8 +60,6 @@ pub enum Runner {
         reconnect_time2: f32,
         reset_timer: f32,
         fps: u32,
-        start_ping: bool,
-        reset_status: bool,
         loop_timer: LoopTimer,
         mouse_pos: PhysicalPosition<f64>,
         mouse_press: bool,
@@ -359,8 +357,6 @@ impl winit::application::ApplicationHandler for Runner {
                 reconnect_time2: 0.0f32,
                 reset_timer: 0.0f32,
                 fps: 0u32,
-                start_ping: true,
-                reset_status: false,
                 loop_timer: LoopTimer::default(),
                 mouse_pos: PhysicalPosition::new(0.0, 0.0),
                 mouse_press: false,
@@ -391,8 +387,6 @@ impl winit::application::ApplicationHandler for Runner {
             reconnect_time2,
             reset_timer,
             fps,
-            start_ping,
-            reset_status,
             loop_timer,
             mouse_pos,
             mouse_press,
@@ -406,8 +400,19 @@ impl winit::application::ApplicationHandler for Runner {
             if window_id == systems.renderer.window().id() {
                 match event {
                     WindowEvent::CloseRequested => {
-                        println!("The close button was pressed; stopping");
-                        event_loop.exit();
+                        if content.content_type == ContentType::Game {
+                            alert.show_alert(
+                                systems,
+                                AlertType::Confirm,
+                                "Do you want to return to title screen?".into(),
+                                "Exit Game".to_string(),
+                                250,
+                                AlertIndex::ExitGame,
+                                false,
+                            );
+                        } else {
+                            event_loop.exit();
+                        }
                         return;
                     }
                     WindowEvent::Focused(focused) => {
@@ -676,12 +681,12 @@ impl winit::application::ApplicationHandler for Runner {
                 *reconnect_time2 = seconds + 1.0;
             }
 
-            /*if *start_ping {
-                *start_ping = false;
-                *reset_status = true;
+            if *reset_timer < seconds
+                && content.content_type == ContentType::Menu
+            {
                 *reset_timer = seconds + 3.0;
                 send_ping(socket).unwrap();
-            }*/
+            }
 
             socket
                 .process_packets(
@@ -799,8 +804,6 @@ impl winit::application::ApplicationHandler for Runner {
             reconnect_time2: _,
             reset_timer: _,
             fps: _,
-            start_ping: _,
-            reset_status: _,
             loop_timer: _,
             mouse_pos: _,
             mouse_press: _,
@@ -828,8 +831,6 @@ impl winit::application::ApplicationHandler for Runner {
             reconnect_time2: _,
             reset_timer: _,
             fps: _,
-            start_ping: _,
-            reset_status: _,
             loop_timer: _,
             mouse_pos: _,
             mouse_press: _,

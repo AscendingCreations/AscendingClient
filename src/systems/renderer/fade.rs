@@ -25,7 +25,7 @@ pub const FADE_SWITCH_TO_TITLE: usize = 2;
 
 #[derive(Default)]
 pub struct Fade {
-    show: bool,
+    pub show: bool,
     pub f_image: GfxType,
     f_tmr: f32,
     pub f_alpha: isize,

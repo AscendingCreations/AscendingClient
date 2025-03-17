@@ -232,9 +232,9 @@ fn trigger_button(
 
             match send_register(
                 socket,
-                "test16".to_string(),           //username,
+                "test17".to_string(),           //username,
                 "test".to_string(),             //password,
-                "test16@email.com".to_string(), //email,
+                "test17@email.com".to_string(), //email,
                 menu_content.content_data as u8,
                 (APP_MAJOR, APP_MINOR, APP_REV),
             ) {

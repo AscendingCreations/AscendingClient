@@ -17,8 +17,6 @@ pub fn handle_data(
 ) -> Result<()> {
     let id: ServerPackets = data.read()?;
 
-    info!("Server Packet is {:?}", id);
-
     if id == ServerPackets::OnlineCheck {
         return Ok(());
     }
