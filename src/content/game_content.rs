@@ -139,6 +139,7 @@ impl GameContent {
         self.map.unload(systems);
         self.player_data.unload();
         self.float_text.unload(systems);
+        self.camera.0 = Vec2::new(0.0, 0.0);
         systems.caret.index = None;
         Ok(())
     }
@@ -531,10 +532,7 @@ pub fn update_player(
 ) -> Result<()> {
     let players = content.players.clone();
     for entity in players.borrow().iter() {
-        if let Some(myentity) = content.myentity {
-            move_player(world, systems, *entity, MovementType::MovementBuffer)?;
-        }
-
+        move_player(world, systems, *entity, MovementType::MovementBuffer)?;
         process_player_movement(
             world, systems, socket, *entity, content, buffer,
         )?;

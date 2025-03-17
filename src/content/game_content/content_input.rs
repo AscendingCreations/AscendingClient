@@ -156,7 +156,7 @@ impl GameContent {
         }
 
         match key {
-            Key::Named(NamedKey::ArrowUp) => {
+            Key::Character('w') | Key::Character('W') => {
                 if let Some(index) = content
                     .game_content
                     .move_keypressed
@@ -173,7 +173,7 @@ impl GameContent {
                         .insert(0, ControlKey::MoveUp);
                 }
             }
-            Key::Named(NamedKey::ArrowDown) => {
+            Key::Character('s') | Key::Character('S') => {
                 if let Some(index) = content
                     .game_content
                     .move_keypressed
@@ -190,7 +190,7 @@ impl GameContent {
                         .insert(0, ControlKey::MoveDown);
                 }
             }
-            Key::Named(NamedKey::ArrowLeft) => {
+            Key::Character('a') | Key::Character('A') => {
                 if let Some(index) = content
                     .game_content
                     .move_keypressed
@@ -207,7 +207,7 @@ impl GameContent {
                         .insert(0, ControlKey::MoveLeft);
                 }
             }
-            Key::Named(NamedKey::ArrowRight) => {
+            Key::Character('d') | Key::Character('D') => {
                 if let Some(index) = content
                     .game_content
                     .move_keypressed

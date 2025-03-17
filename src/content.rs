@@ -67,7 +67,6 @@ impl Content {
             }
         }
 
-        systems.gfx.count_collection();
         Ok(())
     }
 }
