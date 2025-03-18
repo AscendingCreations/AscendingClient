@@ -133,10 +133,9 @@ fn trigger_button(
     match index {
         0 => {
             // Register
-            /*
-            let email_regex = Regex::new(
-                r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})",
-            ).unwrap();
+
+            let email_regex =
+                Regex::new(r#"^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$"#).unwrap();
 
             if menu_content.register.textbox[0].text
                 != menu_content.register.textbox[1].text
@@ -228,13 +227,12 @@ fn trigger_button(
                 );
                 return;
             }
-             */
 
             match send_register(
                 socket,
-                "test18".to_string(),           //username,
-                "test".to_string(),             //password,
-                "test18@email.com".to_string(), //email,
+                username,
+                password,
+                email,
                 menu_content.content_data as u8,
                 (APP_MAJOR, APP_MINOR, APP_REV),
             ) {
