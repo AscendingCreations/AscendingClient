@@ -9,9 +9,8 @@ pub use login::*;
 pub use register::*;
 
 use crate::{
-    content::*, data_types::*, is_within_area, widget::*, SystemHolder,
+    SystemHolder, content::*, data_types::*, is_within_area, widget::*,
 };
-use hecs::World;
 
 pub enum WindowType {
     None,
@@ -27,7 +26,6 @@ pub struct MenuContent {
     register: Register,
 
     selected_textbox: Option<usize>,
-    pub server_status: GfxType,
 
     pub content_data: usize,
 
@@ -48,20 +46,6 @@ impl MenuContent {
         bg_image.uv = Vec4::new(0.0, 0.0, 800.0, 600.0);
 
         let bg = systems.gfx.add_image(bg_image, 0, "Menu BG", true);
-        let label_size = Vec2::new(
-            200.0 * systems.scale as f32,
-            20.0 * systems.scale as f32,
-        )
-        .floor();
-        let text = create_label(
-            systems,
-            Vec3::new(10.0, 10.0, ORDER_SERVER_STATUS),
-            label_size,
-            Bounds::new(10.0, 10.0, label_size.x + 10.0, label_size.y + 10.0),
-            Color::rgba(220, 220, 220, 255),
-        );
-        let server_status =
-            systems.gfx.add_text(text, 1, "Menu Server Status", true);
 
         MenuContent {
             bg,
@@ -73,19 +57,16 @@ impl MenuContent {
             did_checkbox_click: false,
             selected_textbox: None,
             content_data: 0,
-            server_status,
         }
     }
 
     pub fn show(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(&self.bg, true);
-        systems.gfx.set_visible(&self.server_status, true);
         create_window(systems, self, WindowType::Login);
     }
 
     pub fn hide(&mut self, systems: &mut SystemHolder) {
         systems.gfx.set_visible(&self.bg, false);
-        systems.gfx.set_visible(&self.server_status, false);
         systems.caret.index = None;
         self.clear_window(systems)
     }
@@ -95,34 +76,6 @@ impl MenuContent {
         self.register.set_visible(systems, false);
         self.selected_textbox = None;
         self.content_data = 0;
-    }
-
-    pub fn set_status_online(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.set_rich_text(
-            &mut systems.renderer,
-            &self.server_status,
-            [
-                (
-                    "Server Status: ",
-                    Attrs::new().color(Color::rgba(220, 220, 220, 255)),
-                ),
-                ("Online", Attrs::new().color(Color::rgba(10, 200, 20, 255))),
-            ],
-        );
-    }
-
-    pub fn set_status_offline(&mut self, systems: &mut SystemHolder) {
-        systems.gfx.set_rich_text(
-            &mut systems.renderer,
-            &self.server_status,
-            [
-                (
-                    "Server Status: ",
-                    Attrs::new().color(Color::rgba(220, 220, 220, 255)),
-                ),
-                ("Offline", Attrs::new().color(Color::rgba(200, 10, 20, 255))),
-            ],
-        );
     }
 }
 

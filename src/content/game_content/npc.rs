@@ -1,11 +1,10 @@
 use graphics::*;
-use hecs::World;
 
 pub const NPC_SPRITE_FRAME_X: f32 = 6.0;
 
 use crate::{
-    create_label, data_types::*, game_content::*, Direction, Result,
-    SystemHolder,
+    Direction, EntityNameMap, HPBar, NpcEntity, Result, SpriteIndex,
+    SystemHolder, create_label, data_types::*, game_content::*,
 };
 
 pub fn add_npc(
@@ -13,9 +12,9 @@ pub fn add_npc(
     systems: &mut SystemHolder,
     pos: Position,
     cur_map: MapPosition,
-    entity: Option<&Entity>,
+    entity: GlobalKey,
     npcnum: usize,
-) -> Result<Entity> {
+) -> Result<GlobalKey> {
     let npc_data = &systems.base.npc[npcnum];
     let start_pos = get_start_map_pos(cur_map, pos.map)
         .unwrap_or_else(|| Vec2::new(0.0, 0.0));
@@ -35,6 +34,14 @@ pub fn add_npc(
     image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
 
     let sprite = systems.gfx.add_image(image, 0, "Npc Sprite", false);
+
+    let screen_pos = pos.convert_to_screen_tile(cur_map);
+
+    systems.gfx.set_override_pos(
+        &sprite,
+        Vec3::new(screen_pos.x as f32, screen_pos.y as f32, ORDER_NPC),
+    );
+
     let mut bg_image = Rect::new(&mut systems.renderer, 0);
 
     bg_image
@@ -61,69 +68,41 @@ pub fn add_npc(
         Color::rgba(200, 40, 40, 255),
     );
     let name_index = systems.gfx.add_text(entity_name, 2, "Npc Name", false);
-    let entitynamemap = EntityNameMap(name_index);
-    let hpbar = HPBar {
+    let name_map = EntityNameMap(name_index);
+    let hp_bar = HPBar {
         visible: false,
         bg_index,
         bar_index,
     };
-    let component1 = (
-        pos,
-        PositionOffset::default(),
-        SpriteIndex(sprite),
-        Movement::default(),
-        EndMovement::default(),
-        Dir::default(),
-        LastMoveFrame::default(),
-        Attacking::default(),
-        AttackTimer::default(),
-        AttackFrame::default(),
-        EntityName::default(),
-        MovementBuffer::default(),
-        Vitals::default(),
-        SpriteImage::default(),
-        WorldEntityType::Npc,
-    );
-    let component2 = (
-        Hidden::default(),
-        DeathType::default(),
-        NpcMode::default(),
-        NpcIndex::default(),
-        Physical::default(),
-        Level::default(),
-        hpbar,
-        Finalized::default(),
-        entitynamemap,
-        EntityLight::default(),
-    );
 
-    if let Some(data) = entity {
-        world.spawn_at(data.0, component1);
-        world.insert(data.0, component2)?;
-        world.insert_one(data.0, EntityType::Npc(Entity(data.0)))?;
-        Ok(Entity(data.0))
-    } else {
-        let entity = world.spawn(component1);
-        world.insert(entity, component2)?;
-        world.insert_one(entity, EntityType::Npc(Entity(entity)))?;
-        Ok(Entity(entity))
-    }
+    let _ = world.kinds.insert(entity, EntityKind::Npc);
+    let _ = world.entities.insert(
+        entity,
+        Entity::Npc(Box::new(NpcEntity {
+            pos,
+            sprite_index: SpriteIndex(sprite),
+            entity_index: npcnum as u64,
+            name_map,
+            hp_bar,
+            ..Default::default()
+        })),
+    );
+    Ok(entity)
 }
 
 pub fn npc_finalized(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
-        return Ok(());
+    if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+        npc_finalized_data(
+            systems,
+            n_data.sprite_index.0,
+            n_data.name_map.0,
+            &n_data.hp_bar,
+        );
     }
-
-    let npc_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-    let hpbar = world.get_or_err::<HPBar>(entity)?;
-    let name = world.get_or_err::<EntityNameMap>(entity)?.0;
-
-    npc_finalized_data(systems, npc_sprite, name, &hpbar);
     Ok(())
 }
 
@@ -143,123 +122,116 @@ pub fn unload_npc(
     world: &mut World,
     systems: &mut SystemHolder,
     content: &GameContent,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<()> {
-    let npc_sprite = world.get_or_err::<SpriteIndex>(entity)?.0;
-
-    systems.gfx.remove_gfx(&mut systems.renderer, &npc_sprite);
-
-    let hpbar = world.get_or_err::<HPBar>(entity)?;
-
-    systems
-        .gfx
-        .remove_gfx(&mut systems.renderer, &hpbar.bar_index);
-    systems
-        .gfx
-        .remove_gfx(&mut systems.renderer, &hpbar.bg_index);
-
-    let entitynamemap = world.get_or_err::<EntityNameMap>(entity)?;
-
-    systems
-        .gfx
-        .remove_gfx(&mut systems.renderer, &entitynamemap.0);
-
-    if let Some(entitylight) = world.get_or_err::<EntityLight>(entity)?.0 {
+    if let Some(Entity::Npc(n_data)) = world.entities.get(entity) {
         systems
             .gfx
-            .remove_area_light(&content.game_lights, entitylight);
+            .remove_gfx(&mut systems.renderer, &n_data.sprite_index.0);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, &n_data.hp_bar.bar_index);
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, &n_data.hp_bar.bg_index);
+
+        systems
+            .gfx
+            .remove_gfx(&mut systems.renderer, &n_data.name_map.0);
+
+        if let Some(entitylight) = n_data.light {
+            systems
+                .gfx
+                .remove_area_light(&content.game_lights, entitylight);
+        }
     }
 
-    world.despawn(entity.0)?;
+    let _ = world.entities.remove(entity);
+    let _ = world.kinds.remove(entity);
     Ok(())
 }
 
 pub fn move_npc(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
     move_type: MovementType,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.entities.contains_key(entity) {
         return Ok(());
     }
 
-    let (dir, end) = match move_type {
-        MovementType::MovementBuffer => {
-            let mut movementbuffer =
-                world.get::<&mut MovementBuffer>(entity.0)?;
-            let movement = world.get_or_err::<Movement>(entity)?;
-
-            if movementbuffer.data.is_empty() || movement.is_moving {
-                return Ok(());
-            }
-
-            let movement_data = movementbuffer.data.pop_front();
-
-            if let Some(data) = movement_data {
-                (dir_to_enum(data.dir), Some(data.end_pos))
-            } else {
-                return Ok(());
-            }
+    let (frame, last_frame) = if let Some(Entity::Npc(n_data)) =
+        world.entities.get_mut(entity)
+    {
+        if n_data.attacking.0 || n_data.movement.is_moving {
+            return Ok(());
         }
-        MovementType::Manual(m_dir, m_end) => (dir_to_enum(m_dir), m_end),
-    };
 
-    if let Some(end_pos) = end {
-        world.get::<&mut EndMovement>(entity.0)?.0 = end_pos;
-    } else {
-        let mut pos = world.get_or_err::<Position>(entity)?;
+        let (dir, end) = match move_type {
+            MovementType::MovementBuffer => {
+                if n_data.movement_buffer.is_empty() {
+                    return Ok(());
+                }
+                let movement_data = n_data.movement_buffer.pop_front();
 
-        pos.x += match dir {
-            Direction::Left => -1,
-            Direction::Right => 1,
-            _ => 0,
-        };
-        pos.y += match dir {
-            Direction::Up => 1,
-            Direction::Down => -1,
-            _ => 0,
+                if let Some(data) = movement_data {
+                    (dir_to_enum(data.dir), Some(data.end_pos))
+                } else {
+                    return Ok(());
+                }
+            }
+            MovementType::Manual(m_dir, m_end) => (dir_to_enum(m_dir), m_end),
         };
 
-        if pos.x < 0 {
-            pos.x = 31;
-            pos.map.x -= 1;
-        } else if pos.x >= 32 {
-            pos.x = 0;
-            pos.map.x += 1;
+        if let Some(end_pos) = end {
+            n_data.end_movement = end_pos;
+        } else {
+            let adj = [(0, -1), (1, 0), (0, 1), (-1, 0)];
+            let dir_index = enum_to_dir(dir) as usize;
+            let mut end_move = Position {
+                x: n_data.pos.x + adj[dir_index].0,
+                y: n_data.pos.y + adj[dir_index].1,
+                map: n_data.pos.map,
+            };
+
+            if end_move.x < 0
+                || end_move.x >= 32
+                || end_move.y < 0
+                || end_move.y >= 32
+            {
+                let new_pos = [
+                    (end_move.x, 31),
+                    (0, end_move.y),
+                    (end_move.x, 0),
+                    (31, end_move.y),
+                ];
+
+                end_move.x = new_pos[dir_index].0;
+                end_move.y = new_pos[dir_index].1;
+                end_move.map.x += adj[dir_index].0;
+                end_move.map.y += adj[dir_index].1;
+            }
+
+            n_data.end_movement = end_move;
         }
-        if pos.y < 0 {
-            pos.y = 31;
-            pos.map.y -= 1;
-        } else if pos.y >= 32 {
-            pos.y = 0;
-            pos.map.y += 1;
-        }
 
-        world.get::<&mut EndMovement>(entity.0)?.0 = pos;
-    }
+        let dir_u8 = enum_to_dir(dir);
 
-    if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
-        movement.is_moving = true;
-        movement.move_direction = dir;
-        movement.move_offset = 0.0;
-        movement.move_timer = 0.0;
-    }
-    {
-        world.get::<&mut Dir>(entity.0)?.0 = enum_to_dir(dir);
-    }
+        n_data.movement.is_moving = true;
+        n_data.movement.move_direction = dir;
+        n_data.movement.move_offset = 0.0;
+        n_data.movement.move_timer = 0.0;
+        n_data.dir = dir_u8;
 
-    let last_frame = if world.get_or_err::<LastMoveFrame>(entity)?.0 == 1 {
-        2
+        let last_frame = if n_data.last_move_frame == 1 { 2 } else { 1 };
+
+        n_data.last_move_frame = last_frame;
+
+        (n_data.dir * NPC_SPRITE_FRAME_X as u8, last_frame)
     } else {
-        1
+        return Ok(());
     };
-
-    {
-        world.get::<&mut LastMoveFrame>(entity.0)?.0 = last_frame;
-    }
-
-    let frame = world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
 
     set_npc_frame(world, systems, entity, frame as usize + last_frame)
 }
@@ -267,36 +239,35 @@ pub fn move_npc(
 pub fn end_npc_move(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.entities.contains_key(entity) {
         return Ok(());
     }
 
-    if let Ok(mut movement) = world.get::<&mut Movement>(entity.0) {
-        if !movement.is_moving {
+    let dir = if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity)
+    {
+        if !n_data.movement.is_moving {
             return Ok(());
         }
-        movement.is_moving = false;
-        movement.move_offset = 0.0;
-        movement.move_timer = 0.0;
-    }
+        n_data.movement.is_moving = false;
+        n_data.movement.move_offset = 0.0;
+        n_data.movement.move_timer = 0.0;
 
-    let end_pos = world.get_or_err::<EndMovement>(entity)?.0;
-
-    {
-        if let Ok(mut pos) = world.get::<&mut Position>(entity.0) {
-            pos.x = end_pos.x;
-            pos.y = end_pos.y;
-            if pos.map != end_pos.map {
-                pos.map = end_pos.map;
-            }
+        n_data.pos.x = n_data.end_movement.x;
+        n_data.pos.y = n_data.end_movement.y;
+        if n_data.pos.map != n_data.end_movement.map {
+            n_data.pos.map = n_data.end_movement.map;
         }
-        world.get::<&mut PositionOffset>(entity.0)?.offset =
-            Vec2::new(0.0, 0.0);
-    }
 
-    let frame = world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+        n_data.pos_offset = Vec2::new(0.0, 0.0);
+
+        n_data.dir
+    } else {
+        return Ok(());
+    };
+
+    let frame = dir * NPC_SPRITE_FRAME_X as u8;
 
     set_npc_frame(world, systems, entity, frame as usize)
 }
@@ -306,7 +277,7 @@ pub fn update_npc_position(
     content: &mut GameContent,
     sprite: GfxType,
     pos: &Position,
-    pos_offset: &PositionOffset,
+    pos_offset: Vec2,
     hpbar: &HPBar,
     entitynamemap: &EntityNameMap,
     light_key: Option<Index>,
@@ -318,29 +289,37 @@ pub fn update_npc_position(
     let cur_pos = systems.gfx.get_pos(&sprite);
     let texture_pos = content.camera.0
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
-        + pos_offset.offset
+        + pos_offset
         - Vec2::new(10.0, 4.0);
-    let pos =
+    let t_pos =
         Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
 
-    if pos == Vec2::new(cur_pos.x, cur_pos.y) {
+    let screen_pos = pos.convert_to_screen_tile(content.map.map_pos);
+
+    systems.gfx.set_override_pos(
+        &sprite,
+        Vec3::new(screen_pos.x as f32, screen_pos.y as f32, ORDER_NPC),
+    );
+
+    if t_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return Ok(());
     }
 
     systems
         .gfx
-        .set_pos(&sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+        .set_pos(&sprite, Vec3::new(t_pos.x, t_pos.y, cur_pos.z));
 
     if let Some(light) = light_key {
         systems.gfx.set_area_light_pos(
             &content.game_lights,
             light,
-            pos + TILE_SIZE as f32,
+            t_pos + TILE_SIZE as f32,
         )
     }
 
     let sprite_size = systems.gfx.get_size(&sprite);
-    let bar_pos = pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
+    let bar_pos =
+        t_pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
 
     systems.gfx.set_pos(
         &hpbar.bar_index,
@@ -353,7 +332,7 @@ pub fn update_npc_position(
 
     let textsize = systems.gfx.get_measure(&entitynamemap.0).floor();
     let name_pos =
-        pos + Vec2::new(((sprite_size.x - textsize.x) * 0.5).floor(), 40.0);
+        t_pos + Vec2::new(((sprite_size.x - textsize.x) * 0.5).floor(), 40.0);
 
     systems.gfx.set_pos(
         &entitynamemap.0,
@@ -366,47 +345,50 @@ pub fn update_npc_position(
 pub fn set_npc_frame(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
     frame_index: usize,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
-        return Ok(());
+    if let Some(Entity::Npc(n_data)) = world.entities.get(entity) {
+        let size = systems.gfx.get_size(&n_data.sprite_index.0);
+        let frame_pos = Vec2::new(
+            frame_index as f32 % NPC_SPRITE_FRAME_X,
+            (frame_index as f32 / NPC_SPRITE_FRAME_X).floor(),
+        );
+
+        systems.gfx.set_uv(
+            &n_data.sprite_index.0,
+            Vec4::new(
+                size.x * frame_pos.x,
+                size.y * frame_pos.y,
+                size.x,
+                size.y,
+            ),
+        );
     }
-
-    let sprite_index = world.get_or_err::<SpriteIndex>(entity)?.0;
-    let size = systems.gfx.get_size(&sprite_index);
-    let frame_pos = Vec2::new(
-        frame_index as f32 % NPC_SPRITE_FRAME_X,
-        (frame_index as f32 / NPC_SPRITE_FRAME_X).floor(),
-    );
-
-    systems.gfx.set_uv(
-        &sprite_index,
-        Vec4::new(size.x * frame_pos.x, size.y * frame_pos.y, size.x, size.y),
-    );
     Ok(())
 }
 
 pub fn init_npc_attack(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
     seconds: f32,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.entities.contains_key(entity) {
         return Ok(());
     }
 
-    {
-        world.get::<&mut Attacking>(entity.0)?.0 = true;
-        world.get::<&mut AttackTimer>(entity.0)?.0 = seconds + 0.5;
-        if let Ok(mut attackframe) = world.get::<&mut AttackFrame>(entity.0) {
-            attackframe.frame = 0;
-            attackframe.timer = seconds + 0.16;
-        }
-    }
+    let frame =
+        if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+            n_data.attacking.0 = true;
+            n_data.attack_timer = seconds + 0.5;
+            n_data.attack_frame.frame = 0;
+            n_data.attack_frame.timer = seconds + 0.16;
 
-    let frame = world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
+            n_data.dir * NPC_SPRITE_FRAME_X as u8
+        } else {
+            return Ok(());
+        };
 
     set_npc_frame(world, systems, entity, frame as usize + 3)
 }
@@ -414,66 +396,61 @@ pub fn init_npc_attack(
 pub fn process_npc_attack(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
+    entity: GlobalKey,
     seconds: f32,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
-        return Ok(());
-    }
-
-    if !world.get_or_err::<Attacking>(entity)?.0 {
-        return Ok(());
-    }
-
-    if seconds < world.get_or_err::<AttackTimer>(entity)?.0 {
-        if seconds > world.get_or_err::<AttackFrame>(entity)?.timer {
-            {
-                world.get::<&mut AttackFrame>(entity.0)?.frame += 1;
-                world.get::<&mut AttackFrame>(entity.0)?.timer = seconds + 0.16;
+    let frame =
+        if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+            if !n_data.attacking.0 {
+                return Ok(());
             }
 
-            let mut attackframe =
-                world.get_or_err::<AttackFrame>(entity)?.frame;
+            if seconds < n_data.attack_timer {
+                if seconds > n_data.attack_frame.timer {
+                    n_data.attack_frame.frame += 1;
+                    n_data.attack_frame.timer = seconds + 0.16;
 
-            if attackframe > 2 {
-                attackframe = 2;
+                    let mut attackframe = n_data.attack_frame.frame;
+
+                    if attackframe > 2 {
+                        attackframe = 2;
+                    }
+
+                    let frame = n_data.dir * NPC_SPRITE_FRAME_X as u8;
+
+                    frame as usize + 3 + attackframe
+                } else {
+                    return Ok(());
+                }
+            } else {
+                n_data.attacking.0 = false;
+
+                (n_data.dir * NPC_SPRITE_FRAME_X as u8) as usize
             }
+        } else {
+            return Ok(());
+        };
 
-            let frame =
-                world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
-
-            set_npc_frame(
-                world,
-                systems,
-                entity,
-                frame as usize + 3 + attackframe,
-            )?;
-        }
-    } else {
-        {
-            world.get::<&mut Attacking>(entity.0)?.0 = false;
-        }
-
-        let frame =
-            world.get_or_err::<Dir>(entity)?.0 * NPC_SPRITE_FRAME_X as u8;
-
-        set_npc_frame(world, systems, entity, frame as usize)?;
-    }
-    Ok(())
+    set_npc_frame(world, systems, entity, frame)
 }
 
 pub fn process_npc_movement(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
-    socket: &mut Socket,
+    entity: GlobalKey,
+    socket: &mut Poller,
     content: &mut GameContent,
 ) -> Result<()> {
-    if !world.contains(entity.0) {
+    if !world.entities.contains_key(entity) {
         return Ok(());
     }
 
-    let movement = world.get_or_err::<Movement>(entity)?;
+    let movement = if let Some(Entity::Npc(n_data)) = world.entities.get(entity)
+    {
+        n_data.movement
+    } else {
+        return Ok(());
+    };
 
     if !movement.is_moving {
         return Ok(());
@@ -482,13 +459,11 @@ pub fn process_npc_movement(
     let add_offset = 2.0;
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
-        {
-            world.get::<&mut Movement>(entity.0)?.move_offset += add_offset;
-        }
+        if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+            n_data.movement.move_offset += add_offset;
 
-        let moveoffset = world.get_or_err::<Movement>(entity)?.move_offset;
+            let moveoffset = n_data.movement.move_offset;
 
-        {
             let offset = match movement.move_direction {
                 Direction::Up => Vec2::new(0.0, moveoffset),
                 Direction::Down => Vec2::new(0.0, -moveoffset),
@@ -496,11 +471,12 @@ pub fn process_npc_movement(
                 Direction::Right => Vec2::new(moveoffset, 0.0),
             };
 
-            world.get::<&mut PositionOffset>(entity.0)?.offset = offset;
+            n_data.pos_offset = offset;
         }
     } else {
-        world.get::<&mut PositionOffset>(entity.0)?.offset =
-            Vec2::new(0.0, 0.0);
+        if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+            n_data.pos_offset = Vec2::new(0.0, 0.0);
+        }
         end_npc_move(world, systems, entity)?;
     }
 
@@ -510,62 +486,45 @@ pub fn process_npc_movement(
 pub fn update_npc_camera(
     world: &mut World,
     systems: &mut SystemHolder,
-    entity: &Entity,
-    socket: &mut Socket,
+    entity: GlobalKey,
+    socket: &mut Poller,
     content: &mut GameContent,
 ) -> Result<()> {
-    let mut query = world.query_one::<(
-        &mut HPBar,
-        &SpriteIndex,
-        &Position,
-        &PositionOffset,
-        &EntityNameMap,
-        &EntityLight,
-    )>(entity.0)?;
-
-    if let Some((
-        hpbar,
-        spriteindex,
-        position,
-        positionoffset,
-        entitymapname,
-        entitylight,
-    )) = query.get()
-    {
+    if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
         let is_target = if let Some(target) = content.target.entity {
-            target.0 == entity.0
+            target == entity
         } else {
             false
         };
 
         if is_target {
-            if !hpbar.visible {
-                hpbar.visible = true;
-                systems.gfx.set_visible(&hpbar.bar_index, true);
-                systems.gfx.set_visible(&hpbar.bg_index, true);
+            if !n_data.hp_bar.visible {
+                n_data.hp_bar.visible = true;
+                systems.gfx.set_visible(&n_data.hp_bar.bar_index, true);
+                systems.gfx.set_visible(&n_data.hp_bar.bg_index, true);
             }
-            let pos = systems.gfx.get_pos(&spriteindex.0);
+            let pos = systems.gfx.get_pos(&n_data.sprite_index.0);
             content.target.set_target_pos(
                 socket,
                 systems,
                 Vec2::new(pos.x, pos.y),
-                hpbar,
+                &mut n_data.hp_bar,
             )?;
-        } else if hpbar.visible {
-            hpbar.visible = false;
-            systems.gfx.set_visible(&hpbar.bar_index, false);
-            systems.gfx.set_visible(&hpbar.bg_index, false);
+        } else if n_data.hp_bar.visible {
+            n_data.hp_bar.visible = false;
+            systems.gfx.set_visible(&n_data.hp_bar.bar_index, false);
+            systems.gfx.set_visible(&n_data.hp_bar.bg_index, false);
         }
 
         update_npc_position(
             systems,
             content,
-            spriteindex.0,
-            position,
-            positionoffset,
-            hpbar,
-            entitymapname,
-            entitylight.0,
+            n_data.sprite_index.0,
+            &n_data.pos,
+            n_data.pos_offset,
+            &n_data.hp_bar,
+            &n_data.name_map,
+            n_data.light,
         )?;
     }
     Ok(())
@@ -575,20 +534,17 @@ pub fn create_npc_light(
     world: &mut World,
     systems: &mut SystemHolder,
     game_light: &GfxType,
-    entity: &Entity,
+    entity: GlobalKey,
 ) {
-    if let Ok(mut entitylight) = world.get::<&mut EntityLight>(entity.0) {
-        entitylight.0 = systems.gfx.add_area_light(
-            game_light,
-            AreaLight {
-                pos: Vec2::new(0.0, 0.0),
-                color: Color::rgba(100, 100, 100, 20),
-                max_distance: 20.0,
-                animate: true,
-                anim_speed: 5.0,
-                dither: 0.8,
-                camera_type: CameraType::None,
-            },
-        )
+    if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+        n_data.light = systems.gfx.add_area_light(game_light, AreaLight {
+            pos: Vec2::new(0.0, 0.0),
+            color: Color::rgba(100, 100, 100, 20),
+            max_distance: 20.0,
+            animate: true,
+            anim_speed: 5.0,
+            dither: 0.8,
+            camera_type: CameraType::None,
+        })
     }
 }

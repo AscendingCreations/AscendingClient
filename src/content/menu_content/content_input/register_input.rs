@@ -1,21 +1,21 @@
 use graphics::*;
-use hecs::World;
+
 use input::Key;
 use log::error;
 use regex::Regex;
 use winit::keyboard::NamedKey;
 
 use crate::{
-    button, content::*, logic::*, socket::*, Alert, AlertIndex, AlertType,
-    ContentType, MouseInputType, SystemHolder, Tooltip, APP_MAJOR, APP_MINOR,
-    APP_REV,
+    APP_MAJOR, APP_MINOR, APP_REV, Alert, AlertIndex, AlertType, ContentType,
+    MouseInputType, SystemHolder, Tooltip, button, content::*, logic::*,
+    socket::*,
 };
 
 pub fn register_mouse_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     tooltip: &mut Tooltip,
     input_type: MouseInputType,
@@ -55,7 +55,7 @@ pub fn register_key_input(
     menu_content: &mut MenuContent,
     _world: &mut World,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     key: &Key,
     pressed: bool,
@@ -126,16 +126,16 @@ pub fn register_key_input(
 fn trigger_button(
     menu_content: &mut MenuContent,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
     alert: &mut Alert,
     index: usize,
 ) {
     match index {
         0 => {
             // Register
-            let email_regex = Regex::new(
-                r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})",
-            ).unwrap();
+
+            let email_regex =
+                Regex::new(r#"^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$"#).unwrap();
 
             if menu_content.register.textbox[0].text
                 != menu_content.register.textbox[1].text

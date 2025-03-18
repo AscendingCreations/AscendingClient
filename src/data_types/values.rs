@@ -1,4 +1,4 @@
-use crate::{data_types::*, socket::*};
+use crate::{GlobalKey, data_types::*, socket::*};
 use graphics::*;
 use serde::{Deserialize, Serialize};
 
@@ -13,17 +13,6 @@ pub enum Direction {
     Down,
     Left,
     Right,
-}
-
-#[derive(
-    Copy, Clone, Debug, PartialEq, Eq, Default, Deserialize, Serialize,
-)]
-pub enum EntityType {
-    #[default]
-    None,
-    Player(Entity),
-    Npc(Entity),
-    MapItem(Entity),
 }
 
 #[derive(
@@ -76,29 +65,6 @@ pub enum VitalTypes {
 }
 
 #[derive(
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    Deserialize,
-    Serialize,
-    Default,
-    MByteBufferRead,
-    MByteBufferWrite,
-)]
-pub enum IsUsingType {
-    #[default]
-    None,
-    Bank,
-    Fishing(i64),
-    Crafting(i64),
-    Trading(Entity),
-    Store(i64),
-    Other(i64),
-}
-
-#[derive(
     PartialEq,
     Eq,
     Copy,
@@ -117,12 +83,6 @@ pub enum TradeStatus {
     None,
     Accepted,
     Submitted,
-}
-
-impl IsUsingType {
-    pub fn inuse(self) -> bool {
-        !matches!(self, IsUsingType::None)
-    }
 }
 
 #[derive(

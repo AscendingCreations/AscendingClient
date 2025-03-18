@@ -4,8 +4,8 @@ use rustls::internal::msgs;
 use std::collections::VecDeque;
 
 use crate::{
-    data_types::*, database::map::*, Content, MapAttributes, MapDirBlock,
-    MessageChannel, Result, SystemHolder,
+    Content, MapAttributes, MapDirBlock, MapPosition, MessageChannel, Result,
+    SystemHolder, data_types::*, database::map::*,
 };
 
 pub struct StoredData {

@@ -10,7 +10,7 @@ const MAX_KEY: usize = 1;
 use input::Key;
 use winit::keyboard::NamedKey;
 
-use crate::{logic::*, widget::*, GfxType, SystemHolder};
+use crate::{GfxType, SystemHolder, logic::*, widget::*};
 
 pub enum TextDisable {
     Selection,
@@ -338,86 +338,120 @@ impl Textbox {
             return;
         }
 
-        let mut did_edit = false;
-        if self.special_key_hold[KEY_CTRL] {
-            if !numeric_only {
-                match key {
-                    Key::Character('c') => {
-                        if self.disable_copy
-                            || self.hold_initial_index == self.hold_final_index
-                        {
-                            return;
-                        }
+        let (mut did_edit, mut special_key) = (false, false);
 
-                        let first = cmp::min(
-                            self.hold_initial_index,
-                            self.hold_final_index,
-                        );
-                        let second = cmp::max(
-                            self.hold_initial_index,
-                            self.hold_final_index,
-                        );
-                        let text = &self.text[first..second];
-
-                        set_clipboard_text(text.to_string());
+        if self.special_key_hold[KEY_CTRL] && !numeric_only {
+            match key {
+                Key::Character('x') => {
+                    if self.disable_copy {
+                        return;
                     }
-                    Key::Character('v') => {
-                        if self.disable_paste {
-                            return;
-                        }
 
-                        let clipboard_text = get_clipboard_text();
-                        if self.data_text.chars().count()
-                            + clipboard_text.chars().count()
-                            >= self.limit
-                        {
-                            return;
-                        }
-
-                        let can_proceed = if numeric_only {
-                            is_numeric(&clipboard_text)
-                        } else {
-                            true
-                        };
-
-                        if can_proceed {
-                            self.remove_selection(systems);
-
-                            self.text = insert_text(
-                                self.text.clone(),
-                                self.caret_pos,
-                                &clipboard_text,
-                            );
-                            let clipboard = if self.hide_content {
-                                clipboard_text.chars().map(|_| '*').collect()
-                            } else {
-                                clipboard_text.clone()
-                            };
-                            self.data_text = insert_text(
-                                self.data_text.clone(),
-                                self.caret_pos,
-                                &clipboard,
-                            );
-
-                            for char in clipboard.chars().rev() {
-                                let size =
-                                    measure_string(systems, char.to_string()).x;
-                                self.char_size.insert(self.caret_pos, size);
-                            }
-                            self.move_caret_pos(
-                                systems,
-                                false,
-                                clipboard_text.chars().count(),
-                                false,
-                            );
-
-                            did_edit = true;
-                        }
+                    if self.hold_initial_index == self.hold_final_index {
+                        return;
                     }
-                    _ => {}
+                    let first = cmp::min(
+                        self.hold_initial_index,
+                        self.hold_final_index,
+                    );
+                    let second = cmp::max(
+                        self.hold_initial_index,
+                        self.hold_final_index,
+                    );
+                    let text = &self.text[first..second];
+
+                    set_clipboard_text(text.to_string());
+
+                    self.remove_selection(systems);
+
+                    did_edit = true;
+                    special_key = true;
                 }
+                Key::Character('a') => {
+                    self.select_all_text(systems);
+                    return;
+                }
+                Key::Character('c') => {
+                    if self.disable_copy
+                        || self.hold_initial_index == self.hold_final_index
+                    {
+                        return;
+                    }
+
+                    let first = cmp::min(
+                        self.hold_initial_index,
+                        self.hold_final_index,
+                    );
+                    let second = cmp::max(
+                        self.hold_initial_index,
+                        self.hold_final_index,
+                    );
+                    let text = &self.text[first..second];
+
+                    set_clipboard_text(text.to_string());
+
+                    special_key = true;
+                }
+                Key::Character('v') => {
+                    if self.disable_paste {
+                        return;
+                    }
+
+                    let clipboard_text = get_clipboard_text();
+                    if self.data_text.chars().count()
+                        + clipboard_text.chars().count()
+                        >= self.limit
+                    {
+                        return;
+                    }
+
+                    let can_proceed = if numeric_only {
+                        is_numeric(&clipboard_text)
+                    } else {
+                        true
+                    };
+
+                    if can_proceed {
+                        self.remove_selection(systems);
+
+                        self.text = insert_text(
+                            self.text.clone(),
+                            self.caret_pos,
+                            &clipboard_text,
+                        );
+                        let clipboard = if self.hide_content {
+                            clipboard_text.chars().map(|_| '*').collect()
+                        } else {
+                            clipboard_text.clone()
+                        };
+                        self.data_text = insert_text(
+                            self.data_text.clone(),
+                            self.caret_pos,
+                            &clipboard,
+                        );
+
+                        for char in clipboard.chars().rev() {
+                            let size =
+                                measure_string(systems, char.to_string()).x;
+                            self.char_size.insert(self.caret_pos, size);
+                        }
+                        self.move_caret_pos(
+                            systems,
+                            false,
+                            clipboard_text.chars().count(),
+                            false,
+                        );
+
+                        did_edit = true;
+                    }
+
+                    special_key = true;
+                }
+                _ => {}
             }
-        } else {
+        }
+
+        if !special_key {
             match key {
                 Key::Named(NamedKey::Backspace) => {
                     if self.hold_initial_index != self.hold_final_index {
@@ -775,6 +809,23 @@ impl Textbox {
 
         let mut found_index = None;
 
+        let last_pos = if let Some(last_pos) = self.char_pos.last() {
+            if let Some(last_size) = self.char_size.last() {
+                let char_x_pos = b_pos.x + *last_pos + self.adjust_x;
+                if char_x_pos >= b_pos.x
+                    && char_x_pos + *last_size <= b_pos.x + self.size.x
+                {
+                    char_x_pos
+                } else {
+                    b_pos.x + self.size.x
+                }
+            } else {
+                b_pos.x + self.size.x
+            }
+        } else {
+            b_pos.x + self.size.x
+        };
+
         for (index, pos) in self.char_pos.iter().enumerate() {
             if is_within_area(
                 screen_pos,
@@ -787,7 +838,7 @@ impl Textbox {
         }
 
         if found_index.is_none() {
-            if screen_pos.x > b_pos.x + self.size.x {
+            if screen_pos.x > last_pos {
                 found_index = Some(self.data_text.chars().count());
             } else if screen_pos.x < b_pos.x {
                 found_index = Some(0);
@@ -818,6 +869,10 @@ impl Textbox {
     }
 
     pub fn update_selection(&mut self, systems: &mut SystemHolder) {
+        if self.char_pos.is_empty() {
+            return;
+        }
+
         let size = if self.hold_initial_index != self.hold_final_index
             && !self.data_text.is_empty()
         {
@@ -847,14 +902,30 @@ impl Textbox {
             + (self.adjust_pos * systems.scale as f32).floor();
 
         let pos = systems.gfx.get_pos(&self.selection);
-        systems.gfx.set_pos(
-            &self.selection,
-            Vec3::new(b_pos.x + self.selection_pos, pos.y, pos.z),
+
+        let set_pos = Vec3::new(
+            (b_pos.x + self.selection_pos).max(b_pos.x + 1.0),
+            pos.y,
+            pos.z,
         );
-        systems.gfx.set_size(
-            &self.selection,
-            Vec2::new(size, (self.size.y * systems.scale as f32).floor()),
-        );
+        let set_size =
+            Vec2::new(size, (self.size.y * systems.scale as f32).floor());
+
+        systems.gfx.set_pos(&self.selection, set_pos);
+        systems.gfx.set_size(&self.selection, set_size);
+    }
+
+    pub fn select_all_text(&mut self, systems: &mut SystemHolder) {
+        self.char_pos.clear();
+        let mut pos_x = 0.0;
+        for size in self.char_size.iter() {
+            self.char_pos.push(pos_x);
+            pos_x += size;
+        }
+
+        self.hold_initial_index = 0;
+        self.hold_final_index = self.data_text.chars().count();
+        self.update_selection(systems);
     }
 }
 

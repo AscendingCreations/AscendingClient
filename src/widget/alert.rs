@@ -1,9 +1,15 @@
 use crate::{
-    data_types::*, logic::*, send_accepttrade, send_addtradeitem,
-    send_declinetrade, send_deposititem, send_dropitem, send_removetradeitem,
-    send_sellitem, send_switchinvslot, send_switchstorageslot,
-    send_withdrawitem, socket, widget::*, MouseInputType, Result, Socket,
-    SystemHolder,
+    MouseInputType, Result, SystemHolder,
+    content::{Content, ContentType},
+    data_types::*,
+    logic::*,
+    send_accepttrade, send_addtradeitem, send_declinetrade, send_deposititem,
+    send_dropitem, send_removetradeitem, send_sellitem, send_switchinvslot,
+    send_switchstorageslot, send_withdrawitem, socket,
+    systems::{
+        FADE_SWITCH_TO_TITLE, FadeData, FadeType, Poller, send_disconnect,
+    },
+    widget::*,
 };
 use graphics::{cosmic_text::Attrs, *};
 use input::Key;
@@ -28,6 +34,8 @@ pub enum AlertIndex {
     Withdraw(u16, u16),
     TradeRequest,
     Offline,
+    ExitGame,
+    Disconnect,
 }
 
 pub struct AlertTextbox {
@@ -523,7 +531,8 @@ impl Alert {
     pub fn alert_mouse_input(
         &mut self,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
+        content: &mut Content,
         elwt: &ActiveEventLoop,
         input_type: MouseInputType,
         tooltip: &mut Tooltip,
@@ -540,7 +549,9 @@ impl Alert {
 
                     if let Some(index) = button_index {
                         self.did_button_click = true;
-                        self.select_option(systems, socket, elwt, index)?;
+                        self.select_option(
+                            systems, socket, content, elwt, index,
+                        )?;
                     }
 
                     self.click_textbox(systems, screen_pos);
@@ -576,8 +587,9 @@ impl Alert {
     pub fn select_option(
         &mut self,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
-        _elwt: &ActiveEventLoop,
+        socket: &mut Poller,
+        content: &mut Content,
+        elwt: &ActiveEventLoop,
         index: usize,
     ) -> Result<()> {
         match self.alert_type {
@@ -586,6 +598,15 @@ impl Alert {
                 match self.custom_index {
                     AlertIndex::Offline => {
                         //elwt.exit();
+                    }
+                    AlertIndex::Disconnect => {
+                        systems.fade.init_fade(
+                            &mut systems.gfx,
+                            FadeType::In,
+                            FADE_SWITCH_TO_TITLE,
+                            FadeData::None,
+                        );
+                        self.hide_alert(systems);
                     }
                     _ => self.hide_alert(systems),
                 }
@@ -597,6 +618,23 @@ impl Alert {
                         AlertIndex::TradeRequest => {
                             send_accepttrade(socket)?;
                             self.hide_alert(systems);
+                        }
+                        AlertIndex::ExitGame => {
+                            if content.content_type == ContentType::Game {
+                                socket.socket.clear_sends();
+                                socket.tls_socket.clear_sends();
+                                send_disconnect(socket)?;
+                                systems.fade.init_fade(
+                                    &mut systems.gfx,
+                                    FadeType::In,
+                                    FADE_SWITCH_TO_TITLE,
+                                    FadeData::None,
+                                );
+
+                                self.hide_alert(systems);
+                            } else {
+                                elwt.exit()
+                            }
                         }
                         _ => self.hide_alert(systems),
                     }, // Yes

@@ -1,11 +1,11 @@
 use crate::{
-    data_types::*, send_settarget, Result, Socket, SystemHolder, ORDER_TARGET,
+    GlobalKey, HPBar, ORDER_TARGET, Result, SystemHolder, data_types::*,
+    send_settarget, systems::Poller,
 };
 use graphics::*;
-use hecs::World;
 
 pub struct Target {
-    pub entity: Option<Entity>,
+    pub entity: Option<GlobalKey>,
     img_index: GfxType,
 }
 
@@ -54,18 +54,18 @@ impl Target {
 
     pub fn set_target(
         &mut self,
-        socket: &mut Socket,
+        socket: &mut Poller,
         systems: &mut SystemHolder,
-        target: &Entity,
+        target: GlobalKey,
     ) -> Result<()> {
-        self.entity = Some(*target);
+        self.entity = Some(target);
         systems.gfx.set_visible(&self.img_index, true);
         send_settarget(socket, self.entity)
     }
 
     pub fn clear_target(
         &mut self,
-        socket: &mut Socket,
+        socket: &mut Poller,
         systems: &mut SystemHolder,
         hpbar: &mut HPBar,
     ) -> Result<()> {
@@ -81,7 +81,7 @@ impl Target {
 
     pub fn set_target_pos(
         &mut self,
-        socket: &mut Socket,
+        socket: &mut Poller,
         systems: &mut SystemHolder,
         pos: Vec2,
         hpbar: &mut HPBar,

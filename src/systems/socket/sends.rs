@@ -1,4 +1,6 @@
-use crate::{data_types::*, data_types::*, socket::*};
+use crate::{GlobalKey, Position, data_types::*, data_types::*, socket::*};
+
+use super::bufer_ext::MByteBufferExt;
 
 #[derive(Clone, Debug, PartialEq, Eq, MByteBufferRead, MByteBufferWrite)]
 pub enum Command {
@@ -45,10 +47,15 @@ enum ClientPacket {
     AcceptTrade,
     DeclineTrade,
     Ping,
+    TlsReconnect,
+    TlsHandShake,
+    Reconnect,
+    Disconnect,
+    LoginOk,
 }
 
 pub fn send_register(
-    socket: &mut Socket,
+    socket: &mut Poller,
     username: String,
     password: String,
     email: String,
@@ -67,11 +74,11 @@ pub fn send_register(
     buf.write(app_version.2)?;
     buf.finish()?;
 
-    socket.tls_send(buf)
+    socket.send(buf, true)
 }
 
 pub fn send_login(
-    socket: &mut Socket,
+    socket: &mut Poller,
     username: String,
     password: String,
     app_version: (u16, u16, u16),
@@ -88,44 +95,43 @@ pub fn send_login(
     buf.write(reconnect_code)?;
     buf.finish()?;
 
-    socket.tls_send(buf)
+    socket.send(buf, true)
 }
 
-pub fn send_handshake(socket: &mut Socket, handshake: String) -> Result<()> {
+pub fn send_handshake(socket: &mut Poller, handshake: String) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::HandShake)?;
     buf.write(handshake)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_move(socket: &mut Socket, dir: u8, pos: Position) -> Result<()> {
+pub fn send_move(socket: &mut Poller, dir: Option<u8>) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::Move)?;
     buf.write(dir)?;
-    buf.write(pos)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_dir(socket: &mut Socket, dir: u8) -> Result<()> {
+pub fn send_dir(socket: &mut Poller, dir: u8) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::Dir)?;
     buf.write(dir)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_attack(
-    socket: &mut Socket,
+    socket: &mut Poller,
     dir: u8,
-    entity: Option<Entity>,
+    entity: Option<GlobalKey>,
 ) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
@@ -134,31 +140,31 @@ pub fn send_attack(
     buf.write(entity)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_useitem(socket: &mut Socket, slot: u16) -> Result<()> {
+pub fn send_useitem(socket: &mut Poller, slot: u16) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::UseItem)?;
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_unequip(socket: &mut Socket, slot: u16) -> Result<()> {
+pub fn send_unequip(socket: &mut Poller, slot: u16) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::Unequip)?;
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_switchinvslot(
-    socket: &mut Socket,
+    socket: &mut Poller,
     oldslot: u16,
     newslot: u16,
     amount: u16,
@@ -171,20 +177,20 @@ pub fn send_switchinvslot(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_pickup(socket: &mut Socket) -> Result<()> {
+pub fn send_pickup(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::PickUp)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_dropitem(
-    socket: &mut Socket,
+    socket: &mut Poller,
     slot: u16,
     amount: u16,
 ) -> Result<()> {
@@ -195,21 +201,21 @@ pub fn send_dropitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_deleteitem(socket: &mut Socket, slot: u16) -> Result<()> {
+pub fn send_deleteitem(socket: &mut Poller, slot: u16) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::DeleteItem)?;
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_switchstorageslot(
-    socket: &mut Socket,
+    socket: &mut Poller,
     oldslot: u16,
     newslot: u16,
     amount: u16,
@@ -222,21 +228,21 @@ pub fn send_switchstorageslot(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_deletestorageitem(socket: &mut Socket, slot: u16) -> Result<()> {
+pub fn send_deletestorageitem(socket: &mut Poller, slot: u16) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::DeleteStorageItem)?;
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_deposititem(
-    socket: &mut Socket,
+    socket: &mut Poller,
     inv_slot: u16,
     bank_slot: u16,
     amount: u16,
@@ -249,11 +255,11 @@ pub fn send_deposititem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_withdrawitem(
-    socket: &mut Socket,
+    socket: &mut Poller,
     inv_slot: u16,
     bank_slot: u16,
     amount: u16,
@@ -266,11 +272,11 @@ pub fn send_withdrawitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_message(
-    socket: &mut Socket,
+    socket: &mut Poller,
     channel: MessageChannel,
     msg: String,
     name: String,
@@ -283,22 +289,22 @@ pub fn send_message(
     buf.write(name)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_command(socket: &mut Socket, command: Command) -> Result<()> {
+pub fn send_command(socket: &mut Poller, command: Command) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::Command)?;
     buf.write(command)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_settarget(
-    socket: &mut Socket,
-    entity: Option<Entity>,
+    socket: &mut Poller,
+    entity: Option<GlobalKey>,
 ) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
@@ -306,48 +312,48 @@ pub fn send_settarget(
     buf.write(entity)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_closestorage(socket: &mut Socket) -> Result<()> {
+pub fn send_closestorage(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::CloseStorage)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_closeshop(socket: &mut Socket) -> Result<()> {
+pub fn send_closeshop(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::CloseShop)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_closetrade(socket: &mut Socket) -> Result<()> {
+pub fn send_closetrade(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::CloseTrade)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_buyitem(socket: &mut Socket, slot: u16) -> Result<()> {
+pub fn send_buyitem(socket: &mut Poller, slot: u16) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::BuyItem)?;
     buf.write(slot)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_sellitem(
-    socket: &mut Socket,
+    socket: &mut Poller,
     slot: u16,
     amount: u16,
 ) -> Result<()> {
@@ -358,11 +364,11 @@ pub fn send_sellitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_addtradeitem(
-    socket: &mut Socket,
+    socket: &mut Poller,
     slot: u16,
     amount: u16,
 ) -> Result<()> {
@@ -373,11 +379,11 @@ pub fn send_addtradeitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
 pub fn send_removetradeitem(
-    socket: &mut Socket,
+    socket: &mut Poller,
     slot: u16,
     amount: u64,
 ) -> Result<()> {
@@ -388,72 +394,115 @@ pub fn send_removetradeitem(
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_updatetrademoney(socket: &mut Socket, amount: u64) -> Result<()> {
+pub fn send_updatetrademoney(socket: &mut Poller, amount: u64) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::UpdateTradeMoney)?;
     buf.write(amount)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_submittrade(socket: &mut Socket) -> Result<()> {
+pub fn send_submittrade(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::SubmitTrade)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_accepttrade(socket: &mut Socket) -> Result<()> {
+pub fn send_accepttrade(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::AcceptTrade)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_declinetrade(socket: &mut Socket) -> Result<()> {
+pub fn send_declinetrade(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::DeclineTrade)?;
     buf.finish()?;
 
-    socket.send(buf)
+    socket.send(buf, false)
 }
 
-pub fn send_ping(socket: &mut Socket) -> Result<()> {
+pub fn send_ping(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::OnlineCheck)?;
     buf.write(0u64)?;
     buf.finish()?;
 
-    match socket.encrypt_state {
-        EncryptionState::None => socket.send(buf),
-        EncryptionState::ReadWrite | EncryptionState::WriteTransfering => {
-            socket.tls_send(buf)
-        }
-    }
+    socket.send(buf, true)
 }
 
-pub fn send_gameping(socket: &mut Socket) -> Result<()> {
+pub fn send_gameping(socket: &mut Poller) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::Ping)?;
     buf.write(0u64)?;
     buf.finish()?;
 
-    match socket.encrypt_state {
-        EncryptionState::None => socket.send(buf),
-        EncryptionState::ReadWrite | EncryptionState::WriteTransfering => {
-            socket.tls_send(buf)
-        }
-    }
+    socket.send(buf, false)
+}
+
+pub fn send_tls_reconnect(socket: &mut Poller, code: &str) -> Result<()> {
+    let mut buf = MByteBuffer::new_packet()?;
+
+    buf.write(ClientPacket::TlsReconnect)?;
+    buf.write_str(code)?;
+    buf.finish()?;
+
+    socket.send(buf, true)
+}
+
+pub fn send_tls_handshake(
+    socket: &mut Poller,
+    handshake: String,
+) -> Result<()> {
+    let mut buf = MByteBuffer::new_packet()?;
+
+    buf.write(ClientPacket::TlsHandShake)?;
+    buf.write(handshake)?;
+    buf.finish()?;
+
+    socket.send(buf, true)
+}
+
+pub fn send_reconnect(socket: &mut Poller, code: &str) -> Result<()> {
+    let mut buf = MByteBuffer::new_packet()?;
+
+    buf.write(ClientPacket::Reconnect)?;
+    buf.write_str(code)?;
+    buf.finish()?;
+
+    socket.send(buf, true)
+}
+
+pub fn send_disconnect(socket: &mut Poller) -> Result<()> {
+    let mut buf = MByteBuffer::new_packet()?;
+
+    buf.write(ClientPacket::Disconnect)?;
+    buf.write(0u32)?;
+    buf.finish()?;
+
+    socket.send(buf, false)
+}
+
+pub fn send_login_ok(socket: &mut Poller, code: &str) -> Result<()> {
+    let mut buf = MByteBuffer::new_packet()?;
+
+    buf.write(ClientPacket::LoginOk)?;
+    buf.write_str(code)?;
+    buf.finish()?;
+
+    socket.send(buf, false)
 }

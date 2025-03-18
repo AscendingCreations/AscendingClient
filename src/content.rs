@@ -1,5 +1,4 @@
-use crate::{data_types::*, database::*, Config, Result, SystemHolder};
-use hecs::World;
+use crate::{Config, Result, SystemHolder, World, data_types::*, database::*};
 
 pub mod game_content;
 pub mod inputs;
@@ -68,7 +67,6 @@ impl Content {
             }
         }
 
-        systems.gfx.count_collection();
         Ok(())
     }
 }

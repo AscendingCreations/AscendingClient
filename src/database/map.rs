@@ -1,6 +1,6 @@
 use crate::{
-    data_types::*, socket::*, BufferTask, BufferTaskEnum, MapAttributes,
-    MapDirBlock, Result, SystemHolder,
+    BufferTask, BufferTaskEnum, MapAttributes, MapDirBlock, MapPosition,
+    Result, SystemHolder, data_types::*, socket::*,
 };
 use graphics::*;
 use log::{error, info};
@@ -237,7 +237,6 @@ pub fn get_map_key(
     let mappos = MapPosition { x, y, group };
 
     if let Some(index) = systems.base.mappos_key.get(&mappos) {
-        info!("Got Map Index from Hash");
         systems.base.map_cache.promote(index);
         return Ok(*index);
     }
@@ -254,7 +253,6 @@ pub fn get_map_key(
         }
     }
 
-    info!("Got Map Index by creating map data");
     let key = create_map_data(systems, mappos)?;
     systems.base.mappos_key.insert(mappos, key);
     systems.base.map_cache.push(key, key);

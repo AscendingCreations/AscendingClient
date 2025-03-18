@@ -1,9 +1,14 @@
-use crate::{data_types::*, fade::*, socket::*, BufferTask};
+use crate::{BufferTask, data_types::*, fade::*, socket::*};
 use ahash::AHashMap;
 use serde::{Deserialize, Serialize};
 
+use super::{
+    handle_entity::*, handle_general::*, handle_interface::*, handle_player::*,
+    handle_trade::*,
+};
+
 type PacketFunction = fn(
-    &mut Socket,
+    &mut Poller,
     &mut World,
     &mut SystemHolder,
     &mut Content,
@@ -66,6 +71,8 @@ pub enum ServerPackets {
     PlayItemSfx,
     Damage,
     Ping,
+    TlsHandShake,
+    ClearData,
 }
 
 pub struct PacketRouter(pub AHashMap<ServerPackets, PacketFunction>);
@@ -73,139 +80,99 @@ pub struct PacketRouter(pub AHashMap<ServerPackets, PacketFunction>);
 impl PacketRouter {
     pub fn init() -> Self {
         Self(AHashMap::from([
-            (
-                ServerPackets::AlertMsg,
-                routes::handle_alertmsg as PacketFunction,
-            ),
-            (
-                ServerPackets::FltAlert,
-                routes::handle_fltalert as PacketFunction,
-            ),
-            (
-                ServerPackets::LoginOk,
-                routes::handle_loginok as PacketFunction,
-            ),
-            (
-                ServerPackets::MapItems,
-                routes::handle_mapitems as PacketFunction,
-            ),
-            (
-                ServerPackets::MyIndex,
-                routes::handle_myindex as PacketFunction,
-            ),
+            (ServerPackets::AlertMsg, handle_alertmsg as PacketFunction),
+            (ServerPackets::FltAlert, handle_fltalert as PacketFunction),
+            (ServerPackets::LoginOk, handle_loginok as PacketFunction),
+            (ServerPackets::MapItems, handle_mapitems as PacketFunction),
+            (ServerPackets::MyIndex, handle_myindex as PacketFunction),
             (
                 ServerPackets::PlayerData,
-                routes::handle_playerdata as PacketFunction,
+                handle_playerdata as PacketFunction,
             ),
             (
                 ServerPackets::PlayerSpawn,
-                routes::handle_playerspawn as PacketFunction,
+                handle_playerspawn as PacketFunction,
             ),
-            (ServerPackets::Move, routes::handle_move as PacketFunction),
-            (
-                ServerPackets::MoveOk,
-                routes::handle_move_ok as PacketFunction,
-            ),
-            (ServerPackets::Warp, routes::handle_warp as PacketFunction),
-            (ServerPackets::Dir, routes::handle_dir as PacketFunction),
-            (
-                ServerPackets::Vitals,
-                routes::handle_vitals as PacketFunction,
-            ),
-            (
-                ServerPackets::PlayerInv,
-                routes::handle_playerinv as PacketFunction,
-            ),
+            (ServerPackets::Move, handle_move as PacketFunction),
+            (ServerPackets::MoveOk, handle_move_ok as PacketFunction),
+            (ServerPackets::Warp, handle_warp as PacketFunction),
+            (ServerPackets::Dir, handle_dir as PacketFunction),
+            (ServerPackets::Vitals, handle_vitals as PacketFunction),
+            (ServerPackets::PlayerInv, handle_playerinv as PacketFunction),
             (
                 ServerPackets::PlayerInvSlot,
-                routes::handle_playerinvslot as PacketFunction,
+                handle_playerinvslot as PacketFunction,
             ),
             (
                 ServerPackets::PlayerStorage,
-                routes::handle_playerstorage as PacketFunction,
+                handle_playerstorage as PacketFunction,
             ),
             (
                 ServerPackets::PlayerStorageSlot,
-                routes::handle_playerstorageslot as PacketFunction,
+                handle_playerstorageslot as PacketFunction,
             ),
-            (
-                ServerPackets::Attack,
-                routes::handle_attack as PacketFunction,
-            ),
+            (ServerPackets::Attack, handle_attack as PacketFunction),
             (
                 ServerPackets::PlayerEquipment,
-                routes::handle_playerequipment as PacketFunction,
+                handle_playerequipment as PacketFunction,
             ),
             (
                 ServerPackets::PlayerLevel,
-                routes::handle_playerlevel as PacketFunction,
+                handle_playerlevel as PacketFunction,
             ),
             (
                 ServerPackets::PlayerMoney,
-                routes::handle_playermoney as PacketFunction,
+                handle_playermoney as PacketFunction,
             ),
-            (ServerPackets::Death, routes::handle_death as PacketFunction),
-            (
-                ServerPackets::PlayerPk,
-                routes::handle_playerpk as PacketFunction,
-            ),
-            (
-                ServerPackets::NpcData,
-                routes::handle_npcdata as PacketFunction,
-            ),
-            (
-                ServerPackets::ChatMsg,
-                routes::handle_chatmsg as PacketFunction,
-            ),
+            (ServerPackets::Death, handle_death as PacketFunction),
+            (ServerPackets::PlayerPk, handle_playerpk as PacketFunction),
+            (ServerPackets::NpcData, handle_npcdata as PacketFunction),
+            (ServerPackets::ChatMsg, handle_chatmsg as PacketFunction),
             (
                 ServerPackets::EntityUnload,
-                routes::handle_entityunload as PacketFunction,
+                handle_entityunload as PacketFunction,
             ),
             (
                 ServerPackets::OpenStorage,
-                routes::handle_openstorage as PacketFunction,
+                handle_openstorage as PacketFunction,
             ),
-            (
-                ServerPackets::OpenShop,
-                routes::handle_openshop as PacketFunction,
-            ),
+            (ServerPackets::OpenShop, handle_openshop as PacketFunction),
             (
                 ServerPackets::ClearIsUsingType,
-                routes::handle_clearisusingtype as PacketFunction,
+                handle_clearisusingtype as PacketFunction,
             ),
             (
                 ServerPackets::UpdateTradeItem,
-                routes::handle_updatetradeitem as PacketFunction,
+                handle_updatetradeitem as PacketFunction,
             ),
             (
                 ServerPackets::UpdateTradeMoney,
-                routes::handle_updatetrademoney as PacketFunction,
+                handle_updatetrademoney as PacketFunction,
             ),
-            (
-                ServerPackets::InitTrade,
-                routes::handle_inittrade as PacketFunction,
-            ),
-            (
-                ServerPackets::HandShake,
-                routes::handle_handshake as PacketFunction,
-            ),
+            (ServerPackets::InitTrade, handle_inittrade as PacketFunction),
+            (ServerPackets::HandShake, handle_handshake as PacketFunction),
             (
                 ServerPackets::TradeStatus,
-                routes::handle_tradestatus as PacketFunction,
+                handle_tradestatus as PacketFunction,
             ),
             (
                 ServerPackets::TradeRequest,
-                routes::handle_traderequest as PacketFunction,
+                handle_traderequest as PacketFunction,
             ),
             (
                 ServerPackets::PlayItemSfx,
-                routes::handle_playitemsfx as PacketFunction,
+                handle_playitemsfx as PacketFunction,
+            ),
+            (ServerPackets::Damage, handle_damage as PacketFunction),
+            (ServerPackets::Ping, handle_ping as PacketFunction),
+            (
+                ServerPackets::TlsHandShake,
+                handle_tls_handshake as PacketFunction,
             ),
             (
-                ServerPackets::Damage,
-                routes::handle_damage as PacketFunction,
+                ServerPackets::ClearData,
+                handle_clear_data as PacketFunction,
             ),
-            (ServerPackets::Ping, routes::handle_ping as PacketFunction),
         ]))
     }
 }

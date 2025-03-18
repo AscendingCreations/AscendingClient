@@ -1,23 +1,31 @@
 use crate::{
-    content::*, data_types::*, database::*, systems::*, widget::*, Action,
+    Action, World,
+    content::*,
+    data_types::*,
+    database::*,
+    systems::{states::ClientState, *},
+    widget::*,
 };
 use backtrace::Backtrace;
 use camera::{
-    controls::{Controls, FlatControls, FlatSettings},
     Projection,
+    controls::{Controls, FlatControls, FlatSettings},
 };
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
-use hecs::World;
+use graphics::{
+    wgpu::{BackendOptions, Dx12BackendOptions},
+    *,
+};
+
 use input::{Axis, Bindings, FrameTime, InputHandler, Key};
-use log::{error, info, warn, LevelFilter, Metadata, Record};
+use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
 use serde::{Deserialize, Serialize};
 use slotmap::SlotMap;
 use std::{collections::HashMap, env, num::NonZeroUsize};
 use std::{
     fs::{self, File},
-    io::{prelude::*, Read, Write},
+    io::{Read, Write, prelude::*},
     iter, panic,
     sync::Arc,
     time::{Duration, Instant},
@@ -42,17 +50,16 @@ pub enum Runner {
         graphics: State<FlatControls>,
         alert: Alert,
         tooltip: Tooltip,
-        socket: Socket,
+        socket: Poller,
         router: PacketRouter,
         buffertask: BufferTask,
         input_handler: InputHandler<Action, Axis>,
         frame_time: FrameTime,
         time: f32,
         reconnect_time: f32,
+        reconnect_time2: f32,
         reset_timer: f32,
         fps: u32,
-        start_ping: bool,
-        reset_status: bool,
         loop_timer: LoopTimer,
         mouse_pos: PhysicalPosition<f64>,
         mouse_press: bool,
@@ -89,11 +96,17 @@ impl winit::application::ApplicationHandler for Runner {
             // Generates an Instance for WGPU. Sets WGPU to be allowed on all possible supported backends
             // These are DX12, DX11, Vulkan, Metal and Gles. if none of these work on a system they cant
             // play the game basically.
-            let instance = wgpu::Instance::new(InstanceDescriptor {
+            let instance = wgpu::Instance::new(&InstanceDescriptor {
                 backends: backend,
                 flags: InstanceFlags::empty(),
-                dx12_shader_compiler: Dx12Compiler::default(),
-                gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
+                backend_options: BackendOptions {
+                    gl: wgpu::GlBackendOptions {
+                        gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
+                    },
+                    dx12: Dx12BackendOptions {
+                        shader_compiler: Dx12Compiler::default(),
+                    },
+                },
             });
 
             info!("after wgpu instance initiation");
@@ -240,7 +253,7 @@ impl winit::application::ApplicationHandler for Runner {
                 LightRenderer::new(&mut systems.renderer).unwrap();
             let ui_renderer = RectRenderer::new(&systems.renderer).unwrap();
 
-            let mut world = World::new();
+            let mut world = World::default();
             let buffertask = BufferTask::new();
 
             // Initiate Game Content
@@ -250,10 +263,8 @@ impl winit::application::ApplicationHandler for Runner {
 
             let tooltip = Tooltip::new(&mut systems);
 
-            let mut socket = Socket::new(&systems.config).unwrap();
+            let socket = Poller::new().unwrap();
             let router = PacketRouter::init();
-            socket.register().unwrap();
-            content.menu_content.set_status_offline(&mut systems);
 
             // setup our system which includes Camera and projection as well as our controls.
             // for the camera.
@@ -343,10 +354,9 @@ impl winit::application::ApplicationHandler for Runner {
                 frame_time: FrameTime::new(),
                 time: 0.0f32,
                 reconnect_time: 0.0f32,
+                reconnect_time2: 0.0f32,
                 reset_timer: 0.0f32,
                 fps: 0u32,
-                start_ping: true,
-                reset_status: false,
                 loop_timer: LoopTimer::default(),
                 mouse_pos: PhysicalPosition::new(0.0, 0.0),
                 mouse_press: false,
@@ -374,10 +384,9 @@ impl winit::application::ApplicationHandler for Runner {
             frame_time,
             time,
             reconnect_time,
+            reconnect_time2,
             reset_timer,
             fps,
-            start_ping,
-            reset_status,
             loop_timer,
             mouse_pos,
             mouse_press,
@@ -391,8 +400,19 @@ impl winit::application::ApplicationHandler for Runner {
             if window_id == systems.renderer.window().id() {
                 match event {
                     WindowEvent::CloseRequested => {
-                        println!("The close button was pressed; stopping");
-                        event_loop.exit();
+                        if content.content_type == ContentType::Game {
+                            alert.show_alert(
+                                systems,
+                                AlertType::Confirm,
+                                "Do you want to return to title screen?".into(),
+                                "Exit Game".to_string(),
+                                250,
+                                AlertIndex::ExitGame,
+                                false,
+                            );
+                        } else {
+                            event_loop.exit();
+                        }
                         return;
                     }
                     WindowEvent::Focused(focused) => {
@@ -401,7 +421,12 @@ impl winit::application::ApplicationHandler for Runner {
                                 |key| {
                                     *key = false;
                                 },
-                            )
+                            );
+
+                            content
+                                .game_content
+                                .reset_key_input(world, socket)
+                                .unwrap();
                         }
                     }
                     _ => {}
@@ -409,24 +434,20 @@ impl winit::application::ApplicationHandler for Runner {
             }
 
             // update our inputs.
-            input_handler.window_updates(
-                systems.renderer.window(),
-                &event,
-                1.0,
-            );
+            input_handler.window_updates(systems.renderer.window(), &event);
 
             for input in input_handler.events() {
                 match input {
                     input::InputEvent::KeyInput { key, pressed, .. } => {
                         handle_key_input(
-                            world, systems, socket, content, alert, key,
-                            *pressed,
+                            world, systems, socket, content, alert, &key,
+                            pressed,
                         )
                         .unwrap();
                     }
                     input::InputEvent::MouseButton { button, pressed } => {
-                        if *button == MouseButton::Left {
-                            if *pressed {
+                        if button == MouseButton::Left {
+                            if pressed {
                                 handle_mouse_input(
                                     world,
                                     systems,
@@ -463,45 +484,35 @@ impl winit::application::ApplicationHandler for Runner {
                             }
                         }
                     }
-                    input::InputEvent::MousePosition => {
-                        if let Some(position) =
-                            input_handler.physical_mouse_position()
-                        {
-                            *mouse_pos = position;
+                    input::InputEvent::MousePosition { x, y } => {
+                        *mouse_pos = PhysicalPosition { x, y };
 
-                            if *mouse_press {
-                                handle_mouse_input(
-                                    world,
-                                    systems,
-                                    socket,
-                                    event_loop,
-                                    MouseInputType::MouseLeftDownMove,
-                                    &Vec2::new(
-                                        position.x as f32,
-                                        position.y as f32,
-                                    ),
-                                    content,
-                                    alert,
-                                    tooltip,
-                                )
-                                .unwrap();
-                            } else {
-                                handle_mouse_input(
-                                    world,
-                                    systems,
-                                    socket,
-                                    event_loop,
-                                    MouseInputType::MouseMove,
-                                    &Vec2::new(
-                                        position.x as f32,
-                                        position.y as f32,
-                                    ),
-                                    content,
-                                    alert,
-                                    tooltip,
-                                )
-                                .unwrap();
-                            }
+                        if *mouse_press {
+                            handle_mouse_input(
+                                world,
+                                systems,
+                                socket,
+                                event_loop,
+                                MouseInputType::MouseLeftDownMove,
+                                &Vec2::new(x as f32, y as f32),
+                                content,
+                                alert,
+                                tooltip,
+                            )
+                            .unwrap();
+                        } else {
+                            handle_mouse_input(
+                                world,
+                                systems,
+                                socket,
+                                event_loop,
+                                MouseInputType::MouseMove,
+                                &Vec2::new(x as f32, y as f32),
+                                content,
+                                alert,
+                                tooltip,
+                            )
+                            .unwrap();
                         }
                     }
                     input::InputEvent::MouseButtonAction(action) => {
@@ -577,10 +588,10 @@ impl winit::application::ApplicationHandler for Runner {
             graphics.system.update(&systems.renderer, frame_time);
 
             // update our systems data to the gpu. this is the Screen in the shaders.
-            graphics.system.update_screen(
-                &systems.renderer,
-                [new_size.width, new_size.height],
-            );
+            graphics.system.update_screen(&systems.renderer, [
+                new_size.width,
+                new_size.height,
+            ]);
 
             // This adds the Image data to the Buffer for rendering.
             add_image_to_buffer(systems, graphics);
@@ -613,55 +624,75 @@ impl winit::application::ApplicationHandler for Runner {
                 .queue()
                 .submit(std::iter::once(encoder.finish()));
 
-            let disconnect = match poll_events(socket) {
-                Ok(d) => d,
-                Err(e) => {
-                    error!("Poll event error: {:?}", e);
-                    true
-                }
-            };
-
-            if disconnect || socket.client.state == ClientState::Closed {
-                if *reconnect_time < seconds {
-                    if content.content_type == ContentType::Game {
-                        alert.show_alert(
-                            systems,
-                            AlertType::Inform,
-                            "You have been disconnected".into(),
-                            "Alert Message".into(),
-                            250,
-                            AlertIndex::None,
-                            false,
-                        );
-
-                        content
-                            .switch_content(world, systems, ContentType::Menu)
-                            .unwrap();
-                    }
-
-                    *start_ping = true;
-                    socket.reconnect().unwrap();
-                    socket.register().unwrap();
-                }
-                content.menu_content.set_status_offline(systems);
-                *reconnect_time = seconds + 1.0;
-            } else if *reset_timer < seconds && *reset_status {
-                *reset_status = false;
-                content.menu_content.set_status_online(systems);
+            if let Err(e) = socket.poll_events() {
+                error!("Poll event error: {:?}", e);
             }
 
-            if *start_ping {
-                *start_ping = false;
-                *reset_status = true;
+            if socket.tls_socket.state == ClientState::Closed
+                && *reconnect_time < seconds
+            {
+                println!("Connecting TLS");
+                socket.reconnect(true).unwrap();
+
+                if content.content_type == ContentType::Game {
+                    send_tls_reconnect(socket, &systems.config.reconnect_code)
+                        .unwrap();
+                }
+
+                *reconnect_time = seconds + 1.0;
+            }
+
+            if socket.socket.state == ClientState::Closed
+                && *reconnect_time2 < seconds
+            {
+                println!("Connecting Non TLS");
+                socket.reconnect(false).unwrap();
+
+                if content.content_type == ContentType::Game {
+                    match content.game_content.reconnect_count {
+                        3 => {
+                            alert.show_alert(
+                                systems,
+                                AlertType::Inform,
+                                "You have been disconnected".into(),
+                                "Alert Message".into(),
+                                250,
+                                AlertIndex::Disconnect,
+                                false,
+                            );
+                        }
+                        i if (i < 3) => {
+                            send_reconnect(
+                                socket,
+                                &systems.config.reconnect_code,
+                            )
+                            .unwrap();
+                        }
+                        _ => {}
+                    }
+
+                    content.game_content.reconnect_count = content
+                        .game_content
+                        .reconnect_count
+                        .saturating_add(1)
+                        .min(4);
+                }
+
+                *reconnect_time2 = seconds + 1.0;
+            }
+
+            if *reset_timer < seconds
+                && content.content_type == ContentType::Menu
+            {
                 *reset_timer = seconds + 3.0;
                 send_ping(socket).unwrap();
             }
 
-            process_packets(
-                socket, router, world, systems, content, alert, seconds,
-                buffertask,
-            )
-            .unwrap();
+            socket
+                .process_packets(
+                    router, world, systems, content, alert, seconds, buffertask,
+                )
+                .unwrap();
 
             buffertask.process_buffer(systems, content).unwrap();
 
@@ -770,10 +801,9 @@ impl winit::application::ApplicationHandler for Runner {
             frame_time: _,
             time: _,
             reconnect_time: _,
+            reconnect_time2: _,
             reset_timer: _,
             fps: _,
-            start_ping: _,
-            reset_status: _,
             loop_timer: _,
             mouse_pos: _,
             mouse_press: _,
@@ -798,10 +828,9 @@ impl winit::application::ApplicationHandler for Runner {
             frame_time: _,
             time: _,
             reconnect_time: _,
+            reconnect_time2: _,
             reset_timer: _,
             fps: _,
-            start_ping: _,
-            reset_status: _,
             loop_timer: _,
             mouse_pos: _,
             mouse_press: _,

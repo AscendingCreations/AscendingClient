@@ -2,8 +2,9 @@ use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
 use crate::{
-    data_types::*, is_within_area, logic::*, send_command, send_message,
-    widget::*, Interface, Result, Socket, SystemHolder,
+    Interface, MapPosition, Position, Result, SystemHolder, data_types::*,
+    is_within_area, logic::*, send_command, send_message, systems::Poller,
+    widget::*,
 };
 
 const MAX_CHAT_LINE: usize = 8;
@@ -918,21 +919,16 @@ impl Chatbox {
 
         let msg = if let Some(header) = header_msg {
             let header_color = Attrs::new().color(header.1);
-            systems.gfx.set_rich_text(
-                &mut systems.renderer,
-                &text,
-                [
-                    (header.0.as_str(), header_color),
-                    (msg.0.as_str(), msg_color),
-                ],
-            );
+            systems.gfx.set_rich_text(&mut systems.renderer, &text, [
+                (header.0.as_str(), header_color),
+                (msg.0.as_str(), msg_color),
+            ]);
             format!("{}{}", header.0, msg.0)
         } else {
-            systems.gfx.set_rich_text(
-                &mut systems.renderer,
-                &text,
-                [(msg.0.as_str(), msg_color)],
-            );
+            systems.gfx.set_rich_text(&mut systems.renderer, &text, [(
+                msg.0.as_str(),
+                msg_color,
+            )]);
             msg.0
         };
         let size = systems.gfx.get_measure(&text);
@@ -1066,7 +1062,7 @@ pub fn can_channel_show(channel: MessageChannel, selected_tab: usize) -> bool {
 pub fn send_chat(
     interface: &mut Interface,
     systems: &mut SystemHolder,
-    socket: &mut Socket,
+    socket: &mut Poller,
 ) -> Result<()> {
     let input_string = interface.chatbox.textbox.text.clone();
     if input_string.is_empty() {

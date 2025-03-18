@@ -1,4 +1,3 @@
-mod entity;
 mod enums;
 mod error;
 mod gfx_collection;
@@ -7,7 +6,6 @@ mod sharedstructs;
 mod time_ext;
 mod values;
 
-pub use entity::*;
 pub use enums::*;
 pub use error::*;
 pub use gfx_collection::*;

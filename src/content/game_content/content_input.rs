@@ -1,13 +1,14 @@
 use graphics::*;
-use hecs::World;
+
 use input::Key;
 use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 use crate::{
+    Alert, COLOR_RED, ContentType, Entity, EntityKind, MouseInputType,
+    SystemHolder, Tooltip,
     content::*,
     data_types::*,
     socket::{self, *},
-    Alert, ContentType, MouseInputType, SystemHolder, Tooltip, COLOR_RED,
 };
 
 use super::{
@@ -20,7 +21,7 @@ impl GameContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         elwt: &ActiveEventLoop,
         alert: &mut Alert,
         tooltip: &mut Tooltip,
@@ -31,6 +32,7 @@ impl GameContent {
             return alert.alert_mouse_input(
                 systems,
                 socket,
+                content,
                 elwt,
                 input_type.clone(),
                 tooltip,
@@ -61,12 +63,27 @@ impl GameContent {
 
             if let Some(entity) = target_entity {
                 if let Some(t_entity) = content.game_content.target.entity {
-                    if let Ok(mut hpbar) = world.get::<&mut HPBar>(t_entity.0) {
-                        content
-                            .game_content
-                            .target
-                            .clear_target(socket, systems, &mut hpbar)?;
+                    let entity_data = world.entities.get_mut(t_entity);
+                    if let Some(entity_data) = entity_data {
+                        match entity_data {
+                            Entity::Player(p_data) => {
+                                content.game_content.target.clear_target(
+                                    socket,
+                                    systems,
+                                    &mut p_data.hp_bar,
+                                )?;
+                            }
+                            Entity::Npc(n_data) => {
+                                content.game_content.target.clear_target(
+                                    socket,
+                                    systems,
+                                    &mut n_data.hp_bar,
+                                )?;
+                            }
+                            _ => {}
+                        }
                     }
+
                     if t_entity == entity {
                         return Ok(());
                     }
@@ -75,22 +92,24 @@ impl GameContent {
                 content
                     .game_content
                     .target
-                    .set_target(socket, systems, &entity)?;
-                match world.get_or_err::<WorldEntityType>(&entity)? {
-                    WorldEntityType::Player => {
+                    .set_target(socket, systems, entity)?;
+
+                let entity_kind = world.get_kind(entity)?;
+                match entity_kind {
+                    EntityKind::Player => {
                         update_player_camera(
                             world,
                             systems,
                             socket,
-                            &entity,
+                            entity,
                             &mut content.game_content,
                         )?;
                     }
-                    WorldEntityType::Npc => {
+                    EntityKind::Npc => {
                         update_npc_camera(
                             world,
                             systems,
-                            &entity,
+                            entity,
                             socket,
                             &mut content.game_content,
                         )?;
@@ -107,7 +126,7 @@ impl GameContent {
         content: &mut Content,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Socket,
+        socket: &mut Poller,
         alert: &mut Alert,
         key: &Key,
         pressed: bool,
@@ -132,21 +151,78 @@ impl GameContent {
             content.game_content.keyinput.iter_mut().for_each(|key| {
                 *key = false;
             });
+            content.game_content.move_keypressed.clear();
             return Ok(());
         }
 
         match key {
-            Key::Named(NamedKey::ArrowUp) => {
-                content.game_content.keyinput[KEY_MOVEUP] = pressed;
+            Key::Character('w') | Key::Character('W') => {
+                if let Some(index) = content
+                    .game_content
+                    .move_keypressed
+                    .iter()
+                    .position(|key| *key == ControlKey::MoveUp)
+                {
+                    let _ = content.game_content.move_keypressed.remove(index);
+                }
+
+                if pressed {
+                    content
+                        .game_content
+                        .move_keypressed
+                        .insert(0, ControlKey::MoveUp);
+                }
             }
-            Key::Named(NamedKey::ArrowDown) => {
-                content.game_content.keyinput[KEY_MOVEDOWN] = pressed;
+            Key::Character('s') | Key::Character('S') => {
+                if let Some(index) = content
+                    .game_content
+                    .move_keypressed
+                    .iter()
+                    .position(|key| *key == ControlKey::MoveDown)
+                {
+                    let _ = content.game_content.move_keypressed.remove(index);
+                }
+
+                if pressed {
+                    content
+                        .game_content
+                        .move_keypressed
+                        .insert(0, ControlKey::MoveDown);
+                }
             }
-            Key::Named(NamedKey::ArrowLeft) => {
-                content.game_content.keyinput[KEY_MOVELEFT] = pressed;
+            Key::Character('a') | Key::Character('A') => {
+                if let Some(index) = content
+                    .game_content
+                    .move_keypressed
+                    .iter()
+                    .position(|key| *key == ControlKey::MoveLeft)
+                {
+                    let _ = content.game_content.move_keypressed.remove(index);
+                }
+
+                if pressed {
+                    content
+                        .game_content
+                        .move_keypressed
+                        .insert(0, ControlKey::MoveLeft);
+                }
             }
-            Key::Named(NamedKey::ArrowRight) => {
-                content.game_content.keyinput[KEY_MOVERIGHT] = pressed;
+            Key::Character('d') | Key::Character('D') => {
+                if let Some(index) = content
+                    .game_content
+                    .move_keypressed
+                    .iter()
+                    .position(|key| *key == ControlKey::MoveRight)
+                {
+                    let _ = content.game_content.move_keypressed.remove(index);
+                }
+
+                if pressed {
+                    content
+                        .game_content
+                        .move_keypressed
+                        .insert(0, ControlKey::MoveRight);
+                }
             }
             Key::Named(NamedKey::Control) => {
                 content.game_content.keyinput[KEY_ATTACK] = pressed;
@@ -155,6 +231,24 @@ impl GameContent {
                 content.game_content.keyinput[KEY_PICKUP] = pressed;
             }
             _ => {}
+        }
+
+        if !content.game_content.move_keypressed.is_empty() {
+            let key = content.game_content.move_keypressed[0];
+
+            let move_dir = match key {
+                ControlKey::MoveDown => Some(Direction::Down),
+                ControlKey::MoveUp => Some(Direction::Up),
+                ControlKey::MoveLeft => Some(Direction::Left),
+                ControlKey::MoveRight => Some(Direction::Right),
+                _ => None,
+            };
+
+            if let Some(dir) = move_dir {
+                content.game_content.move_player(world, socket, Some(dir))?;
+            }
+        } else {
+            content.game_content.move_player(world, socket, None)?;
         }
         Ok(())
     }

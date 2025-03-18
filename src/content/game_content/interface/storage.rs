@@ -1,8 +1,9 @@
 use graphics::*;
 
 use crate::{
-    data_types::*, is_within_area, logic::*, socket::sends::*, widget::*,
-    Alert, AlertIndex, AlertType, Interface, Result, Socket, SystemHolder,
+    Alert, AlertIndex, AlertType, Interface, Item, Result, SystemHolder,
+    data_types::*, is_within_area, logic::*, socket::sends::*, systems::Poller,
+    widget::*,
 };
 
 use super::ItemDescription;
@@ -800,7 +801,7 @@ impl Storage {
 
 pub fn release_storage_slot(
     interface: &mut Interface,
-    socket: &mut Socket,
+    socket: &mut Poller,
     systems: &mut SystemHolder,
     alert: &mut Alert,
     slot: usize,
