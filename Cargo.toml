@@ -86,7 +86,7 @@ version = "0.4.1"
 package = "ascending_graphics"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/graphics"
-version = "0.21.0"
+version = "0.22.0"
 
 [profile.dev]
 codegen-units = 256

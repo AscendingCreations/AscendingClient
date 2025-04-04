@@ -396,7 +396,7 @@ impl GfxCollection {
                 gfx.gfx.set_text(
                     renderer,
                     msg,
-                    Attrs::new(),
+                    &Attrs::new(),
                     Shaping::Advanced,
                 );
             }
@@ -416,7 +416,7 @@ impl GfxCollection {
                 gfx.gfx.set_rich_text(
                     renderer,
                     msg,
-                    Attrs::new(),
+                    &Attrs::new(),
                     Shaping::Advanced,
                     None,
                 );

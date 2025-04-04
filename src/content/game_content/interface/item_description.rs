@@ -1,11 +1,11 @@
 use graphics::{
-    cosmic_text::{rustybuzz::ttf_parser::name, Attrs},
+    cosmic_text::{Attrs, rustybuzz::ttf_parser::name},
     *,
 };
 
 use crate::{
-    create_empty_label, create_label, data_types::ItemTypes, GfxType,
-    SystemHolder, ORDER_ITEM_DESC, ORDER_ITEM_DESC_TEXT,
+    GfxType, ORDER_ITEM_DESC, ORDER_ITEM_DESC_TEXT, SystemHolder,
+    create_empty_label, create_label, data_types::ItemTypes,
 };
 
 struct DescData {
@@ -118,7 +118,7 @@ impl ItemDescription {
             name_text.set_text(
                 &mut systems.renderer,
                 text,
-                Attrs::new(),
+                &Attrs::new(),
                 Shaping::Advanced,
             );
             let name_size = name_text.measure();
@@ -139,7 +139,7 @@ impl ItemDescription {
         name_text.set_text(
             &mut systems.renderer,
             &text_holder[0],
-            Attrs::new(),
+            &Attrs::new(),
             Shaping::Advanced,
         );
 

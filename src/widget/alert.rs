@@ -126,7 +126,7 @@ impl Alert {
         text.set_text(
             &mut systems.renderer,
             &msg,
-            Attrs::new(),
+            &Attrs::new(),
             Shaping::Advanced,
         );
 
@@ -136,7 +136,7 @@ impl Alert {
         header_text.set_text(
             &mut systems.renderer,
             &header,
-            Attrs::new(),
+            &Attrs::new(),
             Shaping::Advanced,
         );
 
