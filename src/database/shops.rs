@@ -1,4 +1,4 @@
-use crate::{data_types::*, socket::*, Result};
+use crate::{Result, data_types::*, socket::*};
 use educe::Educe;
 use log::warn;
 use serde::{Deserialize, Serialize};
@@ -53,7 +53,7 @@ pub fn load_shops() -> Result<Vec<ShopData>> {
 }
 
 fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<ShopData>> {
-    let name = format!("./data/shops/{}.bin", id);
+    let name = format!("./data/shops/{id}.bin");
 
     buffer.clear();
 
@@ -63,7 +63,7 @@ fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<ShopData>> {
             Ok(Some(ShopData::read_from_buffer(buffer).unwrap()))
         }
         Err(e) => {
-            warn!("Shop Load File Num {} Err: {}", id, e);
+            warn!("Shop Load File Num {id} Err: {e}");
             Ok(None)
         }
     }

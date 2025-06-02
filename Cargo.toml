@@ -10,12 +10,12 @@ name = "client"
 version = "0.1.1"
 
 [dependencies]
-ahash = "0.8.11"
-arboard = "3.4.0"
-backtrace = "0.3.73"
+ahash = "0.8.12"
+arboard = "3.5.0"
+backtrace = "0.3.75"
 bit_op = "0.1.1"
 bytey = "0.4.0"
-chrono = {version = "0.4.38", disable-defaults = true, features = [
+chrono = {version = "0.4.41", disable-defaults = true, features = [
   "clock",
   "serde",
   "std",
@@ -25,50 +25,50 @@ educe = {version = "0.6.0", default-features = false, features = [
   "PartialEq",
   "Default",
 ]}
-futures = "0.3.30"
-image = "0.25.2"
-indexmap = "2.4.0"
-log = {version = "0.4.22", default-features = false}
-lru = "0.12.4"
-mio = {version = "1.0.2", features = ["os-poll", "net"]}
+futures = "0.3.31"
+image = "0.25.6"
+indexmap = "2.9.0"
+log = {version = "0.4.27", default-features = false}
+lru = "0.14.0"
+mio = {version = "1.0.4", features = ["os-poll", "net"]}
 mmap_bytey = "0.2.0"
-pki-types = {package = "rustls-pki-types", version = "1.8.0", features = [
+pki-types = {package = "rustls-pki-types", version = "1.12.0", features = [
   "std",
 ]}
-rand = "0.8.5"
-rcgen = {version = "0.13.1", features = [
+rand = "0.9.1"
+rcgen = {version = "0.13.2", features = [
   "pem",
   "ring",
 ], default-features = false}
-regex = "1.10.6"
-rodio = "0.19.0"
-rustls = {version = "0.23.12", default-features = false, features = [
+regex = "1.11.1"
+rodio = "0.20.1"
+rustls = {version = "0.23.27", default-features = false, features = [
   "logging",
   "ring",
   "std",
   "tls12",
 ]}
-rustls-pemfile = "2.1.3"
-serde = {version = "1.0.209", features = ["derive"]}
-serde_json = "1.0.127"
+rustls-pemfile = "2.2.0"
+serde = {version = "1.0.219", features = ["derive"]}
+serde_json = "1.0.140"
 slab = "0.4.9"
 slotmap = "1.0.7"
-snafu = {version = "0.8.5", features = [
+snafu = {version = "0.8.6", features = [
   "backtraces-impl-backtrace-crate",
   "rust_1_81",
 ]}
 speedy = "0.8.7"
-thiserror = "1.0.63"
-tokio = {version = "1.40.0", features = ["full"]}
-toml = "0.8.19"
-uuid = {version = "1.11.0", features = [
+thiserror = "2.0.12"
+tokio = {version = "1.45.1", features = ["full"]}
+toml = "0.8.22"
+uuid = {version = "1.17.0", features = [
   "v7", # Lets you generate random UUIDs
   "fast-rng", # Use a faster (but still sufficiently random) RNG
   "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
 ]}
 webpki = "0.22.4"
-webpki-roots = "0.26.3"
-winit = {version = "0.30.5", features = ["serde", "rwh_05"]}
+webpki-roots = "1.0.0"
+winit = {version = "0.30.11", features = ["serde", "rwh_05"]}
 
 [dependencies.camera]
 package = "ascending_camera"
@@ -86,7 +86,8 @@ version = "0.4.1"
 package = "ascending_graphics"
 #git = "https://github.com/AscendingCreations/AscendingLibraries"
 #path = "../AscendingLibraries/graphics"
-version = "0.22.0"
+features = ["static_dx"]
+version = "0.25.0"
 
 [profile.dev]
 codegen-units = 256

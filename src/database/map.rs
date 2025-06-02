@@ -186,7 +186,7 @@ pub fn load_map_data(
                     if id > 0 {
                         systems.gfx.set_map_tile(
                             &mapslotdata.map_index,
-                            (x as u32, y as u32, layer as u32),
+                            UVec3::new(x as u32, y as u32, layer as u32),
                             TileData {
                                 id,
                                 color: Color::rgba(255, 255, 255, 255),
@@ -212,7 +212,8 @@ pub fn create_map_data(
     systems: &mut SystemHolder,
     mappos: MapPosition,
 ) -> Result<Index> {
-    let mut map = Map::new(&mut systems.renderer, TILE_SIZE as u32);
+    let mut map =
+        Map::new(&mut systems.renderer, TILE_SIZE as u32, Vec2::new(0.0, 0.0));
     map.can_render = true;
     let map_index = systems.gfx.add_map(map, 0, "Map", true);
     let mapslotdata = MapSlotData {
@@ -290,7 +291,7 @@ pub fn get_map_pos(systems: &mut SystemHolder, key: Index) -> Vec2 {
         let pos = systems.gfx.get_pos(&mapslotdata.map_index);
         return Vec2::new(pos.x, pos.y);
     } else {
-        error!("Failed to get map pos of Key: {:?}", key);
+        error!("Failed to get map pos of Key: {key:?}");
     }
 
     Vec2::default()
@@ -349,7 +350,7 @@ pub fn load_file(
 
     buffer.clear();
 
-    let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
+    let name = format!("./data/maps/{x}_{y}_{group}.bin");
 
     match OpenOptions::new().read(true).open(&name) {
         Ok(mut file) => {
@@ -357,14 +358,14 @@ pub fn load_file(
             Ok(MapData::read_from_buffer(buffer).unwrap())
         }
         Err(e) => {
-            error!("Failed to load {}, Err {:?}", name, e);
+            error!("Failed to load {name}, Err {e:?}");
             Ok(MapData::new(x, y, group))
         }
     }
 }
 
 pub fn is_map_exist(x: i32, y: i32, group: u64) -> bool {
-    let name = format!("./data/maps/{}_{}_{}.bin", x, y, group);
+    let name = format!("./data/maps/{x}_{y}_{group}.bin");
     Path::new(&name).exists()
 }
 

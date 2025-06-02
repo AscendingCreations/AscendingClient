@@ -13,7 +13,7 @@ use camera::{
 };
 use cosmic_text::{Attrs, Metrics};
 use graphics::{
-    wgpu::{BackendOptions, Dx12BackendOptions},
+    wgpu::{BackendOptions, Dx12BackendOptions, NoopBackendOptions},
     *,
 };
 
@@ -102,10 +102,12 @@ impl winit::application::ApplicationHandler for Runner {
                 backend_options: BackendOptions {
                     gl: wgpu::GlBackendOptions {
                         gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
+                        fence_behavior: wgpu::GlFenceBehavior::AutoFinish,
                     },
-                    dx12: Dx12BackendOptions {
-                        shader_compiler: Dx12Compiler::default(),
+                    dx12: wgpu::Dx12BackendOptions {
+                        shader_compiler: Dx12Compiler::Fxc,
                     },
+                    noop: NoopBackendOptions::default(),
                 },
             });
 
@@ -136,8 +138,8 @@ impl winit::application::ApplicationHandler for Runner {
                         required_limits: wgpu::Limits::default(),
                         label: None,
                         memory_hints: wgpu::MemoryHints::Performance,
+                        trace: wgpu::Trace::Off,
                     },
-                    None,
                     // How we are presenting the screen which causes it to either clip to a FPS limit or be unlimited.
                     config.present_mode.parse_enum(),
                 ))
@@ -562,12 +564,12 @@ impl winit::application::ApplicationHandler for Runner {
                 systems.renderer.update_depth_texture();
             }
 
-            if let Some(gfx_index) = systems.caret.index {
-                if systems.caret.timer <= seconds {
-                    systems.caret.visible = !systems.caret.visible;
-                    systems.caret.timer = seconds + 0.35;
-                    systems.gfx.set_visible(&gfx_index, systems.caret.visible);
-                }
+            if let Some(gfx_index) = systems.caret.index
+                && systems.caret.timer <= seconds
+            {
+                systems.caret.visible = !systems.caret.visible;
+                systems.caret.timer = seconds + 0.35;
+                systems.gfx.set_visible(&gfx_index, systems.caret.visible);
             }
 
             // Game Loop
@@ -588,10 +590,10 @@ impl winit::application::ApplicationHandler for Runner {
             graphics.system.update(&systems.renderer, frame_time);
 
             // update our systems data to the gpu. this is the Screen in the shaders.
-            graphics.system.update_screen(&systems.renderer, [
-                new_size.width,
-                new_size.height,
-            ]);
+            graphics.system.update_screen(
+                &systems.renderer,
+                [new_size.width, new_size.height],
+            );
 
             // This adds the Image data to the Buffer for rendering.
             add_image_to_buffer(systems, graphics);
@@ -625,7 +627,7 @@ impl winit::application::ApplicationHandler for Runner {
                 .submit(std::iter::once(encoder.finish()));
 
             if let Err(e) = socket.poll_events() {
-                error!("Poll event error: {:?}", e);
+                error!("Poll event error: {e:?}");
             }
 
             if socket.tls_socket.state == ClientState::Closed
@@ -761,7 +763,7 @@ impl winit::application::ApplicationHandler for Runner {
                         systems.gfx.set_text(
                             &mut systems.renderer,
                             &content.game_content.interface.frame_loop,
-                            &format!("Frame Jitter: {:?}", average),
+                            &format!("Frame Jitter: {average:?}"),
                         );
                     }
                     if count >= 20 {

@@ -6,7 +6,7 @@ use graphics::{
     cosmic_text::{Attrs, Metrics, Stretch, Style, Weight},
     *,
 };
-use rand::{Rng, thread_rng};
+use rand::{Rng, rng};
 
 struct FloatingTextData {
     text_bg: GfxType,
@@ -140,15 +140,15 @@ pub fn add_float_text(
     let size = Vec2::new(text.measure().x.floor(), 20.0);
     text.size = size;
 
-    let mut rng = thread_rng();
-    let add_x = rng.gen_range(-6..=6);
+    let mut rng = rng();
+    let add_x = rng.random_range(-6..=6);
 
     let mut adjust_pos = (TILE_SIZE as f32 - size) * 0.5;
     adjust_pos.y += 8.0;
     adjust_pos.x += add_x as f32;
     let tpos = start_pos + texture_pos + adjust_pos;
 
-    text.set_position(Vec3::new(tpos.x, tpos.y, ORDER_FLOAT_TEXT))
+    text.set_pos(Vec3::new(tpos.x, tpos.y, ORDER_FLOAT_TEXT))
         .set_bounds(Bounds::new(
             0.0,
             0.0,

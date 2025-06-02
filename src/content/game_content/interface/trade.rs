@@ -66,25 +66,31 @@ impl Trade {
         let detail_1 = w_pos.z.sub_f32(0.001, 3);
         let detail_2 = w_pos.z.sub_f32(0.002, 3);
 
-        let mut rect = Rect::new(&mut systems.renderer, 0);
-        rect.set_position(Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z))
-            .set_size(w_size + 2.0)
-            .set_color(Color::rgba(110, 110, 110, 255))
+        let mut rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z),
+            w_size + 2.0,
+            0,
+        );
+        rect.set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
         let bg = systems.gfx.add_rect(rect, 0, "Trade Window", false);
 
-        let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
             w_pos.x,
             w_pos.y + (356.0 * systems.scale as f32).floor(),
         );
         let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
-        header_rect
-            .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
-            .set_size((header_size * systems.scale as f32).floor())
-            .set_color(Color::rgba(70, 70, 70, 255));
+        let mut header_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(header_pos.x, header_pos.y, header_zpos),
+            (header_size * systems.scale as f32).floor(),
+            0,
+        );
+
+        header_rect.set_color(Color::rgba(70, 70, 70, 255));
         let header =
             systems.gfx.add_rect(header_rect, 0, "Trade Header", false);
 
@@ -211,13 +217,13 @@ impl Trade {
 
         let mut slot = [GfxType::None; MAX_TRADE_SLOT * 2];
         (0..MAX_TRADE_SLOT).for_each(|index| {
-            let mut box_rect = Rect::new(&mut systems.renderer, 0);
             let frame_pos = Vec2::new(
                 index as f32 % MAX_TRADE_X,
                 (index as f32 / MAX_TRADE_X).floor(),
             );
-            box_rect
-                .set_position(Vec3::new(
+            let mut box_rect = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     w_pos.x
                         + ((10.0 + (37.0 * frame_pos.x))
                             * systems.scale as f32)
@@ -227,23 +233,24 @@ impl Trade {
                             * systems.scale as f32)
                             .floor(),
                     detail_1,
-                ))
-                .set_size(
-                    (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
-                )
-                .set_color(Color::rgba(200, 200, 200, 255));
+                ),
+                (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                0,
+            );
+
+            box_rect.set_color(Color::rgba(200, 200, 200, 255));
             slot[index] =
                 systems.gfx.add_rect(box_rect, 0, "Trade Slot BG", false);
         });
         (MAX_TRADE_SLOT..MAX_TRADE_SLOT * 2).for_each(|index| {
             let render_index = index - MAX_TRADE_SLOT;
-            let mut box_rect = Rect::new(&mut systems.renderer, 0);
             let frame_pos = Vec2::new(
                 render_index as f32 % MAX_TRADE_X,
                 (render_index as f32 / MAX_TRADE_X).floor(),
             );
-            box_rect
-                .set_position(Vec3::new(
+            let mut box_rect = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     w_pos.x
                         + ((210.0 + (37.0 * frame_pos.x))
                             * systems.scale as f32)
@@ -253,33 +260,38 @@ impl Trade {
                             * systems.scale as f32)
                             .floor(),
                     detail_1,
-                ))
-                .set_size(
-                    (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
-                )
-                .set_color(Color::rgba(200, 200, 200, 255));
+                ),
+                (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                0,
+            );
+
+            box_rect.set_color(Color::rgba(200, 200, 200, 255));
             slot[index] =
                 systems.gfx.add_rect(box_rect, 0, "Trade Slot BG", false);
         });
 
-        let mut my_name_bg = Rect::new(&mut systems.renderer, 0);
-        my_name_bg
-            .set_size((Vec2::new(180.0, 20.0) * systems.scale as f32).floor())
-            .set_color(Color::rgba(80, 80, 80, 255))
-            .set_position(Vec3::new(
+        let mut my_name_bg = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(
                 w_pos.x + (10.0 * systems.scale as f32).floor(),
                 w_pos.y + (324.0 * systems.scale as f32).floor(),
                 detail_1,
-            ));
-        let mut their_name_bg = Rect::new(&mut systems.renderer, 0);
-        their_name_bg
-            .set_size((Vec2::new(180.0, 20.0) * systems.scale as f32).floor())
-            .set_color(Color::rgba(80, 80, 80, 255))
-            .set_position(Vec3::new(
+            ),
+            (Vec2::new(180.0, 20.0) * systems.scale as f32).floor(),
+            0,
+        );
+        my_name_bg.set_color(Color::rgba(80, 80, 80, 255));
+        let mut their_name_bg = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(
                 w_pos.x + (210.0 * systems.scale as f32).floor(),
                 w_pos.y + (324.0 * systems.scale as f32).floor(),
                 detail_1,
-            ));
+            ),
+            (Vec2::new(180.0, 20.0) * systems.scale as f32).floor(),
+            0,
+        );
+        their_name_bg.set_color(Color::rgba(80, 80, 80, 255));
         let name_bg = [
             systems.gfx.add_rect(my_name_bg, 0, "Trade Name", false),
             systems.gfx.add_rect(their_name_bg, 0, "Trade Name", false),
@@ -332,32 +344,32 @@ impl Trade {
             "Their Trade: Preparing...",
         );
 
-        let mut my_money_icon = Image::new(
+        let my_money_icon = Image::new(
             Some(systems.resource.shop_currency_icon.allocation),
             &mut systems.renderer,
+            Vec3::new(
+                w_pos.x + (10.0 * systems.scale as f32).floor(),
+                w_pos.y + (77.0 * systems.scale as f32).floor(),
+                detail_1,
+            ),
+            (Vec2::new(20.0, 20.0) * systems.scale as f32).floor(),
+            Vec4::new(0.0, 0.0, 20.0, 20.0),
             0,
         );
-        my_money_icon.pos = Vec3::new(
-            w_pos.x + (10.0 * systems.scale as f32).floor(),
-            w_pos.y + (77.0 * systems.scale as f32).floor(),
-            detail_1,
-        );
-        my_money_icon.hw =
-            (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
-        my_money_icon.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-        let mut their_money_icon = Image::new(
+
+        let their_money_icon = Image::new(
             Some(systems.resource.shop_currency_icon.allocation),
             &mut systems.renderer,
+            Vec3::new(
+                w_pos.x + (210.0 * systems.scale as f32).floor(),
+                w_pos.y + (77.0 * systems.scale as f32).floor(),
+                detail_1,
+            ),
+            (Vec2::new(20.0, 20.0) * systems.scale as f32).floor(),
+            Vec4::new(0.0, 0.0, 20.0, 20.0),
             0,
         );
-        their_money_icon.pos = Vec3::new(
-            w_pos.x + (210.0 * systems.scale as f32).floor(),
-            w_pos.y + (77.0 * systems.scale as f32).floor(),
-            detail_1,
-        );
-        their_money_icon.hw =
-            (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
-        their_money_icon.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
+
         let money_icon = [
             systems
                 .gfx
@@ -1216,17 +1228,17 @@ impl Trade {
                 0
             };
 
-        let mut image = Image::new(
+        let image = Image::new(
             Some(systems.resource.items[sprite].allocation),
             &mut systems.renderer,
+            Vec3::new(
+                slot_pos.x + (6.0 * systems.scale as f32).floor(),
+                slot_pos.y + (6.0 * systems.scale as f32).floor(),
+                item_zpos,
+            ),
+            (Vec2::new(20.0, 20.0) * systems.scale as f32).floor(),
+            Vec4::new(0.0, 0.0, 20.0, 20.0),
             0,
-        );
-        image.hw = (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
-        image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-        image.pos = Vec3::new(
-            slot_pos.x + (6.0 * systems.scale as f32).floor(),
-            slot_pos.y + (6.0 * systems.scale as f32).floor(),
-            item_zpos,
         );
         let image_index =
             systems.gfx.add_image(image, 0, "Trade Item", self.visible);
@@ -1236,12 +1248,13 @@ impl Trade {
         item_slot[slot].count_data = data.val;
 
         if data.val > 1 {
-            let mut text_bg = Rect::new(&mut systems.renderer, 0);
+            let mut text_bg = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(slot_pos.x, slot_pos.y, textbg_zpos),
+                (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
+                0,
+            );
             text_bg
-                .set_size(
-                    (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
-                )
-                .set_position(Vec3::new(slot_pos.x, slot_pos.y, textbg_zpos))
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
@@ -1300,7 +1313,7 @@ impl Trade {
         systems.gfx.set_text(
             &mut systems.renderer,
             &self.their_money,
-            &format!("{}", amount),
+            &format!("{amount}"),
         );
     }
 

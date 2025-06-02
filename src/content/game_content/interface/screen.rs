@@ -1,4 +1,4 @@
-use crate::{data_types::*, get_percent, widget::*, SystemHolder};
+use crate::{SystemHolder, data_types::*, get_percent, widget::*};
 use graphics::*;
 
 pub struct VitalBar {
@@ -17,10 +17,13 @@ impl VitalBar {
             ORDER_VITAL_BG,
         );
 
-        let mut bg_rect = Rect::new(&mut systems.renderer, 0);
+        let mut bg_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(pos.x - 1.0, pos.y - 1.0, pos.z),
+            Vec2::new(size.x + 2.0, size.y + 2.0),
+            0,
+        );
         bg_rect
-            .set_position(Vec3::new(pos.x - 1.0, pos.y - 1.0, pos.z))
-            .set_size(Vec2::new(size.x + 2.0, size.y + 2.0))
             .set_color(Color::rgba(180, 180, 180, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
@@ -37,34 +40,39 @@ impl VitalBar {
                 _ => (0.0, Color::rgba(100, 200, 80, 255), 8.0),
             };
 
-            let mut bg_rect = Rect::new(&mut systems.renderer, 0);
-            bg_rect
-                .set_position(Vec3::new(
+            let mut bg_rect = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     pos.x + (5.0 * systems.scale as f32).floor(),
                     pos.y + ((5.0 + add_y) * systems.scale as f32).floor(),
                     ORDER_VITAL_HPBG,
-                ))
-                .set_size(Vec2::new(
+                ),
+                Vec2::new(
                     size.x - (10.0 * systems.scale as f32).floor(),
                     (height * systems.scale as f32).floor(),
-                ))
+                ),
+                0,
+            );
+            bg_rect
                 .set_color(Color::rgba(100, 100, 100, 255))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(60, 60, 60, 255));
             bar_bg[i] = systems.gfx.add_rect(bg_rect, 0, "Vital BG", true);
 
-            let mut bar_rect = Rect::new(&mut systems.renderer, 0);
-            bar_rect
-                .set_position(Vec3::new(
+            let mut bar_rect = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     pos.x + (6.0 * systems.scale as f32).floor(),
                     pos.y + ((6.0 + add_y) * systems.scale as f32).floor(),
                     ORDER_VITAL_HP,
-                ))
-                .set_size(Vec2::new(
+                ),
+                Vec2::new(
                     size.x - (12.0 * systems.scale as f32).floor(),
                     ((height - 2.0) * systems.scale as f32).floor(),
-                ))
-                .set_color(color);
+                ),
+                0,
+            );
+            bar_rect.set_color(color);
             bar[i] = systems.gfx.add_rect(bar_rect, 0, "Vital Bar", true);
         }
 

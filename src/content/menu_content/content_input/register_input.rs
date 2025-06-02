@@ -238,7 +238,7 @@ fn trigger_button(
             ) {
                 Ok(_) => {}
                 Err(e) => {
-                    error!("send_register error: {:?}", e);
+                    error!("send_register error: {e:?}");
                     alert.show_alert(
                         systems,
                         AlertType::Inform,

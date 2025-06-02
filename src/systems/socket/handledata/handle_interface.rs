@@ -169,9 +169,9 @@ pub fn handle_damage(
         let is_damage = data.read::<bool>()?;
 
         let (text, color) = if is_damage {
-            (format!("-{}", amount), COLOR_RED)
+            (format!("-{amount}"), COLOR_RED)
         } else {
-            (format!("+{}", amount), COLOR_GREEN)
+            (format!("+{amount}"), COLOR_GREEN)
         };
 
         add_float_text(systems, &mut content.game_content, pos, text, color);

@@ -234,47 +234,47 @@ pub fn handle_playerequipment(
             return Ok(());
         };
 
-    if let Some(myentity) = content.game_content.myentity {
-        if myentity == entity {
-            for i in 0..MAX_EQPT {
-                if content.game_content.player_data.equipment[i]
-                    != equipment.items[i]
-                {
-                    content
-                        .game_content
-                        .interface
-                        .profile
-                        .update_equipment_slot(systems, i, &equipment.items[i]);
-                    content.game_content.player_data.equipment[i] =
-                        equipment.items[i];
-                }
+    if let Some(myentity) = content.game_content.myentity
+        && myentity == entity
+    {
+        for i in 0..MAX_EQPT {
+            if content.game_content.player_data.equipment[i]
+                != equipment.items[i]
+            {
+                content
+                    .game_content
+                    .interface
+                    .profile
+                    .update_equipment_slot(systems, i, &equipment.items[i]);
+                content.game_content.player_data.equipment[i] =
+                    equipment.items[i];
             }
-
-            let damage = b_damage.saturating_add(
-                player_get_weapon_damage(world, systems, myentity)?.0 as u32,
-            );
-            content
-                .game_content
-                .interface
-                .profile
-                .set_profile_label_value(
-                    systems,
-                    ProfileLabel::Damage,
-                    damage as u64,
-                );
-            let defense = b_defense.saturating_add(
-                player_get_armor_defense(world, systems, myentity)?.0 as u32,
-            );
-            content
-                .game_content
-                .interface
-                .profile
-                .set_profile_label_value(
-                    systems,
-                    ProfileLabel::Defense,
-                    defense as u64,
-                );
         }
+
+        let damage = b_damage.saturating_add(
+            player_get_weapon_damage(world, systems, myentity)?.0 as u32,
+        );
+        content
+            .game_content
+            .interface
+            .profile
+            .set_profile_label_value(
+                systems,
+                ProfileLabel::Damage,
+                damage as u64,
+            );
+        let defense = b_defense.saturating_add(
+            player_get_armor_defense(world, systems, myentity)?.0 as u32,
+        );
+        content
+            .game_content
+            .interface
+            .profile
+            .set_profile_label_value(
+                systems,
+                ProfileLabel::Defense,
+                defense as u64,
+            );
     }
 
     Ok(())
@@ -295,34 +295,32 @@ pub fn handle_playerlevel(
 
     content.game_content.player_data.levelexp = levelexp;
 
-    if let Some(myentity) = content.game_content.myentity {
-        if world.entities.contains_key(myentity) {
-            if let Some(Entity::Player(p_data)) =
-                world.entities.get_mut(myentity)
-            {
-                p_data.level = level;
-            }
+    if let Some(myentity) = content.game_content.myentity
+        && world.entities.contains_key(myentity)
+    {
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(myentity) {
+            p_data.level = level;
+        }
 
-            let nextexp = player_get_next_lvl_exp(world, myentity)?;
+        let nextexp = player_get_next_lvl_exp(world, myentity)?;
 
-            if content.game_content.finalized {
-                content.game_content.interface.vitalbar.update_bar_size(
+        if content.game_content.finalized {
+            content.game_content.interface.vitalbar.update_bar_size(
+                systems,
+                2,
+                levelexp as i32,
+                nextexp as i32,
+            );
+
+            content
+                .game_content
+                .interface
+                .profile
+                .set_profile_label_value(
                     systems,
-                    2,
-                    levelexp as i32,
-                    nextexp as i32,
+                    ProfileLabel::Level,
+                    level as u64,
                 );
-
-                content
-                    .game_content
-                    .interface
-                    .profile
-                    .set_profile_label_value(
-                        systems,
-                        ProfileLabel::Level,
-                        level as u64,
-                    );
-            }
         }
     }
 

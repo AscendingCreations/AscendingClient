@@ -1,7 +1,7 @@
 use graphics::*;
 
 use crate::{
-    data_types::*, is_within_area, logic::*, widget::*, Interface, SystemHolder,
+    Interface, SystemHolder, data_types::*, is_within_area, logic::*, widget::*,
 };
 
 pub struct Setting {
@@ -46,25 +46,31 @@ impl Setting {
         let detail_1 = w_pos.z.sub_f32(0.001, 3);
         let detail_2 = w_pos.z.sub_f32(0.002, 3);
 
-        let mut rect = Rect::new(&mut systems.renderer, 0);
-        rect.set_position(Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z))
-            .set_size(w_size + 2.0)
-            .set_color(Color::rgba(110, 110, 110, 255))
+        let mut rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z),
+            w_size + 2.0,
+            0,
+        );
+        rect.set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
         let bg = systems.gfx.add_rect(rect, 0, "Settings BG", false);
 
-        let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
             w_pos.x,
             w_pos.y + (237.0 * systems.scale as f32).floor(),
         );
         let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
-        header_rect
-            .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
-            .set_size((header_size * systems.scale as f32).floor())
-            .set_color(Color::rgba(70, 70, 70, 255));
+        let mut header_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(header_pos.x, header_pos.y, header_zpos),
+            (header_size * systems.scale as f32).floor(),
+            0,
+        );
+
+        header_rect.set_color(Color::rgba(70, 70, 70, 255));
         let header =
             systems
                 .gfx
@@ -933,7 +939,7 @@ impl Setting {
         systems.gfx.set_text(
             &mut systems.renderer,
             &self.bgm_label,
-            &format!("{}", value),
+            &format!("{value}"),
         );
     }
 
@@ -945,7 +951,7 @@ impl Setting {
         systems.gfx.set_text(
             &mut systems.renderer,
             &self.sfx_label,
-            &format!("{}", value),
+            &format!("{value}"),
         );
     }
 }

@@ -35,7 +35,7 @@ pub fn handle_data(
     ) {
         Ok(_) => Ok(()),
         Err(e) => {
-            error!("Error {:?} {}", id, e);
+            error!("Error {id:?} {e}");
             Err(e)
         }
     }

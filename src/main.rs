@@ -133,7 +133,7 @@ async fn main() -> Result<()> {
     panic::set_hook(Box::new(|panic_info| {
         let bt = Backtrace::new();
 
-        error!("PANIC: {}, BACKTRACE: {:?}", panic_info, bt);
+        error!("PANIC: {panic_info}, BACKTRACE: {bt:?}");
     }));
 
     // we will allow this since this is a change coming soon to rust.

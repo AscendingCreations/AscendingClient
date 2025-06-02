@@ -62,23 +62,29 @@ impl Inventory {
         let detail_1 = w_pos.z.sub_f32(0.001, 3);
         let detail_2 = w_pos.z.sub_f32(0.002, 3);
 
-        let mut rect = Rect::new(&mut systems.renderer, 0);
-        rect.set_position(Vec3::new(pos.x - 1.0, pos.y - 1.0, w_pos.z))
-            .set_size(w_size + 2.0)
-            .set_color(Color::rgba(110, 110, 110, 255))
+        let mut rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(pos.x - 1.0, pos.y - 1.0, w_pos.z),
+            w_size + 2.0,
+            0,
+        );
+        rect.set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
         let bg = systems.gfx.add_rect(rect, 0, "Inv BG", false);
 
-        let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos =
             Vec2::new(pos.x, pos.y + (237.0 * systems.scale as f32).floor());
         let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
-        header_rect
-            .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
-            .set_size((header_size * systems.scale as f32).floor())
-            .set_color(Color::rgba(70, 70, 70, 255));
+        let mut header_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(header_pos.x, header_pos.y, header_zpos),
+            (header_size * systems.scale as f32).floor(),
+            0,
+        );
+
+        header_rect.set_color(Color::rgba(70, 70, 70, 255));
         let header = systems.gfx.add_rect(header_rect, 0, "Inv Header", false);
 
         let text = create_label(
@@ -106,11 +112,11 @@ impl Inventory {
 
         let mut slot = [GfxType::None; MAX_INV];
         for (i, slot) in slot.iter_mut().enumerate() {
-            let mut box_rect = Rect::new(&mut systems.renderer, 0);
             let frame_pos =
                 Vec2::new(i as f32 % MAX_INV_X, (i as f32 / MAX_INV_X).floor());
-            box_rect
-                .set_position(Vec3::new(
+            let mut box_rect = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     w_pos.x
                         + ((10.0 + (37.0 * frame_pos.x))
                             * systems.scale as f32)
@@ -120,11 +126,12 @@ impl Inventory {
                             * systems.scale as f32)
                             .floor(),
                     detail_1,
-                ))
-                .set_size(
-                    (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
-                )
-                .set_color(Color::rgba(200, 200, 200, 255));
+                ),
+                (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                0,
+            );
+
+            box_rect.set_color(Color::rgba(200, 200, 200, 255));
             *slot = systems.gfx.add_rect(box_rect, 0, "Inv Slot BG", false);
         }
 
@@ -370,17 +377,17 @@ impl Inventory {
                 0
             };
 
-        let mut image = Image::new(
+        let image = Image::new(
             Some(systems.resource.items[sprite].allocation),
             &mut systems.renderer,
+            Vec3::new(
+                slot_pos.x + (6.0 * systems.scale as f32).floor(),
+                slot_pos.y + (6.0 * systems.scale as f32).floor(),
+                item_zpos,
+            ),
+            (Vec2::new(20.0, 20.0) * systems.scale as f32).floor(),
+            Vec4::new(0.0, 0.0, 20.0, 20.0),
             0,
-        );
-        image.hw = (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
-        image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-        image.pos = Vec3::new(
-            slot_pos.x + (6.0 * systems.scale as f32).floor(),
-            slot_pos.y + (6.0 * systems.scale as f32).floor(),
-            item_zpos,
         );
         let image_index =
             systems.gfx.add_image(image, 0, "Inv Item", self.visible);
@@ -390,12 +397,13 @@ impl Inventory {
         self.item_slot[slot].count_data = data.val;
 
         if data.val > 1 {
-            let mut text_bg = Rect::new(&mut systems.renderer, 0);
+            let mut text_bg = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(slot_pos.x, slot_pos.y, textbg_zpos),
+                (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
+                0,
+            );
             text_bg
-                .set_size(
-                    (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
-                )
-                .set_position(Vec3::new(slot_pos.x, slot_pos.y, textbg_zpos))
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
@@ -801,49 +809,53 @@ pub fn release_inv_slot(
     {
         let find_slot =
             interface.inventory.find_inv_slot(systems, screen_pos, true);
-        if let Some(new_slot) = find_slot {
-            if new_slot != slot {
-                if interface.inventory.item_slot[slot].item_index
-                    == interface.inventory.item_slot[new_slot].item_index
-                {
-                    alert.show_alert(
-                        systems,
-                        AlertType::Input,
-                        String::new(),
-                        "Enter the amount to merge".into(),
-                        250,
-                        AlertIndex::MergeInv(slot as u16, new_slot as u16),
-                        true,
-                    );
-                } else {
-                    send_switchinvslot(
-                        socket,
-                        slot as u16,
-                        new_slot as u16,
-                        interface.inventory.item_slot[slot].count_data,
-                    )?;
+        if let Some(new_slot) = find_slot
+            && new_slot != slot
+        {
+            if interface.inventory.item_slot[slot].item_index
+                == interface.inventory.item_slot[new_slot].item_index
+            {
+                alert.show_alert(
+                    systems,
+                    AlertType::Input,
+                    String::new(),
+                    "Enter the amount to merge".into(),
+                    250,
+                    AlertIndex::MergeInv(slot as u16, new_slot as u16),
+                    true,
+                );
+            } else {
+                send_switchinvslot(
+                    socket,
+                    slot as u16,
+                    new_slot as u16,
+                    interface.inventory.item_slot[slot].count_data,
+                )?;
 
-                    interface.inventory.update_inv_slot(systems, slot, &Item {
+                interface.inventory.update_inv_slot(
+                    systems,
+                    slot,
+                    &Item {
                         num: interface.inventory.item_slot[new_slot].item_index
                             as u32,
                         val: interface.inventory.item_slot[new_slot].count_data,
                         ..Default::default()
-                    });
-                    interface.inventory.update_inv_slot(
-                        systems,
-                        new_slot,
-                        &Item {
-                            num: interface.inventory.item_slot[slot].item_index
-                                as u32,
-                            val: interface.inventory.item_slot[slot].count_data,
-                            ..Default::default()
-                        },
-                    );
+                    },
+                );
+                interface.inventory.update_inv_slot(
+                    systems,
+                    new_slot,
+                    &Item {
+                        num: interface.inventory.item_slot[slot].item_index
+                            as u32,
+                        val: interface.inventory.item_slot[slot].count_data,
+                        ..Default::default()
+                    },
+                );
 
-                    interface.inventory.item_slot[slot].need_update = true;
-                    interface.inventory.item_slot[new_slot].need_update = true;
-                    return Ok(());
-                }
+                interface.inventory.item_slot[slot].need_update = true;
+                interface.inventory.item_slot[new_slot].need_update = true;
+                return Ok(());
             }
         }
     } else if interface.storage.in_window(screen_pos)

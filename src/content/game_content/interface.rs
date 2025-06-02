@@ -359,30 +359,26 @@ impl Interface {
             MouseInputType::MouseDoubleLeftDown => {
                 if interface.inventory.visible
                     && interface.inventory.order_index == 0
-                {
-                    if let Some(slot) = interface
+                    && let Some(slot) = interface
                         .inventory
                         .find_inv_slot(systems, screen_pos, false)
-                    {
-                        send_useitem(socket, slot as u16)?;
-                    }
+                {
+                    send_useitem(socket, slot as u16)?;
                 }
 
                 if interface.profile.visible
                     && interface.profile.order_index == 0
-                {
-                    if let Some(slot) = interface
+                    && let Some(slot) = interface
                         .profile
                         .find_eq_slot(systems, screen_pos, false)
-                    {
-                        send_unequip(socket, slot as u16)?;
-                    }
+                {
+                    send_unequip(socket, slot as u16)?;
                 }
 
-                if interface.chatbox.order_index == 0 {
-                    if let Some(text) = interface.chatbox.get_selected_msg() {
-                        set_clipboard_text(text);
-                    }
+                if interface.chatbox.order_index == 0
+                    && let Some(text) = interface.chatbox.get_selected_msg()
+                {
+                    set_clipboard_text(text);
                 }
             }
             MouseInputType::MouseLeftDown => {
@@ -638,33 +634,33 @@ impl Interface {
         key: &Key,
         pressed: bool,
     ) -> Result<()> {
-        if pressed && !game_content.interface.trade.visible {
-            if let Key::Named(NamedKey::Enter) = key {
-                if game_content.interface.selected_textbox
-                    == SelectedTextbox::Chatbox
-                {
-                    game_content.interface.selected_textbox =
-                        SelectedTextbox::None;
-                    game_content
-                        .interface
-                        .chatbox
-                        .textbox
-                        .set_select(systems, false);
-                    trigger_chatbox_button(
-                        &mut game_content.interface,
-                        systems,
-                        socket,
-                        2,
-                    )?;
-                } else {
-                    game_content.interface.selected_textbox =
-                        SelectedTextbox::Chatbox;
-                    game_content
-                        .interface
-                        .chatbox
-                        .textbox
-                        .set_select(systems, true);
-                }
+        if pressed
+            && !game_content.interface.trade.visible
+            && let Key::Named(NamedKey::Enter) = key
+        {
+            if game_content.interface.selected_textbox
+                == SelectedTextbox::Chatbox
+            {
+                game_content.interface.selected_textbox = SelectedTextbox::None;
+                game_content
+                    .interface
+                    .chatbox
+                    .textbox
+                    .set_select(systems, false);
+                trigger_chatbox_button(
+                    &mut game_content.interface,
+                    systems,
+                    socket,
+                    2,
+                )?;
+            } else {
+                game_content.interface.selected_textbox =
+                    SelectedTextbox::Chatbox;
+                game_content
+                    .interface
+                    .chatbox
+                    .textbox
+                    .set_select(systems, true);
             }
         }
 
@@ -1024,35 +1020,30 @@ impl Interface {
                                 SelectedTextbox::Trade,
                             )?;
 
-                            if self.trade.trade_status == TradeStatus::None {
-                                if let Some(slot) = self
+                            if self.trade.trade_status == TradeStatus::None
+                                && let Some(slot) = self
                                     .trade
                                     .find_mytrade_slot(systems, screen_pos)
-                                {
-                                    if self.trade.my_items[slot].got_data {
-                                        if self.trade.my_items[slot].count_data
-                                            > 1
-                                        {
-                                            alert.show_alert(
-                                                systems,
-                                                AlertType::Input,
-                                                String::new(),
-                                                "Enter the amount to remove"
-                                                    .into(),
-                                                250,
-                                                AlertIndex::RemoveTradeItem(
-                                                    slot as u16,
-                                                ),
-                                                true,
-                                            );
-                                        } else {
-                                            send_removetradeitem(
-                                                socket,
-                                                slot as u16,
-                                                1,
-                                            )?;
-                                        }
-                                    }
+                                && self.trade.my_items[slot].got_data
+                            {
+                                if self.trade.my_items[slot].count_data > 1 {
+                                    alert.show_alert(
+                                        systems,
+                                        AlertType::Input,
+                                        String::new(),
+                                        "Enter the amount to remove".into(),
+                                        250,
+                                        AlertIndex::RemoveTradeItem(
+                                            slot as u16,
+                                        ),
+                                        true,
+                                    );
+                                } else {
+                                    send_removetradeitem(
+                                        socket,
+                                        slot as u16,
+                                        1,
+                                    )?;
                                 }
                             }
 
@@ -1297,11 +1288,12 @@ fn trigger_chatbox_button(
 }
 
 fn can_find_window(window: Window, exception: Option<Window>) -> bool {
-    if let Some(x_window) = exception {
-        if window == x_window {
-            return false;
-        }
+    if let Some(x_window) = exception
+        && window == x_window
+    {
+        return false;
     }
+
     true
 }
 

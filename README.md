@@ -3,6 +3,8 @@
 </h1>
 Open Source Client written in rust. Part of Ascending Source.
 
+![Client showcase](./images/client.png)
+
 # Help
 
 If you need help with this library or have suggestions please go to our [Discord Group](https://discord.gg/gVXNDwpS3Z)

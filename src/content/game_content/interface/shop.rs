@@ -1,6 +1,6 @@
 use graphics::*;
 
-use crate::{data_types::*, is_within_area, logic::*, widget::*, SystemHolder};
+use crate::{SystemHolder, data_types::*, is_within_area, logic::*, widget::*};
 
 use super::ItemDescription;
 
@@ -58,25 +58,31 @@ impl Shop {
         let detail_3 = w_pos.z.sub_f32(0.003, 3);
         let detail_4 = w_pos.z.sub_f32(0.004, 3);
 
-        let mut rect = Rect::new(&mut systems.renderer, 0);
-        rect.set_position(Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z))
-            .set_size(w_size + 2.0)
-            .set_color(Color::rgba(110, 110, 110, 255))
+        let mut rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z),
+            w_size + 2.0,
+            0,
+        );
+        rect.set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
         let bg = systems.gfx.add_rect(rect, 0, "Shop BG", false);
 
-        let mut header_rect = Rect::new(&mut systems.renderer, 0);
         let header_pos = Vec2::new(
             w_pos.x,
             w_pos.y + (246.0 * systems.scale as f32).floor(),
         );
         let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
-        header_rect
-            .set_position(Vec3::new(header_pos.x, header_pos.y, header_zpos))
-            .set_size((header_size * systems.scale as f32).floor())
-            .set_color(Color::rgba(70, 70, 70, 255));
+        let mut header_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(header_pos.x, header_pos.y, header_zpos),
+            (header_size * systems.scale as f32).floor(),
+            0,
+        );
+
+        header_rect.set_color(Color::rgba(70, 70, 70, 255));
         let header = systems.gfx.add_rect(header_rect, 0, "Shop Header", false);
 
         let text = create_label(
@@ -206,12 +212,13 @@ impl Shop {
                     + ((203.0 - (i as f32 * 48.0)) * systems.scale as f32)
                         .floor(),
             );
-            let mut bg = Rect::new(&mut systems.renderer, 0);
-            bg.set_position(Vec3::new(pos.x, pos.y, detail_1))
-                .set_size(
-                    (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
-                )
-                .set_color(Color::rgba(200, 200, 200, 255));
+            let mut bg = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(pos.x, pos.y, detail_1),
+                (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                0,
+            );
+            bg.set_color(Color::rgba(200, 200, 200, 255));
             let icon_bg = systems.gfx.add_rect(bg, 0, "Shop Item BG", false);
 
             let pos = Vec2::new(
@@ -260,20 +267,21 @@ impl Shop {
                     .add_text(price_text, 1, "Shop Item Price", false);
             systems.gfx.set_text(&mut systems.renderer, &price, "");
 
-            let mut p_icon = Image::new(
+            let p_icon = Image::new(
                 Some(systems.resource.shop_currency_icon.allocation),
                 &mut systems.renderer,
+                Vec3::new(
+                    w_pos.x + (48.0 * systems.scale as f32).floor(),
+                    w_pos.y
+                        + ((198.0 - (i as f32 * 48.0)) * systems.scale as f32)
+                            .floor(),
+                    detail_1,
+                ),
+                (Vec2::new(20.0, 20.0) * systems.scale as f32).floor(),
+                Vec4::new(0.0, 0.0, 20.0, 20.0),
                 0,
             );
-            p_icon.hw = (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
-            p_icon.pos = Vec3::new(
-                w_pos.x + (48.0 * systems.scale as f32).floor(),
-                w_pos.y
-                    + ((198.0 - (i as f32 * 48.0)) * systems.scale as f32)
-                        .floor(),
-                detail_1,
-            );
-            p_icon.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
+
             let price_icon =
                 systems.gfx.add_image(p_icon, 0, "Shop Price Icon", false);
 
@@ -316,12 +324,13 @@ impl Shop {
                     + ((203.0 - (i as f32 * 48.0)) * systems.scale as f32)
                         .floor(),
             );
-            let mut amount_bg_rect = Rect::new(&mut systems.renderer, 0);
+            let mut amount_bg_rect = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(pos.x, pos.y, detail_3),
+                (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
+                0,
+            );
             amount_bg_rect
-                .set_position(Vec3::new(pos.x, pos.y, detail_3))
-                .set_size(
-                    (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
-                )
                 .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
@@ -972,21 +981,22 @@ impl Shop {
             }
 
             let item_pic = item_data.sprite;
-            let mut item_sprite = Image::new(
+            let item_sprite = Image::new(
                 Some(systems.resource.items[item_pic as usize].allocation),
                 &mut systems.renderer,
+                Vec3::new(
+                    self.pos.x + (16.0 * systems.scale as f32).floor(),
+                    self.pos.y
+                        + ((209.0 - (index as f32 * 48.0))
+                            * systems.scale as f32)
+                            .floor(),
+                    item_zpos,
+                ),
+                (Vec2::new(20.0, 20.0) * systems.scale as f32).floor(),
+                Vec4::new(0.0, 0.0, 20.0, 20.0),
                 0,
             );
-            item_sprite.hw =
-                (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
-            item_sprite.pos = Vec3::new(
-                self.pos.x + (16.0 * systems.scale as f32).floor(),
-                self.pos.y
-                    + ((209.0 - (index as f32 * 48.0)) * systems.scale as f32)
-                        .floor(),
-                item_zpos,
-            );
-            item_sprite.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
+
             let item_index = systems.gfx.add_image(
                 item_sprite,
                 0,
@@ -1061,22 +1071,22 @@ impl Shop {
             }
 
             let item_pic = item_data.sprite;
-            let mut item_sprite = Image::new(
+            let item_sprite = Image::new(
                 Some(systems.resource.items[item_pic as usize].allocation),
                 &mut systems.renderer,
+                Vec3::new(
+                    self.pos.x + (16.0 * systems.scale as f32).floor(),
+                    self.pos.y
+                        + ((209.0 - (default_index as f32 * 48.0))
+                            * systems.scale as f32)
+                            .floor(),
+                    item_zpos,
+                ),
+                (Vec2::new(20.0, 20.0) * systems.scale as f32).floor(),
+                Vec4::new(0.0, 0.0, 20.0, 20.0),
                 0,
             );
-            item_sprite.hw =
-                (Vec2::new(20.0, 20.0) * systems.scale as f32).floor();
-            item_sprite.pos = Vec3::new(
-                self.pos.x + (16.0 * systems.scale as f32).floor(),
-                self.pos.y
-                    + ((209.0 - (default_index as f32 * 48.0))
-                        * systems.scale as f32)
-                        .floor(),
-                item_zpos,
-            );
-            item_sprite.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
+
             let item_index = systems.gfx.add_image(
                 item_sprite,
                 0,

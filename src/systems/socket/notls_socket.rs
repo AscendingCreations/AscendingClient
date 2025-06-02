@@ -115,10 +115,7 @@ impl Socket {
                                 self.reregister(poll)?;
                                 return Ok(());
                             } else {
-                                log::error!(
-                                    "Connection OS Error id: {}",
-                                    os_err
-                                );
+                                log::error!("Connection OS Error id: {os_err}");
                                 return self.shutdown(poll);
                             }
                         }
@@ -136,7 +133,7 @@ impl Socket {
                     }
                 },
                 Ok(Some(err)) | Err(err) => {
-                    log::error!("Connection Error: {:?}", err);
+                    log::error!("Connection Error: {err:?}");
                     return self.shutdown(poll);
                 }
             }
@@ -180,7 +177,7 @@ impl Socket {
                     return Ok(());
                 }
                 Err(err) => {
-                    log::error!("Disconnected on Socket read err {:?}", err);
+                    log::error!("Disconnected on Socket read err {err:?}");
                     self.state = ClientState::Closing;
                     return Ok(());
                 }
@@ -261,7 +258,7 @@ impl Socket {
         if self.buffer.length() - self.buffer.cursor() >= 8 {
             let length = self.buffer.read::<u64>().ok()?;
 
-            trace!("Length is {}", length);
+            trace!("Length is {length}");
             if !(2..=8192).contains(&length) {
                 log::error!("Disconnected on packet get_length");
                 self.set_to_closing(poll);
@@ -278,7 +275,7 @@ pub fn connect(host: &str, port: u16) -> Result<TcpStream> {
     let addrs = (host, port).to_socket_addrs()?;
 
     for addr in addrs {
-        info!("{:?}", addr);
+        info!("{addr:?}");
         let stream = TcpStream::connect(addr);
 
         if let Ok(stream) = stream {
@@ -288,7 +285,7 @@ pub fn connect(host: &str, port: u16) -> Result<TcpStream> {
 
     Err(ClientError::BadConnection {
         num: port as usize,
-        message: format!("Cannot connect to {}:{}", host, port),
+        message: format!("Cannot connect to {host}:{port}"),
         backtrace: Backtrace::new_unresolved(),
     })
 }

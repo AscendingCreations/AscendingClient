@@ -1,8 +1,8 @@
 use graphics::*;
 
 use crate::{
-    content::*, data_types::*, is_within_area, widget::*, Config, SystemHolder,
-    SCREEN_WIDTH,
+    Config, SCREEN_WIDTH, SystemHolder, content::*, data_types::*,
+    is_within_area, widget::*,
 };
 
 pub struct Login {
@@ -25,30 +25,31 @@ impl Login {
         )
         .floor();
         let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 80.0).floor();
-        let mut menu_rect = Rect::new(&mut systems.renderer, 0);
+        let mut menu_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(pos.x - 1.0, pos.y - 1.0, ORDER_MENU_WINDOW),
+            size + 2.0,
+            0,
+        );
 
         menu_rect
-            .set_position(Vec3::new(
-                pos.x - 1.0,
-                pos.y - 1.0,
-                ORDER_MENU_WINDOW,
-            ))
-            .set_size(size + 2.0)
             .set_color(Color::rgba(160, 160, 160, 255))
             .set_border_color(Color::rgba(10, 10, 10, 255))
             .set_border_width(1.0);
         window.push(systems.gfx.add_rect(menu_rect, 0, "Login Window", true));
 
-        let mut header_rect = Rect::new(&mut systems.renderer, 0);
-
-        header_rect
-            .set_position(Vec3::new(
+        let mut header_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(
                 pos.x,
                 pos.y + (196.0 * systems.scale as f32).floor(),
                 ORDER_MENU_WINDOW_CONTENT,
-            ))
-            .set_size(Vec2::new(size.x, (30.0 * systems.scale as f32).floor()))
-            .set_color(Color::rgba(120, 120, 120, 255));
+            ),
+            Vec2::new(size.x, (30.0 * systems.scale as f32).floor()),
+            0,
+        );
+
+        header_rect.set_color(Color::rgba(120, 120, 120, 255));
         window.push(systems.gfx.add_rect(header_rect, 0, "Login Header", true));
 
         let header_text = create_label(
@@ -81,33 +82,33 @@ impl Login {
         label.push(text_index);
 
         for index in 0..2 {
-            let mut labelbox = Rect::new(&mut systems.renderer, 0);
-            let mut textbox_bg = Rect::new(&mut systems.renderer, 0);
             let addy = match index {
                 1 => 123.0,
                 _ => 154.0,
             };
-
-            labelbox
-                .set_position(Vec3::new(
+            let mut labelbox = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     pos.x + (24.0 * systems.scale as f32).floor(),
                     pos.y + (addy * systems.scale as f32).floor(),
                     ORDER_MENU_WINDOW_CONTENT,
-                ))
-                .set_size(
-                    (Vec2::new(116.0, 24.0) * systems.scale as f32).floor(),
-                )
-                .set_color(Color::rgba(208, 208, 208, 255));
-            textbox_bg
-                .set_position(Vec3::new(
+                ),
+                (Vec2::new(116.0, 24.0) * systems.scale as f32).floor(),
+                0,
+            );
+            let mut textbox_bg = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     pos.x + (140.0 * systems.scale as f32).floor(),
                     pos.y + (addy * systems.scale as f32).floor(),
                     ORDER_MENU_WINDOW_CONTENT,
-                ))
-                .set_size(
-                    (Vec2::new(184.0, 24.0) * systems.scale as f32).floor(),
-                )
-                .set_color(Color::rgba(90, 90, 90, 255));
+                ),
+                (Vec2::new(184.0, 24.0) * systems.scale as f32).floor(),
+                0,
+            );
+
+            labelbox.set_color(Color::rgba(208, 208, 208, 255));
+            textbox_bg.set_color(Color::rgba(90, 90, 90, 255));
             window.push(systems.gfx.add_rect(
                 labelbox,
                 0,
@@ -436,10 +437,9 @@ impl Login {
                 (Vec2::new(textbox.size.x, textbox.size.y)
                     * systems.scale as f32)
                     .floor(),
-            ) {
-                if let Some(msg) = &textbox.tooltip {
-                    tooltip.init_tooltip(systems, screen_pos, msg.clone());
-                }
+            ) && let Some(msg) = &textbox.tooltip
+            {
+                tooltip.init_tooltip(systems, screen_pos, msg.clone());
             }
         }
     }

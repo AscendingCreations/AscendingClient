@@ -11,15 +11,14 @@ pub struct Target {
 
 impl Target {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let mut image = Image::new(
+        let image = Image::new(
             Some(systems.resource.target.allocation),
             &mut systems.renderer,
+            Vec3::new(0.0, 0.0, ORDER_TARGET),
+            Vec2::new(40.0, 40.0),
+            Vec4::new(0.0, 40.0, 40.0, 40.0),
             0,
         );
-
-        image.hw = Vec2::new(40.0, 40.0);
-        image.pos = Vec3::new(0.0, 0.0, ORDER_TARGET);
-        image.uv = Vec4::new(0.0, 40.0, 40.0, 40.0);
 
         let img_index = systems.gfx.add_image(image, 0, "Target Image", false);
 
@@ -30,15 +29,14 @@ impl Target {
     }
 
     pub fn recreate(&mut self, systems: &mut SystemHolder) {
-        let mut image = Image::new(
+        let image = Image::new(
             Some(systems.resource.target.allocation),
             &mut systems.renderer,
+            Vec3::new(0.0, 0.0, ORDER_TARGET),
+            Vec2::new(40.0, 40.0),
+            Vec4::new(0.0, 0.0, 40.0, 40.0),
             0,
         );
-
-        image.hw = Vec2::new(40.0, 40.0);
-        image.pos = Vec3::new(0.0, 0.0, ORDER_TARGET);
-        image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
 
         let img_index = systems.gfx.add_image(image, 0, "Target Image", false);
 

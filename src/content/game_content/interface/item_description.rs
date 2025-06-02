@@ -30,10 +30,13 @@ pub struct ItemDescription {
 
 impl ItemDescription {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let mut bg_rect = Rect::new(&mut systems.renderer, 0);
+        let mut bg_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec2::new(0.0, 0.0),
+            0,
+        );
         bg_rect
-            .set_position(Vec3::new(0.0, 0.0, 0.0))
-            .set_size(Vec2::new(0.0, 0.0))
             .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
@@ -152,7 +155,7 @@ impl ItemDescription {
 
         name_text.size = text_size;
         name_text
-            .set_position(Vec3::new(tpos.x, tpos.y, ORDER_ITEM_DESC_TEXT))
+            .set_pos(Vec3::new(tpos.x, tpos.y, ORDER_ITEM_DESC_TEXT))
             .set_bounds(Bounds::new(
                 tpos.x,
                 tpos.y,

@@ -1,8 +1,8 @@
 use graphics::*;
 
 use crate::{
-    content::*, data_types::*, is_within_area, widget::*, SystemHolder,
-    SCREEN_WIDTH,
+    SCREEN_WIDTH, SystemHolder, content::*, data_types::*, is_within_area,
+    widget::*,
 };
 
 pub struct Register {
@@ -22,15 +22,14 @@ impl Register {
         let mut textbox = Vec::with_capacity(5);
         let size = (Vec2::new(348.0, 375.0) * systems.scale as f32).floor();
         let pos = Vec2::new((SCREEN_WIDTH as f32 - size.x) * 0.5, 20.0).floor();
-        let mut menu_rect = Rect::new(&mut systems.renderer, 0);
+        let mut menu_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(pos.x - 1.0, pos.y - 1.0, ORDER_MENU_WINDOW),
+            size + 2.0,
+            0,
+        );
 
         menu_rect
-            .set_position(Vec3::new(
-                pos.x - 1.0,
-                pos.y - 1.0,
-                ORDER_MENU_WINDOW,
-            ))
-            .set_size(size + 2.0)
             .set_color(Color::rgba(160, 160, 160, 255))
             .set_border_color(Color::rgba(10, 10, 10, 255))
             .set_border_width(1.0);
@@ -41,16 +40,18 @@ impl Register {
             true,
         ));
 
-        let mut header_rect = Rect::new(&mut systems.renderer, 0);
-
-        header_rect
-            .set_position(Vec3::new(
+        let mut header_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(
                 pos.x,
                 pos.y + (345.0 * systems.scale as f32).floor(),
                 ORDER_MENU_WINDOW_CONTENT,
-            ))
-            .set_size(Vec2::new(size.x, (30.0 * systems.scale as f32).floor()))
-            .set_color(Color::rgba(120, 120, 120, 255));
+            ),
+            Vec2::new(size.x, (30.0 * systems.scale as f32).floor()),
+            0,
+        );
+
+        header_rect.set_color(Color::rgba(120, 120, 120, 255));
         window.push(systems.gfx.add_rect(
             header_rect,
             0,
@@ -89,8 +90,6 @@ impl Register {
         label.push(text_index);
 
         for index in 0..5 {
-            let mut labelbox = Rect::new(&mut systems.renderer, 0);
-            let mut textbox_bg = Rect::new(&mut systems.renderer, 0);
             let addy = match index {
                 1 => 278.0,
                 2 => 247.0,
@@ -98,27 +97,29 @@ impl Register {
                 4 => 191.0,
                 _ => 303.0,
             };
-
-            labelbox
-                .set_position(Vec3::new(
+            let mut labelbox = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     pos.x + (24.0 * systems.scale as f32).floor(),
                     pos.y + (addy * systems.scale as f32).floor(),
                     ORDER_MENU_WINDOW_CONTENT,
-                ))
-                .set_size(
-                    (Vec2::new(116.0, 24.0) * systems.scale as f32).floor(),
-                )
-                .set_color(Color::rgba(208, 208, 208, 255));
-            textbox_bg
-                .set_position(Vec3::new(
+                ),
+                (Vec2::new(116.0, 24.0) * systems.scale as f32).floor(),
+                0,
+            );
+            let mut textbox_bg = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     pos.x + (140.0 * systems.scale as f32).floor(),
                     pos.y + (addy * systems.scale as f32).floor(),
                     ORDER_MENU_WINDOW_CONTENT,
-                ))
-                .set_size(
-                    (Vec2::new(184.0, 24.0) * systems.scale as f32).floor(),
-                )
-                .set_color(Color::rgba(90, 90, 90, 255));
+                ),
+                (Vec2::new(184.0, 24.0) * systems.scale as f32).floor(),
+                0,
+            );
+
+            labelbox.set_color(Color::rgba(208, 208, 208, 255));
+            textbox_bg.set_color(Color::rgba(90, 90, 90, 255));
             window.push(systems.gfx.add_rect(
                 labelbox,
                 0,
@@ -188,16 +189,18 @@ impl Register {
             textbox.push(txtbox);
         }
 
-        let mut sprite_bg = Rect::new(&mut systems.renderer, 0);
-
-        sprite_bg
-            .set_position(Vec3::new(
+        let mut sprite_bg = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(
                 pos.x + (34.0 * systems.scale as f32).floor(),
                 pos.y + (98.0 * systems.scale as f32).floor(),
                 ORDER_MENU_WINDOW_CONTENT,
-            ))
-            .set_size((Vec2::new(80.0, 80.0) * systems.scale as f32).floor())
-            .set_color(Color::rgba(120, 120, 120, 255));
+            ),
+            (Vec2::new(80.0, 80.0) * systems.scale as f32).floor(),
+            0,
+        );
+
+        sprite_bg.set_color(Color::rgba(120, 120, 120, 255));
         window.push(systems.gfx.add_rect(
             sprite_bg,
             0,
@@ -205,20 +208,18 @@ impl Register {
             true,
         ));
 
-        let mut image_texture = Image::new(
+        let image_texture = Image::new(
             Some(systems.resource.players[0].allocation),
             &mut systems.renderer,
+            Vec3::new(
+                pos.x + (34.0 * systems.scale as f32).floor(),
+                pos.y + (98.0 * systems.scale as f32).floor(),
+                ORDER_MENU_WINDOW_CONTENT_DETAIL,
+            ),
+            (Vec2::new(80.0, 80.0) * systems.scale as f32).floor(),
+            Vec4::new(0.0, 0.0, 40.0, 40.0),
             0,
         );
-
-        image_texture.hw =
-            (Vec2::new(80.0, 80.0) * systems.scale as f32).floor();
-        image_texture.pos = Vec3::new(
-            pos.x + (34.0 * systems.scale as f32).floor(),
-            pos.y + (98.0 * systems.scale as f32).floor(),
-            ORDER_MENU_WINDOW_CONTENT_DETAIL,
-        );
-        image_texture.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
 
         let image =
             systems
@@ -503,10 +504,9 @@ impl Register {
                 (Vec2::new(textbox.size.x, textbox.size.y)
                     * systems.scale as f32)
                     .floor(),
-            ) {
-                if let Some(msg) = &textbox.tooltip {
-                    tooltip.init_tooltip(systems, screen_pos, msg.clone());
-                }
+            ) && let Some(msg) = &textbox.tooltip
+            {
+                tooltip.init_tooltip(systems, screen_pos, msg.clone());
             }
         }
     }

@@ -131,10 +131,7 @@ impl TlsSocket {
                                 self.reregister(poll)?;
                                 return Ok(());
                             } else {
-                                log::error!(
-                                    "Connection OS Error id: {}",
-                                    os_err
-                                );
+                                log::error!("Connection OS Error id: {os_err}",);
                                 return self.shutdown(poll);
                             }
                         }
@@ -152,7 +149,7 @@ impl TlsSocket {
                     }
                 },
                 Ok(Some(err)) | Err(err) => {
-                    log::error!("TLS Connection Error: {:?}", err);
+                    log::error!("TLS Connection Error: {err:?}",);
                     return self.shutdown(poll);
                 }
             }
@@ -190,7 +187,7 @@ impl TlsSocket {
                     continue;
                 }
                 Err(error) => {
-                    log::error!("TLS read error: {:?}", error);
+                    log::error!("TLS read error: {error:?}",);
                     self.state = ClientState::Closing;
                     return Ok(());
                 }
@@ -205,7 +202,7 @@ impl TlsSocket {
             let io_state = match self.tls.process_new_packets() {
                 Ok(io_state) => io_state,
                 Err(err) => {
-                    log::error!("TLS error: {:?}", err);
+                    log::error!("TLS error: {err:?}",);
                     self.state = ClientState::Closing;
                     return Ok(());
                 }
@@ -326,7 +323,7 @@ impl TlsSocket {
         if self.buffer.length() - self.buffer.cursor() >= 8 {
             let length = self.buffer.read::<u64>().ok()?;
 
-            trace!("Length is {}", length);
+            trace!("Length is {length}",);
             if !(2..=8192).contains(&length) {
                 log::error!("Disconnected on packet get_length");
                 self.set_to_closing(poll);

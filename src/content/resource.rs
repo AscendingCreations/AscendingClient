@@ -126,10 +126,10 @@ impl TextureAllocation {
 pub fn get_dir_files(path: &str) -> Vec<DirEntry> {
     let mut files = Vec::new();
     let is_file = |path: &DirEntry| {
-        if let Ok(meta) = path.metadata() {
-            if meta.is_file() {
-                return true;
-            }
+        if let Ok(meta) = path.metadata()
+            && meta.is_file()
+        {
+            return true;
         }
 
         false
@@ -180,10 +180,10 @@ pub fn natural_cmp(a: &str, b: &str) -> Ordering {
             space1.push(ch1.unwrap());
             ch1 = chs1.next();
 
-            if let Some(char) = ch1 {
-                if char.is_ascii_digit() != is_digit1 {
-                    break;
-                }
+            if let Some(char) = ch1
+                && char.is_ascii_digit() != is_digit1
+            {
+                break;
             }
         }
 
@@ -194,10 +194,10 @@ pub fn natural_cmp(a: &str, b: &str) -> Ordering {
             space2.push(ch2.unwrap());
             ch2 = chs2.next();
 
-            if let Some(char) = ch2 {
-                if char.is_ascii_digit() != is_digit2 {
-                    break;
-                }
+            if let Some(char) = ch2
+                && char.is_ascii_digit() != is_digit2
+            {
+                break;
             }
         }
 

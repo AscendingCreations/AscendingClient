@@ -1,7 +1,7 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{logic::*, widget::*, GfxType, SystemHolder};
+use crate::{GfxType, SystemHolder, logic::*, widget::*};
 
 #[derive(Clone)]
 pub enum ButtonChangeType {
@@ -99,11 +99,14 @@ impl Button {
 
         let index = match &button_type {
             ButtonType::Rect(data) => {
-                let mut rect = Rect::new(&mut systems.renderer, 0);
+                let mut rect = Rect::new(
+                    &mut systems.renderer,
+                    Vec3::new(pos.x, pos.y, z_order),
+                    (size * systems.scale as f32).floor(),
+                    0,
+                );
 
-                rect.set_position(Vec3::new(pos.x, pos.y, z_order))
-                    .set_size((size * systems.scale as f32).floor())
-                    .set_color(data.rect_color)
+                rect.set_color(data.rect_color)
                     .set_radius(data.border_radius);
 
                 if data.got_border {
@@ -119,12 +122,14 @@ impl Button {
                 ))
             }
             ButtonType::Image(data) => {
-                let mut image =
-                    Image::new(Some(data.res), &mut systems.renderer, 0);
-
-                image.pos = Vec3::new(pos.x, pos.y, z_order);
-                image.hw = (size * systems.scale as f32).floor();
-                image.uv = Vec4::new(0.0, 0.0, size.x, size.y);
+                let image = Image::new(
+                    Some(data.res),
+                    &mut systems.renderer,
+                    Vec3::new(pos.x, pos.y, z_order),
+                    (size * systems.scale as f32).floor(),
+                    Vec4::new(0.0, 0.0, size.x, size.y),
+                    0,
+                );
 
                 Some(systems.gfx.add_image(
                     image,
@@ -139,22 +144,23 @@ impl Button {
         let content = match &content_type {
             ButtonContentType::None => None,
             ButtonContentType::Image(data) => {
-                let mut image =
-                    Image::new(Some(data.res), &mut systems.renderer, 0);
                 let spos = Vec3::new(
                     pos.x,
                     pos.y,
                     z_order.sub_f32(z_step.0, z_step.1),
                 );
-
-                image.pos = Vec3::new(
-                    spos.x + (data.pos.x * systems.scale as f32).floor(),
-                    spos.y + (data.pos.y * systems.scale as f32).floor(),
-                    spos.z,
+                let image = Image::new(
+                    Some(data.res),
+                    &mut systems.renderer,
+                    Vec3::new(
+                        spos.x + (data.pos.x * systems.scale as f32).floor(),
+                        spos.y + (data.pos.y * systems.scale as f32).floor(),
+                        spos.z,
+                    ),
+                    (data.size * systems.scale as f32).floor(),
+                    Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y),
+                    0,
                 );
-                image.hw = (data.size * systems.scale as f32).floor();
-                image.uv =
-                    Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
 
                 Some(systems.gfx.add_image(
                     image,
@@ -367,16 +373,14 @@ impl Button {
     }
 
     pub fn change_text(&mut self, systems: &mut SystemHolder, msg: String) {
-        if let Some(content_data) = self.content {
-            if let ButtonContentType::Text(data) = &mut self.content_type {
-                systems.gfx.set_text(
-                    &mut systems.renderer,
-                    &content_data,
-                    &msg,
-                );
-                data.text = msg;
-                systems.gfx.center_text(&content_data);
-            }
+        if let Some(content_data) = self.content
+            && let ButtonContentType::Text(data) = &mut self.content_type
+        {
+            systems
+                .gfx
+                .set_text(&mut systems.renderer, &content_data, &msg);
+            data.text = msg;
+            systems.gfx.center_text(&content_data);
         }
     }
 

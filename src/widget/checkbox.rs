@@ -3,7 +3,7 @@ use std::default;
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{logic::*, widget::*, GfxType, SystemHolder};
+use crate::{GfxType, SystemHolder, logic::*, widget::*};
 
 #[derive(Clone)]
 pub enum CheckboxChangeType {
@@ -115,10 +115,13 @@ impl Checkbox {
         let pos = base_pos + (adjust_pos * systems.scale as f32);
         let image = match &box_type {
             CheckboxType::Rect(data) => {
-                let mut rect = Rect::new(&mut systems.renderer, 0);
+                let mut rect = Rect::new(
+                    &mut systems.renderer,
+                    Vec3::new(pos.x, pos.y, z_order),
+                    box_size * systems.scale as f32,
+                    0,
+                );
                 rect.set_color(data.rect_color)
-                    .set_position(Vec3::new(pos.x, pos.y, z_order))
-                    .set_size(box_size * systems.scale as f32)
                     .set_radius(data.border_radius);
 
                 if data.got_border {
@@ -134,16 +137,20 @@ impl Checkbox {
                 )
             }
             CheckboxType::Image(data) => {
-                let mut img =
-                    Image::new(Some(data.res), &mut systems.renderer, 0);
-                img.pos = Vec3::new(pos.x, pos.y, z_order);
-                img.hw = box_size * systems.scale as f32;
-                img.uv = Vec4::new(
-                    0.0,
-                    0.0,
-                    box_size.x * systems.scale as f32,
-                    box_size.y * systems.scale as f32,
+                let img = Image::new(
+                    Some(data.res),
+                    &mut systems.renderer,
+                    Vec3::new(pos.x, pos.y, z_order),
+                    box_size * systems.scale as f32,
+                    Vec4::new(
+                        0.0,
+                        0.0,
+                        box_size.x * systems.scale as f32,
+                        box_size.y * systems.scale as f32,
+                    ),
+                    0,
                 );
+
                 systems.gfx.add_image(
                     img,
                     render_layer,
@@ -155,15 +162,18 @@ impl Checkbox {
         };
         let check_image = match &check_type {
             CheckType::SetRect(data) => {
-                let mut rect = Rect::new(&mut systems.renderer, 0);
-                rect.set_position(Vec3::new(
-                    pos.x + (data.pos.x * systems.scale as f32),
-                    pos.y + (data.pos.y * systems.scale as f32),
-                    z_order.sub_f32(z_step.0, z_step.1),
-                ))
-                .set_size(data.size * systems.scale as f32)
-                .set_color(data.rect_color)
-                .set_radius(data.border_radius);
+                let mut rect = Rect::new(
+                    &mut systems.renderer,
+                    Vec3::new(
+                        pos.x + (data.pos.x * systems.scale as f32),
+                        pos.y + (data.pos.y * systems.scale as f32),
+                        z_order.sub_f32(z_step.0, z_step.1),
+                    ),
+                    data.size * systems.scale as f32,
+                    0,
+                );
+                rect.set_color(data.rect_color)
+                    .set_radius(data.border_radius);
 
                 if data.got_border {
                     rect.set_border_width(1.0)
@@ -178,16 +188,19 @@ impl Checkbox {
                 )
             }
             CheckType::SetImage(data) => {
-                let mut img =
-                    Image::new(Some(data.res), &mut systems.renderer, 0);
-                img.pos = Vec3::new(
-                    pos.x + (data.pos.x * systems.scale as f32),
-                    pos.y + (data.pos.y * systems.scale as f32),
-                    z_order.sub_f32(z_step.0, z_step.1),
+                let img = Image::new(
+                    Some(data.res),
+                    &mut systems.renderer,
+                    Vec3::new(
+                        pos.x + (data.pos.x * systems.scale as f32),
+                        pos.y + (data.pos.y * systems.scale as f32),
+                        z_order.sub_f32(z_step.0, z_step.1),
+                    ),
+                    data.size * systems.scale as f32,
+                    Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y),
+                    0,
                 );
-                img.hw = data.size * systems.scale as f32;
-                img.uv =
-                    Vec4::new(data.uv.x, data.uv.y, data.size.x, data.size.y);
+
                 systems.gfx.add_image(
                     img,
                     render_layer,
@@ -427,10 +440,10 @@ impl Checkbox {
             _ => {}
         }
 
-        if let Some(data) = &mut self.text_type {
-            if let ColorChange(color) = data.1.click_change {
-                systems.gfx.set_color(&data.0, color);
-            }
+        if let Some(data) = &mut self.text_type
+            && let ColorChange(color) = data.1.click_change
+        {
+            systems.gfx.set_color(&data.0, color);
         }
     }
 
@@ -459,10 +472,10 @@ impl Checkbox {
             _ => {}
         }
 
-        if let Some(data) = &mut self.text_type {
-            if let ColorChange(color) = data.1.hover_change {
-                systems.gfx.set_color(&data.0, color);
-            }
+        if let Some(data) = &mut self.text_type
+            && let ColorChange(color) = data.1.hover_change
+        {
+            systems.gfx.set_color(&data.0, color);
         }
     }
 

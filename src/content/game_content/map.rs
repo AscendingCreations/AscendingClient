@@ -38,7 +38,7 @@ impl MapDirBlock {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct MapContent {
     pub map_pos: MapPosition,
     pub mapindex: [Index; 9],
@@ -46,10 +46,7 @@ pub struct MapContent {
 
 impl MapContent {
     pub fn new() -> Self {
-        Self {
-            map_pos: MapPosition::default(),
-            mapindex: [Index::default(); 9],
-        }
+        Self::default()
     }
 
     pub fn recreate(&mut self) {
@@ -212,17 +209,17 @@ pub fn find_entity(
         target_pos.map.y -= 1;
     }
 
-    let target_entity = world.entities.iter().find_map(|(key, entity_data)| {
+    world.entities.iter().find_map(|(key, entity_data)| {
         match entity_data {
             Entity::Player(p_data) => {
-                if p_data.pos == target_pos {
-                    if let Some(myentity) = content.myentity {
-                        if myentity != key {
-                            return Some(key);
-                        }
-                    }
+                if p_data.pos == target_pos
+                    && let Some(myentity) = content.myentity
+                    && myentity != key
+                {
+                    return Some(key);
                 }
             }
+
             Entity::Npc(n_data) => {
                 if n_data.pos == target_pos {
                     return Some(key);
@@ -231,9 +228,7 @@ pub fn find_entity(
             _ => {}
         }
         None
-    });
-
-    target_entity
+    })
 }
 
 pub fn can_move(
@@ -287,12 +282,11 @@ pub fn can_move(
 
         match entity_data {
             Entity::Player(p_data) => {
-                if p_data.pos == next_pos {
-                    if let Some(myentity) = content.myentity {
-                        if myentity != key {
-                            result = true
-                        }
-                    }
+                if p_data.pos == next_pos
+                    && let Some(myentity) = content.myentity
+                    && myentity != key
+                {
+                    result = true
                 }
             }
             Entity::Npc(n_data) => {
@@ -327,15 +321,15 @@ pub fn get_world_pos(tile_pos: Vec2) -> Vec2 {
 pub fn get_mapindex_base_pos(index: usize) -> Vec2 {
     let map_size = Vec2::new(32.0 * TILE_SIZE as f32, 32.0 * TILE_SIZE as f32);
     match index {
-        1 => Vec2::new(map_size.x * -1.0, map_size.y * -1.0), // Top Left
-        2 => Vec2::new(0.0, map_size.y * -1.0),               // Top
-        3 => Vec2::new(map_size.x, map_size.y * -1.0),        // Top Right
-        4 => Vec2::new(map_size.x * -1.0, 0.0),               // Left
-        5 => Vec2::new(map_size.x, 0.0),                      // Right
-        6 => Vec2::new(map_size.x * -1.0, map_size.y),        // Bottom Left
-        7 => Vec2::new(0.0, map_size.y),                      // Bottom
-        8 => Vec2::new(map_size.x, map_size.y),               // Bottom Right
-        _ => Vec2::new(0.0, 0.0),                             // Center
+        1 => Vec2::new(-map_size.x, -map_size.y), // Top Left
+        2 => Vec2::new(0.0, -map_size.y),         // Top
+        3 => Vec2::new(map_size.x, -map_size.y),  // Top Right
+        4 => Vec2::new(-map_size.x, 0.0),         // Left
+        5 => Vec2::new(map_size.x, 0.0),          // Right
+        6 => Vec2::new(-map_size.x, map_size.y),  // Bottom Left
+        7 => Vec2::new(0.0, map_size.y),          // Bottom
+        8 => Vec2::new(map_size.x, map_size.y),   // Bottom Right
+        _ => Vec2::new(0.0, 0.0),                 // Center
     }
 }
 

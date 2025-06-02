@@ -1,16 +1,16 @@
 use graphics::wgpu::{Backend, Backends};
-use log::{debug, LevelFilter};
+use log::{LevelFilter, debug};
 use rustls::{
+    ClientConfig, RootCertStore, ServerConfig,
     client::danger,
-    crypto::{ring as provider, CryptoProvider},
+    crypto::{CryptoProvider, ring as provider},
     pki_types::{CertificateDer, PrivateKeyDer},
     server::WebPkiClientVerifier,
-    ClientConfig, RootCertStore, ServerConfig,
 };
 use serde::{Deserialize, Serialize};
 use std::{fs, io::BufReader, sync::Arc};
 
-use crate::{renderer::*, Result};
+use crate::{Result, renderer::*};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ClientLevelFilter {
@@ -92,7 +92,7 @@ impl Config {
                 _ => {}
             }
         }
-        debug!("Backends: {:?}", backends);
+        debug!("Backends: {backends:?}",);
         backends
     }
 }
@@ -148,10 +148,7 @@ fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
         }
     }
 
-    panic!(
-        "no keys found in {:?} (encrypted keys not supported)",
-        filename
-    );
+    panic!("no keys found in {filename:?} (encrypted keys not supported)");
 }
 
 pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {

@@ -218,11 +218,11 @@ impl GfxCollection {
     }
 
     pub fn set_image(&mut self, index: &GfxType, texture: usize) {
-        if let GfxType::Image(gfx_index) = index {
-            if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
-                gfx.gfx.texture = Some(texture);
-                gfx.gfx.changed = true;
-            }
+        if let GfxType::Image(gfx_index) = index
+            && let Some(gfx) = self.image_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.texture = Some(texture);
+            gfx.gfx.changed = true;
         }
     }
 
@@ -249,18 +249,18 @@ impl GfxCollection {
     }
 
     pub fn set_border_color(&mut self, index: &GfxType, color: Color) {
-        if let GfxType::Rect(gfx_index) = index {
-            if let Some(gfx) = self.rect_storage.get_mut(*gfx_index) {
-                gfx.gfx.set_border_color(color);
-            }
+        if let GfxType::Rect(gfx_index) = index
+            && let Some(gfx) = self.rect_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.set_border_color(color);
         }
     }
 
     pub fn set_border_width(&mut self, index: &GfxType, width: f32) {
-        if let GfxType::Rect(gfx_index) = index {
-            if let Some(gfx) = self.rect_storage.get_mut(*gfx_index) {
-                gfx.gfx.set_border_width(width);
-            }
+        if let GfxType::Rect(gfx_index) = index
+            && let Some(gfx) = self.rect_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.set_border_width(width);
         }
     }
 
@@ -274,10 +274,10 @@ impl GfxCollection {
             }
             GfxType::Rect(gfx_index) => {
                 if let Some(gfx) = self.rect_storage.get_mut(*gfx_index) {
-                    if gfx.gfx.position == pos {
+                    if gfx.gfx.pos == pos {
                         return;
                     }
-                    gfx.gfx.set_position(pos);
+                    gfx.gfx.set_pos(pos);
                 }
             }
             GfxType::Text(gfx_index) => {
@@ -285,7 +285,7 @@ impl GfxCollection {
                     if gfx.gfx.pos == pos {
                         return;
                     }
-                    gfx.gfx.set_position(pos);
+                    gfx.gfx.set_pos(pos);
                 }
             }
             GfxType::Map(gfx_index) => {
@@ -346,10 +346,10 @@ impl GfxCollection {
     }
 
     pub fn set_bound(&mut self, index: &GfxType, bound: Bounds) {
-        if let GfxType::Text(gfx_index) = index {
-            if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
-                gfx.gfx.set_bounds(bound);
-            }
+        if let GfxType::Text(gfx_index) = index
+            && let Some(gfx) = self.text_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.set_bounds(bound);
         }
     }
 
@@ -357,8 +357,7 @@ impl GfxCollection {
         match index {
             GfxType::Image(gfx_index) => {
                 if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
-                    gfx.gfx.hw = size;
-                    gfx.gfx.changed = true;
+                    gfx.gfx.set_size(size);
                 }
             }
             GfxType::Rect(gfx_index) => {
@@ -377,11 +376,11 @@ impl GfxCollection {
     }
 
     pub fn set_uv(&mut self, index: &GfxType, uv: Vec4) {
-        if let GfxType::Image(gfx_index) = index {
-            if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
-                gfx.gfx.uv = uv;
-                gfx.gfx.changed = true;
-            }
+        if let GfxType::Image(gfx_index) = index
+            && let Some(gfx) = self.image_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.uv = uv;
+            gfx.gfx.changed = true;
         }
     }
 
@@ -391,15 +390,11 @@ impl GfxCollection {
         index: &GfxType,
         msg: &str,
     ) {
-        if let GfxType::Text(gfx_index) = index {
-            if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
-                gfx.gfx.set_text(
-                    renderer,
-                    msg,
-                    &Attrs::new(),
-                    Shaping::Advanced,
-                );
-            }
+        if let GfxType::Text(gfx_index) = index
+            && let Some(gfx) = self.text_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx
+                .set_text(renderer, msg, &Attrs::new(), Shaping::Advanced);
         }
     }
 
@@ -411,16 +406,16 @@ impl GfxCollection {
     ) where
         I: IntoIterator<Item = (&'s str, Attrs<'r>)>,
     {
-        if let GfxType::Text(gfx_index) = index {
-            if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
-                gfx.gfx.set_rich_text(
-                    renderer,
-                    msg,
-                    &Attrs::new(),
-                    Shaping::Advanced,
-                    None,
-                );
-            }
+        if let GfxType::Text(gfx_index) = index
+            && let Some(gfx) = self.text_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.set_rich_text(
+                renderer,
+                msg,
+                &Attrs::new(),
+                Shaping::Advanced,
+                None,
+            );
         }
     }
 
@@ -430,27 +425,27 @@ impl GfxCollection {
         index: &GfxType,
         can_wrap: bool,
     ) {
-        if let GfxType::Text(gfx_index) = index {
-            if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
-                if can_wrap {
-                    gfx.gfx.set_wrap(renderer, cosmic_text::Wrap::Word);
-                } else {
-                    gfx.gfx.set_wrap(renderer, cosmic_text::Wrap::None);
-                }
+        if let GfxType::Text(gfx_index) = index
+            && let Some(gfx) = self.text_storage.get_mut(*gfx_index)
+        {
+            if can_wrap {
+                gfx.gfx.set_wrap(renderer, cosmic_text::Wrap::Word);
+            } else {
+                gfx.gfx.set_wrap(renderer, cosmic_text::Wrap::None);
             }
         }
     }
 
     pub fn center_text(&mut self, index: &GfxType) {
-        if let GfxType::Text(gfx_index) = index {
-            if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
-                let size = gfx.gfx.measure();
-                let bound = gfx.gfx.bounds;
-                let textbox_size = bound.right - bound.left;
-                gfx.gfx.pos.x =
-                    bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
-                gfx.gfx.changed = true;
-            }
+        if let GfxType::Text(gfx_index) = index
+            && let Some(gfx) = self.text_storage.get_mut(*gfx_index)
+        {
+            let size = gfx.gfx.measure();
+            let bound = gfx.gfx.bounds;
+            let textbox_size = bound.right - bound.left;
+            gfx.gfx.pos.x =
+                bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
+            gfx.gfx.changed = true;
         }
     }
 
@@ -463,7 +458,7 @@ impl GfxCollection {
             }
             GfxType::Rect(gfx_index) => {
                 if let Some(gfx) = self.rect_storage.get(*gfx_index) {
-                    return gfx.gfx.position;
+                    return gfx.gfx.pos;
                 }
             }
             GfxType::Text(gfx_index) => {
@@ -486,7 +481,7 @@ impl GfxCollection {
         match index {
             GfxType::Image(gfx_index) => {
                 if let Some(gfx) = self.image_storage.get(*gfx_index) {
-                    return gfx.gfx.hw;
+                    return gfx.gfx.size;
                 }
             }
             GfxType::Rect(gfx_index) => {
@@ -506,10 +501,10 @@ impl GfxCollection {
     }
 
     pub fn get_uv(&mut self, index: &GfxType) -> Vec4 {
-        if let GfxType::Image(gfx_index) = index {
-            if let Some(gfx) = self.image_storage.get(*gfx_index) {
-                return gfx.gfx.uv;
-            }
+        if let GfxType::Image(gfx_index) = index
+            && let Some(gfx) = self.image_storage.get(*gfx_index)
+        {
+            return gfx.gfx.uv;
         }
 
         Vec4::new(0.0, 0.0, 0.0, 0.0)
@@ -554,13 +549,13 @@ impl GfxCollection {
     pub fn set_map_tile(
         &mut self,
         index: &GfxType,
-        pos: (u32, u32, u32),
+        pos: UVec3,
         tile: TileData,
     ) {
-        if let GfxType::Map(gfx_index) = index {
-            if let Some(gfx) = self.map_storage.get_mut(*gfx_index) {
-                gfx.gfx.set_tile(pos, tile);
-            }
+        if let GfxType::Map(gfx_index) = index
+            && let Some(gfx) = self.map_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.set_tile(pos, tile);
         }
     }
 
@@ -569,11 +564,12 @@ impl GfxCollection {
         index: &GfxType,
         light: AreaLight,
     ) -> Option<Index> {
-        if let GfxType::Light(gfx_index) = index {
-            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
-                return gfx.gfx.insert_area_light(light);
-            }
+        if let GfxType::Light(gfx_index) = index
+            && let Some(gfx) = self.light_storage.get_mut(*gfx_index)
+        {
+            return gfx.gfx.insert_area_light(light);
         }
+
         None
     }
 
@@ -582,19 +578,20 @@ impl GfxCollection {
         index: &GfxType,
         light: DirectionalLight,
     ) -> Option<Index> {
-        if let GfxType::Light(gfx_index) = index {
-            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
-                return gfx.gfx.insert_directional_light(light);
-            }
+        if let GfxType::Light(gfx_index) = index
+            && let Some(gfx) = self.light_storage.get_mut(*gfx_index)
+        {
+            return gfx.gfx.insert_directional_light(light);
         }
+
         None
     }
 
     pub fn remove_area_light(&mut self, index: &GfxType, light_key: Index) {
-        if let GfxType::Light(gfx_index) = index {
-            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
-                gfx.gfx.remove_area_light(light_key);
-            }
+        if let GfxType::Light(gfx_index) = index
+            && let Some(gfx) = self.light_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.remove_area_light(light_key);
         }
     }
 
@@ -603,10 +600,10 @@ impl GfxCollection {
         index: &GfxType,
         light_key: Index,
     ) {
-        if let GfxType::Light(gfx_index) = index {
-            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
-                gfx.gfx.remove_directional_light(light_key);
-            }
+        if let GfxType::Light(gfx_index) = index
+            && let Some(gfx) = self.light_storage.get_mut(*gfx_index)
+        {
+            gfx.gfx.remove_directional_light(light_key);
         }
     }
 
@@ -616,13 +613,11 @@ impl GfxCollection {
         light_key: Index,
         pos: Vec2,
     ) {
-        if let GfxType::Light(gfx_index) = index {
-            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
-                if let Some(light_data) = gfx.gfx.get_mut_area_light(light_key)
-                {
-                    light_data.pos = pos;
-                }
-            }
+        if let GfxType::Light(gfx_index) = index
+            && let Some(gfx) = self.light_storage.get_mut(*gfx_index)
+            && let Some(light_data) = gfx.gfx.get_mut_area_light(light_key)
+        {
+            light_data.pos = pos;
         }
     }
 
@@ -632,14 +627,12 @@ impl GfxCollection {
         light_key: Index,
         pos: Vec2,
     ) {
-        if let GfxType::Light(gfx_index) = index {
-            if let Some(gfx) = self.light_storage.get_mut(*gfx_index) {
-                if let Some(light_data) =
-                    gfx.gfx.get_mut_directional_light(light_key)
-                {
-                    light_data.pos = pos;
-                }
-            }
+        if let GfxType::Light(gfx_index) = index
+            && let Some(gfx) = self.light_storage.get_mut(*gfx_index)
+            && let Some(light_data) =
+                gfx.gfx.get_mut_directional_light(light_key)
+        {
+            light_data.pos = pos;
         }
     }
 }

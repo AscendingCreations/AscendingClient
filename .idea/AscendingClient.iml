@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="EMPTY_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludePattern pattern="*.lock" />
+      <excludePattern pattern="log.txt" />
+      <excludePattern pattern="*.txt" />
+      <excludePattern pattern="*.7z" />
+      <excludePattern pattern="*.exe" />
+      <excludePattern pattern="*.zip" />
+      <excludePattern pattern="*.json" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

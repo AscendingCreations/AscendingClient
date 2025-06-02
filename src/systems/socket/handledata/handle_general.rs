@@ -40,7 +40,7 @@ pub fn handle_ping(
                 systems.gfx.set_text(
                     &mut systems.renderer,
                     &content.game_content.interface.average_ping,
-                    &format!("Av. Ping: {:?}", average),
+                    &format!("Av. Ping: {average:?}"),
                 );
             }
             if count >= 20 {
@@ -61,7 +61,7 @@ pub fn handle_ping(
     systems.gfx.set_text(
         &mut systems.renderer,
         &content.game_content.interface.ping_text,
-        &format!("Ping: {:?}", elapse_time),
+        &format!("Ping: {elapse_time:?}"),
     );
 
     Ok(())
@@ -179,7 +179,7 @@ pub fn handle_playitemsfx(
         let volume = systems.config.sfx_volume as f32 * 0.01;
         systems
             .audio
-            .play_effect(format!("./audio/{}", sfx_name), volume)?;
+            .play_effect(format!("./audio/{sfx_name}"), volume)?;
     }
 
     Ok(())

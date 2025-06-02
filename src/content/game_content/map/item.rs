@@ -28,20 +28,21 @@ impl MapItem {
     ) -> Result<GlobalKey> {
         let start_pos = get_start_map_pos(cur_map, pos.map)
             .unwrap_or_else(|| Vec2::new(0.0, 0.0));
-        let mut image = Image::new(
-            Some(systems.resource.items[sprite].allocation),
-            &mut systems.renderer,
-            0,
-        );
         let texture_pos =
             Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
-        image.pos = Vec3::new(
-            start_pos.x + texture_pos.x,
-            start_pos.y + texture_pos.y,
-            ORDER_MAP_ITEM,
+        let image = Image::new(
+            Some(systems.resource.items[sprite].allocation),
+            &mut systems.renderer,
+            Vec3::new(
+                start_pos.x + texture_pos.x,
+                start_pos.y + texture_pos.y,
+                ORDER_MAP_ITEM,
+            ),
+            Vec2::new(20.0, 20.0),
+            Vec4::new(0.0, 0.0, 20.0, 20.0),
+            0,
         );
-        image.uv = Vec4::new(0.0, 0.0, 20.0, 20.0);
-        image.hw = Vec2::new(20.0, 20.0);
+
         let sprite_index = systems.gfx.add_image(image, 0, "Map Item", false);
 
         let _ = world.kinds.insert(entity, EntityKind::MapItem);

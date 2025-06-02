@@ -75,17 +75,22 @@ impl Textbox {
         let b_pos = Vec2::new(base_pos.x, base_pos.y)
             + (adjust_pos * systems.scale as f32).floor();
 
-        let mut rect = Rect::new(&mut systems.renderer, 0);
-        rect.set_color(bg_color)
-            .set_position(Vec3::new(b_pos.x, b_pos.y, base_pos.z))
-            .set_size((size * systems.scale as f32).floor());
+        let mut rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(b_pos.x, b_pos.y, base_pos.z),
+            (size * systems.scale as f32).floor(),
+            0,
+        );
+        rect.set_color(bg_color);
         let bg = systems.gfx.add_rect(rect, 0, "Textbox BG", false);
 
-        let mut select_rect = Rect::new(&mut systems.renderer, 0);
-        select_rect
-            .set_color(selection_bg_color)
-            .set_position(Vec3::new(b_pos.x, b_pos.y, detail_1))
-            .set_size(Vec2::new(0.0, size.y * systems.scale as f32).floor());
+        let mut select_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(b_pos.x, b_pos.y, detail_1),
+            Vec2::new(0.0, size.y * systems.scale as f32).floor(),
+            0,
+        );
+        select_rect.set_color(selection_bg_color);
         let selection =
             systems
                 .gfx
@@ -111,11 +116,13 @@ impl Textbox {
             visible,
         );
 
-        let mut caret_rect = Rect::new(&mut systems.renderer, 0);
-        caret_rect
-            .set_size((Vec2::new(2.0, size.y) * systems.scale as f32).floor())
-            .set_position(Vec3::new(b_pos.x, b_pos.y, detail_2))
-            .set_color(text_color);
+        let mut caret_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(b_pos.x, b_pos.y, detail_2),
+            (Vec2::new(2.0, size.y) * systems.scale as f32).floor(),
+            0,
+        );
+        caret_rect.set_color(text_color);
         let caret = systems.gfx.add_rect(caret_rect, 0, "Textbox Caret", false);
 
         let mut disable_selection = false;
@@ -170,11 +177,12 @@ impl Textbox {
                 systems.caret.index = Some(self.caret);
             } else {
                 systems.gfx.set_visible(&self.caret, false);
-                if let Some(index) = systems.caret.index {
-                    if index == self.caret {
-                        systems.caret.index = None;
-                    }
+                if let Some(index) = systems.caret.index
+                    && index == self.caret
+                {
+                    systems.caret.index = None;
                 }
+
                 self.hold_initial_index = self.caret_pos;
                 self.hold_final_index = self.caret_pos;
                 self.update_selection(systems);
@@ -191,10 +199,10 @@ impl Textbox {
         systems
             .gfx
             .remove_gfx(&mut systems.renderer, &self.selection);
-        if let Some(index) = systems.caret.index {
-            if index == self.caret {
-                systems.caret.index = None;
-            }
+        if let Some(index) = systems.caret.index
+            && index == self.caret
+        {
+            systems.caret.index = None;
         }
     }
 
@@ -602,7 +610,7 @@ impl Textbox {
         }
 
         if self.caret_left < 0.0 {
-            self.adjust_x += (self.caret_left * -1.0).max(0.0);
+            self.adjust_x += (-self.caret_left).max(0.0);
             self.caret_left = 0.0;
         } else if self.caret_left > (self.size.x * systems.scale as f32).floor()
         {
@@ -644,7 +652,7 @@ impl Textbox {
                     }
                 }
             } else if self.adjust_x < 0.0 {
-                self.caret_left += self.adjust_x * -1.0;
+                self.caret_left += -self.adjust_x;
                 self.adjust_x = 0.0;
             }
         }
@@ -700,7 +708,7 @@ impl Textbox {
                 }
             }
         } else if self.adjust_x < 0.0 {
-            self.caret_left += self.adjust_x * -1.0;
+            self.caret_left += -self.adjust_x;
             self.adjust_x = 0.0;
         }
 
@@ -941,7 +949,7 @@ pub fn insert_text(text: String, pos: usize, insert_text: &str) -> String {
         }
     }
 
-    format!("{}{}{}", first_text, insert_text, second_text)
+    format!("{first_text}{insert_text}{second_text}")
 }
 
 pub fn insert_char(text: String, pos: usize, insert_text: char) -> String {
@@ -956,7 +964,7 @@ pub fn insert_char(text: String, pos: usize, insert_text: char) -> String {
         }
     }
 
-    format!("{}{}{}", first_text, insert_text, second_text)
+    format!("{first_text}{insert_text}{second_text}")
 }
 
 pub fn replace_text(
@@ -976,7 +984,7 @@ pub fn replace_text(
         }
     }
 
-    format!("{}{}{}", first_text, replace_to, second_text)
+    format!("{first_text}{replace_to}{second_text}")
 }
 
 pub fn remove_text(text: String, pos: usize) -> String {
@@ -991,7 +999,7 @@ pub fn remove_text(text: String, pos: usize) -> String {
         }
     }
 
-    format!("{}{}", first_text, second_text)
+    format!("{first_text}{second_text}")
 }
 
 pub fn is_numeric(char: &str) -> bool {
@@ -1004,7 +1012,7 @@ pub fn get_clipboard_text() -> String {
     match clipboard.get_text() {
         Ok(data) => data,
         Err(e) => {
-            warn!("Get Clipboard Err: {}", e);
+            warn!("Get Clipboard Err: {e}");
             String::new()
         }
     }
@@ -1014,6 +1022,6 @@ pub fn set_clipboard_text(message: String) {
     let mut clipboard = Clipboard::new().unwrap();
 
     if let Err(e) = clipboard.set_text(message) {
-        warn!("Set Clipboard Err: {}", e);
+        warn!("Set Clipboard Err: {e}");
     }
 }

@@ -19,19 +19,18 @@ pub fn add_npc(
     let start_pos = get_start_map_pos(cur_map, pos.map)
         .unwrap_or_else(|| Vec2::new(0.0, 0.0));
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
-    let mut image = Image::new(
+    let image = Image::new(
         Some(systems.resource.npcs[npc_data.sprite as usize].allocation),
         &mut systems.renderer,
+        Vec3::new(
+            start_pos.x + texture_pos.x,
+            start_pos.y + texture_pos.y,
+            ORDER_NPC,
+        ),
+        Vec2::new(40.0, 40.0),
+        Vec4::new(0.0, 0.0, 40.0, 40.0),
         0,
     );
-
-    image.pos = Vec3::new(
-        start_pos.x + texture_pos.x,
-        start_pos.y + texture_pos.y,
-        ORDER_NPC,
-    );
-    image.hw = Vec2::new(40.0, 40.0);
-    image.uv = Vec4::new(0.0, 0.0, 40.0, 40.0);
 
     let sprite = systems.gfx.add_image(image, 0, "Npc Sprite", false);
 
@@ -42,22 +41,27 @@ pub fn add_npc(
         Vec3::new(screen_pos.x as f32, screen_pos.y as f32, ORDER_NPC),
     );
 
-    let mut bg_image = Rect::new(&mut systems.renderer, 0);
+    let mut bg_image = Rect::new(
+        &mut systems.renderer,
+        Vec3::new(0.0, 0.0, ORDER_HPBAR_BG),
+        Vec2::new(20.0, 6.0),
+        0,
+    );
 
     bg_image
-        .set_size(Vec2::new(20.0, 6.0))
-        .set_position(Vec3::new(0.0, 0.0, ORDER_HPBAR_BG))
         .set_color(Color::rgba(80, 80, 80, 255))
         .set_border_width(1.0)
         .set_border_color(Color::rgba(10, 10, 10, 255));
 
     let bg_index = systems.gfx.add_rect(bg_image, 0, "Npc HP BG", false);
-    let mut bar_image = Rect::new(&mut systems.renderer, 0);
+    let mut bar_image = Rect::new(
+        &mut systems.renderer,
+        Vec3::new(1.0, 1.0, ORDER_HPBAR),
+        Vec2::new(18.0, 4.0),
+        0,
+    );
 
-    bar_image
-        .set_size(Vec2::new(18.0, 4.0))
-        .set_position(Vec3::new(1.0, 1.0, ORDER_HPBAR))
-        .set_color(Color::rgba(180, 30, 30, 255));
+    bar_image.set_color(Color::rgba(180, 30, 30, 255));
 
     let bar_index = systems.gfx.add_rect(bar_image, 0, "Npc HP Bar", false);
     let entity_name = create_label(
@@ -537,14 +541,17 @@ pub fn create_npc_light(
     entity: GlobalKey,
 ) {
     if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
-        n_data.light = systems.gfx.add_area_light(game_light, AreaLight {
-            pos: Vec2::new(0.0, 0.0),
-            color: Color::rgba(100, 100, 100, 20),
-            max_distance: 20.0,
-            animate: true,
-            anim_speed: 5.0,
-            dither: 0.8,
-            camera_type: CameraType::None,
-        })
+        n_data.light = systems.gfx.add_area_light(
+            game_light,
+            AreaLight {
+                pos: Vec2::new(0.0, 0.0),
+                color: Color::rgba(100, 100, 100, 20),
+                max_distance: 20.0,
+                animate: true,
+                anim_speed: 5.0,
+                dither: 0.8,
+                camera_type: CameraType::None,
+            },
+        )
     }
 }

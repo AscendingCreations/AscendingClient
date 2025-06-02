@@ -1,4 +1,4 @@
-use crate::{data_types::*, socket::*, Result};
+use crate::{Result, data_types::*, socket::*};
 use log::warn;
 use serde::{Deserialize, Serialize};
 use speedy::{Endianness, Readable, Writable};
@@ -38,7 +38,7 @@ pub fn load_items() -> Result<Vec<ItemData>> {
 }
 
 fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<ItemData>> {
-    let name = format!("./data/items/{}.bin", id);
+    let name = format!("./data/items/{id}.bin");
     buffer.clear();
 
     match OpenOptions::new().read(true).open(name) {
@@ -47,7 +47,7 @@ fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<ItemData>> {
             Ok(Some(ItemData::read_from_buffer(buffer).unwrap()))
         }
         Err(e) => {
-            warn!("Item Load File Num {} Err: {}", id, e);
+            warn!("Item Load File Num {id} Err: {e}");
             Ok(None)
         }
     }

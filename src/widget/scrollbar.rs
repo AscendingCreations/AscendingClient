@@ -1,4 +1,4 @@
-use crate::{is_within_area, logic::*, GfxType, SystemHolder};
+use crate::{GfxType, SystemHolder, is_within_area, logic::*};
 use graphics::*;
 
 pub struct ScrollbarBackground {
@@ -69,28 +69,28 @@ impl Scrollbar {
         tooltip: Option<String>,
     ) -> Self {
         let bg = if let Some(data) = background {
-            let mut scrollbg_rect = Rect::new(&mut systems.renderer, 0);
             let pos = base_pos + (adjust_pos * systems.scale as f32).floor();
             let bg_pos = Vec3::new(pos.x - 1.0, pos.y - 1.0, z_pos);
-            scrollbg_rect
-                .set_position(bg_pos)
-                .set_color(data.color)
-                .set_radius(data.radius);
-
-            if data.got_border {
-                scrollbg_rect
-                    .set_border_width(1.0)
-                    .set_border_color(data.border_color);
-            }
-
             let (w, h) = if is_vertical {
                 (thickness + 2.0, bar_size + 2.0)
             } else {
                 (bar_size + 2.0, thickness + 2.0)
             };
 
-            scrollbg_rect
-                .set_size((Vec2::new(w, h) * systems.scale as f32).floor());
+            let mut scrollbg_rect = Rect::new(
+                &mut systems.renderer,
+                bg_pos,
+                (Vec2::new(w, h) * systems.scale as f32).floor(),
+                0,
+            );
+
+            scrollbg_rect.set_color(data.color).set_radius(data.radius);
+
+            if data.got_border {
+                scrollbg_rect
+                    .set_border_width(1.0)
+                    .set_border_color(data.border_color);
+            }
 
             Some(systems.gfx.add_rect(
                 scrollbg_rect,
@@ -128,7 +128,6 @@ impl Scrollbar {
             end_pos - start_pos
         };
 
-        let mut scroll_rect = Rect::new(&mut systems.renderer, 0);
         let (pos, size) = if is_vertical {
             (
                 Vec2::new(
@@ -152,14 +151,20 @@ impl Scrollbar {
                 ),
             )
         };
-        scroll_rect
-            .set_position(Vec3::new(
+
+        let mut scroll_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(
                 base_pos.x + pos.x,
                 base_pos.y + pos.y,
                 z_pos.sub_f32(z_step.0, z_step.1),
-            ))
+            ),
+            size,
+            0,
+        );
+
+        scroll_rect
             .set_color(scrollbar.color)
-            .set_size(size)
             .set_radius(scrollbar.radius);
         if scrollbar.got_border {
             scroll_rect

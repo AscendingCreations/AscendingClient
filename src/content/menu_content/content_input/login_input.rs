@@ -157,7 +157,7 @@ fn trigger_button(
             ) {
                 Ok(_) => {}
                 Err(e) => {
-                    error!("send_login error: {:?}", e);
+                    error!("send_login error: {e:?}");
                     alert.show_alert(
                         systems,
                         AlertType::Inform,

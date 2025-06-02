@@ -1,7 +1,7 @@
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use crate::{create_label, data_types::*, SystemHolder};
+use crate::{SystemHolder, create_label, data_types::*};
 
 pub struct Tooltip {
     window: GfxType,
@@ -18,10 +18,13 @@ impl Tooltip {
     pub fn new(systems: &mut SystemHolder) -> Self {
         let visible = false;
 
-        let mut window_rect = Rect::new(&mut systems.renderer, 0);
+        let mut window_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(0.0, 0.0, ORDER_TOOLTIP),
+            Vec2::new(24.0, 24.0),
+            0,
+        );
         window_rect
-            .set_position(Vec3::new(0.0, 0.0, ORDER_TOOLTIP))
-            .set_size(Vec2::new(24.0, 24.0))
             .set_color(Color::rgba(130, 130, 130, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));

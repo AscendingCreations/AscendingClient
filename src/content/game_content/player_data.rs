@@ -56,13 +56,13 @@ pub fn player_get_weapon_damage(
         if let Some(Entity::Player(p_data)) = world.entities.get(entity) {
             let mut dmg = (0, 0);
 
-            if p_data.equipment.items[EquipmentType::Weapon as usize].val > 0 {
-                if let Some(item) = systems.base.item.get(
+            if p_data.equipment.items[EquipmentType::Weapon as usize].val > 0
+                && let Some(item) = systems.base.item.get(
                     p_data.equipment.items[EquipmentType::Weapon as usize].num
                         as usize,
-                ) {
-                    dmg = (item.data[0], item.data[1]);
-                }
+                )
+            {
+                dmg = (item.data[0], item.data[1]);
             }
 
             dmg

@@ -190,7 +190,7 @@ impl Alert {
         };
 
         header_text
-            .set_position(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
+            .set_pos(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
             .set_bounds(bounds);
         header_text.size = Vec2::new(
             header_text_size.x,
@@ -209,17 +209,23 @@ impl Alert {
 
         self.text.push(header_text_index);
 
-        let mut bg = Rect::new(&mut systems.renderer, 0);
+        let mut bg = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(0.0, 0.0, ORDER_ALERT_BG),
+            Vec2::new(systems.size.width, systems.size.height),
+            0,
+        );
 
-        bg.set_position(Vec3::new(0.0, 0.0, ORDER_ALERT_BG))
-            .set_size(Vec2::new(systems.size.width, systems.size.height))
-            .set_color(Color::rgba(10, 10, 10, 140));
+        bg.set_color(Color::rgba(10, 10, 10, 140));
 
-        let mut window = Rect::new(&mut systems.renderer, 0);
+        let mut window = Rect::new(
+            &mut systems.renderer,
+            w_pos - Vec3::new(1.0, 1.0, 0.0),
+            w_size + Vec2::new(2.0, 2.0),
+            0,
+        );
 
         window
-            .set_position(w_pos - Vec3::new(1.0, 1.0, 0.0))
-            .set_size(w_size + Vec2::new(2.0, 2.0))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255))
             .set_color(Color::rgba(160, 160, 160, 255));
@@ -234,7 +240,7 @@ impl Alert {
                 w_pos.y + (43.0 * systems.scale as f32).floor(),
             );
 
-            text.set_position(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
+            text.set_pos(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
                 .set_bounds(Bounds::new(
                     pos.x,
                     pos.y,
@@ -249,19 +255,18 @@ impl Alert {
             self.text
                 .push(systems.gfx.add_text(text, 5, "Alert Text", true));
 
-            let mut header = Rect::new(&mut systems.renderer, 0);
-
-            header
-                .set_position(Vec3::new(
+            let mut header = Rect::new(
+                &mut systems.renderer,
+                Vec3::new(
                     w_pos.x,
                     w_pos.y + w_size.y - (30.0 * systems.scale as f32).floor(),
                     ORDER_ALERT_HEADER,
-                ))
-                .set_size(Vec2::new(
-                    w_size.x,
-                    (30.0 * systems.scale as f32).floor(),
-                ))
-                .set_color(Color::rgba(100, 100, 100, 255));
+                ),
+                Vec2::new(w_size.x, (30.0 * systems.scale as f32).floor()),
+                0,
+            );
+
+            header.set_color(Color::rgba(100, 100, 100, 255));
             self.window.push(systems.gfx.add_rect(
                 header,
                 4,
@@ -354,22 +359,23 @@ impl Alert {
             AlertType::Input => {
                 let textbox_pos =
                     Vec2::new(((orig_size.x - 100.0) * 0.5).floor(), 50.0);
-                let mut textbox_bg = Rect::new(&mut systems.renderer, 0);
-
-                textbox_bg
-                    .set_size(
-                        (Vec2::new(104.0, 24.0) * systems.scale as f32).floor(),
-                    )
-                    .set_color(Color::rgba(120, 120, 120, 255))
-                    .set_border_width(1.0)
-                    .set_border_color(Color::rgba(40, 40, 40, 255))
-                    .set_position(Vec3::new(
+                let mut textbox_bg = Rect::new(
+                    &mut systems.renderer,
+                    Vec3::new(
                         w_pos.x
                             + (textbox_pos.x * systems.scale as f32).floor(),
                         w_pos.y
                             + (textbox_pos.y * systems.scale as f32).floor(),
                         ORDER_ALERT_TEXTBOX_BG,
-                    ));
+                    ),
+                    (Vec2::new(104.0, 24.0) * systems.scale as f32).floor(),
+                    0,
+                );
+
+                textbox_bg
+                    .set_color(Color::rgba(120, 120, 120, 255))
+                    .set_border_width(1.0)
+                    .set_border_color(Color::rgba(40, 40, 40, 255));
 
                 let textbox = Textbox::new(
                     systems,
@@ -572,15 +578,15 @@ impl Alert {
         key: &Key,
         pressed: bool,
     ) {
-        if let Some(textbox) = &mut self.input_box {
-            if textbox.selected {
-                textbox.textbox.enter_text(
-                    systems,
-                    key,
-                    pressed,
-                    textbox.numeric_only,
-                );
-            }
+        if let Some(textbox) = &mut self.input_box
+            && textbox.selected
+        {
+            textbox.textbox.enter_text(
+                systems,
+                key,
+                pressed,
+                textbox.numeric_only,
+            );
         }
     }
 
@@ -737,19 +743,18 @@ impl Alert {
         tooltip: &mut Tooltip,
         screen_pos: Vec2,
     ) {
-        if let Some(textbox) = &mut self.input_box {
-            if is_within_area(
+        if let Some(textbox) = &mut self.input_box
+            && is_within_area(
                 screen_pos,
                 Vec2::new(
                     textbox.textbox.base_pos.x,
                     textbox.textbox.base_pos.y,
                 ) + (textbox.textbox.adjust_pos * systems.scale as f32).floor(),
                 (textbox.textbox.size * systems.scale as f32).floor(),
-            ) {
-                if let Some(msg) = &textbox.textbox.tooltip {
-                    tooltip.init_tooltip(systems, screen_pos, msg.clone());
-                }
-            }
+            )
+            && let Some(msg) = &textbox.textbox.tooltip
+        {
+            tooltip.init_tooltip(systems, screen_pos, msg.clone());
         }
     }
 
@@ -779,10 +784,10 @@ impl Alert {
     }
 
     pub fn release_textbox(&mut self) {
-        if let Some(textbox) = &mut self.input_box {
-            if textbox.selected {
-                textbox.textbox.set_hold(false);
-            }
+        if let Some(textbox) = &mut self.input_box
+            && textbox.selected
+        {
+            textbox.textbox.set_hold(false);
         }
     }
 
@@ -791,10 +796,10 @@ impl Alert {
         systems: &mut SystemHolder,
         screen_pos: Vec2,
     ) {
-        if let Some(textbox) = &mut self.input_box {
-            if textbox.selected {
-                textbox.textbox.hold_move(systems, screen_pos);
-            }
+        if let Some(textbox) = &mut self.input_box
+            && textbox.selected
+        {
+            textbox.textbox.hold_move(systems, screen_pos);
         }
     }
 }

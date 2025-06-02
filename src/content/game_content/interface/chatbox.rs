@@ -42,10 +42,13 @@ impl ChatTab {
     ) -> Self {
         let pos = base_pos + (adjust_pos * systems.scale as f32).floor();
 
-        let mut bg_rect = Rect::new(&mut systems.renderer, 0);
+        let mut bg_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(pos.x, pos.y, z_order[0]),
+            (size * systems.scale as f32).floor(),
+            0,
+        );
         bg_rect
-            .set_position(Vec3::new(pos.x, pos.y, z_order[0]))
-            .set_size((size * systems.scale as f32).floor())
             .set_border_width(1.0)
             .set_color(Color::rgba(100, 100, 100, 255))
             .set_border_color(Color::rgba(40, 40, 40, 255));
@@ -212,34 +215,34 @@ impl Chatbox {
         let detail_2 = w_pos.z.sub_f32(0.002, 3);
         let detail_3 = w_pos.z.sub_f32(0.003, 3);
 
-        let mut window_rect = Rect::new(&mut systems.renderer, 0);
+        let mut window_rect =
+            Rect::new(&mut systems.renderer, w_pos, w_size, 0);
         window_rect
-            .set_position(w_pos)
-            .set_size(w_size)
             .set_color(Color::rgba(120, 120, 120, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
         let window = systems.gfx.add_rect(window_rect, 0, "Chatbox BG", true);
 
-        let mut textbox_rect = Rect::new(&mut systems.renderer, 0);
         let textbox_zpos = detail_1;
-        textbox_rect
-            .set_position(Vec3::new(
+        let mut textbox_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(
                 w_pos.x + (5.0 * systems.scale as f32).floor(),
                 w_pos.y + (5.0 * systems.scale as f32).floor(),
                 textbox_zpos,
-            ))
-            .set_size(Vec2::new(
+            ),
+            Vec2::new(
                 w_size.x - (75.0 * systems.scale as f32).floor(),
                 (24.0 * systems.scale as f32).floor(),
-            ))
-            .set_color(Color::rgba(80, 80, 80, 255));
+            ),
+            0,
+        );
+        textbox_rect.set_color(Color::rgba(80, 80, 80, 255));
         let textbox_bg =
             systems
                 .gfx
                 .add_rect(textbox_rect, 0, "Chatbox Textbox BG", true);
 
-        let mut chatarea_rect = Rect::new(&mut systems.renderer, 0);
         let chatarea_zorder = detail_1;
         let chat_area_pos = Vec2::new(
             w_pos.x + (5.0 * systems.scale as f32).floor(),
@@ -249,14 +252,15 @@ impl Chatbox {
             w_size.x - (39.0 * systems.scale as f32).floor(),
             w_size.y - (39.0 * systems.scale as f32).floor(),
         );
-        chatarea_rect
-            .set_position(Vec3::new(
-                chat_area_pos.x,
-                chat_area_pos.y,
-                chatarea_zorder,
-            ))
-            .set_size(chat_areasize)
-            .set_color(Color::rgba(140, 140, 140, 255));
+
+        let mut chatarea_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(chat_area_pos.x, chat_area_pos.y, chatarea_zorder),
+            chat_areasize,
+            0,
+        );
+
+        chatarea_rect.set_color(Color::rgba(140, 140, 140, 255));
         let chatarea_bg =
             systems
                 .gfx
@@ -446,11 +450,13 @@ impl Chatbox {
         ];
         chat_tab[0].set_select(systems, false);
 
-        let mut selection_rect = Rect::new(&mut systems.renderer, 0);
-        selection_rect
-            .set_position(Vec3::new(0.0, 0.0, detail_3))
-            .set_size(Vec2::new(0.0, 0.0))
-            .set_color(Color::rgba(60, 60, 60, 255));
+        let mut selection_rect = Rect::new(
+            &mut systems.renderer,
+            Vec3::new(0.0, 0.0, detail_3),
+            Vec2::new(0.0, 0.0),
+            0,
+        );
+        selection_rect.set_color(Color::rgba(60, 60, 60, 255));
         let msg_selection =
             systems
                 .gfx
@@ -795,10 +801,10 @@ impl Chatbox {
     }
 
     pub fn get_selected_msg(&mut self) -> Option<String> {
-        if let Some(index) = self.msg_select_index {
-            if let Some(chatdata) = self.chat.get(index) {
-                return Some(chatdata.msg.clone());
-            }
+        if let Some(index) = self.msg_select_index
+            && let Some(chatdata) = self.chat.get(index)
+        {
+            return Some(chatdata.msg.clone());
         }
         None
     }
@@ -919,16 +925,21 @@ impl Chatbox {
 
         let msg = if let Some(header) = header_msg {
             let header_color = Attrs::new().color(header.1);
-            systems.gfx.set_rich_text(&mut systems.renderer, &text, [
-                (header.0.as_str(), header_color),
-                (msg.0.as_str(), msg_color),
-            ]);
+            systems.gfx.set_rich_text(
+                &mut systems.renderer,
+                &text,
+                [
+                    (header.0.as_str(), header_color),
+                    (msg.0.as_str(), msg_color),
+                ],
+            );
             format!("{}{}", header.0, msg.0)
         } else {
-            systems.gfx.set_rich_text(&mut systems.renderer, &text, [(
-                msg.0.as_str(),
-                msg_color,
-            )]);
+            systems.gfx.set_rich_text(
+                &mut systems.renderer,
+                &text,
+                [(msg.0.as_str(), msg_color)],
+            );
             msg.0
         };
         let size = systems.gfx.get_measure(&text);
@@ -946,12 +957,11 @@ impl Chatbox {
             can_channel_show(channel, self.selected_tab),
         );
 
-        if self.chat.len() >= MAX_CHAT {
-            if let Some(chat) = self.chat.pop() {
-                if can_channel_show(chat.channel, self.selected_tab) {
-                    self.chat_line_size -= chat.size.y
-                }
-            }
+        if self.chat.len() >= MAX_CHAT
+            && let Some(chat) = self.chat.pop()
+            && can_channel_show(chat.channel, self.selected_tab)
+        {
+            self.chat_line_size -= chat.size.y
         }
 
         if can_channel_show(channel, self.selected_tab) {

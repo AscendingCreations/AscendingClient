@@ -1,4 +1,4 @@
-use crate::{data_types::*, socket::*, Result};
+use crate::{Result, data_types::*, socket::*};
 use log::warn;
 use serde::{Deserialize, Serialize};
 use speedy::{Endianness, Readable, Writable};
@@ -77,7 +77,7 @@ pub fn load_npcs() -> Result<Vec<NpcData>> {
 }
 
 fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<NpcData>> {
-    let name = format!("./data/npcs/{}.bin", id);
+    let name = format!("./data/npcs/{id}.bin");
 
     buffer.clear();
 
@@ -87,7 +87,7 @@ fn load_file(id: usize, buffer: &mut Vec<u8>) -> Result<Option<NpcData>> {
             Ok(Some(NpcData::read_from_buffer(buffer).unwrap()))
         }
         Err(e) => {
-            warn!("Npc Load File Num {} Err: {}", id, e);
+            warn!("Npc Load File Num {id} Err: {e}");
             Ok(None)
         }
     }

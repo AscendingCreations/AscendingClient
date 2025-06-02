@@ -276,11 +276,11 @@ impl GameContent {
 
         systems.gfx.set_visible(&self.game_lights, true);
 
-        if let Some(music) = &get_map_music(systems, self.map.mapindex[0]) {
-            if self.current_music != *music {
-                self.current_music.clone_from(music);
-                systems.audio.set_music(format!("./audio/{}", music))?;
-            }
+        if let Some(music) = &get_map_music(systems, self.map.mapindex[0])
+            && self.current_music != *music
+        {
+            self.current_music.clone_from(music);
+            systems.audio.set_music(format!("./audio/{music}"))?;
         }
 
         self.finalized = true;
@@ -298,10 +298,10 @@ impl GameContent {
         for i in 0..9 {
             let (mx, my) = get_map_loc(map.x, map.y, i);
 
-            if let Some(mappos) = get_map_id(systems, self.map.mapindex[i]) {
-                if map.checkdistance(mappos) > 1 {
-                    set_map_visible(systems, self.map.mapindex[i], false);
-                }
+            if let Some(mappos) = get_map_id(systems, self.map.mapindex[i])
+                && map.checkdistance(mappos) > 1
+            {
+                set_map_visible(systems, self.map.mapindex[i], false);
             }
 
             let key = get_map_key(systems, mx, my, map.group, buffer)?;
