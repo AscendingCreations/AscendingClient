@@ -72,7 +72,12 @@ pub struct GameContent {
 
 impl GameContent {
     pub fn new(systems: &mut SystemHolder) -> Self {
-        let mut lights = Lights::new(&mut systems.renderer, 0, ORDER_LIGHT);
+        let mut lights = Lights::new(
+            &mut systems.renderer,
+            0,
+            Vec3::new(0.0, 0.0, ORDER_LIGHT),
+            Vec2::new(systems.size.width, systems.size.height),
+        );
         lights.world_color = Vec4::new(0.0, 0.0, 0.0, 0.8);
         lights.enable_lights = true;
 
@@ -118,6 +123,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
+        map_renderer: &mut MapRenderer,
     ) -> Result<()> {
         for entity in self.players.borrow().iter() {
             unload_player(world, systems, self, *entity)?;
@@ -136,7 +142,7 @@ impl GameContent {
         self.myentity = None;
         self.interface.unload(systems);
         self.target.unload(systems);
-        self.map.unload(systems);
+        self.map.unload(systems, map_renderer);
         self.player_data.unload();
         self.float_text.unload(systems);
         self.camera.0 = Vec2::new(0.0, 0.0);
@@ -148,8 +154,9 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
+        map_renderer: &mut MapRenderer,
     ) -> Result<()> {
-        self.clear_data(world, systems)
+        self.clear_data(world, systems, map_renderer)
     }
 
     pub fn finalize_entity(
@@ -290,6 +297,7 @@ impl GameContent {
     pub fn init_map(
         &mut self,
         systems: &mut SystemHolder,
+        map_renderer: &mut MapRenderer,
         map: MapPosition,
         buffer: &mut BufferTask,
     ) -> Result<()> {
@@ -304,7 +312,8 @@ impl GameContent {
                 set_map_visible(systems, self.map.mapindex[i], false);
             }
 
-            let key = get_map_key(systems, mx, my, map.group, buffer)?;
+            let key =
+                get_map_key(systems, map_renderer, mx, my, map.group, buffer)?;
             self.map.mapindex[i] = key;
             set_map_pos(systems, key, get_mapindex_base_pos(i));
             set_map_visible(systems, key, true);
@@ -317,6 +326,7 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
+        map_renderer: &mut MapRenderer,
         socket: &mut Poller,
         dir: Direction,
         buffer: &mut BufferTask,
@@ -328,7 +338,7 @@ impl GameContent {
             Direction::Up => self.map.map_pos.y += 1,
         }
 
-        self.init_map(systems, self.map.map_pos, buffer)?;
+        self.init_map(systems, map_renderer, self.map.map_pos, buffer)?;
 
         update_camera(world, self, systems, socket)
     }
@@ -525,6 +535,7 @@ impl GameContent {
 pub fn update_player(
     world: &mut World,
     systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
     socket: &mut Poller,
     content: &mut GameContent,
     buffer: &mut BufferTask,
@@ -534,7 +545,13 @@ pub fn update_player(
     for entity in players.borrow().iter() {
         move_player(world, systems, *entity, MovementType::MovementBuffer)?;
         process_player_movement(
-            world, systems, socket, *entity, content, buffer,
+            world,
+            systems,
+            map_renderer,
+            socket,
+            *entity,
+            content,
+            buffer,
         )?;
         process_player_attack(world, systems, *entity, seconds)?
     }

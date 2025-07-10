@@ -1,5 +1,6 @@
 use crate::{BufferTask, data_types::*, fade::*, socket::*};
 use ahash::AHashMap;
+use graphics::MapRenderer;
 use serde::{Deserialize, Serialize};
 
 use super::{
@@ -7,16 +8,18 @@ use super::{
     handle_trade::*,
 };
 
-type PacketFunction = fn(
-    &mut Poller,
-    &mut World,
-    &mut SystemHolder,
-    &mut Content,
-    &mut Alert,
-    &mut MByteBuffer,
-    f32,
-    &mut BufferTask,
-) -> Result<()>;
+pub struct PacketPasser<'a> {
+    pub socket: &'a mut Poller,
+    pub world: &'a mut World,
+    pub systems: &'a mut SystemHolder,
+    pub content: &'a mut Content,
+    pub alert: &'a mut Alert,
+    pub map_renderer: &'a mut MapRenderer,
+    pub seconds: f32,
+    pub buffer: &'a mut BufferTask,
+}
+
+type PacketFunction = fn(&mut MByteBuffer, &mut PacketPasser) -> Result<()>;
 
 #[derive(
     Copy,

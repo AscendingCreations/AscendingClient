@@ -45,14 +45,14 @@ impl Fade {
         gfx_collection: &mut GfxCollection,
         screen_size: &PhysicalSize<f32>,
     ) {
-        let mut rect = Rect::new(
+        let rect = Rect::new(
             renderer,
             Vec3::new(0.0, 0.0, ORDER_FADE),
             Vec2::new(screen_size.width, screen_size.height),
+            Color::rgba(0, 0, 0, 0),
             0,
         );
 
-        rect.set_color(Color::rgba(0, 0, 0, 0));
         self.f_image = gfx_collection.add_rect(rect, 4, "Fade Image", true);
         self.show = false;
         self.f_tmr = 0.0;
@@ -148,14 +148,14 @@ impl MapFade {
         gfx_collection: &mut GfxCollection,
         screen_size: &PhysicalSize<f32>,
     ) {
-        let mut rect = Rect::new(
+        let rect = Rect::new(
             renderer,
             Vec3::new(0.0, 0.0, ORDER_MAP_FADE),
             Vec2::new(screen_size.width, screen_size.height),
+            Color::rgba(0, 0, 0, 0),
             0,
         );
 
-        rect.set_color(Color::rgba(0, 0, 0, 0));
         self.f_image = gfx_collection.add_rect(rect, 4, "Map Fade Image", true);
         self.show = false;
         self.f_tmr = 0.0;
@@ -248,6 +248,7 @@ impl MapFade {
 
 pub fn fade_end(
     systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
     world: &mut World,
     content: &mut Content,
     socket: &mut Poller,
@@ -256,7 +257,12 @@ pub fn fade_end(
     #[allow(clippy::single_match)]
     match systems.fade.f_end_index {
         FADE_SWITCH_TO_GAME => {
-            content.switch_content(world, systems, ContentType::Game)?;
+            content.switch_content(
+                world,
+                systems,
+                map_renderer,
+                ContentType::Game,
+            )?;
 
             let pos = if let Some(entity) = content.game_content.myentity {
                 if let Some(Entity::Player(p_data)) = world.entities.get(entity)
@@ -269,7 +275,12 @@ pub fn fade_end(
                 Position::default()
             };
 
-            content.game_content.init_map(systems, pos.map, buffer)?;
+            content.game_content.init_map(
+                systems,
+                map_renderer,
+                pos.map,
+                buffer,
+            )?;
             content
                 .game_content
                 .init_finalized_data(world, systems, socket)?;
@@ -282,7 +293,12 @@ pub fn fade_end(
             );
         }
         FADE_SWITCH_TO_TITLE => {
-            content.switch_content(world, systems, ContentType::Menu)?;
+            content.switch_content(
+                world,
+                systems,
+                map_renderer,
+                ContentType::Menu,
+            )?;
 
             systems.fade.init_fade(
                 &mut systems.gfx,

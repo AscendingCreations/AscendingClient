@@ -119,10 +119,10 @@ impl Checkbox {
                     &mut systems.renderer,
                     Vec3::new(pos.x, pos.y, z_order),
                     box_size * systems.scale as f32,
+                    data.rect_color,
                     0,
                 );
-                rect.set_color(data.rect_color)
-                    .set_radius(data.border_radius);
+                rect.set_radius(data.border_radius);
 
                 if data.got_border {
                     rect.set_border_width(1.0)
@@ -170,10 +170,10 @@ impl Checkbox {
                         z_order.sub_f32(z_step.0, z_step.1),
                     ),
                     data.size * systems.scale as f32,
+                    data.rect_color,
                     0,
                 );
-                rect.set_color(data.rect_color)
-                    .set_radius(data.border_radius);
+                rect.set_radius(data.border_radius);
 
                 if data.got_border {
                     rect.set_border_width(1.0)

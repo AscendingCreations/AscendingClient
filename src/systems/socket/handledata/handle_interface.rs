@@ -5,24 +5,20 @@ use crate::{
     COLOR_WHITE, FtlType, GlobalKey, IsUsingType, MessageChannel, Position,
     Result, UserAccess, World,
     content::{Content, Window, add_float_text, open_interface},
-    systems::{BufferTask, ChatTask, Poller, SystemHolder},
+    systems::{
+        BufferTask, ChatTask, Poller, SystemHolder, mapper::PacketPasser,
+    },
 };
 
 pub fn handle_alertmsg(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    _content: &mut Content,
-    alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let message = data.read::<String>()?;
     let _close = data.read::<u8>()?;
 
-    alert.show_alert(
-        systems,
+    passer.alert.show_alert(
+        passer.systems,
         AlertType::Inform,
         message,
         "Alert Message".into(),
@@ -35,14 +31,8 @@ pub fn handle_alertmsg(
 }
 
 pub fn handle_fltalert(
-    _socket: &mut Poller,
-    _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    _passer: &mut PacketPasser,
 ) -> Result<()> {
     let _flttype = data.read::<FtlType>()?;
     let _message = data.read::<String>()?;
@@ -51,14 +41,8 @@ pub fn handle_fltalert(
 }
 
 pub fn handle_chatmsg(
-    _socket: &mut Poller,
-    _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let count = data.read::<u32>()?;
 
@@ -80,7 +64,7 @@ pub fn handle_chatmsg(
             None
         };
 
-        buffer.chatbuffer.add_task(ChatTask::new(
+        passer.buffer.chatbuffer.add_task(ChatTask::new(
             (msg_string, COLOR_WHITE),
             header,
             channel,
@@ -91,74 +75,63 @@ pub fn handle_chatmsg(
 }
 
 pub fn handle_openstorage(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let _ = data.read::<u32>()?;
 
     open_interface(
-        &mut content.game_content.interface,
-        systems,
+        &mut passer.content.game_content.interface,
+        passer.systems,
         Window::Storage,
     );
 
-    content
+    passer
+        .content
         .game_content
         .keyinput
         .iter_mut()
         .for_each(|key_press| *key_press = false);
 
-    content.game_content.player_data.is_using_type = IsUsingType::Bank;
+    passer.content.game_content.player_data.is_using_type = IsUsingType::Bank;
 
     Ok(())
 }
 
 pub fn handle_openshop(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let shop_index = data.read::<u16>()?;
 
-    open_interface(&mut content.game_content.interface, systems, Window::Shop);
-    content
+    open_interface(
+        &mut passer.content.game_content.interface,
+        passer.systems,
+        Window::Shop,
+    );
+    passer
+        .content
         .game_content
         .interface
         .shop
-        .set_shop(systems, shop_index as usize);
+        .set_shop(passer.systems, shop_index as usize);
 
-    content
+    passer
+        .content
         .game_content
         .keyinput
         .iter_mut()
         .for_each(|key_press| *key_press = false);
 
-    content.game_content.player_data.is_using_type =
+    passer.content.game_content.player_data.is_using_type =
         IsUsingType::Store(shop_index as i64);
 
     Ok(())
 }
 
 pub fn handle_damage(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let count = data.read::<u32>()?;
 
@@ -174,7 +147,13 @@ pub fn handle_damage(
             (format!("+{amount}"), COLOR_GREEN)
         };
 
-        add_float_text(systems, &mut content.game_content, pos, text, color);
+        add_float_text(
+            passer.systems,
+            &mut passer.content.game_content,
+            pos,
+            text,
+            color,
+        );
     }
 
     Ok(())

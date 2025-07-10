@@ -29,16 +29,16 @@ impl Login {
             &mut systems.renderer,
             Vec3::new(pos.x - 1.0, pos.y - 1.0, ORDER_MENU_WINDOW),
             size + 2.0,
+            Color::rgba(160, 160, 160, 255),
             0,
         );
 
         menu_rect
-            .set_color(Color::rgba(160, 160, 160, 255))
             .set_border_color(Color::rgba(10, 10, 10, 255))
             .set_border_width(1.0);
         window.push(systems.gfx.add_rect(menu_rect, 0, "Login Window", true));
 
-        let mut header_rect = Rect::new(
+        let header_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(
                 pos.x,
@@ -46,10 +46,10 @@ impl Login {
                 ORDER_MENU_WINDOW_CONTENT,
             ),
             Vec2::new(size.x, (30.0 * systems.scale as f32).floor()),
+            Color::rgba(120, 120, 120, 255),
             0,
         );
 
-        header_rect.set_color(Color::rgba(120, 120, 120, 255));
         window.push(systems.gfx.add_rect(header_rect, 0, "Login Header", true));
 
         let header_text = create_label(
@@ -86,7 +86,7 @@ impl Login {
                 1 => 123.0,
                 _ => 154.0,
             };
-            let mut labelbox = Rect::new(
+            let labelbox = Rect::new(
                 &mut systems.renderer,
                 Vec3::new(
                     pos.x + (24.0 * systems.scale as f32).floor(),
@@ -94,9 +94,10 @@ impl Login {
                     ORDER_MENU_WINDOW_CONTENT,
                 ),
                 (Vec2::new(116.0, 24.0) * systems.scale as f32).floor(),
+                Color::rgba(208, 208, 208, 255),
                 0,
             );
-            let mut textbox_bg = Rect::new(
+            let textbox_bg = Rect::new(
                 &mut systems.renderer,
                 Vec3::new(
                     pos.x + (140.0 * systems.scale as f32).floor(),
@@ -104,11 +105,9 @@ impl Login {
                     ORDER_MENU_WINDOW_CONTENT,
                 ),
                 (Vec2::new(184.0, 24.0) * systems.scale as f32).floor(),
+                Color::rgba(90, 90, 90, 255),
                 0,
             );
-
-            labelbox.set_color(Color::rgba(208, 208, 208, 255));
-            textbox_bg.set_color(Color::rgba(90, 90, 90, 255));
             window.push(systems.gfx.add_rect(
                 labelbox,
                 0,

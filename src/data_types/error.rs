@@ -235,6 +235,11 @@ pub enum ClientError {
         #[snafu(backtrace)]
         backtrace: Backtrace,
     },
+    #[snafu(display("Failed to create map. BACKTRACE: {backtrace:?}"))]
+    MapCreationFailed {
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
 }
 
 impl<T> From<TryLockError<T>> for ClientError {

@@ -1,8 +1,11 @@
+use graphics::MapRenderer;
 use log::info;
 
 use crate::{
     BufferTask, Entity, EntityKind, MyInstant, Position, Result, SystemHolder,
-    World, content::*, dir_to_enum, send_gameping,
+    World,
+    content::{game_content::map, *},
+    dir_to_enum, send_gameping,
 };
 
 use super::Poller;
@@ -19,6 +22,7 @@ pub fn game_loop(
     socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
     content: &mut Content,
     buffer: &mut BufferTask,
     seconds: f32,
@@ -35,6 +39,7 @@ pub fn game_loop(
                 update_player(
                     world,
                     systems,
+                    map_renderer,
                     socket,
                     &mut content.game_content,
                     buffer,

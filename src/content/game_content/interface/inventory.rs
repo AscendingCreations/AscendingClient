@@ -66,10 +66,10 @@ impl Inventory {
             &mut systems.renderer,
             Vec3::new(pos.x - 1.0, pos.y - 1.0, w_pos.z),
             w_size + 2.0,
+            Color::rgba(110, 110, 110, 255),
             0,
         );
-        rect.set_color(Color::rgba(110, 110, 110, 255))
-            .set_border_width(1.0)
+        rect.set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
         let bg = systems.gfx.add_rect(rect, 0, "Inv BG", false);
 
@@ -77,14 +77,14 @@ impl Inventory {
             Vec2::new(pos.x, pos.y + (237.0 * systems.scale as f32).floor());
         let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
-        let mut header_rect = Rect::new(
+        let header_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(header_pos.x, header_pos.y, header_zpos),
             (header_size * systems.scale as f32).floor(),
+            Color::rgba(70, 70, 70, 255),
             0,
         );
 
-        header_rect.set_color(Color::rgba(70, 70, 70, 255));
         let header = systems.gfx.add_rect(header_rect, 0, "Inv Header", false);
 
         let text = create_label(
@@ -114,7 +114,7 @@ impl Inventory {
         for (i, slot) in slot.iter_mut().enumerate() {
             let frame_pos =
                 Vec2::new(i as f32 % MAX_INV_X, (i as f32 / MAX_INV_X).floor());
-            let mut box_rect = Rect::new(
+            let box_rect = Rect::new(
                 &mut systems.renderer,
                 Vec3::new(
                     w_pos.x
@@ -128,10 +128,10 @@ impl Inventory {
                     detail_1,
                 ),
                 (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                Color::rgba(200, 200, 200, 255),
                 0,
             );
 
-            box_rect.set_color(Color::rgba(200, 200, 200, 255));
             *slot = systems.gfx.add_rect(box_rect, 0, "Inv Slot BG", false);
         }
 
@@ -401,10 +401,10 @@ impl Inventory {
                 &mut systems.renderer,
                 Vec3::new(slot_pos.x, slot_pos.y, textbg_zpos),
                 (Vec2::new(32.0, 16.0) * systems.scale as f32).floor(),
+                Color::rgba(20, 20, 20, 120),
                 0,
             );
             text_bg
-                .set_color(Color::rgba(20, 20, 20, 120))
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
             let text_bg_index =

@@ -38,11 +38,6 @@ pub struct GfxText {
     pub gfx: Text,
 }
 
-pub struct GfxMap {
-    pub data: GfxData,
-    pub gfx: Map,
-}
-
 pub struct GfxLight {
     pub data: GfxData,
     pub gfx: Lights,
@@ -53,7 +48,6 @@ pub struct GfxCollection {
     pub image_storage: SlotMap<Index, GfxImage>,
     pub rect_storage: SlotMap<Index, GfxRect>,
     pub text_storage: SlotMap<Index, GfxText>,
-    pub map_storage: SlotMap<Index, GfxMap>,
     pub light_storage: SlotMap<Index, GfxLight>,
 }
 
@@ -66,7 +60,6 @@ impl GfxCollection {
         info!("Image Size: {:?}", self.image_storage.len());
         info!("Rect Size: {:?}", self.rect_storage.len());
         info!("Text Size: {:?}", self.text_storage.len());
-        info!("Map Size: {:?}", self.map_storage.len());
         info!("Light Size: {:?}", self.light_storage.len());
     }
 
@@ -118,22 +111,6 @@ impl GfxCollection {
         GfxType::Text(self.text_storage.insert(GfxText { data, gfx }))
     }
 
-    pub fn add_map(
-        &mut self,
-        gfx: Map,
-        layer: usize,
-        identifier: impl Into<Cow<'static, str>>,
-        visible: bool,
-    ) -> GfxType {
-        let data = GfxData {
-            layer,
-            visible,
-            identifier: identifier.into(),
-        };
-
-        GfxType::Map(self.map_storage.insert(GfxMap { data, gfx }))
-    }
-
     pub fn add_light(
         &mut self,
         gfx: Lights,
@@ -167,11 +144,6 @@ impl GfxCollection {
                     gfx.gfx.unload(renderer);
                 }
             }
-            GfxType::Map(gfx_index) => {
-                if let Some(gfx) = self.map_storage.remove(*gfx_index) {
-                    gfx.gfx.unload(renderer);
-                }
-            }
             GfxType::Light(gfx_index) => {
                 if let Some(gfx) = self.light_storage.remove(*gfx_index) {
                     gfx.gfx.unload(renderer);
@@ -197,12 +169,6 @@ impl GfxCollection {
             }
             GfxType::Text(gfx_index) => {
                 if let Some(gfx) = self.text_storage.get_mut(*gfx_index) {
-                    gfx.data.visible = visible;
-                    gfx.gfx.changed = true;
-                }
-            }
-            GfxType::Map(gfx_index) => {
-                if let Some(gfx) = self.map_storage.get_mut(*gfx_index) {
                     gfx.data.visible = visible;
                     gfx.gfx.changed = true;
                 }
@@ -286,15 +252,6 @@ impl GfxCollection {
                         return;
                     }
                     gfx.gfx.set_pos(pos);
-                }
-            }
-            GfxType::Map(gfx_index) => {
-                if let Some(gfx) = self.map_storage.get_mut(*gfx_index) {
-                    if gfx.gfx.pos == Vec2::new(pos.x, pos.y) {
-                        return;
-                    }
-                    gfx.gfx.pos = Vec2::new(pos.x, pos.y);
-                    gfx.gfx.changed = true;
                 }
             }
             _ => {}
@@ -466,11 +423,6 @@ impl GfxCollection {
                     return gfx.gfx.pos;
                 }
             }
-            GfxType::Map(gfx_index) => {
-                if let Some(gfx) = self.map_storage.get(*gfx_index) {
-                    return Vec3::new(gfx.gfx.pos.x, gfx.gfx.pos.y, 0.0);
-                }
-            }
             _ => {}
         }
 
@@ -544,19 +496,6 @@ impl GfxCollection {
         }
 
         Vec2::new(0.0, 0.0)
-    }
-
-    pub fn set_map_tile(
-        &mut self,
-        index: &GfxType,
-        pos: UVec3,
-        tile: TileData,
-    ) {
-        if let GfxType::Map(gfx_index) = index
-            && let Some(gfx) = self.map_storage.get_mut(*gfx_index)
-        {
-            gfx.gfx.set_tile(pos, tile);
-        }
     }
 
     pub fn add_area_light(

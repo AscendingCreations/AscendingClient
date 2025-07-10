@@ -22,10 +22,10 @@ impl Tooltip {
             &mut systems.renderer,
             Vec3::new(0.0, 0.0, ORDER_TOOLTIP),
             Vec2::new(24.0, 24.0),
+            Color::rgba(130, 130, 130, 255),
             0,
         );
         window_rect
-            .set_color(Color::rgba(130, 130, 130, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
         let window =

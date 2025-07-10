@@ -209,26 +209,25 @@ impl Alert {
 
         self.text.push(header_text_index);
 
-        let mut bg = Rect::new(
+        let bg = Rect::new(
             &mut systems.renderer,
             Vec3::new(0.0, 0.0, ORDER_ALERT_BG),
             Vec2::new(systems.size.width, systems.size.height),
+            Color::rgba(10, 10, 10, 140),
             0,
         );
-
-        bg.set_color(Color::rgba(10, 10, 10, 140));
 
         let mut window = Rect::new(
             &mut systems.renderer,
             w_pos - Vec3::new(1.0, 1.0, 0.0),
             w_size + Vec2::new(2.0, 2.0),
+            Color::rgba(160, 160, 160, 255),
             0,
         );
 
         window
             .set_border_width(1.0)
-            .set_border_color(Color::rgba(40, 40, 40, 255))
-            .set_color(Color::rgba(160, 160, 160, 255));
+            .set_border_color(Color::rgba(40, 40, 40, 255));
         self.window
             .push(systems.gfx.add_rect(bg, 3, "Alert BG", true));
         self.window
@@ -255,7 +254,7 @@ impl Alert {
             self.text
                 .push(systems.gfx.add_text(text, 5, "Alert Text", true));
 
-            let mut header = Rect::new(
+            let header = Rect::new(
                 &mut systems.renderer,
                 Vec3::new(
                     w_pos.x,
@@ -263,10 +262,10 @@ impl Alert {
                     ORDER_ALERT_HEADER,
                 ),
                 Vec2::new(w_size.x, (30.0 * systems.scale as f32).floor()),
+                Color::rgba(100, 100, 100, 255),
                 0,
             );
 
-            header.set_color(Color::rgba(100, 100, 100, 255));
             self.window.push(systems.gfx.add_rect(
                 header,
                 4,
@@ -369,11 +368,11 @@ impl Alert {
                         ORDER_ALERT_TEXTBOX_BG,
                     ),
                     (Vec2::new(104.0, 24.0) * systems.scale as f32).floor(),
+                    Color::rgba(120, 120, 120, 255),
                     0,
                 );
 
                 textbox_bg
-                    .set_color(Color::rgba(120, 120, 120, 255))
                     .set_border_width(1.0)
                     .set_border_color(Color::rgba(40, 40, 40, 255));
 

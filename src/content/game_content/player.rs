@@ -47,6 +47,7 @@ pub fn add_player(
         &mut systems.renderer,
         Vec3::new(0.0, 0.0, ORDER_HPBAR_BG),
         Vec2::new(20.0, 6.0),
+        Color::rgba(80, 80, 80, 255),
         0,
     );
 
@@ -58,19 +59,17 @@ pub fn add_player(
     );
 
     bg_image
-        .set_color(Color::rgba(80, 80, 80, 255))
         .set_border_width(1.0)
         .set_border_color(Color::rgba(10, 10, 10, 255));
 
     let bg_index = systems.gfx.add_rect(bg_image, 0, "Player HP BG", false);
-    let mut bar_image = Rect::new(
+    let bar_image = Rect::new(
         &mut systems.renderer,
         Vec3::new(1.0, 1.0, ORDER_HPBAR),
         Vec2::new(18.0, 4.0),
+        Color::rgba(180, 30, 30, 255),
         0,
     );
-
-    bar_image.set_color(Color::rgba(180, 30, 30, 255));
 
     let bar_index = systems.gfx.add_rect(bar_image, 0, "Player HP Bar", false);
     let entity_name = create_label(
@@ -252,6 +251,7 @@ pub fn move_player(
 pub fn end_player_move(
     world: &mut World,
     systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
     content: &mut GameContent,
     socket: &mut Poller,
     entity: GlobalKey,
@@ -290,7 +290,14 @@ pub fn end_player_move(
         && *p == entity
         && move_map
     {
-        content.move_map(world, systems, socket, direction, buffer)?;
+        content.move_map(
+            world,
+            systems,
+            map_renderer,
+            socket,
+            direction,
+            buffer,
+        )?;
         finalize_entity(world, systems)?;
         content.refresh_map = true;
     }
@@ -463,6 +470,7 @@ pub fn process_player_attack(
 pub fn process_player_movement(
     world: &mut World,
     systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
     socket: &mut Poller,
     entity: GlobalKey,
     content: &mut GameContent,
@@ -504,7 +512,15 @@ pub fn process_player_movement(
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
             p_data.pos_offset = Vec2::new(0.0, 0.0);
         }
-        end_player_move(world, systems, content, socket, entity, buffer)?;
+        end_player_move(
+            world,
+            systems,
+            map_renderer,
+            content,
+            socket,
+            entity,
+            buffer,
+        )?;
     }
 
     if let Some(myindex) = content.myentity

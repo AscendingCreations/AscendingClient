@@ -62,10 +62,10 @@ impl Profile {
             &mut systems.renderer,
             Vec3::new(w_pos.x - 1.0, w_pos.y - 1.0, w_pos.z),
             w_size + 2.0,
+            Color::rgba(110, 110, 110, 255),
             0,
         );
-        rect.set_color(Color::rgba(110, 110, 110, 255))
-            .set_border_width(1.0)
+        rect.set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
         let bg = systems.gfx.add_rect(rect, 0, "Profile BG", false);
 
@@ -75,17 +75,17 @@ impl Profile {
         );
         let header_size = Vec2::new(orig_size.x, 30.0);
         let header_zpos = detail_1;
-        let mut header_rect = Rect::new(
+        let header_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(header_pos.x, header_pos.y, header_zpos),
             Vec2::new(
                 (header_size.x * systems.scale as f32).floor(),
                 (header_size.y * systems.scale as f32).floor(),
             ),
+            Color::rgba(70, 70, 70, 255),
             0,
         );
 
-        header_rect.set_color(Color::rgba(70, 70, 70, 255));
         let header =
             systems
                 .gfx
@@ -150,7 +150,7 @@ impl Profile {
 
         let mut slot = [GfxType::None; MAX_EQPT];
         for (i, slot) in slot.iter_mut().enumerate() {
-            let mut box_rect = Rect::new(
+            let box_rect = Rect::new(
                 &mut systems.renderer,
                 Vec3::new(
                     w_pos.x
@@ -160,9 +160,9 @@ impl Profile {
                     detail_1,
                 ),
                 (Vec2::new(32.0, 32.0) * systems.scale as f32).floor(),
+                Color::rgba(200, 200, 200, 255),
                 0,
             );
-            box_rect.set_color(Color::rgba(200, 200, 200, 255));
             *slot =
                 systems
                     .gfx

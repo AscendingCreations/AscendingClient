@@ -6,6 +6,7 @@ pub mod menu_content;
 pub mod resource;
 
 pub use game_content::*;
+use graphics::MapRenderer;
 pub use inputs::*;
 use log::info;
 pub use menu_content::*;
@@ -25,7 +26,11 @@ pub struct Content {
 }
 
 impl Content {
-    pub fn new(world: &mut World, systems: &mut SystemHolder) -> Result<Self> {
+    pub fn new(
+        world: &mut World,
+        systems: &mut SystemHolder,
+        map_renderer: &mut MapRenderer,
+    ) -> Result<Self> {
         let mut content = Content {
             content_type: ContentType::Menu,
             menu_content: MenuContent::new(systems),
@@ -33,7 +38,7 @@ impl Content {
             ping_start: MyInstant::now(),
         };
         content.menu_content.show(systems);
-        content.game_content.hide(world, systems)?;
+        content.game_content.hide(world, systems, map_renderer)?;
 
         Ok(content)
     }
@@ -42,6 +47,7 @@ impl Content {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
+        map_renderer: &mut MapRenderer,
         contenttype: ContentType,
     ) -> Result<()> {
         if self.content_type == contenttype {
@@ -50,7 +56,7 @@ impl Content {
 
         match self.content_type {
             ContentType::Game => {
-                self.game_content.hide(world, systems)?;
+                self.game_content.hide(world, systems, map_renderer)?;
             }
             ContentType::Menu => {
                 self.menu_content.hide(systems);

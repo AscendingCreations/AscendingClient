@@ -1,9 +1,9 @@
-username = "aerghwsetyhwetewrterewtetrygwerytwerw"
-password = "eetrhgswertgyhwertge"
+username = ""
+password = ""
 save_password = true
 bgm_volume = 0
 sfx_volume = 0
-reconnect_code = "MrnZGKhBijbW8bNrt0sorxR7yWc2sNAP"
+reconnect_code = "m4i8e5FWRiR3kR5twJJh7X886cNYKpJ9"
 level_filter = "Info"
 enable_backtrace = false
 graphic_backend = "OpenGL|DX12|Vulkan|Metal"

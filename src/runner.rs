@@ -249,7 +249,7 @@ impl winit::application::ApplicationHandler for Runner {
             // We establish the different renderers here to load their data up to use them.
             let text_renderer = TextRenderer::new(&systems.renderer).unwrap();
             let image_renderer = ImageRenderer::new(&systems.renderer).unwrap();
-            let map_renderer =
+            let mut map_renderer =
                 MapRenderer::new(&mut systems.renderer, 81).unwrap();
             let light_renderer =
                 LightRenderer::new(&mut systems.renderer).unwrap();
@@ -259,7 +259,9 @@ impl winit::application::ApplicationHandler for Runner {
             let buffertask = BufferTask::new();
 
             // Initiate Game Content
-            let mut content = Content::new(&mut world, &mut systems).unwrap();
+            let mut content =
+                Content::new(&mut world, &mut systems, &mut map_renderer)
+                    .unwrap();
 
             let alert = Alert::new();
 
@@ -436,7 +438,7 @@ impl winit::application::ApplicationHandler for Runner {
             }
 
             // update our inputs.
-            input_handler.window_updates(systems.renderer.window(), &event);
+            input_handler.window_updates(&event);
 
             for input in input_handler.events() {
                 match input {
@@ -574,12 +576,26 @@ impl winit::application::ApplicationHandler for Runner {
 
             // Game Loop
             game_loop(
-                socket, world, systems, content, buffertask, seconds,
+                socket,
+                world,
+                systems,
+                &mut graphics.map_renderer,
+                content,
+                buffertask,
+                seconds,
                 loop_timer,
             )
             .unwrap();
             if systems.fade.fade_logic(&mut systems.gfx, seconds) {
-                fade_end(systems, world, content, socket, buffertask).unwrap();
+                fade_end(
+                    systems,
+                    &mut graphics.map_renderer,
+                    world,
+                    content,
+                    socket,
+                    buffertask,
+                )
+                .unwrap();
             }
             if systems.map_fade.fade_logic(&mut systems.gfx, seconds) {
                 map_fade_end(systems, world, content);
@@ -596,7 +612,7 @@ impl winit::application::ApplicationHandler for Runner {
             );
 
             // This adds the Image data to the Buffer for rendering.
-            add_image_to_buffer(systems, graphics);
+            add_image_to_buffer(systems, content, graphics);
 
             // this cycles all the Image's in the Image buffer by first putting them in rendering order
             // and then uploading them to the GPU if they have moved or changed in any way. clears the
@@ -692,7 +708,14 @@ impl winit::application::ApplicationHandler for Runner {
 
             socket
                 .process_packets(
-                    router, world, systems, content, alert, seconds, buffertask,
+                    router,
+                    world,
+                    systems,
+                    &mut graphics.map_renderer,
+                    content,
+                    alert,
+                    seconds,
+                    buffertask,
                 )
                 .unwrap();
 
@@ -791,7 +814,7 @@ impl winit::application::ApplicationHandler for Runner {
     ) {
         if let Self::Ready {
             content: _,
-            systems,
+            systems: _,
             world: _,
             graphics: _,
             router: _,
@@ -811,7 +834,7 @@ impl winit::application::ApplicationHandler for Runner {
             mouse_press: _,
         } = self
         {
-            input_handler.device_updates(systems.renderer.window(), &event);
+            input_handler.device_updates(&event);
         }
     }
 

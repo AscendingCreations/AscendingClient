@@ -8,38 +8,26 @@ use crate::{
         create_player_light, player_get_armor_defense, player_get_next_lvl_exp,
         player_get_weapon_damage,
     },
-    systems::{BufferTask, Poller, SystemHolder},
+    systems::{BufferTask, Poller, SystemHolder, mapper::PacketPasser},
 };
 
 pub fn handle_move_ok(
-    _socket: &mut Poller,
-    _world: &mut World,
-    _systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     // TODO use this to reset players position, reload stuff etc.
     let _move_ok = data.read::<bool>()?;
-    content.game_content.can_move = true;
+    passer.content.game_content.can_move = true;
     //info!("move allowed: {move_ok}");
     //content.game_content.myentity = Some(entity);
     Ok(())
 }
 
 pub fn handle_playerdata(
-    _socket: &mut Poller,
-    world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
-    if let Some(entity) = content.game_content.myentity {
+    if let Some(entity) = passer.content.game_content.myentity {
         let username = data.read::<String>()?;
         let useraccess = data.read::<UserAccess>()?;
         let dir = data.read::<u8>()?;
@@ -57,11 +45,12 @@ pub fn handle_playerdata(
         let mut vitalmax = [0; VITALS_MAX];
         vitalmax.copy_from_slice(&data.read::<[i32; VITALS_MAX]>()?);
 
-        if !world.entities.contains_key(entity) || !content.game_content.in_game
+        if !passer.world.entities.contains_key(entity)
+            || !passer.content.game_content.in_game
         {
             let player = add_player(
-                world,
-                systems,
+                passer.world,
+                passer.systems,
                 pos,
                 pos.map,
                 entity,
@@ -69,22 +58,29 @@ pub fn handle_playerdata(
             )?;
             // Create Lights
             create_player_light(
-                world,
-                systems,
-                &content.game_content.game_lights,
+                passer.world,
+                passer.systems,
+                &passer.content.game_content.game_lights,
                 entity,
             );
 
-            content.game_content.players.borrow_mut().insert(player);
-            content.game_content.in_game = true;
+            passer
+                .content
+                .game_content
+                .players
+                .borrow_mut()
+                .insert(player);
+            passer.content.game_content.in_game = true;
         }
 
-        content.game_content.player_data.equipment[..]
+        passer.content.game_content.player_data.equipment[..]
             .copy_from_slice(&equipment.items);
 
-        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
-            systems.gfx.set_text(
-                &mut systems.renderer,
+        if let Some(Entity::Player(p_data)) =
+            passer.world.entities.get_mut(entity)
+        {
+            passer.systems.gfx.set_text(
+                &mut passer.systems.renderer,
                 &p_data.name_map.0,
                 &username,
             );
@@ -109,26 +105,22 @@ pub fn handle_playerdata(
 }
 
 pub fn handle_playerinv(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let items = data.read::<Vec<Item>>()?;
 
-    content.game_content.player_data.inventory[..].copy_from_slice(&items);
+    passer.content.game_content.player_data.inventory[..]
+        .copy_from_slice(&items);
 
-    if content.game_content.finalized {
+    if passer.content.game_content.finalized {
         for (index, item) in items.iter().enumerate() {
-            content
+            passer
+                .content
                 .game_content
                 .interface
                 .inventory
-                .update_inv_slot(systems, index, item);
+                .update_inv_slot(passer.systems, index, item);
         }
     }
 
@@ -136,54 +128,44 @@ pub fn handle_playerinv(
 }
 
 pub fn handle_playerinvslot(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let index = data.read::<usize>()?;
     let item = data.read::<Item>()?;
 
-    content
+    passer
+        .content
         .game_content
         .interface
         .inventory
-        .update_inv_slot(systems, index, &item);
+        .update_inv_slot(passer.systems, index, &item);
 
     Ok(())
 }
 
 pub fn handle_playerstorage(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let start = data.read::<usize>()?;
     let end = data.read::<usize>()?;
     let items = data.read::<Vec<Item>>()?;
 
-    content.game_content.player_data.storage[start..end]
+    passer.content.game_content.player_data.storage[start..end]
         .copy_from_slice(&items);
-    if content.game_content.finalized {
-        for (index, item) in content.game_content.player_data.storage
+    if passer.content.game_content.finalized {
+        for (index, item) in passer.content.game_content.player_data.storage
             [start..end]
             .iter()
             .enumerate()
         {
-            content.game_content.interface.storage.update_storage_slot(
-                systems,
-                index + start,
-                item,
-            );
+            passer
+                .content
+                .game_content
+                .interface
+                .storage
+                .update_storage_slot(passer.systems, index + start, item);
         }
     }
 
@@ -191,87 +173,86 @@ pub fn handle_playerstorage(
 }
 
 pub fn handle_playerstorageslot(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let index = data.read::<usize>()?;
     let item = data.read::<Item>()?;
 
-    content
+    passer
+        .content
         .game_content
         .interface
         .storage
-        .update_storage_slot(systems, index, &item);
+        .update_storage_slot(passer.systems, index, &item);
 
     Ok(())
 }
 
 pub fn handle_playerequipment(
-    _socket: &mut Poller,
-    world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let entity = data.read::<GlobalKey>()?;
     let equipment = data.read::<Equipment>()?;
 
-    let (b_damage, b_defense) =
-        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
-            p_data.equipment.clone_from(&equipment);
+    let (b_damage, b_defense) = if let Some(Entity::Player(p_data)) =
+        passer.world.entities.get_mut(entity)
+    {
+        p_data.equipment.clone_from(&equipment);
 
-            (p_data.physical.damage, p_data.physical.defense)
-        } else {
-            return Ok(());
-        };
+        (p_data.physical.damage, p_data.physical.defense)
+    } else {
+        return Ok(());
+    };
 
-    if let Some(myentity) = content.game_content.myentity
+    if let Some(myentity) = passer.content.game_content.myentity
         && myentity == entity
     {
         for i in 0..MAX_EQPT {
-            if content.game_content.player_data.equipment[i]
+            if passer.content.game_content.player_data.equipment[i]
                 != equipment.items[i]
             {
-                content
+                passer
+                    .content
                     .game_content
                     .interface
                     .profile
-                    .update_equipment_slot(systems, i, &equipment.items[i]);
-                content.game_content.player_data.equipment[i] =
+                    .update_equipment_slot(
+                        passer.systems,
+                        i,
+                        &equipment.items[i],
+                    );
+                passer.content.game_content.player_data.equipment[i] =
                     equipment.items[i];
             }
         }
 
         let damage = b_damage.saturating_add(
-            player_get_weapon_damage(world, systems, myentity)?.0 as u32,
+            player_get_weapon_damage(passer.world, passer.systems, myentity)?.0
+                as u32,
         );
-        content
+        passer
+            .content
             .game_content
             .interface
             .profile
             .set_profile_label_value(
-                systems,
+                passer.systems,
                 ProfileLabel::Damage,
                 damage as u64,
             );
         let defense = b_defense.saturating_add(
-            player_get_armor_defense(world, systems, myentity)?.0 as u32,
+            player_get_armor_defense(passer.world, passer.systems, myentity)?.0
+                as u32,
         );
-        content
+        passer
+            .content
             .game_content
             .interface
             .profile
             .set_profile_label_value(
-                systems,
+                passer.systems,
                 ProfileLabel::Defense,
                 defense as u64,
             );
@@ -281,43 +262,45 @@ pub fn handle_playerequipment(
 }
 
 pub fn handle_playerlevel(
-    _socket: &mut Poller,
-    world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let level = data.read::<i32>()?;
     let levelexp = data.read::<u64>()?;
 
-    content.game_content.player_data.levelexp = levelexp;
+    passer.content.game_content.player_data.levelexp = levelexp;
 
-    if let Some(myentity) = content.game_content.myentity
-        && world.entities.contains_key(myentity)
+    if let Some(myentity) = passer.content.game_content.myentity
+        && passer.world.entities.contains_key(myentity)
     {
-        if let Some(Entity::Player(p_data)) = world.entities.get_mut(myentity) {
+        if let Some(Entity::Player(p_data)) =
+            passer.world.entities.get_mut(myentity)
+        {
             p_data.level = level;
         }
 
-        let nextexp = player_get_next_lvl_exp(world, myentity)?;
+        let nextexp = player_get_next_lvl_exp(passer.world, myentity)?;
 
-        if content.game_content.finalized {
-            content.game_content.interface.vitalbar.update_bar_size(
-                systems,
-                2,
-                levelexp as i32,
-                nextexp as i32,
-            );
+        if passer.content.game_content.finalized {
+            passer
+                .content
+                .game_content
+                .interface
+                .vitalbar
+                .update_bar_size(
+                    passer.systems,
+                    2,
+                    levelexp as i32,
+                    nextexp as i32,
+                );
 
-            content
+            passer
+                .content
                 .game_content
                 .interface
                 .profile
                 .set_profile_label_value(
-                    systems,
+                    passer.systems,
                     ProfileLabel::Level,
                     level as u64,
                 );
@@ -328,79 +311,63 @@ pub fn handle_playerlevel(
 }
 
 pub fn handle_playermoney(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let vals = data.read::<u64>()?;
 
-    content.game_content.player_data.player_money = vals;
-    content
+    passer.content.game_content.player_data.player_money = vals;
+    passer
+        .content
         .game_content
         .interface
         .profile
-        .set_profile_label_value(systems, ProfileLabel::Money, vals);
+        .set_profile_label_value(passer.systems, ProfileLabel::Money, vals);
 
     Ok(())
 }
 
 pub fn handle_playerpk(
-    _socket: &mut Poller,
-    _world: &mut World,
-    _systems: &mut SystemHolder,
-    _content: &mut Content,
-    _alert: &mut Alert,
     _data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    _passer: &mut PacketPasser,
 ) -> Result<()> {
     Ok(())
 }
 
 pub fn handle_clearisusingtype(
-    _socket: &mut Poller,
-    _world: &mut World,
-    systems: &mut SystemHolder,
-    content: &mut Content,
-    _alert: &mut Alert,
     data: &mut MByteBuffer,
-    _seconds: f32,
-    _buffer: &mut BufferTask,
+    passer: &mut PacketPasser,
 ) -> Result<()> {
     let _ = data.read::<u16>()?;
 
-    match content.game_content.player_data.is_using_type {
+    match passer.content.game_content.player_data.is_using_type {
         IsUsingType::Bank => close_interface(
-            &mut content.game_content.interface,
-            systems,
+            &mut passer.content.game_content.interface,
+            passer.systems,
             Window::Storage,
         ),
         IsUsingType::Store(_) => close_interface(
-            &mut content.game_content.interface,
-            systems,
+            &mut passer.content.game_content.interface,
+            passer.systems,
             Window::Shop,
         ),
         IsUsingType::Trading(_) => {
             close_interface(
-                &mut content.game_content.interface,
-                systems,
+                &mut passer.content.game_content.interface,
+                passer.systems,
                 Window::Trade,
             );
-            content
+            passer
+                .content
                 .game_content
                 .interface
                 .trade
-                .clear_trade_items(systems);
+                .clear_trade_items(passer.systems);
         }
         _ => {}
     }
 
-    content.game_content.player_data.is_using_type = IsUsingType::None;
+    passer.content.game_content.player_data.is_using_type = IsUsingType::None;
 
     Ok(())
 }

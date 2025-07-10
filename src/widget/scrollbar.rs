@@ -81,10 +81,11 @@ impl Scrollbar {
                 &mut systems.renderer,
                 bg_pos,
                 (Vec2::new(w, h) * systems.scale as f32).floor(),
+                data.color,
                 0,
             );
 
-            scrollbg_rect.set_color(data.color).set_radius(data.radius);
+            scrollbg_rect.set_radius(data.radius);
 
             if data.got_border {
                 scrollbg_rect
@@ -160,12 +161,11 @@ impl Scrollbar {
                 z_pos.sub_f32(z_step.0, z_step.1),
             ),
             size,
+            scrollbar.color,
             0,
         );
 
-        scroll_rect
-            .set_color(scrollbar.color)
-            .set_radius(scrollbar.radius);
+        scroll_rect.set_radius(scrollbar.radius);
         if scrollbar.got_border {
             scroll_rect
                 .set_border_width(1.0)

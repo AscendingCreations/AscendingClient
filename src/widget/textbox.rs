@@ -75,22 +75,22 @@ impl Textbox {
         let b_pos = Vec2::new(base_pos.x, base_pos.y)
             + (adjust_pos * systems.scale as f32).floor();
 
-        let mut rect = Rect::new(
+        let rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(b_pos.x, b_pos.y, base_pos.z),
             (size * systems.scale as f32).floor(),
+            bg_color,
             0,
         );
-        rect.set_color(bg_color);
         let bg = systems.gfx.add_rect(rect, 0, "Textbox BG", false);
 
-        let mut select_rect = Rect::new(
+        let select_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(b_pos.x, b_pos.y, detail_1),
             Vec2::new(0.0, size.y * systems.scale as f32).floor(),
+            selection_bg_color,
             0,
         );
-        select_rect.set_color(selection_bg_color);
         let selection =
             systems
                 .gfx
@@ -116,13 +116,13 @@ impl Textbox {
             visible,
         );
 
-        let mut caret_rect = Rect::new(
+        let caret_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(b_pos.x, b_pos.y, detail_2),
             (Vec2::new(2.0, size.y) * systems.scale as f32).floor(),
+            text_color,
             0,
         );
-        caret_rect.set_color(text_color);
         let caret = systems.gfx.add_rect(caret_rect, 0, "Textbox Caret", false);
 
         let mut disable_selection = false;

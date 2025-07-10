@@ -28,7 +28,6 @@ use super::notls_socket::connect;
 use super::{
     PacketRouter,
     bufer_ext::ByteBufferExt,
-    handle_data,
     states::{ClientState, PollState},
 };
 

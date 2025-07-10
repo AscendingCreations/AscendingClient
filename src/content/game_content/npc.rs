@@ -45,23 +45,22 @@ pub fn add_npc(
         &mut systems.renderer,
         Vec3::new(0.0, 0.0, ORDER_HPBAR_BG),
         Vec2::new(20.0, 6.0),
+        Color::rgba(80, 80, 80, 255),
         0,
     );
 
     bg_image
-        .set_color(Color::rgba(80, 80, 80, 255))
         .set_border_width(1.0)
         .set_border_color(Color::rgba(10, 10, 10, 255));
 
     let bg_index = systems.gfx.add_rect(bg_image, 0, "Npc HP BG", false);
-    let mut bar_image = Rect::new(
+    let bar_image = Rect::new(
         &mut systems.renderer,
         Vec3::new(1.0, 1.0, ORDER_HPBAR),
         Vec2::new(18.0, 4.0),
+        Color::rgba(180, 30, 30, 255),
         0,
     );
-
-    bar_image.set_color(Color::rgba(180, 30, 30, 255));
 
     let bar_index = systems.gfx.add_rect(bar_image, 0, "Npc HP Bar", false);
     let entity_name = create_label(

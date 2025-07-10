@@ -103,11 +103,11 @@ impl Button {
                     &mut systems.renderer,
                     Vec3::new(pos.x, pos.y, z_order),
                     (size * systems.scale as f32).floor(),
+                    data.rect_color,
                     0,
                 );
 
-                rect.set_color(data.rect_color)
-                    .set_radius(data.border_radius);
+                rect.set_radius(data.border_radius);
 
                 if data.got_border {
                     rect.set_border_width(1.0)

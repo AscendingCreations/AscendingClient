@@ -5,6 +5,7 @@ use crate::{
 use graphics::*;
 use log::{error, info};
 use serde::{Deserialize, Serialize};
+use snafu::Backtrace;
 use speedy::{Endianness, Readable, Writable};
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, Read};
@@ -105,10 +106,10 @@ pub enum Weather {
     Windy,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 pub struct MapSlotData {
     pub mappos: MapPosition,
-    pub map_index: GfxType,
+    pub map: Map,
     pub enable: bool,
     pub dir_block: MapDirBlock,
     pub attributes: MapAttributes,
@@ -184,8 +185,7 @@ pub fn load_map_data(
                 (0..9).for_each(|layer| {
                     let id = mapdata.tile[layer].id[tile_num] as usize;
                     if id > 0 {
-                        systems.gfx.set_map_tile(
-                            &mapslotdata.map_index,
+                        mapslotdata.map.set_tile(
                             UVec3::new(x as u32, y as u32, layer as u32),
                             TileData {
                                 id,
@@ -210,26 +210,38 @@ pub fn load_map_data(
 
 pub fn create_map_data(
     systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
     mappos: MapPosition,
 ) -> Result<Index> {
-    let mut map =
-        Map::new(&mut systems.renderer, TILE_SIZE as u32, Vec2::new(0.0, 0.0));
-    map.can_render = true;
-    let map_index = systems.gfx.add_map(map, 0, "Map", true);
-    let mapslotdata = MapSlotData {
-        mappos,
-        map_index,
-        enable: false,
-        dir_block: MapDirBlock::default(),
-        attributes: MapAttributes::default(),
-        music: None,
-    };
+    if let Some(mut map) = Map::new(
+        &mut systems.renderer,
+        map_renderer,
+        TILE_SIZE as u32,
+        Vec2::new(0.0, 0.0),
+        MapZLayers::default(),
+    ) {
+        map.can_render = true;
 
-    Ok(systems.base.mapdata.insert(mapslotdata))
+        let mapslotdata = MapSlotData {
+            mappos,
+            map,
+            enable: false,
+            dir_block: MapDirBlock::default(),
+            attributes: MapAttributes::default(),
+            music: None,
+        };
+
+        Ok(systems.base.mapdata.insert(mapslotdata))
+    } else {
+        Err(ClientError::MapCreationFailed {
+            backtrace: Backtrace::new(),
+        })
+    }
 }
 
 pub fn get_map_key(
     systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
     x: i32,
     y: i32,
     group: i32,
@@ -254,18 +266,22 @@ pub fn get_map_key(
         }
     }
 
-    let key = create_map_data(systems, mappos)?;
+    let key = create_map_data(systems, map_renderer, mappos)?;
     systems.base.mappos_key.insert(mappos, key);
     systems.base.map_cache.push(key, key);
     buffer.add_task(BufferTaskEnum::ApplyMap(mappos, key));
     Ok(key)
 }
 
-pub fn clear_map_data(systems: &mut SystemHolder) {
-    for mapslotdata in systems.base.mapdata.iter() {
-        systems
-            .gfx
-            .remove_gfx(&mut systems.renderer, &mapslotdata.1.map_index);
+pub fn clear_map_data(
+    systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
+) {
+    for mapslotdata in systems.base.mapdata.iter_mut() {
+        mapslotdata
+            .1
+            .map
+            .unload(&mut systems.renderer, map_renderer);
     }
 
     systems.base.mapdata.clear();
@@ -273,23 +289,20 @@ pub fn clear_map_data(systems: &mut SystemHolder) {
 }
 
 pub fn set_map_visible(systems: &mut SystemHolder, key: Index, visible: bool) {
-    if let Some(mapslotdata) = systems.base.mapdata.get(key) {
-        systems.gfx.set_visible(&mapslotdata.map_index, visible)
+    if let Some(mapslotdata) = systems.base.mapdata.get_mut(key) {
+        mapslotdata.map.can_render = visible;
     }
 }
 
 pub fn set_map_pos(systems: &mut SystemHolder, key: Index, pos: Vec2) {
-    if let Some(mapslotdata) = systems.base.mapdata.get(key) {
-        systems
-            .gfx
-            .set_pos(&mapslotdata.map_index, Vec3::new(pos.x, pos.y, 0.0))
+    if let Some(mapslotdata) = systems.base.mapdata.get_mut(key) {
+        mapslotdata.map.set_pos(Vec2::new(pos.x, pos.y));
     }
 }
 
 pub fn get_map_pos(systems: &mut SystemHolder, key: Index) -> Vec2 {
-    if let Some(mapslotdata) = systems.base.mapdata.get(key) {
-        let pos = systems.gfx.get_pos(&mapslotdata.map_index);
-        return Vec2::new(pos.x, pos.y);
+    if let Some(mapslotdata) = systems.base.mapdata.get_mut(key) {
+        return mapslotdata.map.pos;
     } else {
         error!("Failed to get map pos of Key: {key:?}");
     }

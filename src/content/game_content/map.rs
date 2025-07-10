@@ -54,8 +54,12 @@ impl MapContent {
         self.map_pos = MapPosition::default();
     }
 
-    pub fn unload(&mut self, systems: &mut SystemHolder) {
-        clear_map_data(systems);
+    pub fn unload(
+        &mut self,
+        systems: &mut SystemHolder,
+        map_renderer: &mut MapRenderer,
+    ) {
+        clear_map_data(systems, map_renderer);
     }
 
     pub fn move_pos(&mut self, systems: &mut SystemHolder, pos: Vec2) {

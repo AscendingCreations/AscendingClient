@@ -46,11 +46,11 @@ impl ChatTab {
             &mut systems.renderer,
             Vec3::new(pos.x, pos.y, z_order[0]),
             (size * systems.scale as f32).floor(),
+            Color::rgba(100, 100, 100, 255),
             0,
         );
         bg_rect
             .set_border_width(1.0)
-            .set_color(Color::rgba(100, 100, 100, 255))
             .set_border_color(Color::rgba(40, 40, 40, 255));
         let bg = systems.gfx.add_rect(bg_rect, 0, "ChatTab BG", true);
 
@@ -215,16 +215,20 @@ impl Chatbox {
         let detail_2 = w_pos.z.sub_f32(0.002, 3);
         let detail_3 = w_pos.z.sub_f32(0.003, 3);
 
-        let mut window_rect =
-            Rect::new(&mut systems.renderer, w_pos, w_size, 0);
+        let mut window_rect = Rect::new(
+            &mut systems.renderer,
+            w_pos,
+            w_size,
+            Color::rgba(120, 120, 120, 255),
+            0,
+        );
         window_rect
-            .set_color(Color::rgba(120, 120, 120, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
         let window = systems.gfx.add_rect(window_rect, 0, "Chatbox BG", true);
 
         let textbox_zpos = detail_1;
-        let mut textbox_rect = Rect::new(
+        let textbox_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(
                 w_pos.x + (5.0 * systems.scale as f32).floor(),
@@ -235,9 +239,9 @@ impl Chatbox {
                 w_size.x - (75.0 * systems.scale as f32).floor(),
                 (24.0 * systems.scale as f32).floor(),
             ),
+            Color::rgba(80, 80, 80, 255),
             0,
         );
-        textbox_rect.set_color(Color::rgba(80, 80, 80, 255));
         let textbox_bg =
             systems
                 .gfx
@@ -253,14 +257,14 @@ impl Chatbox {
             w_size.y - (39.0 * systems.scale as f32).floor(),
         );
 
-        let mut chatarea_rect = Rect::new(
+        let chatarea_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(chat_area_pos.x, chat_area_pos.y, chatarea_zorder),
             chat_areasize,
+            Color::rgba(140, 140, 140, 255),
             0,
         );
 
-        chatarea_rect.set_color(Color::rgba(140, 140, 140, 255));
         let chatarea_bg =
             systems
                 .gfx
@@ -450,13 +454,13 @@ impl Chatbox {
         ];
         chat_tab[0].set_select(systems, false);
 
-        let mut selection_rect = Rect::new(
+        let selection_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(0.0, 0.0, detail_3),
             Vec2::new(0.0, 0.0),
+            Color::rgba(60, 60, 60, 255),
             0,
         );
-        selection_rect.set_color(Color::rgba(60, 60, 60, 255));
         let msg_selection =
             systems
                 .gfx

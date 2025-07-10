@@ -4,6 +4,7 @@ use crate::{
 };
 pub use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 
+use graphics::MapRenderer;
 use log::{info, trace, warn};
 use mio::net::TcpStream;
 use mio::{Events, Interest, Poll, Token};
@@ -134,6 +135,7 @@ impl Poller {
         router: &PacketRouter,
         world: &mut World,
         systems: &mut SystemHolder,
+        map_renderer: &mut MapRenderer,
         content: &mut Content,
         alert: &mut Alert,
         seconds: f32,
@@ -184,6 +186,7 @@ impl Poller {
                     router,
                     world,
                     systems,
+                    map_renderer,
                     content,
                     alert,
                     &mut packet,
@@ -250,6 +253,7 @@ impl Poller {
                     router,
                     world,
                     systems,
+                    map_renderer,
                     content,
                     alert,
                     &mut packet,

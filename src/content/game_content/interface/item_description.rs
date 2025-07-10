@@ -34,10 +34,10 @@ impl ItemDescription {
             &mut systems.renderer,
             Vec3::new(0.0, 0.0, 0.0),
             Vec2::new(0.0, 0.0),
+            Color::rgba(110, 110, 110, 255),
             0,
         );
         bg_rect
-            .set_color(Color::rgba(110, 110, 110, 255))
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
         let bg = systems.gfx.add_rect(bg_rect, 0, "Item Desc Window", false);

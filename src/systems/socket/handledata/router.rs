@@ -1,7 +1,10 @@
 use log::{error, trace};
 use snafu::Backtrace;
 
-use crate::{BufferTask, data_types::*, fade::*, socket::*};
+use crate::{
+    BufferTask, data_types::*, fade::*, socket::*,
+    systems::mapper::PacketPasser,
+};
 
 #[allow(clippy::too_many_arguments)]
 pub fn handle_data(
@@ -9,6 +12,7 @@ pub fn handle_data(
     router: &PacketRouter,
     world: &mut World,
     systems: &mut SystemHolder,
+    map_renderer: &mut MapRenderer,
     content: &mut Content,
     alert: &mut Alert,
     data: &mut MByteBuffer,
@@ -31,7 +35,17 @@ pub fn handle_data(
     };
 
     match fun(
-        socket, world, systems, content, alert, data, seconds, buffer,
+        data,
+        &mut PacketPasser {
+            socket,
+            world,
+            systems,
+            content,
+            alert,
+            map_renderer,
+            seconds,
+            buffer,
+        },
     ) {
         Ok(_) => Ok(()),
         Err(e) => {

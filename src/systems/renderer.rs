@@ -15,7 +15,8 @@ pub use fade::*;
 
 use crate::{
     Audio, Config, ItemData, MapData, MapPosition, MapSlotData, NpcData,
-    ShopData, TextureAllocation, data_types::*, game_content::*,
+    ShopData, TextureAllocation, content::Content, data_types::*,
+    game_content::*,
 };
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -214,6 +215,7 @@ where
 
 pub fn add_image_to_buffer<Controls>(
     systems: &mut SystemHolder,
+    content: &mut Content,
     graphics: &mut State<Controls>,
 ) where
     Controls: camera::controls::Controls,
@@ -251,16 +253,6 @@ pub fn add_image_to_buffer<Controls>(
             );
         }
     });
-    systems.gfx.map_storage.iter_mut().for_each(|(_, gfx)| {
-        if gfx.data.visible {
-            graphics.map_renderer.map_update(
-                &mut gfx.gfx,
-                &mut systems.renderer,
-                &mut graphics.map_atlas,
-                [0, 1],
-            );
-        }
-    });
     systems.gfx.light_storage.iter_mut().for_each(|(_, gfx)| {
         if gfx.data.visible {
             graphics.light_renderer.lights_update(
@@ -270,4 +262,15 @@ pub fn add_image_to_buffer<Controls>(
             );
         }
     });
+
+    for key in content.game_content.map.mapindex.iter() {
+        if let Some(mapslotdata) = systems.base.mapdata.get_mut(*key) {
+            graphics.map_renderer.map_update(
+                &mut mapslotdata.map,
+                &mut systems.renderer,
+                &mut graphics.map_atlas,
+                [0, 1],
+            );
+        }
+    }
 }
