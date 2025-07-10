@@ -352,8 +352,7 @@ pub fn update_player_position(
     }
 
     let sprite_size = systems.gfx.get_size(&sprite);
-    let bar_pos =
-        t_pos + Vec2::new(((sprite_size.x - 20.0) * 0.5).floor(), 0.0);
+    let bar_pos = t_pos + Vec2::new((sprite_size.x - 20.0) * 0.5, 0.0);
 
     systems.gfx.set_pos(
         &hpbar.bar_index,
@@ -365,8 +364,7 @@ pub fn update_player_position(
     );
 
     let textsize = systems.gfx.get_measure(&entitynamemap.0).floor();
-    let name_pos =
-        t_pos + Vec2::new(((sprite_size.x - textsize.x) * 0.5).floor(), 40.0);
+    let name_pos = t_pos + Vec2::new((sprite_size.x - textsize.x) * 0.5, 40.0);
 
     systems.gfx.set_pos(
         &entitynamemap.0,

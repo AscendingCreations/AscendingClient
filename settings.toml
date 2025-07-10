@@ -1,9 +1,9 @@
-username = ""
-password = ""
+username = "test@test.com"
+password = "test"
 save_password = true
 bgm_volume = 0
 sfx_volume = 0
-reconnect_code = "m4i8e5FWRiR3kR5twJJh7X886cNYKpJ9"
+reconnect_code = "K1pq7SEkukhPJR1r4wVH5lgjkLv69rmd"
 level_filter = "Info"
 enable_backtrace = false
 graphic_backend = "OpenGL|DX12|Vulkan|Metal"
