@@ -6,5 +6,5 @@ pub mod handle_trade;
 pub mod mapper;
 pub mod router;
 
-pub use mapper::{PacketRouter, ServerPackets};
+pub use mapper::ServerPackets;
 pub use router::handle_data;

@@ -132,7 +132,6 @@ impl Poller {
 
     pub fn process_packets(
         &mut self,
-        router: &PacketRouter,
         world: &mut World,
         systems: &mut SystemHolder,
         map_renderer: &mut MapRenderer,
@@ -183,7 +182,6 @@ impl Poller {
 
                 if handle_data(
                     self,
-                    router,
                     world,
                     systems,
                     map_renderer,
@@ -250,7 +248,6 @@ impl Poller {
 
                 if handle_data(
                     self,
-                    router,
                     world,
                     systems,
                     map_renderer,

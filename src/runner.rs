@@ -51,7 +51,6 @@ pub enum Runner {
         alert: Alert,
         tooltip: Tooltip,
         socket: Poller,
-        router: PacketRouter,
         buffertask: BufferTask,
         input_handler: InputHandler<Action, Axis>,
         frame_time: FrameTime,
@@ -268,7 +267,6 @@ impl winit::application::ApplicationHandler for Runner {
             let tooltip = Tooltip::new(&mut systems);
 
             let socket = Poller::new().unwrap();
-            let router = PacketRouter::init();
 
             // setup our system which includes Camera and projection as well as our controls.
             // for the camera.
@@ -353,7 +351,6 @@ impl winit::application::ApplicationHandler for Runner {
                 alert,
                 tooltip,
                 socket,
-                router,
                 buffertask,
                 frame_time: FrameTime::new(),
                 time: 0.0f32,
@@ -383,7 +380,6 @@ impl winit::application::ApplicationHandler for Runner {
             alert,
             tooltip,
             socket,
-            router,
             buffertask,
             frame_time,
             time,
@@ -708,7 +704,6 @@ impl winit::application::ApplicationHandler for Runner {
 
             socket
                 .process_packets(
-                    router,
                     world,
                     systems,
                     &mut graphics.map_renderer,
@@ -817,7 +812,6 @@ impl winit::application::ApplicationHandler for Runner {
             systems: _,
             world: _,
             graphics: _,
-            router: _,
             buffertask: _,
             input_handler,
             alert: _,
@@ -844,7 +838,6 @@ impl winit::application::ApplicationHandler for Runner {
             systems,
             world: _,
             graphics: _,
-            router: _,
             buffertask: _,
             input_handler: _,
             alert: _,

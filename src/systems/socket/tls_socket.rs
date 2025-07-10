@@ -26,7 +26,6 @@ use std::{
 
 use super::notls_socket::connect;
 use super::{
-    PacketRouter,
     bufer_ext::ByteBufferExt,
     states::{ClientState, PollState},
 };

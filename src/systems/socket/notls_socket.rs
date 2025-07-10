@@ -25,7 +25,6 @@ use std::{
     time::Duration,
 };
 
-use super::PacketRouter;
 use super::states::PollState;
 use super::{ClientState, bufer_ext::ByteBufferExt};
 

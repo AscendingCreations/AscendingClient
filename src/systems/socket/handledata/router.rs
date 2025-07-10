@@ -2,14 +2,16 @@ use log::{error, trace};
 use snafu::Backtrace;
 
 use crate::{
-    BufferTask, data_types::*, fade::*, socket::*,
-    systems::mapper::PacketPasser,
+    BufferTask,
+    data_types::*,
+    fade::*,
+    socket::*,
+    systems::mapper::{PacketPasser, run_packet},
 };
 
 #[allow(clippy::too_many_arguments)]
 pub fn handle_data(
     socket: &mut Poller,
-    router: &PacketRouter,
     world: &mut World,
     systems: &mut SystemHolder,
     map_renderer: &mut MapRenderer,
@@ -25,7 +27,7 @@ pub fn handle_data(
         return Ok(());
     }
 
-    let fun = match router.0.get(&id) {
+    let fun = match run_packet(&id) {
         Some(fun) => fun,
         None => {
             return Err(ClientError::InvalidPacket {
