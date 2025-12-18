@@ -71,7 +71,13 @@ impl Inventory {
         );
         rect.set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Inv BG", false);
+        let bg = systems.gfx.add_rect(
+            rect,
+            0,
+            "Inv BG",
+            false,
+            CameraView::SubView1,
+        );
 
         let header_pos =
             Vec2::new(pos.x, pos.y + (237.0 * systems.scale as f32).floor());
@@ -85,7 +91,13 @@ impl Inventory {
             0,
         );
 
-        let header = systems.gfx.add_rect(header_rect, 0, "Inv Header", false);
+        let header = systems.gfx.add_rect(
+            header_rect,
+            0,
+            "Inv Header",
+            false,
+            CameraView::SubView1,
+        );
 
         let text = create_label(
             systems,
@@ -103,8 +115,13 @@ impl Inventory {
             ),
             Color::rgba(200, 200, 200, 255),
         );
-        let header_text =
-            systems.gfx.add_text(text, 1, "Inv Header Text", false);
+        let header_text = systems.gfx.add_text(
+            text,
+            1,
+            "Inv Header Text",
+            false,
+            CameraView::SubView1,
+        );
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Inventory");
@@ -132,7 +149,13 @@ impl Inventory {
                 0,
             );
 
-            *slot = systems.gfx.add_rect(box_rect, 0, "Inv Slot BG", false);
+            *slot = systems.gfx.add_rect(
+                box_rect,
+                0,
+                "Inv Slot BG",
+                false,
+                CameraView::SubView1,
+            );
         }
 
         let mut button = Vec::with_capacity(1);
@@ -389,8 +412,13 @@ impl Inventory {
             Vec4::new(0.0, 0.0, 20.0, 20.0),
             0,
         );
-        let image_index =
-            systems.gfx.add_image(image, 0, "Inv Item", self.visible);
+        let image_index = systems.gfx.add_image(
+            image,
+            0,
+            "Inv Item",
+            self.visible,
+            CameraView::SubView1,
+        );
 
         self.item_slot[slot].image = image_index;
         self.item_slot[slot].item_index = data.num as u16;
@@ -407,10 +435,13 @@ impl Inventory {
             text_bg
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(50, 50, 50, 180));
-            let text_bg_index =
-                systems
-                    .gfx
-                    .add_rect(text_bg, 1, "Inv Amount BG", self.visible);
+            let text_bg_index = systems.gfx.add_rect(
+                text_bg,
+                1,
+                "Inv Amount BG",
+                self.visible,
+                CameraView::SubView1,
+            );
 
             let text_size =
                 (Vec2::new(32.0, 16.0) * systems.scale as f32).floor();
@@ -430,8 +461,13 @@ impl Inventory {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let text_index =
-                systems.gfx.add_text(text, 2, "Inv Amount", self.visible);
+            let text_index = systems.gfx.add_text(
+                text,
+                2,
+                "Inv Amount",
+                self.visible,
+                CameraView::SubView1,
+            );
             systems.gfx.set_text(
                 &mut systems.renderer,
                 &text_index,

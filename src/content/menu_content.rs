@@ -44,7 +44,13 @@ impl MenuContent {
             0,
         );
 
-        let bg = systems.gfx.add_image(bg_image, 0, "Menu BG", true);
+        let bg = systems.gfx.add_image(
+            bg_image,
+            0,
+            "Menu BG",
+            true,
+            CameraView::SubView1,
+        );
 
         MenuContent {
             bg,

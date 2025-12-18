@@ -200,10 +200,13 @@ impl Alert {
         );
         header_text.changed = true;
 
-        let header_text_index =
-            systems
-                .gfx
-                .add_text(header_text, 5, "Alert Header Text", true);
+        let header_text_index = systems.gfx.add_text(
+            header_text,
+            5,
+            "Alert Header Text",
+            true,
+            CameraView::SubView1,
+        );
 
         if alert_type == AlertType::Input {
             systems.gfx.center_text(&header_text_index);
@@ -230,10 +233,20 @@ impl Alert {
         window
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        self.window
-            .push(systems.gfx.add_rect(bg, 3, "Alert BG", true));
-        self.window
-            .push(systems.gfx.add_rect(window, 4, "Alert Window", true));
+        self.window.push(systems.gfx.add_rect(
+            bg,
+            3,
+            "Alert BG",
+            true,
+            CameraView::SubView1,
+        ));
+        self.window.push(systems.gfx.add_rect(
+            window,
+            4,
+            "Alert Window",
+            true,
+            CameraView::SubView1,
+        ));
 
         if alert_type != AlertType::Input {
             let pos = Vec2::new(
@@ -253,8 +266,13 @@ impl Alert {
                 text_size.y + (10.0 * systems.scale as f32).floor(),
             );
             text.changed = true;
-            self.text
-                .push(systems.gfx.add_text(text, 5, "Alert Text", true));
+            self.text.push(systems.gfx.add_text(
+                text,
+                5,
+                "Alert Text",
+                true,
+                CameraView::SubView1,
+            ));
 
             let header = Rect::new(
                 &mut systems.renderer,
@@ -273,6 +291,7 @@ impl Alert {
                 4,
                 "Alert Header BG",
                 true,
+                CameraView::SubView1,
             ));
         }
 
@@ -401,6 +420,7 @@ impl Alert {
                         4,
                         "Alert Input BG",
                         true,
+                        CameraView::SubView1,
                     ),
                     textbox,
                     selected: false,

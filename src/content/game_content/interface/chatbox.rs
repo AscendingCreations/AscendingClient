@@ -52,7 +52,13 @@ impl ChatTab {
         bg_rect
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let bg = systems.gfx.add_rect(bg_rect, 0, "ChatTab BG", true);
+        let bg = systems.gfx.add_rect(
+            bg_rect,
+            0,
+            "ChatTab BG",
+            true,
+            CameraView::SubView1,
+        );
 
         let text_data = create_label(
             systems,
@@ -66,7 +72,13 @@ impl ChatTab {
             ),
             Color::rgba(255, 255, 255, 255),
         );
-        let text = systems.gfx.add_text(text_data, 1, "ChatTab Text", true);
+        let text = systems.gfx.add_text(
+            text_data,
+            1,
+            "ChatTab Text",
+            true,
+            CameraView::SubView1,
+        );
         systems.gfx.set_text(&mut systems.renderer, &text, &msg);
         systems.gfx.center_text(&text);
 
@@ -225,7 +237,13 @@ impl Chatbox {
         window_rect
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let window = systems.gfx.add_rect(window_rect, 0, "Chatbox BG", true);
+        let window = systems.gfx.add_rect(
+            window_rect,
+            0,
+            "Chatbox BG",
+            true,
+            CameraView::SubView1,
+        );
 
         let textbox_zpos = detail_1;
         let textbox_rect = Rect::new(
@@ -242,10 +260,13 @@ impl Chatbox {
             Color::rgba(80, 80, 80, 255),
             0,
         );
-        let textbox_bg =
-            systems
-                .gfx
-                .add_rect(textbox_rect, 0, "Chatbox Textbox BG", true);
+        let textbox_bg = systems.gfx.add_rect(
+            textbox_rect,
+            0,
+            "Chatbox Textbox BG",
+            true,
+            CameraView::SubView1,
+        );
 
         let chatarea_zorder = detail_1;
         let chat_area_pos = Vec2::new(
@@ -265,10 +286,13 @@ impl Chatbox {
             0,
         );
 
-        let chatarea_bg =
-            systems
-                .gfx
-                .add_rect(chatarea_rect, 0, "Chatbox Chat Area", true);
+        let chatarea_bg = systems.gfx.add_rect(
+            chatarea_rect,
+            0,
+            "Chatbox Chat Area",
+            true,
+            CameraView::SubView1,
+        );
         let chat_zorder = detail_3;
         let chat_bounds = Bounds::new(
             chat_area_pos.x,
@@ -461,10 +485,13 @@ impl Chatbox {
             Color::rgba(60, 60, 60, 255),
             0,
         );
-        let msg_selection =
-            systems
-                .gfx
-                .add_rect(selection_rect, 0, "Chatbox Selection", true);
+        let msg_selection = systems.gfx.add_rect(
+            selection_rect,
+            0,
+            "Chatbox Selection",
+            true,
+            CameraView::SubView1,
+        );
         systems.gfx.set_visible(&msg_selection, false);
 
         Chatbox {
@@ -924,7 +951,13 @@ impl Chatbox {
             )
             .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
 
-        let text = systems.gfx.add_text(text_data, 1, "Chatbox Text", true);
+        let text = systems.gfx.add_text(
+            text_data,
+            1,
+            "Chatbox Text",
+            true,
+            CameraView::SubView1,
+        );
         let msg_color = Attrs::new().color(msg.1);
 
         let msg = if let Some(header) = header_msg {

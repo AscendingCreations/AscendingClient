@@ -98,6 +98,7 @@ impl Scrollbar {
                 data.render_layer,
                 "Scrollbar BG",
                 visible,
+                CameraView::SubView1,
             ))
         } else {
             None
@@ -176,6 +177,7 @@ impl Scrollbar {
             scrollbar.render_layer,
             "Scrollbar Scroll",
             visible,
+            CameraView::SubView1,
         );
 
         Scrollbar {

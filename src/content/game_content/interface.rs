@@ -101,6 +101,7 @@ impl Interface {
             5,
             "Ping".to_string(),
             systems.config.show_ping,
+            CameraView::SubView1,
         );
 
         systems
@@ -124,6 +125,7 @@ impl Interface {
             5,
             "Av. Ping".to_string(),
             systems.config.show_average_ping,
+            CameraView::SubView1,
         );
 
         systems.gfx.set_text(
@@ -149,6 +151,7 @@ impl Interface {
             5,
             "Av. Ping".to_string(),
             systems.config.show_frame_loop,
+            CameraView::SubView1,
         );
 
         systems.gfx.set_text(

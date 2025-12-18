@@ -67,7 +67,13 @@ impl Profile {
         );
         rect.set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Profile BG", false);
+        let bg = systems.gfx.add_rect(
+            rect,
+            0,
+            "Profile BG",
+            false,
+            CameraView::SubView1,
+        );
 
         let header_pos = Vec2::new(
             w_pos.x,
@@ -86,10 +92,13 @@ impl Profile {
             0,
         );
 
-        let header =
-            systems
-                .gfx
-                .add_rect(header_rect, 0, "Profile Header", false);
+        let header = systems.gfx.add_rect(
+            header_rect,
+            0,
+            "Profile Header",
+            false,
+            CameraView::SubView1,
+        );
 
         let text = create_label(
             systems,
@@ -107,8 +116,13 @@ impl Profile {
             ),
             Color::rgba(200, 200, 200, 255),
         );
-        let header_text =
-            systems.gfx.add_text(text, 1, "Profile Header Text", false);
+        let header_text = systems.gfx.add_text(
+            text,
+            1,
+            "Profile Header Text",
+            false,
+            CameraView::SubView1,
+        );
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Profile");
@@ -163,10 +177,13 @@ impl Profile {
                 Color::rgba(200, 200, 200, 255),
                 0,
             );
-            *slot =
-                systems
-                    .gfx
-                    .add_rect(box_rect, 0, "Profile EQ Slot BG", false);
+            *slot = systems.gfx.add_rect(
+                box_rect,
+                0,
+                "Profile EQ Slot BG",
+                false,
+                CameraView::SubView1,
+            );
         }
 
         let mut fixed_label = Vec::with_capacity(5);
@@ -229,7 +246,13 @@ impl Profile {
                 Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
                 Color::rgba(200, 200, 200, 255),
             );
-            let label = systems.gfx.add_text(text, 1, "Profile Label", false);
+            let label = systems.gfx.add_text(
+                text,
+                1,
+                "Profile Label",
+                false,
+                CameraView::SubView1,
+            );
             systems.gfx.set_text(&mut systems.renderer, &label, msg);
             fixed_label.push(label);
         }
@@ -254,8 +277,13 @@ impl Profile {
                 Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
                 Color::rgba(200, 200, 200, 255),
             );
-            let label =
-                systems.gfx.add_text(text, 1, "Profile Label Value", false);
+            let label = systems.gfx.add_text(
+                text,
+                1,
+                "Profile Label Value",
+                false,
+                CameraView::SubView1,
+            );
             systems.gfx.set_text(&mut systems.renderer, &label, "0");
             value_label.push(label);
         }
@@ -778,10 +806,13 @@ impl Profile {
             Vec4::new(0.0, 0.0, 20.0, 20.0),
             0,
         );
-        let eq_img =
-            systems
-                .gfx
-                .add_image(img, 0, "Profile EQ Image", self.visible);
+        let eq_img = systems.gfx.add_image(
+            img,
+            0,
+            "Profile EQ Image",
+            self.visible,
+            CameraView::SubView1,
+        );
 
         self.eq_data[slot] = Some(EqData {
             img: eq_img,

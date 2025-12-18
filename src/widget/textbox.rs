@@ -82,7 +82,13 @@ impl Textbox {
             bg_color,
             0,
         );
-        let bg = systems.gfx.add_rect(rect, 0, "Textbox BG", false);
+        let bg = systems.gfx.add_rect(
+            rect,
+            0,
+            "Textbox BG",
+            false,
+            CameraView::SubView1,
+        );
 
         let select_rect = Rect::new(
             &mut systems.renderer,
@@ -91,10 +97,13 @@ impl Textbox {
             selection_bg_color,
             0,
         );
-        let selection =
-            systems
-                .gfx
-                .add_rect(select_rect, 0, "Textbox Select", visible);
+        let selection = systems.gfx.add_rect(
+            select_rect,
+            0,
+            "Textbox Select",
+            visible,
+            CameraView::SubView1,
+        );
 
         let mut text_data = create_label(
             systems,
@@ -114,6 +123,7 @@ impl Textbox {
             render_layer,
             "Textbox Text",
             visible,
+            CameraView::SubView1,
         );
 
         let caret_rect = Rect::new(
@@ -123,7 +133,13 @@ impl Textbox {
             text_color,
             0,
         );
-        let caret = systems.gfx.add_rect(caret_rect, 0, "Textbox Caret", false);
+        let caret = systems.gfx.add_rect(
+            caret_rect,
+            0,
+            "Textbox Caret",
+            false,
+            CameraView::SubView1,
+        );
 
         let mut disable_selection = false;
         let mut disable_copy = false;

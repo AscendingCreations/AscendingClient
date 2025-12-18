@@ -28,10 +28,13 @@ impl Tooltip {
         window_rect
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let window =
-            systems
-                .gfx
-                .add_rect(window_rect, 4, "Tool Tips Window", visible);
+        let window = systems.gfx.add_rect(
+            window_rect,
+            4,
+            "Tool Tips Window",
+            visible,
+            CameraView::SubView1,
+        );
 
         let mut text_label = create_label(
             systems,
@@ -45,10 +48,13 @@ impl Tooltip {
             Some(300.0),
             Some(systems.size.height),
         );
-        let text =
-            systems
-                .gfx
-                .add_text(text_label, 5, "Tool Tips Text", visible);
+        let text = systems.gfx.add_text(
+            text_label,
+            5,
+            "Tool Tips Text",
+            visible,
+            CameraView::SubView1,
+        );
 
         Tooltip {
             window,

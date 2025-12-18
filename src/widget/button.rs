@@ -119,6 +119,7 @@ impl Button {
                     render_layer,
                     "Button Image",
                     visible,
+                    CameraView::SubView1,
                 ))
             }
             ButtonType::Image(data) => {
@@ -136,6 +137,7 @@ impl Button {
                     render_layer,
                     "Button Image",
                     visible,
+                    CameraView::SubView1,
                 ))
             }
             _ => None,
@@ -167,6 +169,7 @@ impl Button {
                     render_layer,
                     "Button Content",
                     visible,
+                    CameraView::SubView1,
                 ))
             }
             ButtonContentType::Text(data) => {
@@ -196,6 +199,7 @@ impl Button {
                     data.render_layer,
                     "Button Content",
                     visible,
+                    CameraView::SubView1,
                 );
 
                 systems

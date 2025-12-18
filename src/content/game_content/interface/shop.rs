@@ -67,7 +67,13 @@ impl Shop {
         );
         rect.set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Shop BG", false);
+        let bg = systems.gfx.add_rect(
+            rect,
+            0,
+            "Shop BG",
+            false,
+            CameraView::SubView1,
+        );
 
         let header_pos = Vec2::new(
             w_pos.x,
@@ -83,7 +89,13 @@ impl Shop {
             0,
         );
 
-        let header = systems.gfx.add_rect(header_rect, 0, "Shop Header", false);
+        let header = systems.gfx.add_rect(
+            header_rect,
+            0,
+            "Shop Header",
+            false,
+            CameraView::SubView1,
+        );
 
         let text = create_label(
             systems,
@@ -101,8 +113,13 @@ impl Shop {
             ),
             Color::rgba(200, 200, 200, 255),
         );
-        let header_text =
-            systems.gfx.add_text(text, 1, "Shop Header Text", false);
+        let header_text = systems.gfx.add_text(
+            text,
+            1,
+            "Shop Header Text",
+            false,
+            CameraView::SubView1,
+        );
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Shop");
@@ -219,7 +236,13 @@ impl Shop {
                 Color::rgba(200, 200, 200, 255),
                 0,
             );
-            let icon_bg = systems.gfx.add_rect(bg, 0, "Shop Item BG", false);
+            let icon_bg = systems.gfx.add_rect(
+                bg,
+                0,
+                "Shop Item BG",
+                false,
+                CameraView::SubView1,
+            );
 
             let pos = Vec2::new(
                 w_pos.x + (48.0 * systems.scale as f32).floor(),
@@ -239,8 +262,13 @@ impl Shop {
                 ),
                 Color::rgba(200, 200, 200, 255),
             );
-            let name =
-                systems.gfx.add_text(item_name, 1, "Shop Item Name", false);
+            let name = systems.gfx.add_text(
+                item_name,
+                1,
+                "Shop Item Name",
+                false,
+                CameraView::SubView1,
+            );
             systems.gfx.set_text(&mut systems.renderer, &name, "");
 
             let pos = Vec2::new(
@@ -261,10 +289,13 @@ impl Shop {
                 ),
                 Color::rgba(200, 200, 200, 255),
             );
-            let price =
-                systems
-                    .gfx
-                    .add_text(price_text, 1, "Shop Item Price", false);
+            let price = systems.gfx.add_text(
+                price_text,
+                1,
+                "Shop Item Price",
+                false,
+                CameraView::SubView1,
+            );
             systems.gfx.set_text(&mut systems.renderer, &price, "");
 
             let p_icon = Image::new(
@@ -282,8 +313,13 @@ impl Shop {
                 0,
             );
 
-            let price_icon =
-                systems.gfx.add_image(p_icon, 0, "Shop Price Icon", false);
+            let price_icon = systems.gfx.add_image(
+                p_icon,
+                0,
+                "Shop Price Icon",
+                false,
+                CameraView::SubView1,
+            );
 
             let buy_button = Button::new(
                 systems,
@@ -339,6 +375,7 @@ impl Shop {
                 1,
                 "Shop Item Amount BG",
                 false,
+                CameraView::SubView1,
             );
 
             let text_size =
@@ -359,8 +396,13 @@ impl Shop {
                 ),
                 Color::rgba(240, 240, 240, 255),
             );
-            let amount =
-                systems.gfx.add_text(text, 2, "Shop Item Amount", false);
+            let amount = systems.gfx.add_text(
+                text,
+                2,
+                "Shop Item Amount",
+                false,
+                CameraView::SubView1,
+            );
 
             item.push(ShopItem {
                 got_data: false,
@@ -1002,6 +1044,7 @@ impl Shop {
                 0,
                 "Shop Item",
                 self.visible,
+                CameraView::SubView1,
             );
             self.item[index].icon = Some(item_index);
             self.item[index].item_index = shopdata.item[index].index as usize;
@@ -1092,6 +1135,7 @@ impl Shop {
                 0,
                 "Shop Item",
                 self.visible,
+                CameraView::SubView1,
             );
             self.item[default_index].icon = Some(item_index);
         })

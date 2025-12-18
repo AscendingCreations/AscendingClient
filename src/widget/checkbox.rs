@@ -134,6 +134,7 @@ impl Checkbox {
                     render_layer,
                     "Checkbox Image",
                     visible,
+                    CameraView::SubView1,
                 )
             }
             CheckboxType::Image(data) => {
@@ -156,6 +157,7 @@ impl Checkbox {
                     render_layer,
                     "Checkbox Image",
                     visible,
+                    CameraView::SubView1,
                 )
             }
             _ => GfxType::None,
@@ -185,6 +187,7 @@ impl Checkbox {
                     render_layer,
                     "Checkbox Check",
                     false,
+                    CameraView::SubView1,
                 )
             }
             CheckType::SetImage(data) => {
@@ -206,6 +209,7 @@ impl Checkbox {
                     render_layer,
                     "Checkbox Check",
                     false,
+                    CameraView::SubView1,
                 )
             }
             _ => GfxType::None,
@@ -235,6 +239,7 @@ impl Checkbox {
                 data.render_layer,
                 "Checkbox Text",
                 visible,
+                CameraView::SubView1,
             );
             systems
                 .gfx

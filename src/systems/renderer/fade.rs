@@ -53,7 +53,13 @@ impl Fade {
             0,
         );
 
-        self.f_image = gfx_collection.add_rect(rect, 4, "Fade Image", true);
+        self.f_image = gfx_collection.add_rect(
+            rect,
+            4,
+            "Fade Image",
+            true,
+            CameraView::SubView1,
+        );
         self.show = false;
         self.f_tmr = 0.0;
         self.f_alpha = 0;
@@ -156,7 +162,13 @@ impl MapFade {
             0,
         );
 
-        self.f_image = gfx_collection.add_rect(rect, 4, "Map Fade Image", true);
+        self.f_image = gfx_collection.add_rect(
+            rect,
+            4,
+            "Map Fade Image",
+            true,
+            CameraView::SubView1,
+        );
         self.show = false;
         self.f_tmr = 0.0;
         self.f_alpha = 0;

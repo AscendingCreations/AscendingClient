@@ -32,7 +32,13 @@ pub fn add_npc(
         0,
     );
 
-    let sprite = systems.gfx.add_image(image, 0, "Npc Sprite", false);
+    let sprite = systems.gfx.add_image(
+        image,
+        0,
+        "Npc Sprite",
+        false,
+        CameraView::MainView,
+    );
 
     let screen_pos = pos.convert_to_screen_tile(cur_map);
 
@@ -53,7 +59,13 @@ pub fn add_npc(
         .set_border_width(1.0)
         .set_border_color(Color::rgba(10, 10, 10, 255));
 
-    let bg_index = systems.gfx.add_rect(bg_image, 0, "Npc HP BG", false);
+    let bg_index = systems.gfx.add_rect(
+        bg_image,
+        0,
+        "Npc HP BG",
+        false,
+        CameraView::MainView,
+    );
     let bar_image = Rect::new(
         &mut systems.renderer,
         Vec3::new(1.0, 1.0, ORDER_HPBAR),
@@ -62,7 +74,13 @@ pub fn add_npc(
         0,
     );
 
-    let bar_index = systems.gfx.add_rect(bar_image, 0, "Npc HP Bar", false);
+    let bar_index = systems.gfx.add_rect(
+        bar_image,
+        0,
+        "Npc HP Bar",
+        false,
+        CameraView::MainView,
+    );
     let entity_name = create_label(
         systems,
         Vec3::new(0.0, 0.0, ORDER_ENTITY_NAME),
@@ -70,7 +88,13 @@ pub fn add_npc(
         Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
         Color::rgba(200, 40, 40, 255),
     );
-    let name_index = systems.gfx.add_text(entity_name, 2, "Npc Name", false);
+    let name_index = systems.gfx.add_text(
+        entity_name,
+        2,
+        "Npc Name",
+        false,
+        CameraView::MainView,
+    );
     let name_map = EntityNameMap(name_index);
     let hp_bar = HPBar {
         visible: false,

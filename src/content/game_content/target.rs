@@ -20,7 +20,13 @@ impl Target {
             0,
         );
 
-        let img_index = systems.gfx.add_image(image, 0, "Target Image", false);
+        let img_index = systems.gfx.add_image(
+            image,
+            0,
+            "Target Image",
+            false,
+            CameraView::MainView,
+        );
 
         Target {
             img_index,
@@ -38,7 +44,13 @@ impl Target {
             0,
         );
 
-        let img_index = systems.gfx.add_image(image, 0, "Target Image", false);
+        let img_index = systems.gfx.add_image(
+            image,
+            0,
+            "Target Image",
+            false,
+            CameraView::MainView,
+        );
 
         self.img_index = img_index;
         self.entity = None;

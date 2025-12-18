@@ -38,6 +38,7 @@ impl Register {
             0,
             "Register Window",
             true,
+            CameraView::SubView1,
         ));
 
         let header_rect = Rect::new(
@@ -57,6 +58,7 @@ impl Register {
             0,
             "Register Header",
             true,
+            CameraView::SubView1,
         ));
 
         let header_text = create_label(
@@ -76,10 +78,13 @@ impl Register {
             Color::rgba(240, 240, 240, 255),
         );
 
-        let text_index =
-            systems
-                .gfx
-                .add_text(header_text, 1, "Register Header Text", true);
+        let text_index = systems.gfx.add_text(
+            header_text,
+            1,
+            "Register Header Text",
+            true,
+            CameraView::SubView1,
+        );
 
         systems.gfx.set_text(
             &mut systems.renderer,
@@ -125,12 +130,14 @@ impl Register {
                 0,
                 "Register Labelbox",
                 true,
+                CameraView::SubView1,
             ));
             window.push(systems.gfx.add_rect(
                 textbox_bg,
                 0,
                 "Register Textbox BG",
                 true,
+                CameraView::SubView1,
             ));
 
             let tpos = Vec2::new(
@@ -149,8 +156,13 @@ impl Register {
                 ),
                 Color::rgba(100, 100, 100, 255),
             );
-            let textindex =
-                systems.gfx.add_text(text, 1, "Register Label", true);
+            let textindex = systems.gfx.add_text(
+                text,
+                1,
+                "Register Label",
+                true,
+                CameraView::SubView1,
+            );
             let (msg, hide_content) = match index {
                 1 => ("Retype", false),
                 2 => ("Password", true),
@@ -206,6 +218,7 @@ impl Register {
             0,
             "Register Sprite BG",
             true,
+            CameraView::SubView1,
         ));
 
         let image_texture = Image::new(
@@ -221,10 +234,13 @@ impl Register {
             0,
         );
 
-        let image =
-            systems
-                .gfx
-                .add_image(image_texture, 0, "Register Sprite", true);
+        let image = systems.gfx.add_image(
+            image_texture,
+            0,
+            "Register Sprite",
+            true,
+            CameraView::SubView1,
+        );
 
         let sprite_label = create_label(
             systems,
@@ -247,6 +263,7 @@ impl Register {
             1,
             "Register Sprite Label",
             true,
+            CameraView::SubView1,
         );
 
         systems.gfx.set_text(
@@ -400,6 +417,7 @@ impl Register {
             1,
             "Register Sprite Number",
             true,
+            CameraView::SubView1,
         );
 
         systems

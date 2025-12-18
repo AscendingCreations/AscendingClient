@@ -36,7 +36,13 @@ impl Login {
         menu_rect
             .set_border_color(Color::rgba(10, 10, 10, 255))
             .set_border_width(1.0);
-        window.push(systems.gfx.add_rect(menu_rect, 0, "Login Window", true));
+        window.push(systems.gfx.add_rect(
+            menu_rect,
+            0,
+            "Login Window",
+            true,
+            CameraView::SubView1,
+        ));
 
         let header_rect = Rect::new(
             &mut systems.renderer,
@@ -50,7 +56,13 @@ impl Login {
             0,
         );
 
-        window.push(systems.gfx.add_rect(header_rect, 0, "Login Header", true));
+        window.push(systems.gfx.add_rect(
+            header_rect,
+            0,
+            "Login Header",
+            true,
+            CameraView::SubView1,
+        ));
 
         let header_text = create_label(
             systems,
@@ -68,10 +80,13 @@ impl Login {
             ),
             Color::rgba(240, 240, 240, 255),
         );
-        let text_index =
-            systems
-                .gfx
-                .add_text(header_text, 1, "Login Header Text", true);
+        let text_index = systems.gfx.add_text(
+            header_text,
+            1,
+            "Login Header Text",
+            true,
+            CameraView::SubView1,
+        );
 
         systems.gfx.set_text(
             &mut systems.renderer,
@@ -113,12 +128,14 @@ impl Login {
                 0,
                 "Login Labelbox",
                 true,
+                CameraView::SubView1,
             ));
             window.push(systems.gfx.add_rect(
                 textbox_bg,
                 0,
                 "Login Textbox BG",
                 true,
+                CameraView::SubView1,
             ));
 
             let tpos = Vec2::new(
@@ -137,7 +154,13 @@ impl Login {
                 ),
                 Color::rgba(100, 100, 100, 255),
             );
-            let textindex = systems.gfx.add_text(text, 1, "Login Label", true);
+            let textindex = systems.gfx.add_text(
+                text,
+                1,
+                "Login Label",
+                true,
+                CameraView::SubView1,
+            );
             let (msg, disable_option) = match index {
                 1 => (
                     "Password",

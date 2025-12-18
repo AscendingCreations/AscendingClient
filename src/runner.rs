@@ -312,8 +312,13 @@ impl winit::application::ApplicationHandler for Runner {
                 ),
                 Color::rgba(255, 255, 255, 255),
             );
-            let text =
-                systems.gfx.add_text(txt, 5, "FPS", systems.config.show_fps);
+            let text = systems.gfx.add_text(
+                txt,
+                5,
+                "FPS",
+                systems.config.show_fps,
+                CameraView::SubView1,
+            );
             systems.fps = text;
 
             // Allow the window to be seen. hiding it then making visible speeds up

@@ -27,7 +27,13 @@ impl VitalBar {
         bg_rect
             .set_border_width(1.0)
             .set_border_color(Color::rgba(40, 40, 40, 255));
-        let bg = systems.gfx.add_rect(bg_rect, 0, "Vital Window", true);
+        let bg = systems.gfx.add_rect(
+            bg_rect,
+            0,
+            "Vital Window",
+            true,
+            CameraView::SubView1,
+        );
 
         let bar_size = size.x - (12.0 * systems.scale as f32).floor();
 
@@ -57,7 +63,13 @@ impl VitalBar {
             bg_rect
                 .set_border_width(1.0)
                 .set_border_color(Color::rgba(60, 60, 60, 255));
-            bar_bg[i] = systems.gfx.add_rect(bg_rect, 0, "Vital BG", true);
+            bar_bg[i] = systems.gfx.add_rect(
+                bg_rect,
+                0,
+                "Vital BG",
+                true,
+                CameraView::SubView1,
+            );
 
             let bar_rect = Rect::new(
                 &mut systems.renderer,
@@ -73,7 +85,13 @@ impl VitalBar {
                 color,
                 0,
             );
-            bar[i] = systems.gfx.add_rect(bar_rect, 0, "Vital Bar", true);
+            bar[i] = systems.gfx.add_rect(
+                bar_rect,
+                0,
+                "Vital Bar",
+                true,
+                CameraView::SubView1,
+            );
         }
 
         VitalBar {

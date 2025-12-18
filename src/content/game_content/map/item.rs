@@ -43,7 +43,13 @@ impl MapItem {
             0,
         );
 
-        let sprite_index = systems.gfx.add_image(image, 0, "Map Item", false);
+        let sprite_index = systems.gfx.add_image(
+            image,
+            0,
+            "Map Item",
+            false,
+            CameraView::SubView1,
+        );
 
         let _ = world.kinds.insert(entity, EntityKind::MapItem);
         let _ = world.entities.insert(

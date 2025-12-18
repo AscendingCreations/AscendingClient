@@ -55,7 +55,13 @@ impl Setting {
         );
         rect.set_border_width(1.0)
             .set_border_color(Color::rgba(20, 20, 20, 255));
-        let bg = systems.gfx.add_rect(rect, 0, "Settings BG", false);
+        let bg = systems.gfx.add_rect(
+            rect,
+            0,
+            "Settings BG",
+            false,
+            CameraView::SubView1,
+        );
 
         let header_pos = Vec2::new(
             w_pos.x,
@@ -71,10 +77,13 @@ impl Setting {
             0,
         );
 
-        let header =
-            systems
-                .gfx
-                .add_rect(header_rect, 0, "Settings Header", false);
+        let header = systems.gfx.add_rect(
+            header_rect,
+            0,
+            "Settings Header",
+            false,
+            CameraView::SubView1,
+        );
 
         let text = create_label(
             systems,
@@ -92,8 +101,13 @@ impl Setting {
             ),
             Color::rgba(200, 200, 200, 255),
         );
-        let header_text =
-            systems.gfx.add_text(text, 1, "Settings Header Text", false);
+        let header_text = systems.gfx.add_text(
+            text,
+            1,
+            "Settings Header Text",
+            false,
+            CameraView::SubView1,
+        );
         systems
             .gfx
             .set_text(&mut systems.renderer, &header_text, "Setting");
@@ -221,8 +235,13 @@ impl Setting {
                 ),
                 Color::rgba(200, 200, 200, 255),
             );
-            let label_index =
-                systems.gfx.add_text(text, 1, "Settings Label", false);
+            let label_index = systems.gfx.add_text(
+                text,
+                1,
+                "Settings Label",
+                false,
+                CameraView::SubView1,
+            );
             systems
                 .gfx
                 .set_text(&mut systems.renderer, &label_index, msg);
@@ -242,8 +261,13 @@ impl Setting {
             Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
             Color::rgba(200, 200, 200, 255),
         );
-        let bgm_label =
-            systems.gfx.add_text(slabel, 1, "Settings BGM Label", false);
+        let bgm_label = systems.gfx.add_text(
+            slabel,
+            1,
+            "Settings BGM Label",
+            false,
+            CameraView::SubView1,
+        );
         systems.gfx.set_text(
             &mut systems.renderer,
             &bgm_label,
@@ -262,8 +286,13 @@ impl Setting {
             Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
             Color::rgba(200, 200, 200, 255),
         );
-        let sfx_label =
-            systems.gfx.add_text(slabel, 1, "Settings SFX Label", false);
+        let sfx_label = systems.gfx.add_text(
+            slabel,
+            1,
+            "Settings SFX Label",
+            false,
+            CameraView::SubView1,
+        );
         systems.gfx.set_text(
             &mut systems.renderer,
             &sfx_label,

@@ -65,49 +65,58 @@ impl GfxCollection {
 
     pub fn add_image(
         &mut self,
-        gfx: Image,
+        mut gfx: Image,
         layer: usize,
         identifier: impl Into<Cow<'static, str>>,
         visible: bool,
+        view: CameraView,
     ) -> GfxType {
+        if view != CameraView::MainView {
+            gfx.set_camera_view(view);
+        }
         let data = GfxData {
             layer,
             visible,
             identifier: identifier.into(),
         };
-
         GfxType::Image(self.image_storage.insert(GfxImage { data, gfx }))
     }
 
     pub fn add_rect(
         &mut self,
-        gfx: Rect,
+        mut gfx: Rect,
         layer: usize,
         identifier: impl Into<Cow<'static, str>>,
         visible: bool,
+        view: CameraView,
     ) -> GfxType {
+        if view != CameraView::MainView {
+            gfx.set_camera_view(view);
+        }
         let data = GfxData {
             layer,
             visible,
             identifier: identifier.into(),
         };
-
         GfxType::Rect(self.rect_storage.insert(GfxRect { data, gfx }))
     }
 
     pub fn add_text(
         &mut self,
-        gfx: Text,
+        mut gfx: Text,
         layer: usize,
         identifier: impl Into<Cow<'static, str>>,
         visible: bool,
+        view: CameraView,
     ) -> GfxType {
+        if view != CameraView::MainView {
+            gfx.set_camera_view(view);
+        }
         let data = GfxData {
             layer,
             visible,
             identifier: identifier.into(),
         };
-
         GfxType::Text(self.text_storage.insert(GfxText { data, gfx }))
     }
 

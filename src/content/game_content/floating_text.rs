@@ -157,7 +157,13 @@ pub fn add_float_text(
             systems.size.height,
         ))
         .set_default_color(color);
-    let text_index = systems.gfx.add_text(text, 2, "Floating Text", true);
+    let text_index = systems.gfx.add_text(
+        text,
+        2,
+        "Floating Text",
+        true,
+        CameraView::MainView,
+    );
 
     let mut textbg = create_label(
         systems,
@@ -174,9 +180,13 @@ pub fn add_float_text(
         Shaping::Advanced,
         None,
     );
-    let text_bg = systems
-        .gfx
-        .add_text(textbg, 2, "Floating Text Shadow", true);
+    let text_bg = systems.gfx.add_text(
+        textbg,
+        2,
+        "Floating Text Shadow",
+        true,
+        CameraView::MainView,
+    );
 
     content.float_text.data.push(FloatingTextData {
         text: text_index,
