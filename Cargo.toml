@@ -79,8 +79,9 @@ package = "ascending_input"
 version = "0.5.0"
 
 [dependencies.graphics]
+features = ["static_dx"]
 package = "ascending_graphics"
-version = "0.27.0"
+version = "0.32.0"
 
 [profile.dev]
 codegen-units = 256

@@ -1,6 +1,6 @@
 use arboard::Clipboard;
 use cosmic_text::{Attrs, Metrics};
-use graphics::{cosmic_text::rustybuzz::ttf_parser::name::Name, *};
+use graphics::*;
 use log::warn;
 use std::cmp;
 
@@ -311,7 +311,7 @@ impl Textbox {
         self.data_text.push_str(&msg);
 
         for char in msg.chars().rev() {
-            let size = measure_string(systems, char.to_string()).x;
+            let size = measure_string(systems, &char.to_string(), 16.0, 16.0).x;
             self.char_size.insert(self.caret_pos, size);
         }
 
@@ -439,8 +439,13 @@ impl Textbox {
                         );
 
                         for char in clipboard.chars().rev() {
-                            let size =
-                                measure_string(systems, char.to_string()).x;
+                            let size = measure_string(
+                                systems,
+                                &char.to_string(),
+                                16.0,
+                                16.0,
+                            )
+                            .x;
                             self.char_size.insert(self.caret_pos, size);
                         }
                         self.move_caret_pos(
@@ -529,8 +534,13 @@ impl Textbox {
                                 self.caret_pos,
                                 msg,
                             );
-                            let size =
-                                measure_string(systems, msg.to_string()).x;
+                            let size = measure_string(
+                                systems,
+                                &msg.to_string(),
+                                16.0,
+                                16.0,
+                            )
+                            .x;
                             self.char_size.insert(self.caret_pos, size);
                             self.move_caret_pos(systems, false, 1, false);
                             did_edit = true;
@@ -595,13 +605,15 @@ impl Textbox {
             (start, self.caret_pos)
         };
 
-        let edit_text: String = self
-            .data_text
-            .chars()
-            .skip(start)
-            .take(end - start)
-            .collect();
-        let size = measure_string(systems, edit_text).x;
+        let edit_text_whole: String =
+            self.data_text.chars().take(end).collect();
+        let edit_text_part: String =
+            self.data_text.chars().take(start).collect();
+
+        let size_whole =
+            measure_string(systems, &edit_text_whole, 16.0, 16.0).x;
+        let size_part = measure_string(systems, &edit_text_part, 16.0, 16.0).x;
+        let size = size_whole - size_part;
 
         if move_left {
             self.caret_left -= size;
@@ -638,7 +650,7 @@ impl Textbox {
                 );
             };
 
-            let total_size = measure_string(systems, text).x;
+            let total_size = measure_string(systems, &text, 16.0, 16.0).x;
 
             if total_size > (self.size.x * systems.scale as f32).floor() {
                 let visible_size = total_size + self.adjust_x;
@@ -696,7 +708,7 @@ impl Textbox {
             );
         };
 
-        let total_size = measure_string(systems, text).x;
+        let total_size = measure_string(systems, &text, 16.0, 16.0).x;
 
         if total_size > self.size.x {
             let visible_size = total_size + self.adjust_x;
@@ -898,7 +910,7 @@ impl Textbox {
 
             self.selection_pos =
                 (self.adjust_x + self.char_pos[first]).floor().max(0.0);
-            measure_string(systems, text)
+            measure_string(systems, &text, 16.0, 16.0)
                 .x
                 .floor()
                 .min((self.size.x * systems.scale as f32) - self.selection_pos)

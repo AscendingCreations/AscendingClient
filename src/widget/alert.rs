@@ -128,6 +128,7 @@ impl Alert {
             &msg,
             &Attrs::new(),
             Shaping::Advanced,
+            None,
         );
 
         let text_size = text.measure().floor();
@@ -138,6 +139,7 @@ impl Alert {
             &header,
             &Attrs::new(),
             Shaping::Advanced,
+            None,
         );
 
         let header_text_size = header_text.measure().floor();

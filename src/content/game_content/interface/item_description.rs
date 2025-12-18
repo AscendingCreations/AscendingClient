@@ -1,7 +1,4 @@
-use graphics::{
-    cosmic_text::{Attrs, rustybuzz::ttf_parser::name},
-    *,
-};
+use graphics::{cosmic_text::Attrs, *};
 
 use crate::{
     GfxType, ORDER_ITEM_DESC, ORDER_ITEM_DESC_TEXT, SystemHolder,
@@ -123,6 +120,7 @@ impl ItemDescription {
                 text,
                 &Attrs::new(),
                 Shaping::Advanced,
+                None,
             );
             let name_size = name_text.measure();
             if name_size.x > text_size {
@@ -144,6 +142,7 @@ impl ItemDescription {
             &text_holder[0],
             &Attrs::new(),
             Shaping::Advanced,
+            None,
         );
 
         let tpos = Vec2::new(

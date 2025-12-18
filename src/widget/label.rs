@@ -51,18 +51,41 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
     text
 }
 
-pub fn measure_string(systems: &mut SystemHolder, text: String) -> Vec2 {
+pub fn measure_string(
+    systems: &mut SystemHolder,
+    text: &str,
+    font_size: f32,
+    line_height: f32,
+) -> Vec2 {
     Text::measure_string(
         &mut systems.renderer.font_sys,
-        &text,
+        text,
         &Attrs::new(),
         TextOptions {
             shaping: Shaping::Advanced,
-            metrics: Some(Metrics::new(16.0, 16.0).scale(systems.scale as f32)),
-            buffer_height: Some(systems.size.height),
+            metrics: Some(Metrics::new(font_size, line_height).scale(1.0)),
             buffer_width: Some(4096.0),
+            buffer_height: Some(4096.0),
             scale: 1.0,
             wrap: Wrap::None,
         },
+        None,
+    )
+}
+
+pub fn measure_character(systems: &mut SystemHolder, text: &str) -> Vec<Vec2> {
+    Text::measure_glyphs(
+        &mut systems.renderer.font_sys,
+        text,
+        &Attrs::new(),
+        TextOptions {
+            shaping: Shaping::Advanced,
+            metrics: Some(Metrics::new(16.0, 16.0).scale(1.0)),
+            buffer_width: Some(4096.0),
+            buffer_height: Some(systems.size.height),
+            scale: 1.0,
+            wrap: Wrap::None,
+        },
+        None,
     )
 }

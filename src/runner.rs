@@ -14,8 +14,8 @@ use camera::{
 use cosmic_text::{Attrs, Metrics};
 use graphics::{
     wgpu::{
-        BackendOptions, Dx12BackendOptions, MemoryBudgetThresholds,
-        NoopBackendOptions,
+        BackendOptions, Dx12BackendOptions, Dx12SwapchainKind,
+        ExperimentalFeatures, MemoryBudgetThresholds, NoopBackendOptions,
     },
     *,
 };
@@ -99,15 +99,18 @@ impl winit::application::ApplicationHandler for Runner {
             // These are DX12, DX11, Vulkan, Metal and Gles. if none of these work on a system they cant
             // play the game basically.
             let instance = wgpu::Instance::new(&InstanceDescriptor {
-                backends: backend,
+                backends: Backends::all(),
                 flags: InstanceFlags::empty(),
                 backend_options: BackendOptions {
                     gl: wgpu::GlBackendOptions {
                         gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
-                        fence_behavior: wgpu::GlFenceBehavior::AutoFinish,
+                        fence_behavior: wgpu::GlFenceBehavior::Normal,
                     },
                     dx12: wgpu::Dx12BackendOptions {
-                        shader_compiler: Dx12Compiler::Fxc,
+                        shader_compiler: Dx12Compiler::StaticDxc,
+                        latency_waitable_object:
+                            wgpu::wgt::Dx12UseFrameLatencyWaitableObject::DontWait,
+                        presentation_system: Dx12SwapchainKind::default(),
                     },
                     noop: NoopBackendOptions::default(),
                 },
@@ -132,7 +135,7 @@ impl winit::application::ApplicationHandler for Runner {
                     //used to find adapters
                     AdapterOptions {
                         allowed_backends: Backends::all(),
-                        power: config.power_settings.parse_enum(),
+                        power: AdapterPowerSettings::HighPower,
                         compatible_surface: Some(compatible_surface),
                     },
                     // used to deturmine which adapters support our special limits or features for our backends.
@@ -142,9 +145,11 @@ impl winit::application::ApplicationHandler for Runner {
                         label: None,
                         memory_hints: wgpu::MemoryHints::Performance,
                         trace: wgpu::Trace::Off,
+                        experimental_features: ExperimentalFeatures::disabled(),
                     },
                     // How we are presenting the screen which causes it to either clip to a FPS limit or be unlimited.
-                    config.present_mode.parse_enum(),
+                    wgpu::PresentMode::AutoVsync,
+                    EnabledPipelines::all(),
                 ))
                 .unwrap();
 
@@ -274,7 +279,7 @@ impl winit::application::ApplicationHandler for Runner {
 
             // setup our system which includes Camera and projection as well as our controls.
             // for the camera.
-            let system = System::new(
+            let mut system = System::new(
                 &mut systems.renderer,
                 Projection::Orthographic {
                     left: 0.0,
@@ -286,9 +291,8 @@ impl winit::application::ApplicationHandler for Runner {
                 },
                 FlatControls::new(FlatSettings { zoom: 1.0 }),
                 [systems.size.width, systems.size.height],
-                mat,
-                1.5,
             );
+            system.set_view(CameraView::SubView1, mat, 1.0);
 
             // create a Text rendering object.
             let text_scale = systems.scale as f32;

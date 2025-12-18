@@ -136,6 +136,7 @@ pub fn add_float_text(
         &msg,
         &Attrs::new(),
         Shaping::Advanced,
+        None,
     );
     let size = Vec2::new(text.measure().x.floor(), 20.0);
     text.size = size;
@@ -166,7 +167,13 @@ pub fn add_float_text(
         Color::rgba(10, 10, 10, 255),
     );
     let attrs = Attrs::new().weight(Weight::BOLD);
-    textbg.set_text(&mut systems.renderer, &msg, &attrs, Shaping::Advanced);
+    textbg.set_text(
+        &mut systems.renderer,
+        &msg,
+        &attrs,
+        Shaping::Advanced,
+        None,
+    );
     let text_bg = systems
         .gfx
         .add_text(textbg, 2, "Floating Text Shadow", true);

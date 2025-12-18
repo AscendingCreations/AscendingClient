@@ -170,6 +170,7 @@ where
             ),
             timestamp_writes: None,
             occlusion_query_set: None,
+            multiview_mask: None,
         });
 
         // Lets set the System's Shader information here, mostly Camera, Size and Time
@@ -223,7 +224,7 @@ pub fn add_image_to_buffer<Controls>(
 {
     systems.gfx.image_storage.iter_mut().for_each(|(_, gfx)| {
         if gfx.data.visible {
-            graphics.image_renderer.image_update(
+            graphics.image_renderer.update(
                 &mut gfx.gfx,
                 &mut systems.renderer,
                 &mut graphics.image_atlas,
@@ -235,7 +236,7 @@ pub fn add_image_to_buffer<Controls>(
         if gfx.data.visible {
             graphics
                 .text_renderer
-                .text_update(
+                .update(
                     &mut gfx.gfx,
                     &mut graphics.text_atlas,
                     &mut systems.renderer,
@@ -246,7 +247,7 @@ pub fn add_image_to_buffer<Controls>(
     });
     systems.gfx.rect_storage.iter_mut().for_each(|(_, gfx)| {
         if gfx.data.visible {
-            graphics.ui_renderer.rect_update(
+            graphics.ui_renderer.update(
                 &mut gfx.gfx,
                 &mut systems.renderer,
                 &mut graphics.ui_atlas,
@@ -256,7 +257,7 @@ pub fn add_image_to_buffer<Controls>(
     });
     systems.gfx.light_storage.iter_mut().for_each(|(_, gfx)| {
         if gfx.data.visible {
-            graphics.light_renderer.lights_update(
+            graphics.light_renderer.update(
                 &mut gfx.gfx,
                 &mut systems.renderer,
                 gfx.data.layer,
@@ -266,7 +267,7 @@ pub fn add_image_to_buffer<Controls>(
 
     for key in content.game_content.map.mapindex.iter() {
         if let Some(mapslotdata) = systems.base.mapdata.get_mut(*key) {
-            graphics.map_renderer.map_update(
+            graphics.map_renderer.update(
                 &mut mapslotdata.map,
                 &mut systems.renderer,
                 &mut graphics.map_atlas,

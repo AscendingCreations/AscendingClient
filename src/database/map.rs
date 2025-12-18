@@ -190,6 +190,7 @@ pub fn load_map_data(
                             TileData {
                                 id,
                                 color: Color::rgba(255, 255, 255, 255),
+                                anim_time: 250,
                             },
                         );
                     }

@@ -350,8 +350,13 @@ impl GfxCollection {
         if let GfxType::Text(gfx_index) = index
             && let Some(gfx) = self.text_storage.get_mut(*gfx_index)
         {
-            gfx.gfx
-                .set_text(renderer, msg, &Attrs::new(), Shaping::Advanced);
+            gfx.gfx.set_text(
+                renderer,
+                msg,
+                &Attrs::new(),
+                Shaping::Advanced,
+                None,
+            );
         }
     }
 
