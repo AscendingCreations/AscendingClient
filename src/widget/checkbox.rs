@@ -339,7 +339,7 @@ impl Checkbox {
         let extra_pos = match &self.check_type {
             CheckType::SetRect(data) => data.pos * systems.scale as f32,
             CheckType::SetImage(data) => data.pos * systems.scale as f32,
-            _ => Vec2::new(0.0, 0.0),
+            _ => Vec2::ZERO,
         };
         let pos = Vec3::new(
             self.base_pos.x

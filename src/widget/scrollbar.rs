@@ -190,7 +190,7 @@ impl Scrollbar {
             is_vertical,
             base_pos,
             adjust_pos,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             pos,
             size,
             bar_size,

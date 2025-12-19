@@ -1,3 +1,4 @@
+use camera::controls::FlatControls;
 use graphics::*;
 
 use input::Key;
@@ -7,6 +8,7 @@ use crate::{
     Alert, Direction, EntityKind, Result, SystemHolder, Tooltip,
     content::{menu_content::content_input::*, *},
     socket::*,
+    systems::State,
 };
 
 #[derive(Clone, Debug)]
@@ -56,6 +58,7 @@ pub fn handle_mouse_input(
 pub fn handle_key_input(
     world: &mut World,
     systems: &mut SystemHolder,
+    graphics: &mut State<FlatControls>,
     socket: &mut Poller,
     content: &mut Content,
     alert: &mut Alert,
@@ -97,6 +100,46 @@ pub fn handle_key_input(
                     "Storage Len Size MapItems Count: {}",
                     content.game_content.mapitems.borrow().len()
                 );
+            }
+            Key::Named(NamedKey::ArrowDown) => {
+                let input = graphics.system.controls_mut().inputs_mut();
+                let new_pos = Vec2::new(
+                    content.game_content.camera.x,
+                    content.game_content.camera.y + 2.0,
+                );
+                input.translation.x = new_pos.x;
+                input.translation.y = new_pos.y;
+                content.game_content.camera = new_pos;
+            }
+            Key::Named(NamedKey::ArrowLeft) => {
+                let input = graphics.system.controls_mut().inputs_mut();
+                let new_pos = Vec2::new(
+                    content.game_content.camera.x + 2.0,
+                    content.game_content.camera.y,
+                );
+                input.translation.x = new_pos.x;
+                input.translation.y = new_pos.y;
+                content.game_content.camera = new_pos;
+            }
+            Key::Named(NamedKey::ArrowRight) => {
+                let input = graphics.system.controls_mut().inputs_mut();
+                let new_pos = Vec2::new(
+                    content.game_content.camera.x - 2.0,
+                    content.game_content.camera.y,
+                );
+                input.translation.x = new_pos.x;
+                input.translation.y = new_pos.y;
+                content.game_content.camera = new_pos;
+            }
+            Key::Named(NamedKey::ArrowUp) => {
+                let input = graphics.system.controls_mut().inputs_mut();
+                let new_pos = Vec2::new(
+                    content.game_content.camera.x,
+                    content.game_content.camera.y - 2.0,
+                );
+                input.translation.x = new_pos.x;
+                input.translation.y = new_pos.y;
+                content.game_content.camera = new_pos;
             }
             _ => {}
         }

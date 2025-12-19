@@ -15,10 +15,11 @@ pub fn add_npc(
     entity: GlobalKey,
     npcnum: usize,
 ) -> Result<GlobalKey> {
-    let npc_data = &systems.base.npc[npcnum];
-    let start_pos = get_start_map_pos(cur_map, pos.map)
-        .unwrap_or_else(|| Vec2::new(0.0, 0.0));
+    let start_pos = get_map_pos(systems, pos.map);
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
+
+    let npc_data = &systems.base.npc[npcnum];
+
     let image = Image::new(
         Some(systems.resource.npcs[npc_data.sprite as usize].allocation),
         &mut systems.renderer,
@@ -287,7 +288,7 @@ pub fn end_npc_move(
             n_data.pos.map = n_data.end_movement.map;
         }
 
-        n_data.pos_offset = Vec2::new(0.0, 0.0);
+        n_data.pos_offset = Vec2::ZERO;
 
         n_data.dir
     } else {
@@ -309,17 +310,12 @@ pub fn update_npc_position(
     entitynamemap: &EntityNameMap,
     light_key: Option<Index>,
 ) -> Result<()> {
-    let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
-        .unwrap_or_else(|| {
-            Vec2::new(systems.size.width * 2.0, systems.size.height * 2.0)
-        });
+    let start_pos = get_map_pos(systems, pos.map);
     let cur_pos = systems.gfx.get_pos(&sprite);
-    let texture_pos = content.camera.0
+    let texture_pos = start_pos
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset
         - Vec2::new(10.0, 4.0);
-    let t_pos =
-        Vec2::new(start_pos.x + texture_pos.x, start_pos.y + texture_pos.y);
 
     let screen_pos = pos.convert_to_screen_tile(content.map.map_pos);
 
@@ -328,24 +324,24 @@ pub fn update_npc_position(
         Vec3::new(screen_pos.x as f32, screen_pos.y as f32, ORDER_NPC),
     );
 
-    if t_pos == Vec2::new(cur_pos.x, cur_pos.y) {
+    if texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
         return Ok(());
     }
 
     systems
         .gfx
-        .set_pos(&sprite, Vec3::new(t_pos.x, t_pos.y, cur_pos.z));
+        .set_pos(&sprite, Vec3::new(texture_pos.x, texture_pos.y, cur_pos.z));
 
     if let Some(light) = light_key {
         systems.gfx.set_area_light_pos(
             &content.game_lights,
             light,
-            t_pos + TILE_SIZE as f32,
+            texture_pos + TILE_SIZE as f32,
         )
     }
 
     let sprite_size = systems.gfx.get_size(&sprite);
-    let bar_pos = t_pos + Vec2::new((sprite_size.x - 20.0) * 0.5, 0.0);
+    let bar_pos = texture_pos + Vec2::new((sprite_size.x - 20.0) * 0.5, 0.0);
 
     systems.gfx.set_pos(
         &hpbar.bar_index,
@@ -357,7 +353,8 @@ pub fn update_npc_position(
     );
 
     let textsize = systems.gfx.get_measure(&entitynamemap.0).floor();
-    let name_pos = t_pos + Vec2::new((sprite_size.x - textsize.x) * 0.5, 40.0);
+    let name_pos =
+        texture_pos + Vec2::new((sprite_size.x - textsize.x) * 0.5, 40.0);
 
     systems.gfx.set_pos(
         &entitynamemap.0,
@@ -500,7 +497,7 @@ pub fn process_npc_movement(
         }
     } else {
         if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
-            n_data.pos_offset = Vec2::new(0.0, 0.0);
+            n_data.pos_offset = Vec2::ZERO;
         }
         end_npc_move(world, systems, entity)?;
     }
@@ -565,7 +562,7 @@ pub fn create_npc_light(
         n_data.light = systems.gfx.add_area_light(
             game_light,
             AreaLight {
-                pos: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
                 color: Color::rgba(100, 100, 100, 20),
                 max_distance: 20.0,
                 animate: true,

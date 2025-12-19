@@ -11,6 +11,10 @@ pub mod item;
 pub use item::*;
 
 const MAX_MAP_ITEMS: usize = 30;
+pub const MAP_SIZE: Vec2 = Vec2 {
+    x: 640.0, // 32 x TEXTURE_SIZE
+    y: 640.0, // 32 x TEXTURE_SIZE
+};
 
 #[derive(Clone, Debug, Default)]
 pub struct MapAttributes {
@@ -62,7 +66,7 @@ impl MapContent {
         clear_map_data(systems, map_renderer);
     }
 
-    pub fn move_pos(&mut self, systems: &mut SystemHolder, pos: Vec2) {
+    /*pub fn move_pos(&mut self, systems: &mut SystemHolder, pos: Vec2) {
         self.mapindex.iter().enumerate().for_each(|(index, key)| {
             let add_pos = get_mapindex_base_pos(index);
 
@@ -72,7 +76,7 @@ impl MapContent {
                 Vec2::new(add_pos.x + pos.x, add_pos.y + pos.y),
             );
         });
-    }
+    }*/
 
     pub fn get_attribute(
         &self,
@@ -181,7 +185,7 @@ pub fn find_entity(
     content: &mut GameContent,
     screen_pos: Vec2,
 ) -> Option<GlobalKey> {
-    let center_pos = get_map_pos(systems, content.map.mapindex[0]);
+    let center_pos = get_map_pos(systems, content.map.map_pos);
     let adjusted_pos = screen_pos - center_pos;
     let tile_pos = Vec2::new(
         (adjusted_pos.x / 20.0).floor(),
@@ -333,7 +337,7 @@ pub fn get_mapindex_base_pos(index: usize) -> Vec2 {
         6 => Vec2::new(-map_size.x, map_size.y),  // Bottom Left
         7 => Vec2::new(0.0, map_size.y),          // Bottom
         8 => Vec2::new(map_size.x, map_size.y),   // Bottom Right
-        _ => Vec2::new(0.0, 0.0),                 // Center
+        _ => Vec2::ZERO,                          // Center
     }
 }
 
@@ -348,45 +352,6 @@ pub fn get_map_loc(mx: i32, my: i32, index: usize) -> (i32, i32) {
         7 => (mx, my + 1),     // Bottom
         8 => (mx + 1, my + 1), // Bottom Right
         _ => (mx, my),         // Center
-    }
-}
-
-pub fn get_start_map_pos(from: MapPosition, to: MapPosition) -> Option<Vec2> {
-    if from.group != to.group {
-        return None;
-    }
-    let from_vec = Vec2::new(from.x as f32, from.y as f32);
-    let to_vec = Vec2::new(to.x as f32, to.y as f32);
-
-    match from_vec {
-        Vec2 { x, y } if x + 1.0 == to_vec.x && y + 1.0 == to_vec.y => {
-            Some(get_mapindex_base_pos(8))
-        } // Bottom Right
-        Vec2 { x, y } if x - 1.0 == to_vec.x && y + 1.0 == to_vec.y => {
-            Some(get_mapindex_base_pos(6))
-        } // Bottom Left
-        Vec2 { x, y } if x + 1.0 == to_vec.x && y - 1.0 == to_vec.y => {
-            Some(get_mapindex_base_pos(3))
-        } // Top Right
-        Vec2 { x, y } if x - 1.0 == to_vec.x && y - 1.0 == to_vec.y => {
-            Some(get_mapindex_base_pos(1))
-        } // Top Left
-        Vec2 { x, y } if x + 1.0 == to_vec.x && y == to_vec.y => {
-            Some(get_mapindex_base_pos(5))
-        } // Right
-        Vec2 { x, y } if x - 1.0 == to_vec.x && y == to_vec.y => {
-            Some(get_mapindex_base_pos(4))
-        } // Left
-        Vec2 { x, y } if x == to_vec.x && y + 1.0 == to_vec.y => {
-            Some(get_mapindex_base_pos(7))
-        } // Bottom
-        Vec2 { x, y } if x == to_vec.x && y - 1.0 == to_vec.y => {
-            Some(get_mapindex_base_pos(2))
-        } // Top
-        Vec2 { x, y } if x == to_vec.x && y == to_vec.y => {
-            Some(get_mapindex_base_pos(0))
-        } // Center
-        _ => None,
     }
 }
 

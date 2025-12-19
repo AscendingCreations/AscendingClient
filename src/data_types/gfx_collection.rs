@@ -460,10 +460,10 @@ impl GfxCollection {
                     return gfx.gfx.size;
                 }
             }
-            _ => return Vec2::new(0.0, 0.0),
+            _ => return Vec2::ZERO,
         }
 
-        Vec2::new(0.0, 0.0)
+        Vec2::ZERO
     }
 
     pub fn get_uv(&mut self, index: &GfxType) -> Vec4 {
@@ -506,10 +506,10 @@ impl GfxCollection {
                     return gfx.gfx.measure();
                 }
             }
-            _ => return Vec2::new(0.0, 0.0),
+            _ => return Vec2::ZERO,
         }
 
-        Vec2::new(0.0, 0.0)
+        Vec2::ZERO
     }
 
     pub fn add_area_light(

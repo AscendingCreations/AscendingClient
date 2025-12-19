@@ -35,7 +35,7 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
         &mut systems.renderer,
         Some(Metrics::new(16.0, 16.0).scale(systems.scale as f32)),
         Vec3::new(0.0, 0.0, 0.0),
-        Vec2::new(0.0, 0.0),
+        Vec2::ZERO,
         1.0,
         0,
     );

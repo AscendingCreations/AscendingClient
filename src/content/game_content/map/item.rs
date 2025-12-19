@@ -4,10 +4,7 @@ use graphics::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    Item, MapItemEntity, SystemHolder,
-    data_types::*,
-    game_content::{Camera, *},
-    get_start_map_pos,
+    Item, MapItemEntity, SystemHolder, data_types::*, game_content::*,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -23,11 +20,9 @@ impl MapItem {
         systems: &mut SystemHolder,
         sprite: usize,
         pos: Position,
-        cur_map: MapPosition,
         entity: GlobalKey,
     ) -> Result<GlobalKey> {
-        let start_pos = get_start_map_pos(cur_map, pos.map)
-            .unwrap_or_else(|| Vec2::new(0.0, 0.0));
+        let start_pos = get_map_pos(systems, pos.map);
         let texture_pos =
             Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
         let image = Image::new(
@@ -88,32 +83,28 @@ pub fn update_mapitem_position(
     pos: &Position,
     pos_offset: Vec2,
     light_key: Option<Index>,
-) {
-    let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
-        .unwrap_or_else(|| {
-            Vec2::new(systems.size.width * 2.0, systems.size.height * 2.0)
-        });
+) -> Result<()> {
+    let start_pos = get_map_pos(systems, pos.map);
     let cur_pos = systems.gfx.get_pos(&sprite);
-    let texture_pos = content.camera.0
+    let texture_pos = start_pos
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset;
-    if start_pos + texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
-        return;
+    if texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
+        return Ok(());
     }
-
-    let pos = start_pos + texture_pos;
 
     systems
         .gfx
-        .set_pos(&sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+        .set_pos(&sprite, Vec3::new(texture_pos.x, texture_pos.y, cur_pos.z));
 
     if let Some(light) = light_key {
         systems.gfx.set_area_light_pos(
             &content.game_lights,
             light,
-            pos + TILE_SIZE as f32,
+            texture_pos + TILE_SIZE as f32,
         )
     }
+    Ok(())
 }
 
 pub fn unload_mapitems(

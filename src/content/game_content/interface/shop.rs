@@ -142,8 +142,8 @@ impl Shop {
                 }),
                 ButtonContentType::Image(ButtonContentImg {
                     res: systems.resource.window_button_icon.allocation,
-                    pos: Vec2::new(0.0, 0.0),
-                    uv: Vec2::new(0.0, 0.0),
+                    pos: Vec2::ZERO,
+                    uv: Vec2::ZERO,
                     size: Vec2::new(20.0, 20.0),
                     hover_change: ButtonChangeType::None,
                     click_change: ButtonChangeType::None,
@@ -174,7 +174,7 @@ impl Shop {
                 ButtonContentType::Image(ButtonContentImg {
                     res: systems.resource.vertical_arrow.allocation,
                     pos: Vec2::new(-2.0, -2.0),
-                    uv: Vec2::new(0.0, 0.0),
+                    uv: Vec2::ZERO,
                     size: Vec2::new(24.0, 24.0),
                     hover_change: ButtonChangeType::None,
                     click_change: ButtonChangeType::None,
@@ -466,7 +466,7 @@ impl Shop {
             z_order: 0.0,
             order_index: 0,
             in_hold: false,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             header_pos,
             header_size,
             did_button_click: false,

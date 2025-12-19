@@ -242,7 +242,7 @@ impl Login {
             ButtonType::None,
             ButtonContentType::Text(ButtonContentText {
                 text: "Register".to_string(),
-                pos: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
                 color: Color::rgba(80, 80, 80, 255),
                 render_layer: 1,
                 hover_change: ButtonChangeType::ColorChange(Color::rgba(

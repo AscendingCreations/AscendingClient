@@ -175,8 +175,8 @@ impl Inventory {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.window_button_icon.allocation,
-                pos: Vec2::new(0.0, 0.0),
-                uv: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
+                uv: Vec2::ZERO,
                 size: Vec2::new(20.0, 20.0),
                 hover_change: ButtonChangeType::None,
                 click_change: ButtonChangeType::None,
@@ -206,7 +206,7 @@ impl Inventory {
             z_order: 0.0,
             order_index: 0,
             in_hold: false,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             header_pos,
             header_size,
             did_button_click: false,
@@ -218,7 +218,7 @@ impl Inventory {
             max_bound: Vec2::new(1.0, 1.0),
 
             hold_slot: None,
-            hold_adjust_pos: Vec2::new(0.0, 0.0),
+            hold_adjust_pos: Vec2::ZERO,
         }
     }
 
@@ -556,7 +556,7 @@ impl Inventory {
 
     pub fn release_window(&mut self) {
         self.in_hold = false;
-        self.hold_pos = Vec2::new(0.0, 0.0);
+        self.hold_pos = Vec2::ZERO;
     }
 
     pub fn set_z_order(

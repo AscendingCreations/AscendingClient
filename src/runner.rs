@@ -99,7 +99,7 @@ impl winit::application::ApplicationHandler for Runner {
             // These are DX12, DX11, Vulkan, Metal and Gles. if none of these work on a system they cant
             // play the game basically.
             let instance = wgpu::Instance::new(&InstanceDescriptor {
-                backends: Backends::all(),
+                backends: backend,
                 flags: InstanceFlags::empty(),
                 backend_options: BackendOptions {
                     gl: wgpu::GlBackendOptions {
@@ -148,7 +148,7 @@ impl winit::application::ApplicationHandler for Runner {
                         experimental_features: ExperimentalFeatures::disabled(),
                     },
                     // How we are presenting the screen which causes it to either clip to a FPS limit or be unlimited.
-                    wgpu::PresentMode::AutoVsync,
+                    config.present_mode.parse_enum(),
                     EnabledPipelines::all(),
                 ))
                 .unwrap();
@@ -191,7 +191,7 @@ impl winit::application::ApplicationHandler for Runner {
             // get the screen size.
             let size = renderer.size();
             let mat = Mat4::from_translation(Vec3 {
-                x: 40.0,
+                x: 0.0,
                 y: 0.0,
                 z: 0.0,
             });
@@ -453,8 +453,8 @@ impl winit::application::ApplicationHandler for Runner {
                 match input {
                     input::InputEvent::KeyInput { key, pressed, .. } => {
                         handle_key_input(
-                            world, systems, socket, content, alert, &key,
-                            pressed,
+                            world, systems, graphics, socket, content, alert,
+                            &key, pressed,
                         )
                         .unwrap();
                     }

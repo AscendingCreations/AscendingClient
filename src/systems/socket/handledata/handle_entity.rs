@@ -225,17 +225,7 @@ pub fn handle_mapitems(
         let _owner = data.read::<Option<GlobalKey>>()?;
         let _did_spawn = data.read::<bool>()?;
 
-        if let Some(myentity) = passer.content.game_content.myentity
-            && !passer.world.entities.contains_key(entity)
-        {
-            let client_pos = if let Some(Entity::Player(p_data)) =
-                passer.world.entities.get(myentity)
-            {
-                p_data.pos
-            } else {
-                Position::default()
-            };
-
+        if !passer.world.entities.contains_key(entity) {
             let sprite = if let Some(itemdata) =
                 passer.systems.base.item.get(item.num as usize)
             {
@@ -248,7 +238,6 @@ pub fn handle_mapitems(
                 passer.systems,
                 sprite,
                 pos,
-                client_pos.map,
                 entity,
             )?;
 
@@ -271,7 +260,7 @@ pub fn handle_mapitems(
                         &pos,
                         mi_data.pos_offset,
                         mi_data.light,
-                    );
+                    )?;
                 }
             }
         }
@@ -396,7 +385,7 @@ pub fn handle_warp(
                         p_data.movement_buffer.clear();
                         p_data.movement.is_moving = false;
                         p_data.pos = pos;
-                        p_data.pos_offset = Vec2::new(0.0, 0.0);
+                        p_data.pos_offset = Vec2::ZERO;
 
                         (old_pos, p_data.dir)
                     }
@@ -405,7 +394,7 @@ pub fn handle_warp(
                         n_data.movement_buffer.clear();
                         n_data.movement.is_moving = false;
                         n_data.pos = pos;
-                        n_data.pos_offset = Vec2::new(0.0, 0.0);
+                        n_data.pos_offset = Vec2::ZERO;
 
                         (old_pos, n_data.dir)
                     }

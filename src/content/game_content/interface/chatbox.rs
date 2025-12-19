@@ -335,8 +335,8 @@ impl Chatbox {
                 }),
                 ButtonContentType::Image(ButtonContentImg {
                     res: systems.resource.vertical_arrow.allocation,
-                    pos: Vec2::new(0.0, 0.0),
-                    uv: Vec2::new(0.0, 0.0),
+                    pos: Vec2::ZERO,
+                    uv: Vec2::ZERO,
                     size: Vec2::new(24.0, 24.0),
                     hover_change: ButtonChangeType::None,
                     click_change: ButtonChangeType::None,
@@ -366,7 +366,7 @@ impl Chatbox {
                 }),
                 ButtonContentType::Image(ButtonContentImg {
                     res: systems.resource.vertical_arrow.allocation,
-                    pos: Vec2::new(0.0, 0.0),
+                    pos: Vec2::ZERO,
                     uv: Vec2::new(24.0, 0.0),
                     size: Vec2::new(24.0, 24.0),
                     hover_change: ButtonChangeType::None,
@@ -481,7 +481,7 @@ impl Chatbox {
         let selection_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(0.0, 0.0, detail_3),
-            Vec2::new(0.0, 0.0),
+            Vec2::ZERO,
             Color::rgba(60, 60, 60, 255),
             0,
         );
@@ -513,7 +513,7 @@ impl Chatbox {
             z_order: w_pos.z,
             order_index: 0,
             in_hold: false,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             chat_tab,
             selected_tab: 0,
             msg_selection,
@@ -523,7 +523,7 @@ impl Chatbox {
                 systems.size.width - w_size.x,
                 systems.size.height - w_size.y,
             ),
-            max_bound: Vec2::new(0.0, 0.0),
+            max_bound: Vec2::ZERO,
         }
     }
 

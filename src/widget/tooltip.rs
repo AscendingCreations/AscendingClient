@@ -63,7 +63,7 @@ impl Tooltip {
 
             init: false,
             start_tmr: false,
-            init_pos: Vec2::new(0.0, 0.0),
+            init_pos: Vec2::ZERO,
             init_tmr: 0.0,
         }
     }

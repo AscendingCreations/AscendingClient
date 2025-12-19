@@ -38,22 +38,12 @@ const KEY_MOVERIGHT: usize = 4;
 const KEY_PICKUP: usize = 5;
 const MAX_KEY: usize = 6;
 
-#[derive(Clone, Debug)]
-pub struct Camera(pub Vec2);
-
-impl Camera {
-    pub fn new(tile_pos: Vec2) -> Self {
-        Self(tile_pos * TILE_SIZE as f32)
-    }
-}
-
 pub struct GameContent {
     pub players: Rc<RefCell<IndexSet<GlobalKey, ahash::RandomState>>>,
     pub npcs: Rc<RefCell<IndexSet<GlobalKey, ahash::RandomState>>>,
     pub mapitems: Rc<RefCell<IndexSet<GlobalKey, ahash::RandomState>>>,
     pub game_lights: GfxType,
     pub map: MapContent,
-    camera: Camera,
     pub interface: Interface,
     pub keyinput: [bool; MAX_KEY],
     pub myentity: Option<GlobalKey>,
@@ -68,6 +58,7 @@ pub struct GameContent {
     pub can_move: bool,
     pub reconnect_count: usize,
     pub move_keypressed: Vec<ControlKey>,
+    pub camera: Vec2,
 }
 
 impl GameContent {
@@ -90,7 +81,6 @@ impl GameContent {
             mapitems: Rc::new(RefCell::new(IndexSet::default())),
             game_lights,
             map: MapContent::new(),
-            camera: Camera::new(Vec2::new(0.0, 0.0)),
             interface: Interface::new(systems),
             keyinput: [false; MAX_KEY],
             finalized: false,
@@ -105,6 +95,7 @@ impl GameContent {
             can_move: true,
             reconnect_count: 0,
             move_keypressed: Vec::with_capacity(4),
+            camera: Vec2::ZERO,
         }
     }
 
@@ -145,7 +136,6 @@ impl GameContent {
         self.map.unload(systems, map_renderer);
         self.player_data.unload();
         self.float_text.unload(systems);
-        self.camera.0 = Vec2::new(0.0, 0.0);
         systems.caret.index = None;
         Ok(())
     }
@@ -312,10 +302,14 @@ impl GameContent {
                 set_map_visible(systems, self.map.mapindex[i], false);
             }
 
-            let key =
-                get_map_key(systems, map_renderer, mx, my, map.group, buffer)?;
+            let key = get_map_key(
+                systems,
+                map_renderer,
+                MapPosition::new(mx, my, map.group),
+                buffer,
+                map,
+            )?;
             self.map.mapindex[i] = key;
-            set_map_pos(systems, key, get_mapindex_base_pos(i));
             set_map_visible(systems, key, true);
         }
 
@@ -620,7 +614,7 @@ pub fn update_camera(
     systems: &mut SystemHolder,
     socket: &mut Poller,
 ) -> Result<()> {
-    let player_pos = if let Some(entity) = content.myentity {
+    /*let player_pos = if let Some(entity) = content.myentity {
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
             (Vec2::new(p_data.pos.x as f32, p_data.pos.y as f32)
                 * TILE_SIZE as f32)
@@ -629,17 +623,10 @@ pub fn update_camera(
             return Ok(());
         }
     } else {
-        Vec2::new(0.0, 0.0)
+        Vec2::ZERO
     };
 
     let adjust_pos = get_screen_center(&systems.size) - player_pos;
-    if content.camera.0 == adjust_pos {
-        return Ok(());
-    }
-
-    content.camera.0 = adjust_pos;
-
-    content.map.move_pos(systems, content.camera.0);
 
     for (key, entity) in world.entities.iter_mut() {
         let is_target = content.target.entity == Some(key);
@@ -718,6 +705,6 @@ pub fn update_camera(
             }
             _ => {}
         }
-    }
+    }*/
     Ok(())
 }

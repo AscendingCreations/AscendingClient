@@ -1,3 +1,4 @@
+use crate::content::MAP_SIZE;
 use crate::{
     BufferTask, BufferTaskEnum, MapAttributes, MapDirBlock, MapPosition,
     Result, SystemHolder, data_types::*, socket::*,
@@ -213,12 +214,13 @@ pub fn create_map_data(
     systems: &mut SystemHolder,
     map_renderer: &mut MapRenderer,
     mappos: MapPosition,
+    world_pos: Vec2,
 ) -> Result<Index> {
     if let Some(mut map) = Map::new(
         &mut systems.renderer,
         map_renderer,
         TILE_SIZE as u32,
-        Vec2::new(0.0, 0.0),
+        world_pos,
         MapZLayers::default(),
     ) {
         map.can_render = true;
@@ -243,15 +245,32 @@ pub fn create_map_data(
 pub fn get_map_key(
     systems: &mut SystemHolder,
     map_renderer: &mut MapRenderer,
-    x: i32,
-    y: i32,
-    group: i32,
+    mappos: MapPosition,
     buffer: &mut BufferTask,
+    center_pos: MapPosition,
 ) -> Result<Index> {
-    let mappos = MapPosition { x, y, group };
+    let center_map_pos = if let Some(index) =
+        systems.base.mappos_key.get(&center_pos)
+        && let Some(mapdata) = systems.base.mapdata.get(*index)
+    {
+        mapdata.map.pos
+    } else {
+        Vec2::ZERO
+    };
+
+    let world_pos = center_map_pos
+        + Vec2::new(
+            (mappos.x - center_pos.x) as f32 * MAP_SIZE.x,
+            (mappos.y - center_pos.y) as f32 * MAP_SIZE.y,
+        );
 
     if let Some(index) = systems.base.mappos_key.get(&mappos) {
         systems.base.map_cache.promote(index);
+        if let Some(mapdata) = systems.base.mapdata.get_mut(*index)
+            && mapdata.map.pos != world_pos
+        {
+            mapdata.map.set_pos(world_pos);
+        }
         return Ok(*index);
     }
 
@@ -267,7 +286,7 @@ pub fn get_map_key(
         }
     }
 
-    let key = create_map_data(systems, map_renderer, mappos)?;
+    let key = create_map_data(systems, map_renderer, mappos, world_pos)?;
     systems.base.mappos_key.insert(mappos, key);
     systems.base.map_cache.push(key, key);
     buffer.add_task(BufferTaskEnum::ApplyMap(mappos, key));
@@ -295,20 +314,14 @@ pub fn set_map_visible(systems: &mut SystemHolder, key: Index, visible: bool) {
     }
 }
 
-pub fn set_map_pos(systems: &mut SystemHolder, key: Index, pos: Vec2) {
-    if let Some(mapslotdata) = systems.base.mapdata.get_mut(key) {
-        mapslotdata.map.set_pos(Vec2::new(pos.x, pos.y));
-    }
-}
-
-pub fn get_map_pos(systems: &mut SystemHolder, key: Index) -> Vec2 {
-    if let Some(mapslotdata) = systems.base.mapdata.get_mut(key) {
+pub fn get_map_pos(systems: &mut SystemHolder, map_pos: MapPosition) -> Vec2 {
+    if let Some(key) = systems.base.mappos_key.get(&map_pos)
+        && let Some(mapslotdata) = systems.base.mapdata.get(*key)
+    {
         return mapslotdata.map.pos;
-    } else {
-        error!("Failed to get map pos of Key: {key:?}");
     }
 
-    Vec2::default()
+    Vec2::ZERO
 }
 
 pub fn get_map_dir_block(

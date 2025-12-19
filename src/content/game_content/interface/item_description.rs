@@ -30,7 +30,7 @@ impl ItemDescription {
         let mut bg_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(0.0, 0.0, 0.0),
-            Vec2::new(0.0, 0.0),
+            Vec2::ZERO,
             Color::rgba(110, 110, 110, 255),
             0,
         );
@@ -49,9 +49,9 @@ impl ItemDescription {
             visible: false,
             bg,
             data: None,
-            size: Vec2::new(0.0, 0.0),
-            min_bound: Vec2::new(0.0, 0.0),
-            max_bound: Vec2::new(0.0, 0.0),
+            size: Vec2::ZERO,
+            min_bound: Vec2::ZERO,
+            max_bound: Vec2::ZERO,
         }
     }
 

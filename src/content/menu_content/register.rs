@@ -314,7 +314,7 @@ impl Register {
             ButtonType::None,
             ButtonContentType::Text(ButtonContentText {
                 text: "Sign In".to_string(),
-                pos: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
                 color: Color::rgba(80, 80, 80, 255),
                 render_layer: 1,
                 hover_change: ButtonChangeType::ColorChange(Color::rgba(
@@ -349,8 +349,8 @@ impl Register {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.horizontal_arrow.allocation,
-                pos: Vec2::new(0.0, 0.0),
-                uv: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
+                uv: Vec2::ZERO,
                 size: Vec2::new(24.0, 24.0),
                 hover_change: ButtonChangeType::None,
                 click_change: ButtonChangeType::None,
@@ -380,7 +380,7 @@ impl Register {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.horizontal_arrow.allocation,
-                pos: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
                 uv: Vec2::new(24.0, 0.0),
                 size: Vec2::new(24.0, 24.0),
                 hover_change: ButtonChangeType::None,

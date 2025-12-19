@@ -52,7 +52,7 @@ pub fn game_loop(
                     &mut content.game_content,
                     seconds,
                 )?;
-                float_text_loop(systems, &mut content.game_content, seconds);
+                float_text_loop(systems, &mut content.game_content, seconds)?;
 
                 loop_timer.entity_tmr = seconds + 0.025;
             }
