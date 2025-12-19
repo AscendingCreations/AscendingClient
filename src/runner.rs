@@ -455,8 +455,8 @@ impl winit::application::ApplicationHandler for Runner {
                 match input {
                     input::InputEvent::KeyInput { key, pressed, .. } => {
                         handle_key_input(
-                            world, systems, graphics, socket, content, alert,
-                            &key, pressed,
+                            world, systems, socket, content, alert, &key,
+                            pressed,
                         )
                         .unwrap();
                     }
@@ -551,7 +551,7 @@ impl winit::application::ApplicationHandler for Runner {
                     }
                     input::InputEvent::MouseWheel { amount, axis } => {
                         if axis == MouseAxis::Vertical && amount != 0.0 {
-                            // ToDo remove TEMP
+                            // Test Feature: Map View Zoom
                             let new_zoom = (if amount > 0.0 {
                                 content.game_content.zoom + 0.1
                             } else {

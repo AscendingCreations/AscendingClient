@@ -276,6 +276,7 @@ pub fn get_map_key(
         {
             mapdata.map.set_pos(world_pos);
         }
+
         return Ok(*index);
     }
 
@@ -315,7 +316,9 @@ pub fn clear_map_data(
 
 pub fn set_map_visible(systems: &mut SystemHolder, key: Index, visible: bool) {
     if let Some(mapslotdata) = systems.base.mapdata.get_mut(key) {
-        mapslotdata.map.can_render = visible;
+        mapslotdata
+            .map
+            .set_visibility(&mut systems.renderer, visible);
     }
 }
 

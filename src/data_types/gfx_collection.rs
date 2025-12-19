@@ -196,8 +196,7 @@ impl GfxCollection {
         if let GfxType::Image(gfx_index) = index
             && let Some(gfx) = self.image_storage.get_mut(*gfx_index)
         {
-            gfx.gfx.texture = Some(texture);
-            gfx.gfx.changed = true;
+            gfx.gfx.set_texture(Some(texture));
         }
     }
 
@@ -205,8 +204,7 @@ impl GfxCollection {
         match index {
             GfxType::Image(gfx_index) => {
                 if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
-                    gfx.gfx.color = color;
-                    gfx.gfx.changed = true;
+                    gfx.gfx.set_color(color);
                 }
             }
             GfxType::Rect(gfx_index) => {
@@ -243,8 +241,7 @@ impl GfxCollection {
         match index {
             GfxType::Image(gfx_index) => {
                 if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
-                    gfx.gfx.pos = pos;
-                    gfx.gfx.changed = true;
+                    gfx.gfx.set_pos(pos);
                 }
             }
             GfxType::Rect(gfx_index) => {
@@ -345,8 +342,7 @@ impl GfxCollection {
         if let GfxType::Image(gfx_index) = index
             && let Some(gfx) = self.image_storage.get_mut(*gfx_index)
         {
-            gfx.gfx.uv = uv;
-            gfx.gfx.changed = true;
+            gfx.gfx.set_uv(uv);
         }
     }
 

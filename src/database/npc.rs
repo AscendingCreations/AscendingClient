@@ -48,7 +48,7 @@ pub struct NpcData {
     pub can_move: bool,
     pub can_attack_player: bool,
     pub has_allys: bool,
-    pub has_enemies: bool, // New
+    pub has_enemies: bool,
     pub can_attack: bool,
     pub has_selfonly: bool,
     pub has_friendonly: bool,
@@ -57,8 +57,8 @@ pub struct NpcData {
     pub isanimated: bool,
     pub run_damage: u32,
     pub spawntime: (GameTime, GameTime), //skill type to cast it with and  percentage needed to cast and Max Percentage.
-    pub range: i32, // New       //attack range. How far they need to be to hit their target.
-    pub enemies: Vec<u64>, // New //list of enemies the npcs can attack of other npc's... WAR!
+    pub range: i32, //attack range. How far they need to be to hit their target.
+    pub enemies: Vec<u64>, //list of enemies the npcs can attack of other npc's... WAR!
     pub drops: [NpcDrop; 10],
     pub free_shares: u32,
     pub exp: i64,

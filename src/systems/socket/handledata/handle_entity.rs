@@ -471,7 +471,6 @@ pub fn handle_warp(
                     finalize_entity(passer.world, passer.systems)?;
                     passer.content.game_content.refresh_map = true;
                 }
-                passer.content.game_content.can_move = true;
 
                 if passer.systems.map_fade.f_alpha > 0 {
                     passer.systems.map_fade.init_fade(

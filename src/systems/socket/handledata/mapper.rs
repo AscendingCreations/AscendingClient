@@ -44,7 +44,6 @@ pub enum ServerPackets {
     MapItems,
     MyIndex,
     Move,
-    MoveOk,
     Warp,
     Dir,
     Vitals,
@@ -90,7 +89,6 @@ pub fn run_packet(packet: &ServerPackets) -> Option<PacketFunction> {
             Some(handle_playerspawn as PacketFunction)
         }
         ServerPackets::Move => Some(handle_move as PacketFunction),
-        ServerPackets::MoveOk => Some(handle_move_ok as PacketFunction),
         ServerPackets::Warp => Some(handle_warp as PacketFunction),
         ServerPackets::Dir => Some(handle_dir as PacketFunction),
         ServerPackets::Vitals => Some(handle_vitals as PacketFunction),
