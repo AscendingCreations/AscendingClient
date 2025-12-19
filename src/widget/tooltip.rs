@@ -40,7 +40,7 @@ impl Tooltip {
             systems,
             Vec3::new(2.0, 2.0, ORDER_TOOLTIP_TEXT),
             Vec2::new(20.0, 20.0),
-            Bounds::new(2.0, 2.0, 22.0, 22.0),
+            Some(Bounds::new(2.0, 2.0, 22.0, 22.0)),
             Color::rgba(255, 255, 255, 255),
         );
         text_label.set_buffer_size(
@@ -91,12 +91,12 @@ impl Tooltip {
         systems.gfx.set_size(&self.text, text_size);
         systems.gfx.set_bound(
             &self.text,
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x + 8.0,
                 w_pos.y + 8.0,
                 w_pos.x + text_size.x + 8.0,
                 w_pos.y + text_size.y + 8.0,
-            ),
+            )),
         );
         systems.gfx.set_pos(
             &self.text,

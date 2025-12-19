@@ -1,5 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
+use camera::controls::FlatControls;
 use graphics::*;
 
 use indexmap::IndexSet;
@@ -164,7 +165,7 @@ impl GameContent {
         for entity in self.mapitems.borrow().iter() {
             MapItem::finalized(world, systems, *entity)?;
         }
-        update_camera(world, self, systems, socket)?;
+        //update_camera(world, self, systems, socket)?;
 
         Ok(())
     }
@@ -334,7 +335,8 @@ impl GameContent {
 
         self.init_map(systems, map_renderer, self.map.map_pos, buffer)?;
 
-        update_camera(world, self, systems, socket)
+        //update_camera(world, self, systems, socket)
+        Ok(())
     }
 
     pub fn handle_key_input(
@@ -612,20 +614,30 @@ pub fn update_camera(
     world: &mut World,
     content: &mut GameContent,
     systems: &mut SystemHolder,
+    graphics: &mut State<FlatControls>,
     socket: &mut Poller,
 ) -> Result<()> {
-    /*let player_pos = if let Some(entity) = content.myentity {
-        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
-            (Vec2::new(p_data.pos.x as f32, p_data.pos.y as f32)
+    let player_pos = if let Some(entity) = content.myentity
+        && let Some(Entity::Player(p_data)) = world.entities.get_mut(entity)
+    {
+        let start_pos = get_map_pos(systems, p_data.pos.map);
+
+        start_pos
+            + (Vec2::new(p_data.pos.x as f32, p_data.pos.y as f32)
                 * TILE_SIZE as f32)
-                + p_data.pos_offset
-        } else {
-            return Ok(());
-        }
+            + p_data.pos_offset
     } else {
-        Vec2::ZERO
+        return Ok(());
     };
 
+    let screen_size = Vec2::new(systems.size.width, systems.size.height);
+    let camera_pos = player_pos - (screen_size * 0.5).floor();
+
+    let input = graphics.system.controls_mut().inputs_mut();
+    input.translation.x = -camera_pos.x;
+    input.translation.y = -camera_pos.y;
+
+    /*
     let adjust_pos = get_screen_center(&systems.size) - player_pos;
 
     for (key, entity) in world.entities.iter_mut() {

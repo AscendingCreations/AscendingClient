@@ -140,12 +140,7 @@ pub fn add_float_text(
     let tpos = texture_pos + adjust_pos;
 
     text.set_pos(Vec3::new(tpos.x, tpos.y, ORDER_FLOAT_TEXT))
-        .set_bounds(Bounds::new(
-            0.0,
-            0.0,
-            systems.size.width,
-            systems.size.height,
-        ))
+        .set_bounds(None)
         .set_default_color(color);
     let text_index = systems.gfx.add_text(
         text,
@@ -159,7 +154,7 @@ pub fn add_float_text(
         systems,
         Vec3::new(tpos.x - 1.0, tpos.y - 2.0, ORDER_FLOAT_TEXT_BG),
         size,
-        Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
+        None,
         Color::rgba(10, 10, 10, 255),
     );
     let attrs = Attrs::new().weight(Weight::BOLD);

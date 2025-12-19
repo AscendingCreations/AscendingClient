@@ -304,12 +304,12 @@ impl winit::application::ApplicationHandler for Runner {
                 &mut systems,
                 Vec3::new(txt_pos.x, txt_pos.y, 0.0),
                 (Vec2::new(150.0, 20.0) * text_scale).floor(),
-                Bounds::new(
+                Some(Bounds::new(
                     txt_pos.x,
                     txt_pos.y,
                     txt_pos.x + (150.0 * text_scale).floor(),
                     txt_pos.y + (20.0 * text_scale).floor(),
-                ),
+                )),
                 Color::rgba(255, 255, 255, 255),
             );
             let text = systems.gfx.add_text(
@@ -585,13 +585,7 @@ impl winit::application::ApplicationHandler for Runner {
 
             // Game Loop
             game_loop(
-                socket,
-                world,
-                systems,
-                &mut graphics.map_renderer,
-                content,
-                buffertask,
-                seconds,
+                socket, world, systems, graphics, content, buffertask, seconds,
                 loop_timer,
             )
             .unwrap();

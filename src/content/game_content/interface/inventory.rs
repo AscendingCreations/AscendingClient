@@ -107,12 +107,12 @@ impl Inventory {
                 detail_2,
             ),
             Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x,
                 pos.y + (242.0 * systems.scale as f32).floor(),
                 pos.x + w_size.x,
                 pos.y + (262.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let header_text = systems.gfx.add_text(
@@ -453,12 +453,12 @@ impl Inventory {
                     text_zpos,
                 ),
                 text_size,
-                Bounds::new(
+                Some(Bounds::new(
                     slot_pos.x,
                     slot_pos.y,
                     slot_pos.x + text_size.x,
                     slot_pos.y + text_size.y,
-                ),
+                )),
                 Color::rgba(240, 240, 240, 255),
             );
             let text_index = systems.gfx.add_text(
@@ -663,12 +663,12 @@ impl Inventory {
         );
         systems.gfx.set_bound(
             &self.header_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x,
                 self.pos.y + (242.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
                 self.pos.y + (262.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.header_text);
 
@@ -725,12 +725,12 @@ impl Inventory {
                     );
                     systems.gfx.set_bound(
                         &self.item_slot[i].count,
-                        Bounds::new(
+                        Some(Bounds::new(
                             slot_pos.x,
                             slot_pos.y,
                             slot_pos.x + item_text_size.x,
                             slot_pos.y + item_text_size.y,
-                        ),
+                        )),
                     );
                 }
             }

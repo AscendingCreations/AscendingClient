@@ -462,12 +462,14 @@ pub fn handle_warp(
                     );
                 }
 
-                update_camera(
+                /*
+                //update_camera(
                     passer.world,
                     &mut passer.content.game_content,
                     passer.systems,
                     passer.socket,
                 )?;
+                */
                 if let Some(target_entity) =
                     passer.content.game_content.target.entity
                     && let Some(entity_data) =

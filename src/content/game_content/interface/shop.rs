@@ -105,12 +105,12 @@ impl Shop {
                 detail_2,
             ),
             Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x,
                 w_pos.y + (251.0 * systems.scale as f32).floor(),
                 w_pos.x + w_size.x,
                 w_pos.y + (271.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let header_text = systems.gfx.add_text(
@@ -254,12 +254,12 @@ impl Shop {
                 systems,
                 Vec3::new(pos.x, pos.y, detail_1),
                 (Vec2::new(114.0, 20.0) * systems.scale as f32).floor(),
-                Bounds::new(
+                Some(Bounds::new(
                     pos.x,
                     pos.y,
                     pos.x + (114.0 * systems.scale as f32).floor(),
                     pos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
                 Color::rgba(200, 200, 200, 255),
             );
             let name = systems.gfx.add_text(
@@ -281,12 +281,12 @@ impl Shop {
                 systems,
                 Vec3::new(pos.x, pos.y, detail_1),
                 (Vec2::new(90.0, 20.0) * systems.scale as f32).floor(),
-                Bounds::new(
+                Some(Bounds::new(
                     pos.x,
                     pos.y,
                     pos.x + (90.0 * systems.scale as f32).floor(),
                     pos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
                 Color::rgba(200, 200, 200, 255),
             );
             let price = systems.gfx.add_text(
@@ -388,12 +388,12 @@ impl Shop {
                     detail_4,
                 ),
                 text_size,
-                Bounds::new(
+                Some(Bounds::new(
                     pos.x,
                     pos.y,
                     pos.x + text_size.x,
                     pos.y + text_size.y,
-                ),
+                )),
                 Color::rgba(240, 240, 240, 255),
             );
             let amount = systems.gfx.add_text(
@@ -695,12 +695,12 @@ impl Shop {
         );
         systems.gfx.set_bound(
             &self.header_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x,
                 self.pos.y + (251.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
                 self.pos.y + (271.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.header_text);
 
@@ -751,12 +751,12 @@ impl Shop {
             );
             systems.gfx.set_bound(
                 &self.item[i].name,
-                Bounds::new(
+                Some(Bounds::new(
                     set_pos.x,
                     set_pos.y,
                     set_pos.x + (114.0 * systems.scale as f32).floor(),
                     set_pos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
             );
 
             let set_pos = Vec2::new(
@@ -772,12 +772,12 @@ impl Shop {
             );
             systems.gfx.set_bound(
                 &self.item[i].price,
-                Bounds::new(
+                Some(Bounds::new(
                     set_pos.x,
                     set_pos.y,
                     set_pos.x + (90.0 * systems.scale as f32).floor(),
                     set_pos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
             );
 
             let pos = systems.gfx.get_pos(&self.item[i].price_icon);
@@ -821,12 +821,12 @@ impl Shop {
             );
             systems.gfx.set_bound(
                 &self.item[i].amount,
-                Bounds::new(
+                Some(Bounds::new(
                     set_pos.x,
                     set_pos.y,
                     set_pos.x + (32.0 * systems.scale as f32).floor(),
                     set_pos.y + (16.0 * systems.scale as f32).floor(),
-                ),
+                )),
             );
         }
     }

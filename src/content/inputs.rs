@@ -105,7 +105,7 @@ pub fn handle_key_input(
                 let input = graphics.system.controls_mut().inputs_mut();
                 let new_pos = Vec2::new(
                     content.game_content.camera.x,
-                    content.game_content.camera.y + 2.0,
+                    content.game_content.camera.y + 20.0,
                 );
                 input.translation.x = new_pos.x;
                 input.translation.y = new_pos.y;
@@ -114,7 +114,7 @@ pub fn handle_key_input(
             Key::Named(NamedKey::ArrowLeft) => {
                 let input = graphics.system.controls_mut().inputs_mut();
                 let new_pos = Vec2::new(
-                    content.game_content.camera.x + 2.0,
+                    content.game_content.camera.x + 20.0,
                     content.game_content.camera.y,
                 );
                 input.translation.x = new_pos.x;
@@ -124,7 +124,7 @@ pub fn handle_key_input(
             Key::Named(NamedKey::ArrowRight) => {
                 let input = graphics.system.controls_mut().inputs_mut();
                 let new_pos = Vec2::new(
-                    content.game_content.camera.x - 2.0,
+                    content.game_content.camera.x - 20.0,
                     content.game_content.camera.y,
                 );
                 input.translation.x = new_pos.x;
@@ -135,7 +135,7 @@ pub fn handle_key_input(
                 let input = graphics.system.controls_mut().inputs_mut();
                 let new_pos = Vec2::new(
                     content.game_content.camera.x,
-                    content.game_content.camera.y - 2.0,
+                    content.game_content.camera.y - 20.0,
                 );
                 input.translation.x = new_pos.x;
                 input.translation.y = new_pos.y;

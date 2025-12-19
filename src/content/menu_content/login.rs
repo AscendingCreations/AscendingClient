@@ -72,12 +72,12 @@ impl Login {
                 ORDER_MENU_WINDOW_CONTENT_DETAIL,
             ),
             Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x,
                 pos.y + (199.0 * systems.scale as f32).floor(),
                 pos.x + size.x,
                 pos.y + (219.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(240, 240, 240, 255),
         );
         let text_index = systems.gfx.add_text(
@@ -146,12 +146,12 @@ impl Login {
                 systems,
                 Vec3::new(tpos.x, tpos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                 (Vec2::new(110.0, 20.0) * systems.scale as f32).floor(),
-                Bounds::new(
+                Some(Bounds::new(
                     tpos.x,
                     tpos.y,
                     tpos.x + (110.0 * systems.scale as f32).floor(),
                     tpos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
                 Color::rgba(100, 100, 100, 255),
             );
             let textindex = systems.gfx.add_text(

@@ -69,12 +69,12 @@ impl Register {
                 ORDER_MENU_WINDOW_CONTENT_DETAIL,
             ),
             Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x,
                 pos.y + (348.0 * systems.scale as f32).floor(),
                 pos.x + size.x,
                 pos.y + (368.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(240, 240, 240, 255),
         );
 
@@ -148,12 +148,12 @@ impl Register {
                 systems,
                 Vec3::new(tpos.x, tpos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                 (Vec2::new(110.0, 20.0) * systems.scale as f32).floor(),
-                Bounds::new(
+                Some(Bounds::new(
                     tpos.x,
                     tpos.y,
                     tpos.x + (110.0 * systems.scale as f32).floor(),
                     tpos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
                 Color::rgba(100, 100, 100, 255),
             );
             let textindex = systems.gfx.add_text(
@@ -250,12 +250,12 @@ impl Register {
                 ORDER_MENU_WINDOW_CONTENT_DETAIL,
             ),
             Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x + (142.0 * systems.scale as f32).floor(),
                 pos.y + (148.0 * systems.scale as f32).floor(),
                 pos.x + (306.0 * systems.scale as f32).floor(),
                 pos.y + (168.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(80, 80, 80, 255),
         );
         let sprite_index = systems.gfx.add_text(
@@ -404,12 +404,12 @@ impl Register {
                 ORDER_MENU_WINDOW_CONTENT_DETAIL,
             ),
             Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x + (170.0 * systems.scale as f32).floor(),
                 pos.y + (120.0 * systems.scale as f32).floor(),
                 pos.x + (278.0 * systems.scale as f32).floor(),
                 pos.y + (140.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(80, 80, 80, 255),
         );
         let unique_label = systems.gfx.add_text(

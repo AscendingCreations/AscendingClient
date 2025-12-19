@@ -93,7 +93,7 @@ pub fn add_player(
         systems,
         Vec3::new(0.0, 0.0, ORDER_ENTITY_NAME),
         Vec2::new(20.0, 20.0),
-        Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
+        None,
         Color::rgba(230, 230, 230, 255),
     );
     let name_index = systems.gfx.add_text(
@@ -508,7 +508,7 @@ pub fn process_player_movement(
         return Ok(());
     };
 
-    let add_offset = 4.0;
+    let add_offset = 2.5;
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {

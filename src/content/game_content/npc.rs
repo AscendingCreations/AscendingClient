@@ -86,7 +86,7 @@ pub fn add_npc(
         systems,
         Vec3::new(0.0, 0.0, ORDER_ENTITY_NAME),
         Vec2::new(20.0, 20.0),
-        Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
+        None,
         Color::rgba(200, 40, 40, 255),
     );
     let name_index = systems.gfx.add_text(

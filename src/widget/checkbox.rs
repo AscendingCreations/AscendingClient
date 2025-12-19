@@ -226,12 +226,12 @@ impl Checkbox {
                 systems,
                 tpos,
                 data.label_size * systems.scale as f32,
-                Bounds::new(
+                Some(Bounds::new(
                     tpos.x,
                     tpos.y,
                     tpos.x + (data.label_size.x * systems.scale as f32),
                     tpos.y + (data.label_size.y * systems.scale as f32),
-                ),
+                )),
                 data.color,
             );
             let txt_index = systems.gfx.add_text(
@@ -368,12 +368,12 @@ impl Checkbox {
             systems.gfx.set_pos(&data.0, pos);
             systems.gfx.set_bound(
                 &data.0,
-                Bounds::new(
+                Some(Bounds::new(
                     pos.x,
                     pos.y,
                     pos.x + (data.1.label_size.x * systems.scale as f32),
                     pos.y + (data.1.label_size.y * systems.scale as f32),
-                ),
+                )),
             );
         }
     }

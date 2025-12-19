@@ -64,12 +64,12 @@ impl ChatTab {
             systems,
             Vec3::new(pos.x, pos.y, z_order[1]),
             (Vec2::new(size.x, 20.0) * systems.scale as f32).floor(),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x,
                 pos.y,
                 pos.x + (size.x * systems.scale as f32).floor(),
                 pos.y + (20.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(255, 255, 255, 255),
         );
         let text = systems.gfx.add_text(
@@ -175,12 +175,12 @@ impl ChatTab {
             .set_pos(&self.text, Vec3::new(set_pos.x, set_pos.y, pos.z));
         systems.gfx.set_bound(
             &self.text,
-            Bounds::new(
+            Some(Bounds::new(
                 set_pos.x,
                 set_pos.y,
                 set_pos.x + (self.size.x * systems.scale as f32).floor(),
                 set_pos.y + (20.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.text);
     }
@@ -714,7 +714,7 @@ impl Chatbox {
                     self.chat_zorder,
                 ),
             );
-            systems.gfx.set_bound(&data.text, self.chat_bounds);
+            systems.gfx.set_bound(&data.text, Some(self.chat_bounds));
         }
 
         let pos = systems.gfx.get_pos(&self.msg_selection);
@@ -940,7 +940,7 @@ impl Chatbox {
             systems,
             Vec3::new(0.0, 0.0, 0.0),
             self.chat_areasize,
-            self.chat_bounds,
+            Some(self.chat_bounds),
             Color::rgba(255, 255, 255, 255),
         );
         text_data

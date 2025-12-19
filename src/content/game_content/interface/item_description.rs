@@ -161,12 +161,12 @@ impl ItemDescription {
         name_text.size = text_size;
         name_text
             .set_pos(Vec3::new(tpos.x, tpos.y, ORDER_ITEM_DESC_TEXT))
-            .set_bounds(Bounds::new(
+            .set_bounds(Some(Bounds::new(
                 tpos.x,
                 tpos.y,
                 tpos.x + text_size.x,
                 tpos.y + text_size.y,
-            ))
+            )))
             .set_default_color(Color::rgba(250, 250, 250, 255));
         let name = systems.gfx.add_text(
             name_text,
@@ -195,12 +195,12 @@ impl ItemDescription {
                     systems,
                     Vec3::new(n_pos.x, n_pos.y, ORDER_ITEM_DESC_TEXT),
                     text_size,
-                    Bounds::new(
+                    Some(Bounds::new(
                         n_pos.x,
                         n_pos.y,
                         n_pos.x + text_size.x,
                         n_pos.y + text_size.y,
-                    ),
+                    )),
                     Color::rgba(200, 200, 200, 255),
                 );
                 let text_index = systems.gfx.add_text(
@@ -268,12 +268,12 @@ impl ItemDescription {
                 );
                 systems.gfx.set_bound(
                     &desc_data.index,
-                    Bounds::new(
+                    Some(Bounds::new(
                         pos.x + desc_data.pos.x,
                         pos.y + desc_data.pos.y,
                         pos.x + desc_data.pos.x + data.size.x,
                         pos.y + desc_data.pos.y + data.size.y,
-                    ),
+                    )),
                 );
             }
         }
