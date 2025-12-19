@@ -122,6 +122,9 @@ pub fn npc_finalized(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: GlobalKey,
+    center_map: MapPosition,
+    game_light: GfxType,
+    update_position: bool,
 ) -> Result<()> {
     if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
         npc_finalized_data(
@@ -130,6 +133,20 @@ pub fn npc_finalized(
             n_data.name_map.0,
             &n_data.hp_bar,
         );
+
+        if update_position {
+            update_npc_position(
+                systems,
+                center_map,
+                game_light,
+                n_data.sprite_index.0,
+                &n_data.pos,
+                n_data.pos_offset,
+                &n_data.hp_bar,
+                &n_data.name_map,
+                n_data.light,
+            )?;
+        }
     }
     Ok(())
 }
@@ -302,7 +319,8 @@ pub fn end_npc_move(
 
 pub fn update_npc_position(
     systems: &mut SystemHolder,
-    content: &mut GameContent,
+    center_map: MapPosition,
+    game_light: GfxType,
     sprite: GfxType,
     pos: &Position,
     pos_offset: Vec2,
@@ -317,7 +335,7 @@ pub fn update_npc_position(
         + pos_offset
         - Vec2::new(10.0, 4.0);
 
-    let screen_pos = pos.convert_to_screen_tile(content.map.map_pos);
+    let screen_pos = pos.convert_to_screen_tile(center_map);
 
     systems.gfx.set_override_pos(
         &sprite,
@@ -334,7 +352,7 @@ pub fn update_npc_position(
 
     if let Some(light) = light_key {
         systems.gfx.set_area_light_pos(
-            &content.game_lights,
+            &game_light,
             light,
             texture_pos + TILE_SIZE as f32,
         )
@@ -513,6 +531,18 @@ pub fn update_npc_camera(
     content: &mut GameContent,
 ) -> Result<()> {
     if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+        update_npc_position(
+            systems,
+            content.map.map_pos,
+            content.game_lights,
+            n_data.sprite_index.0,
+            &n_data.pos,
+            n_data.pos_offset,
+            &n_data.hp_bar,
+            &n_data.name_map,
+            n_data.light,
+        )?;
+
         let is_target = if let Some(target) = content.target.entity {
             target == entity
         } else {
@@ -537,17 +567,6 @@ pub fn update_npc_camera(
             systems.gfx.set_visible(&n_data.hp_bar.bar_index, false);
             systems.gfx.set_visible(&n_data.hp_bar.bg_index, false);
         }
-
-        update_npc_position(
-            systems,
-            content,
-            n_data.sprite_index.0,
-            &n_data.pos,
-            n_data.pos_offset,
-            &n_data.hp_bar,
-            &n_data.name_map,
-            n_data.light,
-        )?;
     }
     Ok(())
 }

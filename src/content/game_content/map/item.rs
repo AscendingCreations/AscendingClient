@@ -43,7 +43,7 @@ impl MapItem {
             0,
             "Map Item",
             false,
-            CameraView::SubView1,
+            CameraView::MainView,
         );
 
         let _ = world.kinds.insert(entity, EntityKind::MapItem);
@@ -64,9 +64,22 @@ impl MapItem {
         world: &mut World,
         systems: &mut SystemHolder,
         entity: GlobalKey,
+        game_light: GfxType,
+        update_position: bool,
     ) -> Result<()> {
         if let Some(Entity::MapItem(i_data)) = world.entities.get(entity) {
             Self::finalized_data(systems, i_data.sprite_index);
+
+            if update_position {
+                update_mapitem_position(
+                    systems,
+                    game_light,
+                    i_data.sprite_index,
+                    &i_data.pos,
+                    i_data.pos_offset,
+                    i_data.light,
+                )?;
+            }
         }
         Ok(())
     }
@@ -78,7 +91,7 @@ impl MapItem {
 
 pub fn update_mapitem_position(
     systems: &mut SystemHolder,
-    content: &GameContent,
+    game_light: GfxType,
     sprite: GfxType,
     pos: &Position,
     pos_offset: Vec2,
@@ -99,7 +112,7 @@ pub fn update_mapitem_position(
 
     if let Some(light) = light_key {
         systems.gfx.set_area_light_pos(
-            &content.game_lights,
+            &game_light,
             light,
             texture_pos + TILE_SIZE as f32,
         )

@@ -129,6 +129,9 @@ pub fn player_finalized(
     world: &mut World,
     systems: &mut SystemHolder,
     entity: GlobalKey,
+    center_map: MapPosition,
+    game_light: GfxType,
+    update_position: bool,
 ) -> Result<()> {
     if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
         player_finalized_data(
@@ -137,6 +140,20 @@ pub fn player_finalized(
             p_data.name_map.0,
             &p_data.hp_bar,
         );
+
+        if update_position {
+            update_player_position(
+                systems,
+                center_map,
+                game_light,
+                p_data.sprite_index.0,
+                &p_data.pos,
+                p_data.pos_offset,
+                &p_data.hp_bar,
+                &p_data.name_map,
+                p_data.light,
+            )?;
+        }
     }
     Ok(())
 }
@@ -276,7 +293,6 @@ pub fn end_player_move(
     systems: &mut SystemHolder,
     map_renderer: &mut MapRenderer,
     content: &mut GameContent,
-    socket: &mut Poller,
     entity: GlobalKey,
     buffer: &mut BufferTask,
 ) -> Result<()> {
@@ -313,14 +329,7 @@ pub fn end_player_move(
         && *p == entity
         && move_map
     {
-        content.move_map(
-            world,
-            systems,
-            map_renderer,
-            socket,
-            direction,
-            buffer,
-        )?;
+        content.move_map(systems, map_renderer, direction, buffer)?;
         finalize_entity(world, systems)?;
         content.refresh_map = true;
     }
@@ -331,7 +340,8 @@ pub fn end_player_move(
 
 pub fn update_player_position(
     systems: &mut SystemHolder,
-    content: &mut GameContent,
+    center_map: MapPosition,
+    game_light: GfxType,
     sprite: GfxType,
     pos: &Position,
     pos_offset: Vec2,
@@ -346,7 +356,7 @@ pub fn update_player_position(
         + pos_offset
         - Vec2::new(10.0, 4.0);
 
-    let screen_pos = pos.convert_to_screen_tile(content.map.map_pos);
+    let screen_pos = pos.convert_to_screen_tile(center_map);
 
     systems.gfx.set_override_pos(
         &sprite,
@@ -363,7 +373,7 @@ pub fn update_player_position(
 
     if let Some(light) = light_key {
         systems.gfx.set_area_light_pos(
-            &content.game_lights,
+            &game_light,
             light,
             texture_pos + TILE_SIZE as f32,
         )
@@ -529,15 +539,7 @@ pub fn process_player_movement(
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
             p_data.pos_offset = Vec2::ZERO;
         }
-        end_player_move(
-            world,
-            systems,
-            map_renderer,
-            content,
-            socket,
-            entity,
-            buffer,
-        )?;
+        end_player_move(world, systems, map_renderer, content, entity, buffer)?;
     }
 
     update_player_camera(world, systems, socket, entity, content)?;
@@ -555,7 +557,8 @@ pub fn update_player_camera(
     if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
         update_player_position(
             systems,
-            content,
+            content.map.map_pos,
+            content.game_lights,
             p_data.sprite_index.0,
             &p_data.pos,
             p_data.pos_offset,

@@ -9,8 +9,8 @@ use crate::{
         add_player, create_npc_light, create_player_light, finalize_entity,
         init_npc_attack, init_player_attack, is_map_connected, npc_finalized,
         player_finalized, set_npc_frame, set_player_frame, unload_mapitems,
-        unload_npc, unload_player, update_camera, update_mapitem_position,
-        update_npc_camera, update_player_camera,
+        unload_npc, unload_player, update_mapitem_position, update_npc_camera,
+        update_player_camera,
     },
     systems::{
         BufferTask, FadeData, FadeType, Poller, SystemHolder, get_percent,
@@ -103,7 +103,14 @@ pub fn handle_playerspawn(
             }
 
             if passer.content.game_content.finalized {
-                player_finalized(passer.world, passer.systems, entity)?;
+                player_finalized(
+                    passer.world,
+                    passer.systems,
+                    entity,
+                    passer.content.game_content.map.map_pos,
+                    passer.content.game_content.game_lights,
+                    false,
+                )?;
                 update_player_camera(
                     passer.world,
                     passer.systems,
@@ -196,8 +203,14 @@ pub fn handle_npcdata(
             }
 
             if passer.content.game_content.finalized {
-                npc_finalized(passer.world, passer.systems, entity)?;
-
+                npc_finalized(
+                    passer.world,
+                    passer.systems,
+                    entity,
+                    passer.content.game_content.map.map_pos,
+                    passer.content.game_content.game_lights,
+                    false,
+                )?;
                 update_npc_camera(
                     passer.world,
                     passer.systems,
@@ -249,13 +262,19 @@ pub fn handle_mapitems(
                 .insert(mapitem);
 
             if passer.content.game_content.finalized {
-                MapItem::finalized(passer.world, passer.systems, entity)?;
+                MapItem::finalized(
+                    passer.world,
+                    passer.systems,
+                    entity,
+                    passer.content.game_content.game_lights,
+                    false,
+                )?;
                 if let Some(Entity::MapItem(mi_data)) =
                     passer.world.entities.get(entity)
                 {
                     update_mapitem_position(
                         passer.systems,
-                        &passer.content.game_content,
+                        passer.content.game_content.game_lights,
                         mi_data.sprite_index,
                         &pos,
                         mi_data.pos_offset,
@@ -447,6 +466,7 @@ pub fn handle_warp(
                         passer.map_renderer,
                         pos.map,
                         passer.buffer,
+                        true,
                     )?;
                     finalize_entity(passer.world, passer.systems)?;
                     passer.content.game_content.refresh_map = true;
@@ -462,14 +482,6 @@ pub fn handle_warp(
                     );
                 }
 
-                /*
-                //update_camera(
-                    passer.world,
-                    &mut passer.content.game_content,
-                    passer.systems,
-                    passer.socket,
-                )?;
-                */
                 if let Some(target_entity) =
                     passer.content.game_content.target.entity
                     && let Some(entity_data) =
@@ -567,15 +579,16 @@ pub fn handle_warp(
                     .players
                     .borrow_mut()
                     .swap_remove(&entity);
-            } else {
-                update_player_camera(
-                    passer.world,
-                    passer.systems,
-                    passer.socket,
-                    entity,
-                    &mut passer.content.game_content,
-                )?;
+                continue;
             }
+
+            update_player_camera(
+                passer.world,
+                passer.systems,
+                passer.socket,
+                entity,
+                &mut passer.content.game_content,
+            )?;
         }
     }
 

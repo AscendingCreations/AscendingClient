@@ -248,9 +248,10 @@ pub fn get_map_key(
     mappos: MapPosition,
     buffer: &mut BufferTask,
     center_pos: MapPosition,
+    reset: bool,
 ) -> Result<Index> {
-    let center_map_pos = if let Some(index) =
-        systems.base.mappos_key.get(&center_pos)
+    let center_map_pos = if !reset
+        && let Some(index) = systems.base.mappos_key.get(&center_pos)
         && let Some(mapdata) = systems.base.mapdata.get(*index)
     {
         mapdata.map.pos
@@ -258,11 +259,15 @@ pub fn get_map_key(
         Vec2::ZERO
     };
 
-    let world_pos = center_map_pos
-        + Vec2::new(
-            (mappos.x - center_pos.x) as f32 * MAP_SIZE.x,
-            (mappos.y - center_pos.y) as f32 * MAP_SIZE.y,
-        );
+    let world_pos = if reset && center_pos == mappos {
+        Vec2::new(0.0, 0.0)
+    } else {
+        center_map_pos
+            + Vec2::new(
+                (mappos.x - center_pos.x) as f32 * MAP_SIZE.x,
+                (mappos.y - center_pos.y) as f32 * MAP_SIZE.y,
+            )
+    };
 
     if let Some(index) = systems.base.mappos_key.get(&mappos) {
         systems.base.map_cache.promote(index);

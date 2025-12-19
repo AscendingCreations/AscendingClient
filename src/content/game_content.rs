@@ -60,6 +60,7 @@ pub struct GameContent {
     pub reconnect_count: usize,
     pub move_keypressed: Vec<ControlKey>,
     pub camera: Vec2,
+    pub zoom: f32,
 }
 
 impl GameContent {
@@ -97,6 +98,7 @@ impl GameContent {
             reconnect_count: 0,
             move_keypressed: Vec::with_capacity(4),
             camera: Vec2::ZERO,
+            zoom: 1.0,
         }
     }
 
@@ -154,18 +156,36 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Poller,
     ) -> Result<()> {
         for entity in self.players.borrow().iter() {
-            player_finalized(world, systems, *entity)?;
+            player_finalized(
+                world,
+                systems,
+                *entity,
+                self.map.map_pos,
+                self.game_lights,
+                true,
+            )?;
         }
         for entity in self.npcs.borrow().iter() {
-            npc_finalized(world, systems, *entity)?;
+            npc_finalized(
+                world,
+                systems,
+                *entity,
+                self.map.map_pos,
+                self.game_lights,
+                true,
+            )?;
         }
         for entity in self.mapitems.borrow().iter() {
-            MapItem::finalized(world, systems, *entity)?;
+            MapItem::finalized(
+                world,
+                systems,
+                *entity,
+                self.game_lights,
+                true,
+            )?;
         }
-        //update_camera(world, self, systems, socket)?;
 
         Ok(())
     }
@@ -174,9 +194,8 @@ impl GameContent {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        socket: &mut Poller,
     ) -> Result<()> {
-        self.finalize_entity(world, systems, socket)?;
+        self.finalize_entity(world, systems)?;
 
         self.player_data.inventory.iter().enumerate().for_each(
             |(index, item)| {
@@ -291,6 +310,7 @@ impl GameContent {
         map_renderer: &mut MapRenderer,
         map: MapPosition,
         buffer: &mut BufferTask,
+        reset: bool,
     ) -> Result<()> {
         self.map.map_pos = map;
 
@@ -309,6 +329,7 @@ impl GameContent {
                 MapPosition::new(mx, my, map.group),
                 buffer,
                 map,
+                reset,
             )?;
             self.map.mapindex[i] = key;
             set_map_visible(systems, key, true);
@@ -319,10 +340,8 @@ impl GameContent {
 
     pub fn move_map(
         &mut self,
-        world: &mut World,
         systems: &mut SystemHolder,
         map_renderer: &mut MapRenderer,
-        socket: &mut Poller,
         dir: Direction,
         buffer: &mut BufferTask,
     ) -> Result<()> {
@@ -333,10 +352,7 @@ impl GameContent {
             Direction::Up => self.map.map_pos.y += 1,
         }
 
-        self.init_map(systems, map_renderer, self.map.map_pos, buffer)?;
-
-        //update_camera(world, self, systems, socket)
-        Ok(())
+        self.init_map(systems, map_renderer, self.map.map_pos, buffer, false)
     }
 
     pub fn handle_key_input(
@@ -615,7 +631,6 @@ pub fn update_camera(
     content: &mut GameContent,
     systems: &mut SystemHolder,
     graphics: &mut State<FlatControls>,
-    socket: &mut Poller,
 ) -> Result<()> {
     let player_pos = if let Some(entity) = content.myentity
         && let Some(Entity::Player(p_data)) = world.entities.get_mut(entity)
@@ -630,93 +645,20 @@ pub fn update_camera(
         return Ok(());
     };
 
-    let screen_size = Vec2::new(systems.size.width, systems.size.height);
-    let camera_pos = player_pos - (screen_size * 0.5).floor();
+    let screen_size =
+        Vec2::new(systems.size.width, systems.size.height) / content.zoom;
+    let camera_pos =
+        -((player_pos - (screen_size * 0.5).floor()) * content.zoom);
+
+    if content.camera == camera_pos {
+        return Ok(());
+    }
 
     let input = graphics.system.controls_mut().inputs_mut();
-    input.translation.x = -camera_pos.x;
-    input.translation.y = -camera_pos.y;
+    input.translation.x = camera_pos.x;
+    input.translation.y = camera_pos.y;
 
-    /*
-    let adjust_pos = get_screen_center(&systems.size) - player_pos;
+    content.camera = camera_pos;
 
-    for (key, entity) in world.entities.iter_mut() {
-        let is_target = content.target.entity == Some(key);
-        let is_my_entity = content.myentity == Some(key);
-
-        match entity {
-            Entity::Player(p_data) => {
-                update_player_position(
-                    systems,
-                    content,
-                    p_data.sprite_index.0,
-                    &p_data.pos,
-                    p_data.pos_offset,
-                    &p_data.hp_bar,
-                    &p_data.name_map,
-                    p_data.light,
-                )?;
-                if is_target {
-                    if !p_data.hp_bar.visible {
-                        p_data.hp_bar.visible = true;
-                        systems.gfx.set_visible(&p_data.hp_bar.bar_index, true);
-                        systems.gfx.set_visible(&p_data.hp_bar.bg_index, true);
-                    }
-                    let spritepos = systems.gfx.get_pos(&p_data.sprite_index.0);
-                    content.target.set_target_pos(
-                        socket,
-                        systems,
-                        Vec2::new(spritepos.x, spritepos.y),
-                        &mut p_data.hp_bar,
-                    )?;
-                } else if p_data.hp_bar.visible && !is_my_entity {
-                    p_data.hp_bar.visible = false;
-                    systems.gfx.set_visible(&p_data.hp_bar.bar_index, false);
-                    systems.gfx.set_visible(&p_data.hp_bar.bg_index, false);
-                }
-            }
-            Entity::Npc(n_data) => {
-                update_npc_position(
-                    systems,
-                    content,
-                    n_data.sprite_index.0,
-                    &n_data.pos,
-                    n_data.pos_offset,
-                    &n_data.hp_bar,
-                    &n_data.name_map,
-                    n_data.light,
-                )?;
-                if is_target {
-                    if !n_data.hp_bar.visible {
-                        n_data.hp_bar.visible = true;
-                        systems.gfx.set_visible(&n_data.hp_bar.bar_index, true);
-                        systems.gfx.set_visible(&n_data.hp_bar.bg_index, true);
-                    }
-                    let spritepos = systems.gfx.get_pos(&n_data.sprite_index.0);
-                    content.target.set_target_pos(
-                        socket,
-                        systems,
-                        Vec2::new(spritepos.x, spritepos.y),
-                        &mut n_data.hp_bar,
-                    )?;
-                } else if n_data.hp_bar.visible {
-                    n_data.hp_bar.visible = false;
-                    systems.gfx.set_visible(&n_data.hp_bar.bar_index, false);
-                    systems.gfx.set_visible(&n_data.hp_bar.bg_index, false);
-                }
-            }
-            Entity::MapItem(i_data) => {
-                update_mapitem_position(
-                    systems,
-                    content,
-                    i_data.sprite_index,
-                    &i_data.pos,
-                    i_data.pos_offset,
-                    i_data.light,
-                );
-            }
-            _ => {}
-        }
-    }*/
     Ok(())
 }

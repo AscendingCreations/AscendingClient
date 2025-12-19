@@ -292,10 +292,9 @@ pub fn fade_end(
                 map_renderer,
                 pos.map,
                 buffer,
+                true,
             )?;
-            content
-                .game_content
-                .init_finalized_data(world, systems, socket)?;
+            content.game_content.init_finalized_data(world, systems)?;
 
             systems.fade.init_fade(
                 &mut systems.gfx,

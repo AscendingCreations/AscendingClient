@@ -20,7 +20,7 @@ use graphics::{
     *,
 };
 
-use input::{Axis, Bindings, FrameTime, InputHandler, Key};
+use input::{Axis, Bindings, FrameTime, InputHandler, Key, MouseAxis};
 use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
 use serde::{Deserialize, Serialize};
@@ -289,7 +289,9 @@ impl winit::application::ApplicationHandler for Runner {
                     near: 1.0,
                     far: -100.0,
                 },
-                FlatControls::new(FlatSettings { zoom: 1.0 }),
+                FlatControls::new(FlatSettings {
+                    zoom: content.game_content.zoom,
+                }),
                 [systems.size.width, systems.size.height],
             );
             system.set_view(CameraView::SubView1, mat, 1.0);
@@ -545,6 +547,23 @@ impl winit::application::ApplicationHandler for Runner {
                                 tooltip,
                             )
                             .unwrap();
+                        }
+                    }
+                    input::InputEvent::MouseWheel { amount, axis } => {
+                        if axis == MouseAxis::Vertical && amount != 0.0 {
+                            // ToDo remove TEMP
+                            let new_zoom = (if amount > 0.0 {
+                                content.game_content.zoom + 0.1
+                            } else {
+                                content.game_content.zoom - 0.1
+                            })
+                            .clamp(1.0, 3.0);
+                            content.game_content.zoom = new_zoom;
+                            graphics
+                                .system
+                                .controls_mut()
+                                .settings_mut()
+                                .zoom = new_zoom;
                         }
                     }
                     _ => {}
