@@ -545,23 +545,17 @@ impl GameContent {
 pub fn update_player(
     world: &mut World,
     systems: &mut SystemHolder,
-    map_renderer: &mut MapRenderer,
     socket: &mut Poller,
     content: &mut GameContent,
     buffer: &mut BufferTask,
+    graphics: &mut State<FlatControls>,
     seconds: f32,
 ) -> Result<()> {
     let players = content.players.clone();
     for entity in players.borrow().iter() {
         move_player(world, systems, *entity, MovementType::MovementBuffer)?;
         process_player_movement(
-            world,
-            systems,
-            map_renderer,
-            socket,
-            *entity,
-            content,
-            buffer,
+            world, systems, socket, *entity, content, buffer, graphics,
         )?;
         process_player_attack(world, systems, *entity, seconds)?
     }

@@ -41,10 +41,10 @@ pub fn game_loop(
                 update_player(
                     world,
                     systems,
-                    &mut graphics.map_renderer,
                     socket,
                     &mut content.game_content,
                     buffer,
+                    graphics,
                     seconds,
                 )?;
                 update_npc(
@@ -58,8 +58,6 @@ pub fn game_loop(
 
                 loop_timer.entity_tmr = seconds + 0.025;
             }
-
-            update_camera(world, &mut content.game_content, systems, graphics)?;
 
             if seconds > loop_timer.input_tmr {
                 content

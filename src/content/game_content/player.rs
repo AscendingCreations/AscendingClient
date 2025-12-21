@@ -394,7 +394,7 @@ pub fn update_player_position(
         Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG),
     );
 
-    let textsize = systems.gfx.get_measure(&entitynamemap).floor();
+    let textsize = systems.gfx.get_measure(&entitynamemap);
     let name_pos =
         texture_pos + Vec2::new((sprite_size.x - textsize.x) * 0.5, 40.0);
 
@@ -500,15 +500,17 @@ pub fn process_player_attack(
 pub fn process_player_movement(
     world: &mut World,
     systems: &mut SystemHolder,
-    map_renderer: &mut MapRenderer,
     socket: &mut Poller,
     entity: GlobalKey,
     content: &mut GameContent,
     buffer: &mut BufferTask,
+    graphics: &mut State<FlatControls>,
 ) -> Result<()> {
     if !world.entities.contains_key(entity) {
         return Ok(());
     }
+
+    let my_entity = content.myentity == Some(entity);
 
     let movement =
         if let Some(Entity::Player(p_data)) = world.entities.get(entity) {
@@ -525,6 +527,10 @@ pub fn process_player_movement(
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            if !is_map_connected(content.map.map_pos, p_data.pos.map) {
+                return Ok(());
+            }
+
             p_data.movement.move_offset += add_offset;
 
             let moveoffset = p_data.movement.move_offset;
@@ -542,10 +548,21 @@ pub fn process_player_movement(
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
             p_data.pos_offset = Vec2::ZERO;
         }
-        end_player_move(world, systems, map_renderer, content, entity, buffer)?;
+        end_player_move(
+            world,
+            systems,
+            &mut graphics.map_renderer,
+            content,
+            entity,
+            buffer,
+        )?;
     }
 
     update_player_camera(world, systems, socket, entity, content)?;
+
+    if my_entity {
+        update_camera(world, content, systems, graphics)?;
+    }
 
     Ok(())
 }

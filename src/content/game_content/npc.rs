@@ -497,6 +497,10 @@ pub fn process_npc_movement(
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+            if !is_map_connected(content.map.map_pos, n_data.pos.map) {
+                return Ok(());
+            }
+
             n_data.movement.move_offset += add_offset;
 
             let moveoffset = n_data.movement.move_offset;
