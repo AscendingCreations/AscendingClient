@@ -72,7 +72,14 @@ pub fn float_text_loop(
 
         float_data.float_y += 0.2;
 
-        let start_pos = get_map_render_pos(systems, float_data.pos.map);
+        let start_pos = if let Some(start) =
+            get_map_render_pos(systems, float_data.pos.map)
+        {
+            start
+        } else {
+            remove_list.push(index);
+            continue;
+        };
         let cur_pos = systems.gfx.get_pos(&float_data.text);
         let texture_pos = start_pos
             + (Vec2::new(float_data.pos.x as f32, float_data.pos.y as f32)
@@ -116,7 +123,11 @@ pub fn add_float_text(
     msg: String,
     color: Color,
 ) -> Result<()> {
-    let start_pos = get_map_render_pos(systems, pos.map);
+    let start_pos = if let Some(start) = get_map_render_pos(systems, pos.map) {
+        start
+    } else {
+        return Ok(());
+    };
     let texture_pos =
         start_pos + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32);
 

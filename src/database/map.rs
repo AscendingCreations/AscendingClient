@@ -325,14 +325,14 @@ pub fn set_map_visible(systems: &mut SystemHolder, key: Index, visible: bool) {
 pub fn get_map_render_pos(
     systems: &mut SystemHolder,
     map_pos: MapPosition,
-) -> Vec2 {
+) -> Option<Vec2> {
     if let Some(key) = systems.base.mappos_key.get(&map_pos)
         && let Some(mapslotdata) = systems.base.mapdata.get(*key)
     {
-        return mapslotdata.map.pos;
+        return Some(mapslotdata.map.pos);
     }
 
-    Vec2::ZERO
+    None
 }
 
 pub fn get_map_music(systems: &mut SystemHolder, key: Index) -> Option<String> {

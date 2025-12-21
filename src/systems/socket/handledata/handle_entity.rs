@@ -270,15 +270,17 @@ pub fn handle_mapitems(
                     false,
                 )?;
                 if let Some(Entity::MapItem(mi_data)) =
-                    passer.world.entities.get(entity)
+                    passer.world.entities.get_mut(entity)
                 {
-                    update_mapitem_position(
+                    mi_data.visible = update_mapitem_position(
                         passer.systems,
                         passer.content.game_content.game_lights,
                         mi_data.sprite_index,
                         &pos,
                         mi_data.pos_offset,
                         mi_data.light,
+                        mi_data.finalized,
+                        mi_data.visible,
                     )?;
                 }
             }
@@ -468,7 +470,12 @@ pub fn handle_warp(
                         passer.buffer,
                         true,
                     )?;
-                    finalize_entity(passer.world, passer.systems)?;
+                    finalize_entity(
+                        passer.world,
+                        passer.systems,
+                        passer.content.game_content.game_lights,
+                        pos.map,
+                    )?;
                     passer.content.game_content.refresh_map = true;
                 }
 

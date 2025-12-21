@@ -7,8 +7,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     AttackFrame, Attacking, DeathType, EntityName, EntityNameMap, GlobalKey,
-    HPBar, MAX_EQPT, Movement, MovementData, Physical, Position, SpriteImage,
-    SpriteIndex, Vitals, content::PlayerPvP,
+    HPBar, LightData, MAX_EQPT, Movement, MovementData, Physical, Position,
+    SpriteImage, SpriteIndex, Vitals, content::PlayerPvP,
 };
 
 #[derive(Debug, Clone, Default)]
@@ -22,7 +22,9 @@ pub struct PlayerEntity {
     pub hp_bar: HPBar,
     pub name_map: EntityNameMap,
     pub light: Option<Index>,
+    pub light_data: LightData,
     pub finalized: bool,
+    pub visible: bool,
     pub equipment: Equipment,
 
     // Appearance

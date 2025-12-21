@@ -587,6 +587,8 @@ pub fn update_npc(
 pub fn finalize_entity(
     world: &mut World,
     systems: &mut SystemHolder,
+    game_light: GfxType,
+    new_map: MapPosition,
 ) -> Result<()> {
     for (_, entity) in world.entities.iter_mut() {
         match entity {
@@ -600,6 +602,24 @@ pub fn finalize_entity(
                     );
                     p_data.finalized = true;
                 }
+
+                if !is_map_connected(new_map, p_data.pos.map) {
+                    systems.gfx.set_visible(&p_data.sprite_index.0, false);
+
+                    if let Some(light) = &p_data.light {
+                        match &p_data.light_data {
+                            LightData::AreaLight(_) => systems
+                                .gfx
+                                .remove_area_light(&game_light, *light),
+                            LightData::DirLight(_) => systems
+                                .gfx
+                                .remove_directional_light(&game_light, *light),
+                            LightData::None => {}
+                        }
+                    }
+
+                    p_data.visible = false;
+                }
             }
             Entity::Npc(n_data) => {
                 if !n_data.finalized {
@@ -611,11 +631,35 @@ pub fn finalize_entity(
                     );
                     n_data.finalized = true;
                 }
+
+                if !is_map_connected(new_map, n_data.pos.map) {
+                    systems.gfx.set_visible(&n_data.sprite_index.0, false);
+
+                    if let Some(light) = &n_data.light {
+                        match &n_data.light_data {
+                            LightData::AreaLight(_) => systems
+                                .gfx
+                                .remove_area_light(&game_light, *light),
+                            LightData::DirLight(_) => systems
+                                .gfx
+                                .remove_directional_light(&game_light, *light),
+                            LightData::None => {}
+                        }
+                    }
+
+                    n_data.visible = false;
+                }
             }
             Entity::MapItem(i_data) => {
                 if !i_data.finalized {
                     MapItem::finalized_data(systems, i_data.sprite_index);
                     i_data.finalized = true;
+                }
+
+                if !is_map_connected(new_map, i_data.pos.map) {
+                    systems.gfx.set_visible(&i_data.sprite_index, false);
+
+                    i_data.visible = false;
                 }
             }
             _ => {}
@@ -633,7 +677,12 @@ pub fn update_camera(
     let player_pos = if let Some(entity) = content.myentity
         && let Some(Entity::Player(p_data)) = world.entities.get_mut(entity)
     {
-        let start_pos = get_map_render_pos(systems, p_data.pos.map);
+        let start_pos =
+            if let Some(start) = get_map_render_pos(systems, p_data.pos.map) {
+                start
+            } else {
+                return Ok(());
+            };
 
         start_pos
             + (Vec2::new(p_data.pos.x as f32, p_data.pos.y as f32)

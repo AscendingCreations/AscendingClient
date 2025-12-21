@@ -60,17 +60,20 @@ impl MapItem {
         game_light: GfxType,
         update_position: bool,
     ) -> Result<()> {
-        if let Some(Entity::MapItem(i_data)) = world.entities.get(entity) {
+        if let Some(Entity::MapItem(i_data)) = world.entities.get_mut(entity) {
+            i_data.finalized = true;
             Self::finalized_data(systems, i_data.sprite_index);
 
             if update_position {
-                update_mapitem_position(
+                i_data.visible = update_mapitem_position(
                     systems,
                     game_light,
                     i_data.sprite_index,
                     &i_data.pos,
                     i_data.pos_offset,
                     i_data.light,
+                    i_data.finalized,
+                    i_data.visible,
                 )?;
             }
         }
@@ -89,14 +92,25 @@ pub fn update_mapitem_position(
     pos: &Position,
     pos_offset: Vec2,
     light_key: Option<Index>,
-) -> Result<()> {
-    let start_pos = get_map_render_pos(systems, pos.map);
+    finalized: bool,
+    visible: bool,
+) -> Result<bool> {
+    let start_pos = if let Some(start) = get_map_render_pos(systems, pos.map) {
+        if !visible {
+            systems.gfx.set_visible(&sprite, finalized);
+        }
+
+        start
+    } else {
+        systems.gfx.set_visible(&sprite, false);
+        return Ok(false);
+    };
     let cur_pos = systems.gfx.get_pos(&sprite);
     let texture_pos = start_pos
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset;
     if texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
-        return Ok(());
+        return Ok(true);
     }
 
     systems
@@ -110,7 +124,7 @@ pub fn update_mapitem_position(
             texture_pos + TILE_SIZE as f32,
         )
     }
-    Ok(())
+    Ok(true)
 }
 
 pub fn unload_mapitems(

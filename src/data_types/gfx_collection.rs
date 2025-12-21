@@ -38,6 +38,14 @@ pub struct GfxText {
     pub gfx: Text,
 }
 
+#[derive(Debug, Clone, Default)]
+pub enum LightData {
+    #[default]
+    None,
+    AreaLight(AreaLight),
+    DirLight(DirectionalLight),
+}
+
 pub struct GfxLight {
     pub data: GfxData,
     pub gfx: Lights,

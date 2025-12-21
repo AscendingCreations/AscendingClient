@@ -127,28 +127,32 @@ pub fn player_finalized(
     game_light: GfxType,
     update_position: bool,
 ) -> Result<()> {
-    if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
-        player_finalized_data(
-            systems,
-            p_data.sprite_index.0,
-            p_data.name_map.0,
-            &p_data.hp_bar,
-        );
-
-        if update_position {
-            update_player_position(
-                systems,
-                center_map,
-                game_light,
+    let (sprite, name_map, hp_bar, pos, pos_offset) =
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            p_data.finalized = true;
+            (
                 p_data.sprite_index.0,
-                &p_data.pos,
+                p_data.name_map.0,
+                p_data.hp_bar,
+                p_data.pos,
                 p_data.pos_offset,
-                &p_data.hp_bar,
-                &p_data.name_map,
-                p_data.light,
-            )?;
-        }
+            )
+        } else {
+            return Ok(());
+        };
+
+    player_finalized_data(systems, sprite, name_map, &hp_bar);
+
+    if update_position
+        && let Some((start_pos, light)) =
+            get_player_start_pos(world, systems, &game_light, entity)
+    {
+        update_player_position(
+            systems, center_map, game_light, sprite, &pos, pos_offset, &hp_bar,
+            name_map, light, start_pos,
+        )?;
     }
+
     Ok(())
 }
 
@@ -324,7 +328,12 @@ pub fn end_player_move(
         && move_map
     {
         content.move_map(systems, map_renderer, direction, buffer)?;
-        finalize_entity(world, systems)?;
+        finalize_entity(
+            world,
+            systems,
+            content.game_lights,
+            content.map.map_pos,
+        )?;
         content.refresh_map = true;
     }
 
@@ -340,10 +349,10 @@ pub fn update_player_position(
     pos: &Position,
     pos_offset: Vec2,
     hpbar: &HPBar,
-    entitynamemap: &EntityNameMap,
+    entitynamemap: GfxType,
     light_key: Option<Index>,
+    start_pos: Vec2,
 ) -> Result<()> {
-    let start_pos = get_map_render_pos(systems, pos.map);
     let cur_pos = systems.gfx.get_pos(&sprite);
     let texture_pos = start_pos
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
@@ -385,12 +394,12 @@ pub fn update_player_position(
         Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG),
     );
 
-    let textsize = systems.gfx.get_measure(&entitynamemap.0).floor();
+    let textsize = systems.gfx.get_measure(&entitynamemap).floor();
     let name_pos =
         texture_pos + Vec2::new((sprite_size.x - textsize.x) * 0.5, 40.0);
 
     systems.gfx.set_pos(
-        &entitynamemap.0,
+        &entitynamemap,
         Vec3::new(name_pos.x, name_pos.y, ORDER_ENTITY_NAME),
     );
     Ok(())
@@ -548,6 +557,14 @@ pub fn update_player_camera(
     entity: GlobalKey,
     content: &mut GameContent,
 ) -> Result<()> {
+    let (start_pos, light) = if let Some(start) =
+        get_player_start_pos(world, systems, &content.game_lights, entity)
+    {
+        start
+    } else {
+        return Ok(());
+    };
+
     if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
         update_player_position(
             systems,
@@ -557,8 +574,9 @@ pub fn update_player_camera(
             &p_data.pos,
             p_data.pos_offset,
             &p_data.hp_bar,
-            &p_data.name_map,
-            p_data.light,
+            p_data.name_map.0,
+            light,
+            start_pos,
         )?;
 
         let is_target = if let Some(target) = content.target.entity {
@@ -619,6 +637,66 @@ pub fn player_get_next_lvl_exp(
     }
 }
 
+pub fn get_player_start_pos(
+    world: &mut World,
+    systems: &mut SystemHolder,
+    game_light: &GfxType,
+    entity: GlobalKey,
+) -> Option<(Vec2, Option<Index>)> {
+    if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+        if let Some(start) = get_map_render_pos(systems, p_data.pos.map) {
+            if !p_data.visible {
+                systems
+                    .gfx
+                    .set_visible(&p_data.sprite_index.0, p_data.finalized);
+
+                if let Some(light) = &p_data.light {
+                    match &p_data.light_data {
+                        LightData::AreaLight(_) => {
+                            systems.gfx.remove_area_light(game_light, *light)
+                        }
+                        LightData::DirLight(_) => systems
+                            .gfx
+                            .remove_directional_light(game_light, *light),
+                        LightData::None => {}
+                    }
+                }
+
+                p_data.light = match &p_data.light_data {
+                    LightData::AreaLight(data) => {
+                        systems.gfx.add_area_light(game_light, *data)
+                    }
+                    LightData::DirLight(data) => {
+                        systems.gfx.add_directional_light(game_light, *data)
+                    }
+                    LightData::None => None,
+                };
+
+                p_data.visible = true;
+            }
+
+            return Some((start, p_data.light));
+        } else {
+            systems.gfx.set_visible(&p_data.sprite_index.0, false);
+
+            if let Some(light) = &p_data.light {
+                match &p_data.light_data {
+                    LightData::AreaLight(_) => {
+                        systems.gfx.remove_area_light(game_light, *light)
+                    }
+                    LightData::DirLight(_) => {
+                        systems.gfx.remove_directional_light(game_light, *light)
+                    }
+                    LightData::None => {}
+                }
+            }
+
+            p_data.visible = false;
+        }
+    }
+    None
+}
+
 pub fn create_player_light(
     world: &mut World,
     systems: &mut SystemHolder,
@@ -626,17 +704,18 @@ pub fn create_player_light(
     entity: GlobalKey,
 ) {
     if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
-        p_data.light = systems.gfx.add_area_light(
-            game_light,
-            AreaLight {
-                pos: Vec2::ZERO,
-                color: Color::rgba(100, 100, 100, 20),
-                max_distance: 60.0,
-                animate: true,
-                anim_speed: 5.0,
-                dither: 0.8,
-                camera_view: CameraView::MainView,
-            },
-        )
+        let area_light = AreaLight {
+            pos: Vec2::ZERO,
+            color: Color::rgba(100, 100, 100, 20),
+            max_distance: 60.0,
+            animate: true,
+            anim_speed: 5.0,
+            dither: 0.8,
+            camera_view: CameraView::MainView,
+            visible: true,
+        };
+
+        p_data.light_data = LightData::AreaLight(area_light);
+        p_data.light = systems.gfx.add_area_light(game_light, area_light)
     }
 }

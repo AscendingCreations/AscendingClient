@@ -7,6 +7,7 @@ pub struct MapItemEntity {
     // Map
     pub light: Option<Index>,
     pub finalized: bool,
+    pub visible: bool,
 
     // Appearance
     pub sprite_index: GfxType,
