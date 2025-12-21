@@ -332,17 +332,6 @@ pub fn get_map_pos(systems: &mut SystemHolder, map_pos: MapPosition) -> Vec2 {
     Vec2::ZERO
 }
 
-pub fn get_map_dir_block(
-    systems: &mut SystemHolder,
-    key: Index,
-) -> MapDirBlock {
-    if let Some(mapslotdata) = systems.base.mapdata.get(key) {
-        return mapslotdata.dir_block.clone();
-    }
-
-    MapDirBlock::default()
-}
-
 pub fn get_map_attributes(
     systems: &mut SystemHolder,
     key: Index,
