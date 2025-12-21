@@ -589,6 +589,9 @@ pub fn get_npc_start_pos(
                 systems
                     .gfx
                     .set_visible(&n_data.sprite_index.0, n_data.finalized);
+                systems
+                    .gfx
+                    .set_visible(&n_data.name_map.0, n_data.finalized);
 
                 if let Some(light) = &n_data.light {
                     match &n_data.light_data {
@@ -611,11 +614,23 @@ pub fn get_npc_start_pos(
                     }
                     LightData::None => None,
                 };
+
+                systems.gfx.set_visible(
+                    &n_data.hp_bar.bar_index,
+                    n_data.hp_bar.visible,
+                );
+                systems.gfx.set_visible(
+                    &n_data.hp_bar.bg_index,
+                    n_data.hp_bar.visible,
+                );
+
+                n_data.visible = true;
             }
 
             return Some((start, n_data.light));
         } else {
             systems.gfx.set_visible(&n_data.sprite_index.0, false);
+            systems.gfx.set_visible(&n_data.name_map.0, false);
 
             if let Some(light) = &n_data.light {
                 match &n_data.light_data {
@@ -628,6 +643,9 @@ pub fn get_npc_start_pos(
                     LightData::None => {}
                 }
             }
+
+            systems.gfx.set_visible(&n_data.hp_bar.bar_index, false);
+            systems.gfx.set_visible(&n_data.hp_bar.bg_index, false);
 
             n_data.visible = false;
         }

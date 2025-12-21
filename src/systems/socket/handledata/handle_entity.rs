@@ -393,6 +393,7 @@ pub fn handle_warp(
     for _ in 0..count {
         let entity = data.read::<GlobalKey>()?;
         let pos = data.read::<Position>()?;
+        let dir = data.read::<u8>()?;
 
         if !passer.world.entities.contains_key(entity) {
             continue;
@@ -407,6 +408,7 @@ pub fn handle_warp(
                         p_data.movement.is_moving = false;
                         p_data.pos = pos;
                         p_data.pos_offset = Vec2::ZERO;
+                        p_data.dir = dir;
 
                         (old_pos, p_data.dir)
                     }
@@ -416,6 +418,7 @@ pub fn handle_warp(
                         n_data.movement.is_moving = false;
                         n_data.pos = pos;
                         n_data.pos_offset = Vec2::ZERO;
+                        n_data.dir = dir;
 
                         (old_pos, n_data.dir)
                     }

@@ -649,6 +649,9 @@ pub fn get_player_start_pos(
                 systems
                     .gfx
                     .set_visible(&p_data.sprite_index.0, p_data.finalized);
+                systems
+                    .gfx
+                    .set_visible(&p_data.name_map.0, p_data.finalized);
 
                 if let Some(light) = &p_data.light {
                     match &p_data.light_data {
@@ -672,12 +675,22 @@ pub fn get_player_start_pos(
                     LightData::None => None,
                 };
 
+                systems.gfx.set_visible(
+                    &p_data.hp_bar.bar_index,
+                    p_data.hp_bar.visible,
+                );
+                systems.gfx.set_visible(
+                    &p_data.hp_bar.bg_index,
+                    p_data.hp_bar.visible,
+                );
+
                 p_data.visible = true;
             }
 
             return Some((start, p_data.light));
         } else {
             systems.gfx.set_visible(&p_data.sprite_index.0, false);
+            systems.gfx.set_visible(&p_data.name_map.0, false);
 
             if let Some(light) = &p_data.light {
                 match &p_data.light_data {
@@ -690,6 +703,9 @@ pub fn get_player_start_pos(
                     LightData::None => {}
                 }
             }
+
+            systems.gfx.set_visible(&p_data.hp_bar.bar_index, false);
+            systems.gfx.set_visible(&p_data.hp_bar.bg_index, false);
 
             p_data.visible = false;
         }
