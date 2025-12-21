@@ -315,7 +315,7 @@ impl GameContent {
         for i in 0..9 {
             let (mx, my) = get_map_loc(map.x, map.y, i);
 
-            if let Some(mappos) = get_map_id(systems, self.map.mapindex[i])
+            if let Some(mappos) = get_map_pos(systems, self.map.mapindex[i])
                 && map.checkdistance(mappos) > 1
             {
                 set_map_visible(systems, self.map.mapindex[i], false);
@@ -633,7 +633,7 @@ pub fn update_camera(
     let player_pos = if let Some(entity) = content.myentity
         && let Some(Entity::Player(p_data)) = world.entities.get_mut(entity)
     {
-        let start_pos = get_map_pos(systems, p_data.pos.map);
+        let start_pos = get_map_render_pos(systems, p_data.pos.map);
 
         start_pos
             + (Vec2::new(p_data.pos.x as f32, p_data.pos.y as f32)

@@ -26,7 +26,7 @@ pub fn add_player(
     entity: GlobalKey,
     sprite: usize,
 ) -> Result<GlobalKey> {
-    let start_pos = get_map_pos(systems, pos.map);
+    let start_pos = get_map_render_pos(systems, pos.map);
     let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
     let image = Image::new(
         Some(systems.resource.players[sprite].allocation),
@@ -349,7 +349,7 @@ pub fn update_player_position(
     entitynamemap: &EntityNameMap,
     light_key: Option<Index>,
 ) -> Result<()> {
-    let start_pos = get_map_pos(systems, pos.map);
+    let start_pos = get_map_render_pos(systems, pos.map);
     let cur_pos = systems.gfx.get_pos(&sprite);
     let texture_pos = start_pos
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)

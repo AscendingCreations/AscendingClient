@@ -263,7 +263,7 @@ pub fn fade_end(
     map_renderer: &mut MapRenderer,
     world: &mut World,
     content: &mut Content,
-    socket: &mut Poller,
+    _socket: &mut Poller,
     buffer: &mut BufferTask,
 ) -> Result<()> {
     #[allow(clippy::single_match)]

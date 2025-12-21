@@ -73,7 +73,7 @@ pub fn find_entity(
     content: &mut GameContent,
     screen_pos: Vec2,
 ) -> Option<GlobalKey> {
-    let center_pos = get_map_pos(systems, content.map.map_pos);
+    let center_pos = get_map_render_pos(systems, content.map.map_pos);
     let adjusted_pos = screen_pos - center_pos;
     let tile_pos = Vec2::new(
         (adjusted_pos.x / 20.0).floor(),

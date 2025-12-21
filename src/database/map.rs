@@ -322,7 +322,10 @@ pub fn set_map_visible(systems: &mut SystemHolder, key: Index, visible: bool) {
     }
 }
 
-pub fn get_map_pos(systems: &mut SystemHolder, map_pos: MapPosition) -> Vec2 {
+pub fn get_map_render_pos(
+    systems: &mut SystemHolder,
+    map_pos: MapPosition,
+) -> Vec2 {
     if let Some(key) = systems.base.mappos_key.get(&map_pos)
         && let Some(mapslotdata) = systems.base.mapdata.get(*key)
     {
@@ -330,17 +333,6 @@ pub fn get_map_pos(systems: &mut SystemHolder, map_pos: MapPosition) -> Vec2 {
     }
 
     Vec2::ZERO
-}
-
-pub fn get_map_attributes(
-    systems: &mut SystemHolder,
-    key: Index,
-) -> MapAttributes {
-    if let Some(mapslotdata) = systems.base.mapdata.get(key) {
-        return mapslotdata.attributes.clone();
-    }
-
-    MapAttributes::default()
 }
 
 pub fn get_map_music(systems: &mut SystemHolder, key: Index) -> Option<String> {
@@ -351,7 +343,7 @@ pub fn get_map_music(systems: &mut SystemHolder, key: Index) -> Option<String> {
     None
 }
 
-pub fn get_map_id(
+pub fn get_map_pos(
     systems: &mut SystemHolder,
     key: Index,
 ) -> Option<MapPosition> {
