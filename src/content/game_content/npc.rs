@@ -15,19 +15,12 @@ pub fn add_npc(
     entity: GlobalKey,
     npcnum: usize,
 ) -> Result<GlobalKey> {
-    let start_pos = get_map_render_pos(systems, pos.map);
-    let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
-
     let npc_data = &systems.base.npc[npcnum];
 
     let image = Image::new(
         Some(systems.resource.npcs[npc_data.sprite as usize].allocation),
         &mut systems.renderer,
-        Vec3::new(
-            start_pos.x + texture_pos.x,
-            start_pos.y + texture_pos.y,
-            ORDER_NPC,
-        ),
+        Vec3::new(0.0, 0.0, ORDER_NPC),
         Vec2::new(40.0, 40.0),
         Vec4::new(0.0, 0.0, 40.0, 40.0),
         0,

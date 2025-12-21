@@ -26,16 +26,10 @@ pub fn add_player(
     entity: GlobalKey,
     sprite: usize,
 ) -> Result<GlobalKey> {
-    let start_pos = get_map_render_pos(systems, pos.map);
-    let texture_pos = Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
     let image = Image::new(
         Some(systems.resource.players[sprite].allocation),
         &mut systems.renderer,
-        Vec3::new(
-            start_pos.x + texture_pos.x,
-            start_pos.y + texture_pos.y,
-            ORDER_PLAYER,
-        ),
+        Vec3::new(0.0, 0.0, ORDER_PLAYER),
         Vec2::new(40.0, 40.0),
         Vec4::new(0.0, 0.0, 40.0, 40.0),
         0,
