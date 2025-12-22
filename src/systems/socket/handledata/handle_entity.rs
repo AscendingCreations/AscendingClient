@@ -9,8 +9,8 @@ use crate::{
         add_player, create_npc_light, create_player_light, finalize_entity,
         init_npc_attack, init_player_attack, is_map_connected, npc_finalized,
         player_finalized, set_npc_frame, set_player_frame, unload_mapitems,
-        unload_npc, unload_player, update_mapitem_position, update_npc_camera,
-        update_player_camera,
+        unload_npc, unload_player, update_camera, update_mapitem_position,
+        update_npc_camera, update_player_camera,
     },
     systems::{
         BufferTask, FadeData, FadeType, Poller, SystemHolder, get_percent,
@@ -468,7 +468,7 @@ pub fn handle_warp(
                 if old_pos.map != pos.map {
                     passer.content.game_content.init_map(
                         passer.systems,
-                        passer.map_renderer,
+                        &mut passer.graphics.map_renderer,
                         pos.map,
                         passer.buffer,
                         true,
@@ -480,6 +480,13 @@ pub fn handle_warp(
                         pos.map,
                     )?;
                     passer.content.game_content.refresh_map = true;
+
+                    update_camera(
+                        passer.world,
+                        &mut passer.content.game_content,
+                        passer.systems,
+                        passer.graphics,
+                    )?;
                 }
 
                 if passer.systems.map_fade.f_alpha > 0 {

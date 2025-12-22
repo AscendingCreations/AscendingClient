@@ -28,6 +28,7 @@ pub fn game_loop(
     content: &mut Content,
     buffer: &mut BufferTask,
     seconds: f32,
+    delta: f32,
     loop_timer: &mut LoopTimer,
 ) -> Result<()> {
     match content.content_type {
@@ -46,6 +47,7 @@ pub fn game_loop(
                     buffer,
                     graphics,
                     seconds,
+                    delta,
                 )?;
                 update_npc(
                     world,
@@ -53,6 +55,7 @@ pub fn game_loop(
                     socket,
                     &mut content.game_content,
                     seconds,
+                    delta,
                 )?;
                 float_text_loop(systems, &mut content.game_content, seconds)?;
 

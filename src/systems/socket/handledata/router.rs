@@ -1,3 +1,4 @@
+use camera::controls::FlatControls;
 use log::{error, trace};
 use snafu::Backtrace;
 
@@ -6,7 +7,10 @@ use crate::{
     data_types::*,
     fade::*,
     socket::*,
-    systems::mapper::{PacketPasser, run_packet},
+    systems::{
+        State,
+        mapper::{PacketPasser, run_packet},
+    },
 };
 
 #[allow(clippy::too_many_arguments)]
@@ -14,12 +18,12 @@ pub fn handle_data(
     socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
-    map_renderer: &mut MapRenderer,
     content: &mut Content,
     alert: &mut Alert,
     data: &mut MByteBuffer,
     seconds: f32,
     buffer: &mut BufferTask,
+    graphics: &mut State<FlatControls>,
 ) -> Result<()> {
     let id: ServerPackets = data.read()?;
 
@@ -44,9 +48,9 @@ pub fn handle_data(
             systems,
             content,
             alert,
-            map_renderer,
             seconds,
             buffer,
+            graphics,
         },
     ) {
         Ok(_) => Ok(()),

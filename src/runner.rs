@@ -564,6 +564,14 @@ impl winit::application::ApplicationHandler for Runner {
                                 .controls_mut()
                                 .settings_mut()
                                 .zoom = new_zoom;
+
+                            update_camera(
+                                world,
+                                &mut content.game_content,
+                                systems,
+                                graphics,
+                            )
+                            .unwrap();
                         }
                     }
                     _ => {}
@@ -604,20 +612,20 @@ impl winit::application::ApplicationHandler for Runner {
 
             // Game Loop
             game_loop(
-                socket, world, systems, graphics, content, buffertask, seconds,
+                socket,
+                world,
+                systems,
+                graphics,
+                content,
+                buffertask,
+                seconds,
+                frame_time.delta_seconds,
                 loop_timer,
             )
             .unwrap();
             if systems.fade.fade_logic(&mut systems.gfx, seconds) {
-                fade_end(
-                    systems,
-                    &mut graphics.map_renderer,
-                    world,
-                    content,
-                    socket,
-                    buffertask,
-                )
-                .unwrap();
+                fade_end(systems, graphics, world, content, socket, buffertask)
+                    .unwrap();
             }
             if systems.map_fade.fade_logic(&mut systems.gfx, seconds) {
                 map_fade_end(systems, world, content);
@@ -730,13 +738,8 @@ impl winit::application::ApplicationHandler for Runner {
 
             socket
                 .process_packets(
-                    world,
-                    systems,
-                    &mut graphics.map_renderer,
-                    content,
-                    alert,
-                    seconds,
-                    buffertask,
+                    world, systems, content, alert, seconds, buffertask,
+                    graphics,
                 )
                 .unwrap();
 

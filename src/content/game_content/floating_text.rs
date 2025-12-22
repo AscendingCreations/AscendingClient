@@ -139,7 +139,7 @@ pub fn add_float_text(
         Shaping::Advanced,
         None,
     );
-    let size = Vec2::new(text.measure().x.floor(), 20.0);
+    let size = Vec2::new(text.measure().x, 20.0);
     text.size = size;
 
     let mut rng = rng();

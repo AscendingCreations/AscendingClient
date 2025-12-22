@@ -367,7 +367,7 @@ pub fn update_npc_position(
         Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG),
     );
 
-    let textsize = systems.gfx.get_measure(&entitynamemap).floor();
+    let textsize = systems.gfx.get_measure(&entitynamemap);
     let name_pos =
         texture_pos + Vec2::new((sprite_size.x - textsize.x) * 0.5, 40.0);
 
@@ -477,6 +477,7 @@ pub fn process_npc_movement(
     entity: GlobalKey,
     socket: &mut Poller,
     content: &mut GameContent,
+    delta: f32,
 ) -> Result<()> {
     if !world.entities.contains_key(entity) {
         return Ok(());
@@ -493,7 +494,7 @@ pub fn process_npc_movement(
         return Ok(());
     };
 
-    let add_offset = 2.0;
+    let add_offset = (2.0 + (delta * TILE_SIZE as f32)).round();
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {

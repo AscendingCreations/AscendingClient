@@ -505,6 +505,7 @@ pub fn process_player_movement(
     content: &mut GameContent,
     buffer: &mut BufferTask,
     graphics: &mut State<FlatControls>,
+    delta: f32,
 ) -> Result<()> {
     if !world.entities.contains_key(entity) {
         return Ok(());
@@ -523,7 +524,7 @@ pub fn process_player_movement(
         return Ok(());
     };
 
-    let add_offset = 2.5;
+    let add_offset = (3.0 + (delta * TILE_SIZE as f32)).round();
 
     if movement.move_offset + add_offset < TILE_SIZE as f32 {
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
