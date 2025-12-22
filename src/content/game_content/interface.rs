@@ -88,12 +88,12 @@ impl Interface {
             systems,
             statistic_pos,
             size,
-            Bounds::new(
+            Some(Bounds::new(
                 statistic_pos.x,
                 statistic_pos.y,
                 statistic_pos.x + size.x,
                 statistic_pos.y + size.y,
-            ),
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let ping_text = systems.gfx.add_text(
@@ -117,7 +117,7 @@ impl Interface {
             systems,
             pos,
             size,
-            Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+            Some(Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y)),
             Color::rgba(200, 200, 200, 255),
         );
         let average_ping = systems.gfx.add_text(
@@ -143,7 +143,7 @@ impl Interface {
             systems,
             pos,
             size,
-            Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+            Some(Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y)),
             Color::rgba(200, 200, 200, 255),
         );
         let frame_loop = systems.gfx.add_text(

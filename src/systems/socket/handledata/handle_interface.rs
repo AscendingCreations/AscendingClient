@@ -153,7 +153,7 @@ pub fn handle_damage(
             pos,
             text,
             color,
-        );
+        )?;
     }
 
     Ok(())

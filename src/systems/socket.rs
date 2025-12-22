@@ -1,9 +1,11 @@
+use crate::systems::State;
 use crate::{
     Alert, BufferTask, ClientError, Content, Result, SERVER_ID, SERVER_PORT,
     SystemHolder, World, config::*,
 };
 pub use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 
+use camera::controls::FlatControls;
 use graphics::MapRenderer;
 use log::{info, trace, warn};
 use mio::net::TcpStream;
@@ -134,11 +136,11 @@ impl Poller {
         &mut self,
         world: &mut World,
         systems: &mut SystemHolder,
-        map_renderer: &mut MapRenderer,
         content: &mut Content,
         alert: &mut Alert,
         seconds: f32,
         buffertask: &mut BufferTask,
+        graphics: &mut State<FlatControls>,
     ) -> Result<()> {
         let mut packet = MByteBuffer::new()?;
 
@@ -184,12 +186,12 @@ impl Poller {
                     self,
                     world,
                     systems,
-                    map_renderer,
                     content,
                     alert,
                     &mut packet,
                     seconds,
                     buffertask,
+                    graphics,
                 )
                 .is_err()
                 {
@@ -250,12 +252,12 @@ impl Poller {
                     self,
                     world,
                     systems,
-                    map_renderer,
                     content,
                     alert,
                     &mut packet,
                     seconds,
                     buffertask,
+                    graphics,
                 )
                 .is_err()
                 {

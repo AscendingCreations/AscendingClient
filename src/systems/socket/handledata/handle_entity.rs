@@ -103,7 +103,14 @@ pub fn handle_playerspawn(
             }
 
             if passer.content.game_content.finalized {
-                player_finalized(passer.world, passer.systems, entity)?;
+                player_finalized(
+                    passer.world,
+                    passer.systems,
+                    entity,
+                    passer.content.game_content.map.map_pos,
+                    passer.content.game_content.game_lights,
+                    false,
+                )?;
                 update_player_camera(
                     passer.world,
                     passer.systems,
@@ -196,8 +203,14 @@ pub fn handle_npcdata(
             }
 
             if passer.content.game_content.finalized {
-                npc_finalized(passer.world, passer.systems, entity)?;
-
+                npc_finalized(
+                    passer.world,
+                    passer.systems,
+                    entity,
+                    passer.content.game_content.map.map_pos,
+                    passer.content.game_content.game_lights,
+                    false,
+                )?;
                 update_npc_camera(
                     passer.world,
                     passer.systems,
@@ -225,17 +238,7 @@ pub fn handle_mapitems(
         let _owner = data.read::<Option<GlobalKey>>()?;
         let _did_spawn = data.read::<bool>()?;
 
-        if let Some(myentity) = passer.content.game_content.myentity
-            && !passer.world.entities.contains_key(entity)
-        {
-            let client_pos = if let Some(Entity::Player(p_data)) =
-                passer.world.entities.get(myentity)
-            {
-                p_data.pos
-            } else {
-                Position::default()
-            };
-
+        if !passer.world.entities.contains_key(entity) {
             let sprite = if let Some(itemdata) =
                 passer.systems.base.item.get(item.num as usize)
             {
@@ -248,7 +251,6 @@ pub fn handle_mapitems(
                 passer.systems,
                 sprite,
                 pos,
-                client_pos.map,
                 entity,
             )?;
 
@@ -260,18 +262,26 @@ pub fn handle_mapitems(
                 .insert(mapitem);
 
             if passer.content.game_content.finalized {
-                MapItem::finalized(passer.world, passer.systems, entity)?;
+                MapItem::finalized(
+                    passer.world,
+                    passer.systems,
+                    entity,
+                    passer.content.game_content.game_lights,
+                    false,
+                )?;
                 if let Some(Entity::MapItem(mi_data)) =
-                    passer.world.entities.get(entity)
+                    passer.world.entities.get_mut(entity)
                 {
-                    update_mapitem_position(
+                    mi_data.visible = update_mapitem_position(
                         passer.systems,
-                        &passer.content.game_content,
+                        passer.content.game_content.game_lights,
                         mi_data.sprite_index,
                         &pos,
                         mi_data.pos_offset,
                         mi_data.light,
-                    );
+                        mi_data.finalized,
+                        mi_data.visible,
+                    )?;
                 }
             }
         }
@@ -383,6 +393,7 @@ pub fn handle_warp(
     for _ in 0..count {
         let entity = data.read::<GlobalKey>()?;
         let pos = data.read::<Position>()?;
+        let dir = data.read::<u8>()?;
 
         if !passer.world.entities.contains_key(entity) {
             continue;
@@ -396,7 +407,8 @@ pub fn handle_warp(
                         p_data.movement_buffer.clear();
                         p_data.movement.is_moving = false;
                         p_data.pos = pos;
-                        p_data.pos_offset = Vec2::new(0.0, 0.0);
+                        p_data.pos_offset = Vec2::ZERO;
+                        p_data.dir = dir;
 
                         (old_pos, p_data.dir)
                     }
@@ -405,7 +417,8 @@ pub fn handle_warp(
                         n_data.movement_buffer.clear();
                         n_data.movement.is_moving = false;
                         n_data.pos = pos;
-                        n_data.pos_offset = Vec2::new(0.0, 0.0);
+                        n_data.pos_offset = Vec2::ZERO;
+                        n_data.dir = dir;
 
                         (old_pos, n_data.dir)
                     }
@@ -455,14 +468,26 @@ pub fn handle_warp(
                 if old_pos.map != pos.map {
                     passer.content.game_content.init_map(
                         passer.systems,
-                        passer.map_renderer,
+                        &mut passer.graphics.map_renderer,
                         pos.map,
                         passer.buffer,
+                        true,
                     )?;
-                    finalize_entity(passer.world, passer.systems)?;
+                    finalize_entity(
+                        passer.world,
+                        passer.systems,
+                        passer.content.game_content.game_lights,
+                        pos.map,
+                    )?;
                     passer.content.game_content.refresh_map = true;
+
+                    update_camera(
+                        passer.world,
+                        &mut passer.content.game_content,
+                        passer.systems,
+                        passer.graphics,
+                    )?;
                 }
-                passer.content.game_content.can_move = true;
 
                 if passer.systems.map_fade.f_alpha > 0 {
                     passer.systems.map_fade.init_fade(
@@ -473,12 +498,6 @@ pub fn handle_warp(
                     );
                 }
 
-                update_camera(
-                    passer.world,
-                    &mut passer.content.game_content,
-                    passer.systems,
-                    passer.socket,
-                )?;
                 if let Some(target_entity) =
                     passer.content.game_content.target.entity
                     && let Some(entity_data) =
@@ -576,15 +595,16 @@ pub fn handle_warp(
                     .players
                     .borrow_mut()
                     .swap_remove(&entity);
-            } else {
-                update_player_camera(
-                    passer.world,
-                    passer.systems,
-                    passer.socket,
-                    entity,
-                    &mut passer.content.game_content,
-                )?;
+                continue;
             }
+
+            update_player_camera(
+                passer.world,
+                passer.systems,
+                passer.socket,
+                entity,
+                &mut passer.content.game_content,
+            )?;
         }
     }
 

@@ -193,7 +193,7 @@ impl Alert {
 
         header_text
             .set_pos(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
-            .set_bounds(bounds);
+            .set_bounds(Some(bounds));
         header_text.size = Vec2::new(
             header_text_size.x,
             header_text_size.y + (4.0 * systems.scale as f32).floor(),
@@ -255,12 +255,12 @@ impl Alert {
             );
 
             text.set_pos(Vec3::new(pos.x, pos.y, ORDER_ALERT_TEXT))
-                .set_bounds(Bounds::new(
+                .set_bounds(Some(Bounds::new(
                     pos.x,
                     pos.y,
                     pos.x + text_size.x,
                     pos.y + text_size.y + (10.0 * systems.scale as f32).floor(),
-                ));
+                )));
             text.size = Vec2::new(
                 text_size.x,
                 text_size.y + (10.0 * systems.scale as f32).floor(),

@@ -93,12 +93,12 @@ impl Setting {
                 detail_2,
             ),
             Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x,
                 w_pos.y + (242.0 * systems.scale as f32).floor(),
                 w_pos.x + w_size.x,
                 w_pos.y + (262.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let header_text = systems.gfx.add_text(
@@ -196,8 +196,8 @@ impl Setting {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.window_button_icon.allocation,
-                pos: Vec2::new(0.0, 0.0),
-                uv: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
+                uv: Vec2::ZERO,
                 size: Vec2::new(20.0, 20.0),
                 hover_change: ButtonChangeType::None,
                 click_change: ButtonChangeType::None,
@@ -227,12 +227,12 @@ impl Setting {
                 systems,
                 Vec3::new(tpos.x, tpos.y, detail_1),
                 (Vec2::new(100.0, 20.0) * systems.scale as f32).floor(),
-                Bounds::new(
+                Some(Bounds::new(
                     tpos.x,
                     tpos.y,
                     tpos.x + (100.0 * systems.scale as f32).floor(),
                     tpos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
                 Color::rgba(200, 200, 200, 255),
             );
             let label_index = systems.gfx.add_text(
@@ -258,7 +258,12 @@ impl Setting {
             systems,
             tpos,
             tsize,
-            Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
+            Some(Bounds::new(
+                tpos.x,
+                tpos.y,
+                tpos.x + tsize.x,
+                tpos.y + tsize.y,
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let bgm_label = systems.gfx.add_text(
@@ -283,7 +288,12 @@ impl Setting {
             systems,
             tpos,
             tsize,
-            Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
+            Some(Bounds::new(
+                tpos.x,
+                tpos.y,
+                tpos.x + tsize.x,
+                tpos.y + tsize.y,
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let sfx_label = systems.gfx.add_text(
@@ -500,7 +510,7 @@ impl Setting {
             z_order: 0.0,
             order_index: 0,
             in_hold: false,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             header_pos,
             header_size,
             did_button_click: false,
@@ -683,12 +693,12 @@ impl Setting {
         );
         systems.gfx.set_bound(
             &self.header_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x,
                 self.pos.y + (242.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
                 self.pos.y + (262.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.header_text);
 
@@ -717,12 +727,12 @@ impl Setting {
             systems.gfx.set_pos(text, Vec3::new(tpos.x, tpos.y, pos.z));
             systems.gfx.set_bound(
                 text,
-                Bounds::new(
+                Some(Bounds::new(
                     tpos.x,
                     tpos.y,
                     tpos.x + (100.0 * systems.scale as f32).floor(),
                     tpos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
             );
         });
 
@@ -737,7 +747,12 @@ impl Setting {
             .set_pos(&self.bgm_label, Vec3::new(tpos.x, tpos.y, pos.z));
         systems.gfx.set_bound(
             &self.bgm_label,
-            Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
+            Some(Bounds::new(
+                tpos.x,
+                tpos.y,
+                tpos.x + tsize.x,
+                tpos.y + tsize.y,
+            )),
         );
 
         let tpos = Vec2::new(
@@ -750,7 +765,12 @@ impl Setting {
             .set_pos(&self.sfx_label, Vec3::new(tpos.x, tpos.y, pos.z));
         systems.gfx.set_bound(
             &self.sfx_label,
-            Bounds::new(tpos.x, tpos.y, tpos.x + tsize.x, tpos.y + tsize.y),
+            Some(Bounds::new(
+                tpos.x,
+                tpos.y,
+                tpos.x + tsize.x,
+                tpos.y + tsize.y,
+            )),
         );
     }
 

@@ -108,12 +108,12 @@ impl Profile {
                 detail_2,
             ),
             Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x,
                 w_pos.y + (242.0 * systems.scale as f32).floor(),
                 w_pos.x + w_size.x,
                 w_pos.y + (262.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let header_text = systems.gfx.add_text(
@@ -145,8 +145,8 @@ impl Profile {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.window_button_icon.allocation,
-                pos: Vec2::new(0.0, 0.0),
-                uv: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
+                uv: Vec2::ZERO,
                 size: Vec2::new(20.0, 20.0),
                 hover_change: ButtonChangeType::None,
                 click_change: ButtonChangeType::None,
@@ -243,7 +243,7 @@ impl Profile {
                 systems,
                 pos,
                 size,
-                Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+                Some(Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y)),
                 Color::rgba(200, 200, 200, 255),
             );
             let label = systems.gfx.add_text(
@@ -274,7 +274,7 @@ impl Profile {
                 systems,
                 pos,
                 size,
-                Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+                Some(Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y)),
                 Color::rgba(200, 200, 200, 255),
             );
             let label = systems.gfx.add_text(
@@ -304,7 +304,7 @@ impl Profile {
             z_order: 0.0,
             order_index: 0,
             in_hold: false,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             header_pos,
             header_size,
             did_button_click: false,
@@ -504,12 +504,12 @@ impl Profile {
         );
         systems.gfx.set_bound(
             &self.header_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x,
                 self.pos.y + (242.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
                 self.pos.y + (262.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.header_text);
 
@@ -598,7 +598,7 @@ impl Profile {
             );
             systems.gfx.set_bound(
                 &self.fixed_label[index],
-                Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+                Some(Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y)),
             );
         }
 
@@ -621,7 +621,7 @@ impl Profile {
             );
             systems.gfx.set_bound(
                 &self.value_label[index],
-                Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y),
+                Some(Bounds::new(pos.x, pos.y, pos.x + size.x, pos.y + size.y)),
             );
         }
     }

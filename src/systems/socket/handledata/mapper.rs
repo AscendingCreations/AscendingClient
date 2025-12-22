@@ -1,5 +1,6 @@
-use crate::{BufferTask, data_types::*, fade::*, socket::*};
+use crate::{BufferTask, data_types::*, fade::*, socket::*, systems::State};
 use ahash::AHashMap;
+use camera::controls::FlatControls;
 use graphics::MapRenderer;
 use serde::{Deserialize, Serialize};
 
@@ -14,9 +15,9 @@ pub struct PacketPasser<'a> {
     pub systems: &'a mut SystemHolder,
     pub content: &'a mut Content,
     pub alert: &'a mut Alert,
-    pub map_renderer: &'a mut MapRenderer,
     pub seconds: f32,
     pub buffer: &'a mut BufferTask,
+    pub graphics: &'a mut State<FlatControls>,
 }
 
 type PacketFunction = fn(&mut MByteBuffer, &mut PacketPasser) -> Result<()>;
@@ -44,7 +45,6 @@ pub enum ServerPackets {
     MapItems,
     MyIndex,
     Move,
-    MoveOk,
     Warp,
     Dir,
     Vitals,
@@ -90,7 +90,6 @@ pub fn run_packet(packet: &ServerPackets) -> Option<PacketFunction> {
             Some(handle_playerspawn as PacketFunction)
         }
         ServerPackets::Move => Some(handle_move as PacketFunction),
-        ServerPackets::MoveOk => Some(handle_move_ok as PacketFunction),
         ServerPackets::Warp => Some(handle_warp as PacketFunction),
         ServerPackets::Dir => Some(handle_dir as PacketFunction),
         ServerPackets::Vitals => Some(handle_vitals as PacketFunction),

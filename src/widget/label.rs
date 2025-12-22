@@ -7,7 +7,7 @@ pub fn create_label(
     systems: &mut SystemHolder,
     pos: Vec3,
     label_size: Vec2,
-    bounds: Bounds,
+    bounds: Option<Bounds>,
     color: Color,
 ) -> Text {
     let mut text = Text::new(
@@ -35,7 +35,7 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
         &mut systems.renderer,
         Some(Metrics::new(16.0, 16.0).scale(systems.scale as f32)),
         Vec3::new(0.0, 0.0, 0.0),
-        Vec2::new(0.0, 0.0),
+        Vec2::ZERO,
         1.0,
         0,
     );
@@ -45,7 +45,7 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
         Some(systems.size.width),
         Some(systems.size.height),
     )
-    .set_bounds(Bounds::new(0.0, 0.0, 0.0, 0.0))
+    .set_bounds(None)
     .set_default_color(Color::rgba(255, 255, 255, 255));
     text.changed = true;
     text

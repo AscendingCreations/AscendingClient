@@ -69,12 +69,12 @@ impl Register {
                 ORDER_MENU_WINDOW_CONTENT_DETAIL,
             ),
             Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x,
                 pos.y + (348.0 * systems.scale as f32).floor(),
                 pos.x + size.x,
                 pos.y + (368.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(240, 240, 240, 255),
         );
 
@@ -148,12 +148,12 @@ impl Register {
                 systems,
                 Vec3::new(tpos.x, tpos.y, ORDER_MENU_WINDOW_CONTENT_DETAIL),
                 (Vec2::new(110.0, 20.0) * systems.scale as f32).floor(),
-                Bounds::new(
+                Some(Bounds::new(
                     tpos.x,
                     tpos.y,
                     tpos.x + (110.0 * systems.scale as f32).floor(),
                     tpos.y + (20.0 * systems.scale as f32).floor(),
-                ),
+                )),
                 Color::rgba(100, 100, 100, 255),
             );
             let textindex = systems.gfx.add_text(
@@ -250,12 +250,12 @@ impl Register {
                 ORDER_MENU_WINDOW_CONTENT_DETAIL,
             ),
             Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x + (142.0 * systems.scale as f32).floor(),
                 pos.y + (148.0 * systems.scale as f32).floor(),
                 pos.x + (306.0 * systems.scale as f32).floor(),
                 pos.y + (168.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(80, 80, 80, 255),
         );
         let sprite_index = systems.gfx.add_text(
@@ -314,7 +314,7 @@ impl Register {
             ButtonType::None,
             ButtonContentType::Text(ButtonContentText {
                 text: "Sign In".to_string(),
-                pos: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
                 color: Color::rgba(80, 80, 80, 255),
                 render_layer: 1,
                 hover_change: ButtonChangeType::ColorChange(Color::rgba(
@@ -349,8 +349,8 @@ impl Register {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.horizontal_arrow.allocation,
-                pos: Vec2::new(0.0, 0.0),
-                uv: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
+                uv: Vec2::ZERO,
                 size: Vec2::new(24.0, 24.0),
                 hover_change: ButtonChangeType::None,
                 click_change: ButtonChangeType::None,
@@ -380,7 +380,7 @@ impl Register {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.horizontal_arrow.allocation,
-                pos: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
                 uv: Vec2::new(24.0, 0.0),
                 size: Vec2::new(24.0, 24.0),
                 hover_change: ButtonChangeType::None,
@@ -404,12 +404,12 @@ impl Register {
                 ORDER_MENU_WINDOW_CONTENT_DETAIL,
             ),
             Vec2::new(size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x + (170.0 * systems.scale as f32).floor(),
                 pos.y + (120.0 * systems.scale as f32).floor(),
                 pos.x + (278.0 * systems.scale as f32).floor(),
                 pos.y + (140.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(80, 80, 80, 255),
         );
         let unique_label = systems.gfx.add_text(

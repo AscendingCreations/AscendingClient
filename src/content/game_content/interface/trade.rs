@@ -113,12 +113,12 @@ impl Trade {
                 detail_2,
             ),
             Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x,
                 w_pos.y + (361.0 * systems.scale as f32).floor(),
                 w_pos.x + w_size.x,
                 w_pos.y + (381.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let header_text = systems.gfx.add_text(
@@ -150,8 +150,8 @@ impl Trade {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.window_button_icon.allocation,
-                pos: Vec2::new(0.0, 0.0),
-                uv: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
+                uv: Vec2::ZERO,
                 size: Vec2::new(20.0, 20.0),
                 hover_change: ButtonChangeType::None,
                 click_change: ButtonChangeType::None,
@@ -343,12 +343,12 @@ impl Trade {
                 detail_2,
             ),
             (Vec2::new(180.0, 20.0) * systems.scale as f32).floor(),
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x + (15.0 * systems.scale as f32).floor(),
                 w_pos.y + (324.0 * systems.scale as f32).floor(),
                 w_pos.x + (185.0 * systems.scale as f32).floor(),
                 w_pos.y + (344.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(220, 220, 220, 255),
         );
         let my_status_text = systems.gfx.add_text(
@@ -371,12 +371,12 @@ impl Trade {
                 detail_2,
             ),
             (Vec2::new(180.0, 20.0) * systems.scale as f32).floor(),
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x + (215.0 * systems.scale as f32).floor(),
                 w_pos.y + (324.0 * systems.scale as f32).floor(),
                 w_pos.x + (385.0 * systems.scale as f32).floor(),
                 w_pos.y + (344.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(220, 220, 220, 255),
         );
         let their_status_text = systems.gfx.add_text(
@@ -461,12 +461,12 @@ impl Trade {
                 detail_1,
             ),
             (Vec2::new(158.0, 20.0) * systems.scale as f32).floor(),
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x + (232.0 * systems.scale as f32).floor(),
                 w_pos.y + (77.0 * systems.scale as f32).floor(),
                 w_pos.x + (390.0 * systems.scale as f32).floor(),
                 w_pos.y + (97.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let their_money = systems.gfx.add_text(
@@ -488,12 +488,12 @@ impl Trade {
                 detail_1,
             ),
             (Vec2::new(180.0, 20.0) * systems.scale as f32).floor(),
-            Bounds::new(
+            Some(Bounds::new(
                 w_pos.x,
                 w_pos.y + (10.0 * systems.scale as f32).floor(),
                 w_pos.x + w_size.x,
                 w_pos.y + (30.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(220, 220, 220, 255),
         );
         let status_text = systems.gfx.add_text(
@@ -531,7 +531,7 @@ impl Trade {
             z_order: 0.0,
             order_index: 0,
             in_hold: false,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             header_pos,
             header_size,
             did_button_click: false,
@@ -800,12 +800,12 @@ impl Trade {
         );
         systems.gfx.set_bound(
             &self.header_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x,
                 self.pos.y + (361.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
                 self.pos.y + (381.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.header_text);
 
@@ -887,12 +887,12 @@ impl Trade {
                     );
                     systems.gfx.set_bound(
                         &item_slot[render_index].count,
-                        Bounds::new(
+                        Some(Bounds::new(
                             slot_pos.x,
                             slot_pos.y,
                             slot_pos.x + item_text_size.x,
                             slot_pos.y + item_text_size.y,
-                        ),
+                        )),
                     );
                 }
             }
@@ -928,12 +928,12 @@ impl Trade {
         );
         systems.gfx.set_bound(
             &self.my_status_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x + (15.0 * systems.scale as f32).floor(),
                 self.pos.y + (324.0 * systems.scale as f32).floor(),
                 self.pos.x + (185.0 * systems.scale as f32).floor(),
                 self.pos.y + (344.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
 
         let pos = systems.gfx.get_pos(&self.their_status_text);
@@ -947,12 +947,12 @@ impl Trade {
         );
         systems.gfx.set_bound(
             &self.their_status_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x + (215.0 * systems.scale as f32).floor(),
                 self.pos.y + (324.0 * systems.scale as f32).floor(),
                 self.pos.x + (385.0 * systems.scale as f32).floor(),
                 self.pos.y + (344.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
 
         let pos = systems.gfx.get_pos(&self.money_icon[0]);
@@ -988,12 +988,12 @@ impl Trade {
         );
         systems.gfx.set_bound(
             &self.their_money,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x + (232.0 * systems.scale as f32).floor(),
                 self.pos.y + (77.0 * systems.scale as f32).floor(),
                 self.pos.x + (390.0 * systems.scale as f32).floor(),
                 self.pos.y + (97.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
 
         let pos = systems.gfx.get_pos(&self.status_text);
@@ -1007,12 +1007,12 @@ impl Trade {
         );
         systems.gfx.set_bound(
             &self.status_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x,
                 self.pos.y + (10.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
                 self.pos.y + (30.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.status_text);
     }
@@ -1340,12 +1340,12 @@ impl Trade {
                     text_zpos,
                 ),
                 text_size,
-                Bounds::new(
+                Some(Bounds::new(
                     slot_pos.x,
                     slot_pos.y,
                     slot_pos.x + text_size.x,
                     slot_pos.y + text_size.y,
-                ),
+                )),
                 Color::rgba(240, 240, 240, 255),
             );
             let text_index = systems.gfx.add_text(

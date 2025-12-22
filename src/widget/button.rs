@@ -186,12 +186,12 @@ impl Button {
                     systems,
                     Vec3::new(text_pos.x, text_pos.y, spos.z),
                     (Vec2::new(size.x, 20.0) * systems.scale as f32).floor(),
-                    Bounds::new(
+                    Some(Bounds::new(
                         text_pos.x,
                         text_pos.y,
                         text_pos.x + (size.x * systems.scale as f32).floor(),
                         text_pos.y + (20.0 * systems.scale as f32).floor(),
-                    ),
+                    )),
                     data.color,
                 );
                 let index = systems.gfx.add_text(
@@ -332,14 +332,14 @@ impl Button {
                     systems.gfx.set_pos(&content_index, pos);
                     systems.gfx.set_bound(
                         &content_index,
-                        Bounds::new(
+                        Some(Bounds::new(
                             pos.x,
                             pos.y,
                             pos.x
                                 + (self.size.x * systems.scale as f32).floor(),
                             pos.y
                                 + (self.size.y * systems.scale as f32).floor(),
-                        ),
+                        )),
                     );
                     systems.gfx.center_text(&content_index);
                 }

@@ -64,12 +64,12 @@ impl ChatTab {
             systems,
             Vec3::new(pos.x, pos.y, z_order[1]),
             (Vec2::new(size.x, 20.0) * systems.scale as f32).floor(),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x,
                 pos.y,
                 pos.x + (size.x * systems.scale as f32).floor(),
                 pos.y + (20.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(255, 255, 255, 255),
         );
         let text = systems.gfx.add_text(
@@ -175,12 +175,12 @@ impl ChatTab {
             .set_pos(&self.text, Vec3::new(set_pos.x, set_pos.y, pos.z));
         systems.gfx.set_bound(
             &self.text,
-            Bounds::new(
+            Some(Bounds::new(
                 set_pos.x,
                 set_pos.y,
                 set_pos.x + (self.size.x * systems.scale as f32).floor(),
                 set_pos.y + (20.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.text);
     }
@@ -335,8 +335,8 @@ impl Chatbox {
                 }),
                 ButtonContentType::Image(ButtonContentImg {
                     res: systems.resource.vertical_arrow.allocation,
-                    pos: Vec2::new(0.0, 0.0),
-                    uv: Vec2::new(0.0, 0.0),
+                    pos: Vec2::ZERO,
+                    uv: Vec2::ZERO,
                     size: Vec2::new(24.0, 24.0),
                     hover_change: ButtonChangeType::None,
                     click_change: ButtonChangeType::None,
@@ -366,7 +366,7 @@ impl Chatbox {
                 }),
                 ButtonContentType::Image(ButtonContentImg {
                     res: systems.resource.vertical_arrow.allocation,
-                    pos: Vec2::new(0.0, 0.0),
+                    pos: Vec2::ZERO,
                     uv: Vec2::new(24.0, 0.0),
                     size: Vec2::new(24.0, 24.0),
                     hover_change: ButtonChangeType::None,
@@ -481,7 +481,7 @@ impl Chatbox {
         let selection_rect = Rect::new(
             &mut systems.renderer,
             Vec3::new(0.0, 0.0, detail_3),
-            Vec2::new(0.0, 0.0),
+            Vec2::ZERO,
             Color::rgba(60, 60, 60, 255),
             0,
         );
@@ -513,7 +513,7 @@ impl Chatbox {
             z_order: w_pos.z,
             order_index: 0,
             in_hold: false,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             chat_tab,
             selected_tab: 0,
             msg_selection,
@@ -523,7 +523,7 @@ impl Chatbox {
                 systems.size.width - w_size.x,
                 systems.size.height - w_size.y,
             ),
-            max_bound: Vec2::new(0.0, 0.0),
+            max_bound: Vec2::ZERO,
         }
     }
 
@@ -714,7 +714,7 @@ impl Chatbox {
                     self.chat_zorder,
                 ),
             );
-            systems.gfx.set_bound(&data.text, self.chat_bounds);
+            systems.gfx.set_bound(&data.text, Some(self.chat_bounds));
         }
 
         let pos = systems.gfx.get_pos(&self.msg_selection);
@@ -940,7 +940,7 @@ impl Chatbox {
             systems,
             Vec3::new(0.0, 0.0, 0.0),
             self.chat_areasize,
-            self.chat_bounds,
+            Some(self.chat_bounds),
             Color::rgba(255, 255, 255, 255),
         );
         text_data

@@ -4,8 +4,8 @@ use graphics::*;
 
 use crate::{
     AttackFrame, Attacking, DeathType, EntityName, EntityNameMap, HPBar,
-    Movement, MovementData, Physical, Position, SpriteImage, SpriteIndex,
-    Vitals,
+    LightData, Movement, MovementData, Physical, Position, SpriteImage,
+    SpriteIndex, Vitals,
 };
 use mmap_bytey::{MByteBuffer, MByteBufferRead, MByteBufferWrite};
 use serde::{Deserialize, Serialize};
@@ -21,7 +21,9 @@ pub struct NpcEntity {
     pub hp_bar: HPBar,
     pub name_map: EntityNameMap,
     pub light: Option<Index>,
+    pub light_data: LightData,
     pub finalized: bool,
+    pub visible: bool,
 
     // Appearance
     pub sprite: SpriteImage,

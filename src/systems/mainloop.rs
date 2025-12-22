@@ -1,3 +1,4 @@
+use camera::controls::FlatControls;
 use graphics::MapRenderer;
 use log::info;
 
@@ -6,6 +7,7 @@ use crate::{
     World,
     content::{game_content::map, *},
     dir_to_enum, send_gameping,
+    systems::State,
 };
 
 use super::Poller;
@@ -22,10 +24,11 @@ pub fn game_loop(
     socket: &mut Poller,
     world: &mut World,
     systems: &mut SystemHolder,
-    map_renderer: &mut MapRenderer,
+    graphics: &mut State<FlatControls>,
     content: &mut Content,
     buffer: &mut BufferTask,
     seconds: f32,
+    delta: f32,
     loop_timer: &mut LoopTimer,
 ) -> Result<()> {
     match content.content_type {
@@ -39,11 +42,12 @@ pub fn game_loop(
                 update_player(
                     world,
                     systems,
-                    map_renderer,
                     socket,
                     &mut content.game_content,
                     buffer,
+                    graphics,
                     seconds,
+                    delta,
                 )?;
                 update_npc(
                     world,
@@ -51,13 +55,12 @@ pub fn game_loop(
                     socket,
                     &mut content.game_content,
                     seconds,
+                    delta,
                 )?;
-                float_text_loop(systems, &mut content.game_content, seconds);
+                float_text_loop(systems, &mut content.game_content, seconds)?;
 
                 loop_timer.entity_tmr = seconds + 0.025;
             }
-
-            update_camera(world, &mut content.game_content, systems, socket)?;
 
             if seconds > loop_timer.input_tmr {
                 content

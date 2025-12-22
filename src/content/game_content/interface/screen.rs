@@ -141,7 +141,7 @@ pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
     let mut image_properties = ButtonContentImg {
         res: systems.resource.button_icon.allocation,
         pos: Vec2::new(4.0, 4.0),
-        uv: Vec2::new(0.0, 0.0),
+        uv: Vec2::ZERO,
         size: Vec2::new(32.0, 32.0),
         hover_change: ButtonChangeType::None,
         click_change: ButtonChangeType::None,

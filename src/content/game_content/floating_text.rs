@@ -1,6 +1,6 @@
 use crate::{
     GameContent, ORDER_FLOAT_TEXT, ORDER_FLOAT_TEXT_BG, Position, SystemHolder,
-    TILE_SIZE, data_types::*, get_start_map_pos, label::*,
+    TILE_SIZE, data_types::*, database::get_map_render_pos, label::*,
 };
 use graphics::{
     cosmic_text::{Attrs, Metrics, Stretch, Style, Weight},
@@ -51,9 +51,9 @@ pub fn float_text_loop(
     systems: &mut SystemHolder,
     content: &mut GameContent,
     seconds: f32,
-) {
+) -> Result<()> {
     if content.float_text.unload {
-        return;
+        return Ok(());
     }
 
     let mut remove_list = Vec::with_capacity(255);
@@ -72,25 +72,22 @@ pub fn float_text_loop(
 
         float_data.float_y += 0.2;
 
-        let start_pos =
-            match get_start_map_pos(content.map.map_pos, float_data.pos.map) {
-                Some(data) => data,
-                None => {
-                    remove_list.push(index);
-                    continue;
-                }
-            };
+        let start_pos = if let Some(start) =
+            get_map_render_pos(systems, float_data.pos.map)
+        {
+            start
+        } else {
+            remove_list.push(index);
+            continue;
+        };
         let cur_pos = systems.gfx.get_pos(&float_data.text);
-        let texture_pos = content.camera.0
+        let texture_pos = start_pos
             + (Vec2::new(float_data.pos.x as f32, float_data.pos.y as f32)
                 * TILE_SIZE as f32);
 
         let pos = Vec2::new(
-            start_pos.x + texture_pos.x + float_data.adjust_pos.x,
-            start_pos.y
-                + texture_pos.y
-                + float_data.adjust_pos.y
-                + float_data.float_y,
+            texture_pos.x + float_data.adjust_pos.x,
+            texture_pos.y + float_data.adjust_pos.y + float_data.float_y,
         );
 
         if pos != Vec2::new(cur_pos.x, cur_pos.y) {
@@ -116,6 +113,7 @@ pub fn float_text_loop(
         );
         content.float_text.data.swap_remove(*index);
     }
+    Ok(())
 }
 
 pub fn add_float_text(
@@ -124,11 +122,14 @@ pub fn add_float_text(
     pos: Position,
     msg: String,
     color: Color,
-) {
-    let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
-        .unwrap_or_else(|| Vec2::new(0.0, 0.0));
-    let texture_pos = content.camera.0
-        + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32);
+) -> Result<()> {
+    let start_pos = if let Some(start) = get_map_render_pos(systems, pos.map) {
+        start
+    } else {
+        return Ok(());
+    };
+    let texture_pos =
+        start_pos + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32);
 
     let mut text = create_empty_label(systems);
     text.set_text(
@@ -138,7 +139,7 @@ pub fn add_float_text(
         Shaping::Advanced,
         None,
     );
-    let size = Vec2::new(text.measure().x.floor(), 20.0);
+    let size = Vec2::new(text.measure().x, 20.0);
     text.size = size;
 
     let mut rng = rng();
@@ -147,15 +148,10 @@ pub fn add_float_text(
     let mut adjust_pos = (TILE_SIZE as f32 - size) * 0.5;
     adjust_pos.y += 8.0;
     adjust_pos.x += add_x as f32;
-    let tpos = start_pos + texture_pos + adjust_pos;
+    let tpos = texture_pos + adjust_pos;
 
     text.set_pos(Vec3::new(tpos.x, tpos.y, ORDER_FLOAT_TEXT))
-        .set_bounds(Bounds::new(
-            0.0,
-            0.0,
-            systems.size.width,
-            systems.size.height,
-        ))
+        .set_bounds(None)
         .set_default_color(color);
     let text_index = systems.gfx.add_text(
         text,
@@ -169,7 +165,7 @@ pub fn add_float_text(
         systems,
         Vec3::new(tpos.x - 1.0, tpos.y - 2.0, ORDER_FLOAT_TEXT_BG),
         size,
-        Bounds::new(0.0, 0.0, systems.size.width, systems.size.height),
+        None,
         Color::rgba(10, 10, 10, 255),
     );
     let attrs = Attrs::new().weight(Weight::BOLD);
@@ -198,4 +194,5 @@ pub fn add_float_text(
         spawned: true,
         float_y: 0.0,
     });
+    Ok(())
 }

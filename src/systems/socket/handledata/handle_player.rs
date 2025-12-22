@@ -11,18 +11,6 @@ use crate::{
     systems::{BufferTask, Poller, SystemHolder, mapper::PacketPasser},
 };
 
-pub fn handle_move_ok(
-    data: &mut MByteBuffer,
-    passer: &mut PacketPasser,
-) -> Result<()> {
-    // TODO use this to reset players position, reload stuff etc.
-    let _move_ok = data.read::<bool>()?;
-    passer.content.game_content.can_move = true;
-    //info!("move allowed: {move_ok}");
-    //content.game_content.myentity = Some(entity);
-    Ok(())
-}
-
 pub fn handle_playerdata(
     data: &mut MByteBuffer,
     passer: &mut PacketPasser,

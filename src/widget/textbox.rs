@@ -109,12 +109,12 @@ impl Textbox {
             systems,
             Vec3::new(b_pos.x, b_pos.y, detail_2),
             size * systems.scale as f32,
-            Bounds::new(
+            Some(Bounds::new(
                 b_pos.x,
                 b_pos.y,
                 b_pos.x + (size.x * systems.scale as f32),
                 b_pos.y + (size.y * systems.scale as f32),
-            ),
+            )),
             text_color,
         );
         text_data.set_wrap(&mut systems.renderer, cosmic_text::Wrap::None);
@@ -279,12 +279,12 @@ impl Textbox {
         );
         systems.gfx.set_bound(
             &self.text_index,
-            Bounds::new(
+            Some(Bounds::new(
                 b_pos.x + self.adjust_x,
                 b_pos.y,
                 b_pos.x + (self.size.x * systems.scale as f32).floor(),
                 b_pos.y + (self.size.y * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.set_pos(
             &self.caret,

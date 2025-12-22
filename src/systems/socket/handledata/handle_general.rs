@@ -135,7 +135,7 @@ pub fn handle_clear_data(
     passer.content.game_content.clear_data(
         passer.world,
         passer.systems,
-        passer.map_renderer,
+        &mut passer.graphics.map_renderer,
     )?;
     passer.content.game_content.show(passer.systems);
     Ok(())

@@ -4,10 +4,7 @@ use graphics::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    Item, MapItemEntity, SystemHolder,
-    data_types::*,
-    game_content::{Camera, *},
-    get_start_map_pos,
+    Item, MapItemEntity, SystemHolder, data_types::*, game_content::*,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -23,21 +20,12 @@ impl MapItem {
         systems: &mut SystemHolder,
         sprite: usize,
         pos: Position,
-        cur_map: MapPosition,
         entity: GlobalKey,
     ) -> Result<GlobalKey> {
-        let start_pos = get_start_map_pos(cur_map, pos.map)
-            .unwrap_or_else(|| Vec2::new(0.0, 0.0));
-        let texture_pos =
-            Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32;
         let image = Image::new(
             Some(systems.resource.items[sprite].allocation),
             &mut systems.renderer,
-            Vec3::new(
-                start_pos.x + texture_pos.x,
-                start_pos.y + texture_pos.y,
-                ORDER_MAP_ITEM,
-            ),
+            Vec3::new(0.0, 0.0, ORDER_MAP_ITEM),
             Vec2::new(20.0, 20.0),
             Vec4::new(0.0, 0.0, 20.0, 20.0),
             0,
@@ -48,7 +36,7 @@ impl MapItem {
             0,
             "Map Item",
             false,
-            CameraView::SubView1,
+            CameraView::MainView,
         );
 
         let _ = world.kinds.insert(entity, EntityKind::MapItem);
@@ -69,9 +57,25 @@ impl MapItem {
         world: &mut World,
         systems: &mut SystemHolder,
         entity: GlobalKey,
+        game_light: GfxType,
+        update_position: bool,
     ) -> Result<()> {
-        if let Some(Entity::MapItem(i_data)) = world.entities.get(entity) {
+        if let Some(Entity::MapItem(i_data)) = world.entities.get_mut(entity) {
+            i_data.finalized = true;
             Self::finalized_data(systems, i_data.sprite_index);
+
+            if update_position {
+                i_data.visible = update_mapitem_position(
+                    systems,
+                    game_light,
+                    i_data.sprite_index,
+                    &i_data.pos,
+                    i_data.pos_offset,
+                    i_data.light,
+                    i_data.finalized,
+                    i_data.visible,
+                )?;
+            }
         }
         Ok(())
     }
@@ -83,37 +87,44 @@ impl MapItem {
 
 pub fn update_mapitem_position(
     systems: &mut SystemHolder,
-    content: &GameContent,
+    game_light: GfxType,
     sprite: GfxType,
     pos: &Position,
     pos_offset: Vec2,
     light_key: Option<Index>,
-) {
-    let start_pos = get_start_map_pos(content.map.map_pos, pos.map)
-        .unwrap_or_else(|| {
-            Vec2::new(systems.size.width * 2.0, systems.size.height * 2.0)
-        });
+    finalized: bool,
+    visible: bool,
+) -> Result<bool> {
+    let start_pos = if let Some(start) = get_map_render_pos(systems, pos.map) {
+        if !visible {
+            systems.gfx.set_visible(&sprite, finalized);
+        }
+
+        start
+    } else {
+        systems.gfx.set_visible(&sprite, false);
+        return Ok(false);
+    };
     let cur_pos = systems.gfx.get_pos(&sprite);
-    let texture_pos = content.camera.0
+    let texture_pos = start_pos
         + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32)
         + pos_offset;
-    if start_pos + texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
-        return;
+    if texture_pos == Vec2::new(cur_pos.x, cur_pos.y) {
+        return Ok(true);
     }
-
-    let pos = start_pos + texture_pos;
 
     systems
         .gfx
-        .set_pos(&sprite, Vec3::new(pos.x, pos.y, cur_pos.z));
+        .set_pos(&sprite, Vec3::new(texture_pos.x, texture_pos.y, cur_pos.z));
 
     if let Some(light) = light_key {
         systems.gfx.set_area_light_pos(
-            &content.game_lights,
+            &game_light,
             light,
-            pos + TILE_SIZE as f32,
+            texture_pos + TILE_SIZE as f32,
         )
     }
+    Ok(true)
 }
 
 pub fn unload_mapitems(

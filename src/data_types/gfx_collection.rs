@@ -38,6 +38,14 @@ pub struct GfxText {
     pub gfx: Text,
 }
 
+#[derive(Debug, Clone, Default)]
+pub enum LightData {
+    #[default]
+    None,
+    AreaLight(AreaLight),
+    DirLight(DirectionalLight),
+}
+
 pub struct GfxLight {
     pub data: GfxData,
     pub gfx: Lights,
@@ -196,8 +204,7 @@ impl GfxCollection {
         if let GfxType::Image(gfx_index) = index
             && let Some(gfx) = self.image_storage.get_mut(*gfx_index)
         {
-            gfx.gfx.texture = Some(texture);
-            gfx.gfx.changed = true;
+            gfx.gfx.set_texture(Some(texture));
         }
     }
 
@@ -205,8 +212,7 @@ impl GfxCollection {
         match index {
             GfxType::Image(gfx_index) => {
                 if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
-                    gfx.gfx.color = color;
-                    gfx.gfx.changed = true;
+                    gfx.gfx.set_color(color);
                 }
             }
             GfxType::Rect(gfx_index) => {
@@ -243,8 +249,7 @@ impl GfxCollection {
         match index {
             GfxType::Image(gfx_index) => {
                 if let Some(gfx) = self.image_storage.get_mut(*gfx_index) {
-                    gfx.gfx.pos = pos;
-                    gfx.gfx.changed = true;
+                    gfx.gfx.set_pos(pos);
                 }
             }
             GfxType::Rect(gfx_index) => {
@@ -311,7 +316,7 @@ impl GfxCollection {
         }
     }
 
-    pub fn set_bound(&mut self, index: &GfxType, bound: Bounds) {
+    pub fn set_bound(&mut self, index: &GfxType, bound: Option<Bounds>) {
         if let GfxType::Text(gfx_index) = index
             && let Some(gfx) = self.text_storage.get_mut(*gfx_index)
         {
@@ -345,8 +350,7 @@ impl GfxCollection {
         if let GfxType::Image(gfx_index) = index
             && let Some(gfx) = self.image_storage.get_mut(*gfx_index)
         {
-            gfx.gfx.uv = uv;
-            gfx.gfx.changed = true;
+            gfx.gfx.set_uv(uv);
         }
     }
 
@@ -412,11 +416,12 @@ impl GfxCollection {
             && let Some(gfx) = self.text_storage.get_mut(*gfx_index)
         {
             let size = gfx.gfx.measure();
-            let bound = gfx.gfx.bounds;
-            let textbox_size = bound.right - bound.left;
-            gfx.gfx.pos.x =
-                bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
-            gfx.gfx.changed = true;
+            if let Some(bound) = gfx.gfx.bounds {
+                let textbox_size = bound.right - bound.left;
+                gfx.gfx.pos.x =
+                    bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
+                gfx.gfx.changed = true;
+            }
         }
     }
 
@@ -460,10 +465,10 @@ impl GfxCollection {
                     return gfx.gfx.size;
                 }
             }
-            _ => return Vec2::new(0.0, 0.0),
+            _ => return Vec2::ZERO,
         }
 
-        Vec2::new(0.0, 0.0)
+        Vec2::ZERO
     }
 
     pub fn get_uv(&mut self, index: &GfxType) -> Vec4 {
@@ -506,10 +511,10 @@ impl GfxCollection {
                     return gfx.gfx.measure();
                 }
             }
-            _ => return Vec2::new(0.0, 0.0),
+            _ => return Vec2::ZERO,
         }
 
-        Vec2::new(0.0, 0.0)
+        Vec2::ZERO
     }
 
     pub fn add_area_light(

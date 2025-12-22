@@ -1,10 +1,13 @@
+use camera::controls::FlatControls;
 use graphics::*;
 
 use winit::dpi::PhysicalSize;
 
 use crate::{
-    BufferTask, Entity, Position, Result, SystemHolder, World, content::*,
-    data_types::*, systems::Poller,
+    BufferTask, Entity, Position, Result, SystemHolder, World,
+    content::*,
+    data_types::*,
+    systems::{Poller, State},
 };
 
 #[derive(Default)]
@@ -260,10 +263,10 @@ impl MapFade {
 
 pub fn fade_end(
     systems: &mut SystemHolder,
-    map_renderer: &mut MapRenderer,
+    graphics: &mut State<FlatControls>,
     world: &mut World,
     content: &mut Content,
-    socket: &mut Poller,
+    _socket: &mut Poller,
     buffer: &mut BufferTask,
 ) -> Result<()> {
     #[allow(clippy::single_match)]
@@ -272,7 +275,7 @@ pub fn fade_end(
             content.switch_content(
                 world,
                 systems,
-                map_renderer,
+                &mut graphics.map_renderer,
                 ContentType::Game,
             )?;
 
@@ -289,13 +292,14 @@ pub fn fade_end(
 
             content.game_content.init_map(
                 systems,
-                map_renderer,
+                &mut graphics.map_renderer,
                 pos.map,
                 buffer,
+                true,
             )?;
             content
                 .game_content
-                .init_finalized_data(world, systems, socket)?;
+                .init_finalized_data(world, systems, graphics)?;
 
             systems.fade.init_fade(
                 &mut systems.gfx,
@@ -308,7 +312,7 @@ pub fn fade_end(
             content.switch_content(
                 world,
                 systems,
-                map_renderer,
+                &mut graphics.map_renderer,
                 ContentType::Menu,
             )?;
 

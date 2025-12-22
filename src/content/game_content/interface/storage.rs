@@ -126,12 +126,12 @@ impl Storage {
                 detail_2,
             ),
             Vec2::new(w_size.x, (20.0 * systems.scale as f32).floor()),
-            Bounds::new(
+            Some(Bounds::new(
                 pos.x,
                 pos.y + (279.0 * systems.scale as f32).floor(),
                 pos.x + w_size.x,
                 pos.y + (299.0 * systems.scale as f32).floor(),
-            ),
+            )),
             Color::rgba(200, 200, 200, 255),
         );
         let header_text = systems.gfx.add_text(
@@ -196,8 +196,8 @@ impl Storage {
             }),
             ButtonContentType::Image(ButtonContentImg {
                 res: systems.resource.window_button_icon.allocation,
-                pos: Vec2::new(0.0, 0.0),
-                uv: Vec2::new(0.0, 0.0),
+                pos: Vec2::ZERO,
+                uv: Vec2::ZERO,
                 size: Vec2::new(20.0, 20.0),
                 hover_change: ButtonChangeType::None,
                 click_change: ButtonChangeType::None,
@@ -227,7 +227,7 @@ impl Storage {
             z_order: 0.0,
             order_index: 0,
             in_hold: false,
-            hold_pos: Vec2::new(0.0, 0.0),
+            hold_pos: Vec2::ZERO,
             header_pos,
             header_size,
             did_button_click: false,
@@ -239,7 +239,7 @@ impl Storage {
             max_bound: Vec2::new(1.0, 1.0),
 
             hold_slot: None,
-            hold_adjust_pos: Vec2::new(0.0, 0.0),
+            hold_adjust_pos: Vec2::ZERO,
         }
     }
 
@@ -461,12 +461,12 @@ impl Storage {
                     text_zpos,
                 ),
                 text_size,
-                Bounds::new(
+                Some(Bounds::new(
                     slot_pos.x,
                     slot_pos.y,
                     slot_pos.x + text_size.x,
                     slot_pos.y + text_size.y,
-                ),
+                )),
                 Color::rgba(240, 240, 240, 255),
             );
             let text_index = systems.gfx.add_text(
@@ -564,7 +564,7 @@ impl Storage {
 
     pub fn release_window(&mut self) {
         self.in_hold = false;
-        self.hold_pos = Vec2::new(0.0, 0.0);
+        self.hold_pos = Vec2::ZERO;
     }
 
     pub fn set_z_order(
@@ -671,12 +671,12 @@ impl Storage {
         );
         systems.gfx.set_bound(
             &self.header_text,
-            Bounds::new(
+            Some(Bounds::new(
                 self.pos.x,
                 self.pos.y + (279.0 * systems.scale as f32).floor(),
                 self.pos.x + self.size.x,
                 self.pos.y + (299.0 * systems.scale as f32).floor(),
-            ),
+            )),
         );
         systems.gfx.center_text(&self.header_text);
 
@@ -735,12 +735,12 @@ impl Storage {
                     );
                     systems.gfx.set_bound(
                         &self.item_slot[i].count,
-                        Bounds::new(
+                        Some(Bounds::new(
                             slot_pos.x,
                             slot_pos.y,
                             slot_pos.x + item_text_size.x,
                             slot_pos.y + item_text_size.y,
-                        ),
+                        )),
                     );
                 }
             }

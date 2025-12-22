@@ -20,7 +20,7 @@ use graphics::{
     *,
 };
 
-use input::{Axis, Bindings, FrameTime, InputHandler, Key};
+use input::{Axis, Bindings, FrameTime, InputHandler, Key, MouseAxis};
 use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
 use serde::{Deserialize, Serialize};
@@ -99,7 +99,7 @@ impl winit::application::ApplicationHandler for Runner {
             // These are DX12, DX11, Vulkan, Metal and Gles. if none of these work on a system they cant
             // play the game basically.
             let instance = wgpu::Instance::new(&InstanceDescriptor {
-                backends: Backends::all(),
+                backends: backend,
                 flags: InstanceFlags::empty(),
                 backend_options: BackendOptions {
                     gl: wgpu::GlBackendOptions {
@@ -148,7 +148,7 @@ impl winit::application::ApplicationHandler for Runner {
                         experimental_features: ExperimentalFeatures::disabled(),
                     },
                     // How we are presenting the screen which causes it to either clip to a FPS limit or be unlimited.
-                    wgpu::PresentMode::AutoVsync,
+                    config.present_mode.parse_enum(),
                     EnabledPipelines::all(),
                 ))
                 .unwrap();
@@ -191,7 +191,7 @@ impl winit::application::ApplicationHandler for Runner {
             // get the screen size.
             let size = renderer.size();
             let mat = Mat4::from_translation(Vec3 {
-                x: 40.0,
+                x: 0.0,
                 y: 0.0,
                 z: 0.0,
             });
@@ -289,7 +289,9 @@ impl winit::application::ApplicationHandler for Runner {
                     near: 1.0,
                     far: -100.0,
                 },
-                FlatControls::new(FlatSettings { zoom: 1.0 }),
+                FlatControls::new(FlatSettings {
+                    zoom: content.game_content.zoom,
+                }),
                 [systems.size.width, systems.size.height],
             );
             system.set_view(CameraView::SubView1, mat, 1.0);
@@ -304,12 +306,12 @@ impl winit::application::ApplicationHandler for Runner {
                 &mut systems,
                 Vec3::new(txt_pos.x, txt_pos.y, 0.0),
                 (Vec2::new(150.0, 20.0) * text_scale).floor(),
-                Bounds::new(
+                Some(Bounds::new(
                     txt_pos.x,
                     txt_pos.y,
                     txt_pos.x + (150.0 * text_scale).floor(),
                     txt_pos.y + (20.0 * text_scale).floor(),
-                ),
+                )),
                 Color::rgba(255, 255, 255, 255),
             );
             let text = systems.gfx.add_text(
@@ -547,6 +549,31 @@ impl winit::application::ApplicationHandler for Runner {
                             .unwrap();
                         }
                     }
+                    input::InputEvent::MouseWheel { amount, axis } => {
+                        if axis == MouseAxis::Vertical && amount != 0.0 {
+                            // Test Feature: Map View Zoom
+                            let new_zoom = (if amount > 0.0 {
+                                content.game_content.zoom + 0.1
+                            } else {
+                                content.game_content.zoom - 0.1
+                            })
+                            .clamp(1.0, 3.0);
+                            content.game_content.zoom = new_zoom;
+                            graphics
+                                .system
+                                .controls_mut()
+                                .settings_mut()
+                                .zoom = new_zoom;
+
+                            update_camera(
+                                world,
+                                &mut content.game_content,
+                                systems,
+                                graphics,
+                            )
+                            .unwrap();
+                        }
+                    }
                     _ => {}
                 }
             }
@@ -588,23 +615,17 @@ impl winit::application::ApplicationHandler for Runner {
                 socket,
                 world,
                 systems,
-                &mut graphics.map_renderer,
+                graphics,
                 content,
                 buffertask,
                 seconds,
+                frame_time.delta_seconds,
                 loop_timer,
             )
             .unwrap();
             if systems.fade.fade_logic(&mut systems.gfx, seconds) {
-                fade_end(
-                    systems,
-                    &mut graphics.map_renderer,
-                    world,
-                    content,
-                    socket,
-                    buffertask,
-                )
-                .unwrap();
+                fade_end(systems, graphics, world, content, socket, buffertask)
+                    .unwrap();
             }
             if systems.map_fade.fade_logic(&mut systems.gfx, seconds) {
                 map_fade_end(systems, world, content);
@@ -717,13 +738,8 @@ impl winit::application::ApplicationHandler for Runner {
 
             socket
                 .process_packets(
-                    world,
-                    systems,
-                    &mut graphics.map_renderer,
-                    content,
-                    alert,
-                    seconds,
-                    buffertask,
+                    world, systems, content, alert, seconds, buffertask,
+                    graphics,
                 )
                 .unwrap();
 
