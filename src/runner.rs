@@ -407,7 +407,7 @@ impl winit::application::ApplicationHandler for Runner {
             mouse_press,
         } = self
         {
-            let frame_time_start = MyInstant::now();
+            let frame_time_start = MyInstant::recent();
 
             frame_time.update();
             let seconds = frame_time.seconds();
@@ -789,7 +789,7 @@ impl winit::application::ApplicationHandler for Runner {
                 systems.renderer.font_sys.shape_run_cache.trim(1024);
             }
 
-            let frame_time_end = MyInstant::now();
+            let frame_time_end = MyInstant::recent();
 
             if systems.config.show_frame_loop {
                 let elapse_time = frame_time_end

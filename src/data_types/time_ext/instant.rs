@@ -1,22 +1,29 @@
-use crate::socket::*;
+use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
+use mmap_bytey::{MByteBuffer, MByteBufferRead, MByteBufferWrite};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::{ops::Add, time::Instant};
+use std::ops::Add;
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct MyInstant(pub std::time::Instant);
+use coarsetime::{Duration, Instant};
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct MyInstant(pub Instant);
 
 impl MyInstant {
     pub fn now() -> MyInstant {
         MyInstant(Instant::now())
     }
 
+    pub fn recent() -> MyInstant {
+        MyInstant(Instant::recent())
+    }
+
     pub fn to_dur(self) -> i64 {
         let mut dur: i64 = 0;
 
-        if let Ok(approx) = chrono::Duration::from_std(
-            self.0.saturating_duration_since(Instant::now()),
-        ) && approx
-            > chrono::Duration::try_milliseconds(1).unwrap_or_default()
+        if let Ok(approx) =
+            chrono::Duration::from_std(self.0.elapsed_since_recent().into())
+            && approx
+                > chrono::Duration::try_milliseconds(15).unwrap_or_default()
         {
             dur = approx.num_milliseconds();
         }
@@ -30,6 +37,7 @@ impl MyInstant {
         let mut instant_now = Instant::now();
 
         if let Ok(dur) = duration.to_std() {
+            let dur = Duration::from(dur);
             instant_now += dur;
         }
 
@@ -188,6 +196,7 @@ impl Add<chrono::Duration> for MyInstant {
 
     fn add(self, other: chrono::Duration) -> MyInstant {
         if let Ok(dur) = other.to_std() {
+            let dur = Duration::from(dur);
             MyInstant(self.0 + dur)
         } else {
             MyInstant(self.0)
@@ -199,6 +208,7 @@ impl Add<std::time::Duration> for MyInstant {
     type Output = MyInstant;
 
     fn add(self, other: std::time::Duration) -> MyInstant {
-        MyInstant(self.0 + other)
+        let dur = Duration::from(other);
+        MyInstant(self.0 + dur)
     }
 }

@@ -74,7 +74,7 @@ pub fn game_loop(
                 && !systems.fade.show
             {
                 send_gameping(socket)?;
-                content.ping_start = MyInstant::now();
+                content.ping_start = MyInstant::recent();
                 loop_timer.ping_tmr = seconds + 1.0;
             }
         }

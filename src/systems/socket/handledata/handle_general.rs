@@ -15,7 +15,7 @@ pub fn handle_ping(
     _data: &mut MByteBuffer,
     passer: &mut PacketPasser,
 ) -> Result<()> {
-    let end_time = MyInstant::now();
+    let end_time = MyInstant::recent();
 
     let elapse_time = end_time
         .duration_since(passer.content.ping_start.0)

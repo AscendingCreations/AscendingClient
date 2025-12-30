@@ -15,7 +15,7 @@ arboard = "3.5.0"
 backtrace = "0.3.75"
 bit_op = "0.1.1"
 bytey = "0.4.0"
-chrono = {version = "0.4.41", disable-defaults = true, features = [
+chrono = {version = "0.4.42", default-features  = true, features = [
   "clock",
   "serde",
   "std",
@@ -69,6 +69,7 @@ uuid = {version = "1.17.0", features = [
 webpki = "0.22.4"
 webpki-roots = "1.0.0"
 winit = {version = "0.30.11", features = ["serde", "rwh_05"]}
+coarsetime = "0.1.36"
 
 [dependencies.camera]
 branch = "main"

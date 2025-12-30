@@ -35,7 +35,7 @@ impl Content {
             content_type: ContentType::Menu,
             menu_content: MenuContent::new(systems),
             game_content: GameContent::new(systems),
-            ping_start: MyInstant::now(),
+            ping_start: MyInstant::recent(),
         };
         content.menu_content.show(systems);
         content.game_content.hide(world, systems, map_renderer)?;

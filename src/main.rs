@@ -13,6 +13,7 @@ use camera::{
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
+use coarsetime::Updater;
 use input::{Bindings, FrameTime, InputHandler, Key};
 use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
@@ -147,5 +148,15 @@ async fn main() -> Result<()> {
     let event_loop = EventLoop::new()?;
 
     let mut runner = runner::Runner::Loading;
-    Ok(event_loop.run_app(&mut runner)?)
+
+    // the timer is coarse so it only updates every 10-17ms.
+    let updater = Updater::new(17).start().unwrap();
+
+    // Start the Instant Timer thread.
+    let updater = updater.start().unwrap();
+
+    event_loop.run_app(&mut runner).unwrap();
+    updater.stop().unwrap();
+
+    Ok(())
 }
