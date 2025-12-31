@@ -1,10 +1,10 @@
 use camera::controls::FlatControls;
 use graphics::MapRenderer;
 use log::info;
+use time::Instant;
 
 use crate::{
-    BufferTask, Entity, EntityKind, MyInstant, Position, Result, SystemHolder,
-    World,
+    BufferTask, Entity, EntityKind, Position, Result, SystemHolder, World,
     content::{game_content::map, *},
     dir_to_enum, send_gameping,
     systems::State,
@@ -74,7 +74,7 @@ pub fn game_loop(
                 && !systems.fade.show
             {
                 send_gameping(socket)?;
-                content.ping_start = MyInstant::recent();
+                content.ping_start = Instant::recent();
                 loop_timer.ping_tmr = seconds + 1.0;
             }
         }

@@ -72,23 +72,35 @@ winit = {version = "0.30.11", features = ["serde", "rwh_05"]}
 coarsetime = "0.1.36"
 
 [dependencies.camera]
-branch = "main"
-git = "https://github.com/AscendingCreations/AscendingLibraries"
+#path = "../ascendinglibraries/camera"
+#branch = "main"
+#git = "https://github.com/AscendingCreations/AscendingLibraries"
 package = "ascending_camera"
-#version = "0.6.0"
+version = "0.6.0"
 
 [dependencies.input]
-branch = "main"
-git = "https://github.com/AscendingCreations/AscendingLibraries"
+#path = "../ascendinglibraries/input"
+#branch = "main"
+#git = "https://github.com/AscendingCreations/AscendingLibraries"
 package = "ascending_input"
-#version = "0.5.0"
+version = "0.6.0"
 
 [dependencies.graphics]
-branch = "main"
+#path = "../ascendinglibraries/graphics"
+#branch = "main"
 features = ["static_dx"]
-git = "https://github.com/AscendingCreations/AscendingLibraries"
+#git = "https://github.com/AscendingCreations/AscendingLibraries"
 package = "ascending_graphics"
-#version = "0.33.0"
+version = "0.34.0"
+
+[dependencies.time]
+#path = "../ascendinglibraries/time"
+#branch = "main"
+#features = ["static_dx"]
+#git = "https://github.com/AscendingCreations/AscendingLibraries"
+package = "ascending_time"
+version = "0.1.0"
+features = ["enable_serde", "enable_mmap_bytey", "enable_bytey"]
 
 [profile.dev]
 codegen-units = 256

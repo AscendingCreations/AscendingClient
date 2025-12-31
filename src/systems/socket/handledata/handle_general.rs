@@ -1,8 +1,9 @@
 use graphics::*;
 use mmap_bytey::MByteBuffer;
+use time::Instant;
 
 use crate::{
-    Alert, GlobalKey, MyInstant, Result, World,
+    Alert, GlobalKey, Result, World,
     content::Content,
     systems::{
         BufferTask, FADE_SWITCH_TO_GAME, FadeData, FadeType, Poller,
@@ -15,10 +16,10 @@ pub fn handle_ping(
     _data: &mut MByteBuffer,
     passer: &mut PacketPasser,
 ) -> Result<()> {
-    let end_time = MyInstant::recent();
+    let end_time = Instant::recent();
 
     let elapse_time = end_time
-        .duration_since(passer.content.ping_start.0)
+        .duration_since(passer.content.ping_start)
         .as_millis() as u64;
 
     if passer.systems.config.show_average_ping {

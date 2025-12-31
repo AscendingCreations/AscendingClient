@@ -19,8 +19,7 @@ use graphics::{
     },
     *,
 };
-
-use input::{Axis, Bindings, FrameTime, InputHandler, Key, MouseAxis};
+use input::{Axis, Bindings, InputHandler, Key, MouseAxis};
 use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
 use serde::{Deserialize, Serialize};
@@ -31,8 +30,9 @@ use std::{
     io::{Read, Write, prelude::*},
     iter, panic,
     sync::Arc,
-    time::{Duration, Instant},
+    time::Duration,
 };
+use time::{FrameTime, Instant};
 use wgpu::{Backends, Dx12Compiler, InstanceDescriptor, InstanceFlags};
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize},
@@ -367,7 +367,7 @@ impl winit::application::ApplicationHandler for Runner {
                 tooltip,
                 socket,
                 buffertask,
-                frame_time: FrameTime::new(),
+                frame_time: FrameTime::new_recent(),
                 time: 0.0f32,
                 reconnect_time: 0.0f32,
                 reconnect_time2: 0.0f32,
@@ -407,9 +407,9 @@ impl winit::application::ApplicationHandler for Runner {
             mouse_press,
         } = self
         {
-            let frame_time_start = MyInstant::recent();
+            let frame_time_start = Instant::recent();
 
-            frame_time.update();
+            frame_time.update_recent();
             let seconds = frame_time.seconds();
 
             if window_id == systems.renderer.window().id() {
@@ -789,12 +789,12 @@ impl winit::application::ApplicationHandler for Runner {
                 systems.renderer.font_sys.shape_run_cache.trim(1024);
             }
 
-            let frame_time_end = MyInstant::recent();
+            let frame_time_end = Instant::recent();
 
             if systems.config.show_frame_loop {
                 let elapse_time = frame_time_end
-                    .duration_since(frame_time_start.0)
-                    .as_millis() as u64;
+                    .duration_since(frame_time_start)
+                    .as_milliseconds();
 
                 let count =
                     content.game_content.interface.frame_loop_collection.len();

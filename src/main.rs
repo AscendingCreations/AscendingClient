@@ -13,8 +13,7 @@ use camera::{
 use cosmic_text::{Attrs, Metrics};
 use graphics::*;
 
-use coarsetime::Updater;
-use input::{Bindings, FrameTime, InputHandler, Key};
+use input::{Bindings, InputHandler, Key};
 use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
 use serde::{Deserialize, Serialize};
@@ -27,6 +26,7 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
+use time::Updater;
 use wgpu::{Backends, Dx12Compiler, InstanceDescriptor, InstanceFlags};
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize},
@@ -149,11 +149,7 @@ async fn main() -> Result<()> {
 
     let mut runner = runner::Runner::Loading;
 
-    // the timer is coarse so it only updates every 10-17ms.
-    let updater = Updater::new(17).start().unwrap();
-
-    // Start the Instant Timer thread.
-    let updater = updater.start().unwrap();
+    let updater = Updater::new().unwrap();
 
     event_loop.run_app(&mut runner).unwrap();
     updater.stop().unwrap();

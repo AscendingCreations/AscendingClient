@@ -11,6 +11,7 @@ pub use inputs::*;
 use log::info;
 pub use menu_content::*;
 pub use resource::*;
+pub use time::Instant;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ContentType {
@@ -22,7 +23,7 @@ pub struct Content {
     pub menu_content: MenuContent,
     pub game_content: GameContent,
     pub content_type: ContentType,
-    pub ping_start: MyInstant,
+    pub ping_start: Instant,
 }
 
 impl Content {
@@ -35,7 +36,7 @@ impl Content {
             content_type: ContentType::Menu,
             menu_content: MenuContent::new(systems),
             game_content: GameContent::new(systems),
-            ping_start: MyInstant::recent(),
+            ping_start: Instant::recent(),
         };
         content.menu_content.show(systems);
         content.game_content.hide(world, systems, map_renderer)?;

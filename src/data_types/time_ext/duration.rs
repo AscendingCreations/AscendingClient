@@ -1,4 +1,5 @@
-use crate::socket::*;
+use bytey::{ByteBuffer, ByteBufferRead, ByteBufferWrite};
+use mmap_bytey::{MByteBuffer, MByteBufferRead, MByteBufferWrite};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
