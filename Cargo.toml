@@ -69,7 +69,6 @@ uuid = {version = "1.17.0", features = [
 webpki = "0.22.4"
 webpki-roots = "1.0.0"
 winit = {version = "0.30.11", features = ["serde", "rwh_05"]}
-coarsetime = "0.1.36"
 
 [dependencies.camera]
 #path = "../ascendinglibraries/camera"
