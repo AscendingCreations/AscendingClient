@@ -603,9 +603,23 @@ pub fn finalize_entity(
                     p_data.finalized = true;
                 }
 
-                if !is_map_connected(new_map, p_data.pos.map) {
-                    systems.gfx.set_visible(&p_data.sprite_index.0, false);
+                let (visible, start) = if let Some(start) =
+                    get_map_render_pos(systems, p_data.pos.map)
+                    && is_map_connected(new_map, p_data.pos.map)
+                {
+                    (true, start)
+                } else {
+                    (false, Vec2::ZERO)
+                };
 
+                p_data.visible = visible;
+
+                systems
+                    .gfx
+                    .set_visible(&p_data.sprite_index.0, p_data.visible);
+                systems.gfx.set_visible(&p_data.name_map.0, p_data.visible);
+
+                if !p_data.visible {
                     if let Some(light) = &p_data.light {
                         match &p_data.light_data {
                             LightData::AreaLight(_) => systems
@@ -618,7 +632,34 @@ pub fn finalize_entity(
                         }
                     }
 
-                    p_data.visible = false;
+                    p_data.light = None;
+                }
+
+                if p_data.visible {
+                    if p_data.light.is_none() {
+                        p_data.light = match &p_data.light_data {
+                            LightData::AreaLight(data) => {
+                                systems.gfx.add_area_light(&game_light, *data)
+                            }
+                            LightData::DirLight(data) => systems
+                                .gfx
+                                .add_directional_light(&game_light, *data),
+                            LightData::None => None,
+                        };
+                    }
+
+                    update_player_position(
+                        systems,
+                        new_map,
+                        game_light,
+                        p_data.sprite_index.0,
+                        &p_data.pos,
+                        p_data.pos_offset,
+                        &p_data.hp_bar,
+                        p_data.name_map.0,
+                        p_data.light,
+                        start,
+                    )?;
                 }
             }
             Entity::Npc(n_data) => {
@@ -632,9 +673,23 @@ pub fn finalize_entity(
                     n_data.finalized = true;
                 }
 
-                if !is_map_connected(new_map, n_data.pos.map) {
-                    systems.gfx.set_visible(&n_data.sprite_index.0, false);
+                let (visible, start) = if let Some(start) =
+                    get_map_render_pos(systems, n_data.pos.map)
+                    && is_map_connected(new_map, n_data.pos.map)
+                {
+                    (true, start)
+                } else {
+                    (false, Vec2::ZERO)
+                };
 
+                n_data.visible = visible;
+
+                systems
+                    .gfx
+                    .set_visible(&n_data.sprite_index.0, n_data.visible);
+                systems.gfx.set_visible(&n_data.name_map.0, n_data.visible);
+
+                if !n_data.visible {
                     if let Some(light) = &n_data.light {
                         match &n_data.light_data {
                             LightData::AreaLight(_) => systems
@@ -647,7 +702,34 @@ pub fn finalize_entity(
                         }
                     }
 
-                    n_data.visible = false;
+                    n_data.light = None;
+                }
+
+                if n_data.visible {
+                    if n_data.light.is_none() {
+                        n_data.light = match &n_data.light_data {
+                            LightData::AreaLight(data) => {
+                                systems.gfx.add_area_light(&game_light, *data)
+                            }
+                            LightData::DirLight(data) => systems
+                                .gfx
+                                .add_directional_light(&game_light, *data),
+                            LightData::None => None,
+                        };
+                    }
+
+                    update_npc_position(
+                        systems,
+                        new_map,
+                        game_light,
+                        n_data.sprite_index.0,
+                        &n_data.pos,
+                        n_data.pos_offset,
+                        &n_data.hp_bar,
+                        n_data.name_map.0,
+                        n_data.light,
+                        start,
+                    )?;
                 }
             }
             Entity::MapItem(i_data) => {
@@ -656,11 +738,12 @@ pub fn finalize_entity(
                     i_data.finalized = true;
                 }
 
-                if !is_map_connected(new_map, i_data.pos.map) {
-                    systems.gfx.set_visible(&i_data.sprite_index, false);
-
-                    i_data.visible = false;
-                }
+                i_data.visible = get_map_render_pos(systems, i_data.pos.map)
+                    .is_some()
+                    && is_map_connected(new_map, i_data.pos.map);
+                systems
+                    .gfx
+                    .set_visible(&i_data.sprite_index, i_data.visible);
             }
             _ => {}
         }
