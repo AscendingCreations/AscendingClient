@@ -39,28 +39,29 @@ pub fn game_loop(
             }
 
             if seconds > loop_timer.entity_tmr {
-                update_player(
-                    world,
-                    systems,
-                    socket,
-                    &mut content.game_content,
-                    buffer,
-                    graphics,
-                    seconds,
-                    delta,
-                )?;
-                update_npc(
-                    world,
-                    systems,
-                    socket,
-                    &mut content.game_content,
-                    seconds,
-                    delta,
-                )?;
                 float_text_loop(systems, &mut content.game_content, seconds)?;
 
                 loop_timer.entity_tmr = seconds + 0.025;
             }
+
+            update_player(
+                world,
+                systems,
+                socket,
+                &mut content.game_content,
+                buffer,
+                graphics,
+                seconds,
+                delta,
+            )?;
+            update_npc(
+                world,
+                systems,
+                socket,
+                &mut content.game_content,
+                seconds,
+                delta,
+            )?;
 
             if seconds > loop_timer.input_tmr {
                 content

@@ -270,8 +270,7 @@ pub fn move_player(
 
         p_data.movement.is_moving = true;
         p_data.movement.move_direction = dir;
-        p_data.movement.move_offset = 0.0;
-        p_data.movement.move_timer = 0.0;
+        p_data.movement.move_speed = 0.2;
         p_data.dir = dir_u8;
 
         let last_frame = if p_data.last_move_frame == 1 { 2 } else { 1 };
@@ -306,8 +305,7 @@ pub fn end_player_move(
                 return Ok(());
             }
             p_data.movement.is_moving = false;
-            p_data.movement.move_offset = 0.0;
-            p_data.movement.move_timer = 0.0;
+            p_data.movement.elapsed_time = 0.0;
 
             p_data.pos.x = p_data.end_movement.x;
             p_data.pos.y = p_data.end_movement.y;
@@ -514,34 +512,34 @@ pub fn process_player_movement(
 
     let my_entity = content.myentity == Some(entity);
 
-    let movement =
-        if let Some(Entity::Player(p_data)) = world.entities.get(entity) {
-            p_data.movement
+    let (move_pos, progress, move_direction) =
+        if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
+            if !p_data.movement.is_moving {
+                return Ok(());
+            };
+
+            p_data.movement.elapsed_time += delta;
+
+            let progress =
+                p_data.movement.elapsed_time / p_data.movement.move_speed;
+            let move_pos = TILE_SIZE as f32 * progress;
+
+            (move_pos, progress, p_data.movement.move_direction)
         } else {
             return Ok(());
         };
 
-    if !movement.is_moving {
-        return Ok(());
-    };
-
-    let add_offset = (3.0 + (delta * TILE_SIZE as f32)).round();
-
-    if movement.move_offset + add_offset < TILE_SIZE as f32 {
+    if progress < 1.0 {
         if let Some(Entity::Player(p_data)) = world.entities.get_mut(entity) {
             if !is_map_connected(content.map.map_pos, p_data.pos.map) {
                 return Ok(());
             }
 
-            p_data.movement.move_offset += add_offset;
-
-            let moveoffset = p_data.movement.move_offset;
-
-            let offset = match movement.move_direction {
-                Direction::Up => Vec2::new(0.0, moveoffset),
-                Direction::Down => Vec2::new(0.0, -moveoffset),
-                Direction::Left => Vec2::new(-moveoffset, 0.0),
-                Direction::Right => Vec2::new(moveoffset, 0.0),
+            let offset = match move_direction {
+                Direction::Up => Vec2::new(0.0, move_pos),
+                Direction::Down => Vec2::new(0.0, -move_pos),
+                Direction::Left => Vec2::new(-move_pos, 0.0),
+                Direction::Right => Vec2::new(move_pos, 0.0),
             };
 
             p_data.pos_offset = offset;

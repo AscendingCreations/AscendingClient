@@ -262,8 +262,7 @@ pub fn move_npc(
 
         n_data.movement.is_moving = true;
         n_data.movement.move_direction = dir;
-        n_data.movement.move_offset = 0.0;
-        n_data.movement.move_timer = 0.0;
+        n_data.movement.move_speed = 0.2;
         n_data.dir = dir_u8;
 
         let last_frame = if n_data.last_move_frame == 1 { 2 } else { 1 };
@@ -293,8 +292,7 @@ pub fn end_npc_move(
             return Ok(());
         }
         n_data.movement.is_moving = false;
-        n_data.movement.move_offset = 0.0;
-        n_data.movement.move_timer = 0.0;
+        n_data.movement.elapsed_time = 0.0;
 
         n_data.pos.x = n_data.end_movement.x;
         n_data.pos.y = n_data.end_movement.y;
@@ -484,34 +482,34 @@ pub fn process_npc_movement(
         return Ok(());
     }
 
-    let movement = if let Some(Entity::Npc(n_data)) = world.entities.get(entity)
-    {
-        n_data.movement
-    } else {
-        return Ok(());
-    };
+    let (move_pos, progress, move_direction) =
+        if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
+            if !n_data.movement.is_moving {
+                return Ok(());
+            };
 
-    if !movement.is_moving {
-        return Ok(());
-    };
+            n_data.movement.elapsed_time += delta;
 
-    let add_offset = (2.0 + (delta * TILE_SIZE as f32)).round();
+            let progress =
+                n_data.movement.elapsed_time / n_data.movement.move_speed;
+            let move_pos = TILE_SIZE as f32 * progress;
 
-    if movement.move_offset + add_offset < TILE_SIZE as f32 {
+            (move_pos, progress, n_data.movement.move_direction)
+        } else {
+            return Ok(());
+        };
+
+    if progress < 1.0 {
         if let Some(Entity::Npc(n_data)) = world.entities.get_mut(entity) {
             if !is_map_connected(content.map.map_pos, n_data.pos.map) {
                 return Ok(());
             }
 
-            n_data.movement.move_offset += add_offset;
-
-            let moveoffset = n_data.movement.move_offset;
-
-            let offset = match movement.move_direction {
-                Direction::Up => Vec2::new(0.0, moveoffset),
-                Direction::Down => Vec2::new(0.0, -moveoffset),
-                Direction::Left => Vec2::new(-moveoffset, 0.0),
-                Direction::Right => Vec2::new(moveoffset, 0.0),
+            let offset = match move_direction {
+                Direction::Up => Vec2::new(0.0, move_pos),
+                Direction::Down => Vec2::new(0.0, -move_pos),
+                Direction::Left => Vec2::new(-move_pos, 0.0),
+                Direction::Right => Vec2::new(move_pos, 0.0),
             };
 
             n_data.pos_offset = offset;

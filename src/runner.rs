@@ -57,6 +57,7 @@ pub enum Runner {
         buffertask: BufferTask,
         input_handler: InputHandler<Action, Axis>,
         frame_time: FrameTime,
+        input_time: FrameTime,
         time: f32,
         reconnect_time: f32,
         reconnect_time2: f32,
@@ -368,6 +369,7 @@ impl winit::application::ApplicationHandler for Runner {
                 socket,
                 buffertask,
                 frame_time: FrameTime::new_recent(),
+                input_time: FrameTime::new_recent(),
                 time: 0.0f32,
                 reconnect_time: 0.0f32,
                 reconnect_time2: 0.0f32,
@@ -397,6 +399,7 @@ impl winit::application::ApplicationHandler for Runner {
             socket,
             buffertask,
             frame_time,
+            input_time,
             time,
             reconnect_time,
             reconnect_time2,
@@ -409,8 +412,7 @@ impl winit::application::ApplicationHandler for Runner {
         {
             let frame_time_start = Instant::recent();
 
-            frame_time.update_recent();
-            let seconds = frame_time.seconds();
+            input_time.update_recent();
 
             if window_id == systems.renderer.window().id() {
                 match event {
@@ -601,6 +603,9 @@ impl winit::application::ApplicationHandler for Runner {
 
                 systems.renderer.update_depth_texture();
             }
+
+            frame_time.update_recent();
+            let seconds = frame_time.seconds();
 
             if let Some(gfx_index) = systems.caret.index
                 && systems.caret.timer <= seconds
@@ -847,6 +852,7 @@ impl winit::application::ApplicationHandler for Runner {
             tooltip: _,
             socket: _,
             frame_time: _,
+            input_time: _,
             time: _,
             reconnect_time: _,
             reconnect_time2: _,
@@ -873,6 +879,7 @@ impl winit::application::ApplicationHandler for Runner {
             tooltip: _,
             socket: _,
             frame_time: _,
+            input_time: _,
             time: _,
             reconnect_time: _,
             reconnect_time2: _,

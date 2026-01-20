@@ -177,8 +177,8 @@ pub struct Vitals {
 pub struct Movement {
     pub is_moving: bool,
     pub move_direction: Direction,
-    pub move_timer: f32,
-    pub move_offset: f32,
+    pub elapsed_time: f32,
+    pub move_speed: f32,
 }
 
 #[derive(Copy, Clone, Debug, Default)]
