@@ -240,7 +240,7 @@ impl winit::application::ApplicationHandler for Runner {
                     timer: 0.0,
                 },
                 try_once: true,
-                fps: GfxType::None,
+                fps: GfxType::default(),
             };
 
             systems.fade.init_setup(

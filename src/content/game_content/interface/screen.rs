@@ -37,8 +37,8 @@ impl VitalBar {
 
         let bar_size = size.x - (12.0 * systems.scale as f32).floor();
 
-        let mut bar_bg = [GfxType::None; 3];
-        let mut bar = [GfxType::None; 3];
+        let mut bar_bg = [GfxType::default(); 3];
+        let mut bar = [GfxType::default(); 3];
         for i in 0..3 {
             let (add_y, color, height) = match i {
                 0 => (38.0, Color::rgba(200, 80, 80, 255), 20.0),

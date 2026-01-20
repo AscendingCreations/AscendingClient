@@ -160,7 +160,7 @@ impl Checkbox {
                     CameraView::SubView1,
                 )
             }
-            _ => GfxType::None,
+            _ => GfxType::default(),
         };
         let check_image = match &check_type {
             CheckType::SetRect(data) => {
@@ -212,7 +212,7 @@ impl Checkbox {
                     CameraView::SubView1,
                 )
             }
-            _ => GfxType::None,
+            _ => GfxType::default(),
         };
         let mut adjust_x = 0.0;
         let text_type = if let Some(data) = &text_data {

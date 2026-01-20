@@ -231,7 +231,7 @@ impl Trade {
         button.push(confirm_button);
         button.push(cancel_button);
 
-        let mut slot = [GfxType::None; MAX_TRADE_SLOT * 2];
+        let mut slot = [GfxType::default(); MAX_TRADE_SLOT * 2];
         (0..MAX_TRADE_SLOT).for_each(|index| {
             let frame_pos = Vec2::new(
                 index as f32 % MAX_TRADE_X,

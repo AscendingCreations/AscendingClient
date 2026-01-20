@@ -379,6 +379,7 @@ pub fn update_player_position(
             &game_light,
             light,
             texture_pos + TILE_SIZE as f32,
+            Vec2::new(systems.size.width, systems.size.height),
         )
     }
 

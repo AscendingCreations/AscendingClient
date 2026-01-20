@@ -80,7 +80,6 @@ pub fn handle_key_input(
     if pressed {
         #[allow(clippy::single_match)]
         match key {
-            Key::Named(NamedKey::F1) => systems.gfx.count_collection(),
             Key::Named(NamedKey::F3) => {
                 info!("World NPC Count: {}", count_npc(world));
                 info!("World Player Count: {}", count_player(world));

@@ -127,7 +127,7 @@ impl Inventory {
             .set_text(&mut systems.renderer, &header_text, "Inventory");
         systems.gfx.center_text(&header_text);
 
-        let mut slot = [GfxType::None; MAX_INV];
+        let mut slot = [GfxType::default(); MAX_INV];
         for (i, slot) in slot.iter_mut().enumerate() {
             let frame_pos =
                 Vec2::new(i as f32 % MAX_INV_X, (i as f32 / MAX_INV_X).floor());

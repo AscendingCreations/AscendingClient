@@ -1,4 +1,5 @@
 use crate::socket::*;
+use graphics::*;
 use serde::{Deserialize, Serialize};
 use speedy::{Endianness, Readable, Writable};
 
@@ -70,4 +71,12 @@ pub enum ControlKey {
     MoveLeft,
     MoveRight,
     Count,
+}
+
+#[derive(Debug, Clone, Default)]
+pub enum LightData {
+    #[default]
+    None,
+    AreaLight(AreaLight),
+    DirLight(DirectionalLight),
 }

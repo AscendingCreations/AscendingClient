@@ -162,7 +162,7 @@ impl Profile {
         );
         button.push(close_button);
 
-        let mut slot = [GfxType::None; MAX_EQPT];
+        let mut slot = [GfxType::default(); MAX_EQPT];
         for (i, slot) in slot.iter_mut().enumerate() {
             let box_rect = Rect::new(
                 &mut systems.renderer,

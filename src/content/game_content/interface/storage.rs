@@ -146,7 +146,7 @@ impl Storage {
             .set_text(&mut systems.renderer, &header_text, "Storage");
         systems.gfx.center_text(&header_text);
 
-        let mut slot = [GfxType::None; MAX_STORAGE];
+        let mut slot = [GfxType::default(); MAX_STORAGE];
         for (i, slot) in slot.iter_mut().enumerate() {
             let frame_pos = Vec2::new(
                 i as f32 % MAX_STORAGE_X,
