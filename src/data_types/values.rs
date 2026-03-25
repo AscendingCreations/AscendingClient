@@ -1,5 +1,5 @@
 use crate::{GlobalKey, data_types::*, socket::*};
-use graphics::*;
+use ascending_graphics::*;
 use serde::{Deserialize, Serialize};
 
 pub const TILE_SIZE: usize = 20;

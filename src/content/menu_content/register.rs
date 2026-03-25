@@ -1,4 +1,4 @@
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{
     SCREEN_WIDTH, SystemHolder, content::*, data_types::*, is_within_area,

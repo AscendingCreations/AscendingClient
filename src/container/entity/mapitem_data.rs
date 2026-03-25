@@ -1,4 +1,4 @@
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{GfxType, Position};
 

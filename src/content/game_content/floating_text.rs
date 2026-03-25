@@ -2,7 +2,7 @@ use crate::{
     GameContent, ORDER_FLOAT_TEXT, ORDER_FLOAT_TEXT_BG, Position, SystemHolder,
     TILE_SIZE, data_types::*, database::get_map_render_pos, label::*,
 };
-use graphics::{
+use ascending_graphics::{
     cosmic_text::{Attrs, Metrics, Stretch, Style, Weight},
     *,
 };

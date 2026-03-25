@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{
     AttackFrame, Attacking, DeathType, EntityName, EntityNameMap, HPBar,

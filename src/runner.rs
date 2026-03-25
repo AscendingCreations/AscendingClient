@@ -6,20 +6,22 @@ use crate::{
     systems::{states::ClientState, *},
     widget::*,
 };
-use backtrace::Backtrace;
-use camera::{
+use ascending_camera::{
     Projection,
     controls::{Controls, FlatControls, FlatSettings},
 };
-use cosmic_text::{Attrs, Metrics};
-use graphics::{
+use ascending_graphics::{
     wgpu::{
         BackendOptions, Dx12BackendOptions, Dx12SwapchainKind,
-        ExperimentalFeatures, MemoryBudgetThresholds, NoopBackendOptions,
+        ExperimentalFeatures, ForceShaderModelToken, GlDebugFns,
+        MemoryBudgetThresholds, NoopBackendOptions,
     },
     *,
 };
-use input::{Axis, Bindings, InputHandler, Key, MouseAxis};
+use ascending_input::{Axis, Bindings, InputHandler, Key, MouseAxis};
+use ascending_time::{FrameTime, Instant};
+use backtrace::Backtrace;
+use cosmic_text::{Attrs, Metrics};
 use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
 use serde::{Deserialize, Serialize};
@@ -32,7 +34,6 @@ use std::{
     sync::Arc,
     time::Duration,
 };
-use time::{FrameTime, Instant};
 use wgpu::{Backends, Dx12Compiler, InstanceDescriptor, InstanceFlags};
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize},
@@ -66,6 +67,7 @@ pub enum Runner {
         loop_timer: LoopTimer,
         mouse_pos: PhysicalPosition<f64>,
         mouse_press: bool,
+        instance: Box<wgpu::Instance>,
     },
 }
 
@@ -99,23 +101,27 @@ impl winit::application::ApplicationHandler for Runner {
             // Generates an Instance for WGPU. Sets WGPU to be allowed on all possible supported backends
             // These are DX12, DX11, Vulkan, Metal and Gles. if none of these work on a system they cant
             // play the game basically.
-            let instance = wgpu::Instance::new(&InstanceDescriptor {
+            let instance = wgpu::Instance::new(InstanceDescriptor {
                 backends: backend,
                 flags: InstanceFlags::empty(),
                 backend_options: BackendOptions {
                     gl: wgpu::GlBackendOptions {
                         gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
                         fence_behavior: wgpu::GlFenceBehavior::Normal,
+                        debug_fns: GlDebugFns::Auto,
                     },
                     dx12: wgpu::Dx12BackendOptions {
                         shader_compiler: Dx12Compiler::StaticDxc,
                         latency_waitable_object:
                             wgpu::wgt::Dx12UseFrameLatencyWaitableObject::DontWait,
                         presentation_system: Dx12SwapchainKind::default(),
+                        force_shader_model: ForceShaderModelToken::default(),
+                        agility_sdk: None,
                     },
                     noop: NoopBackendOptions::default(),
                 },
                 memory_budget_thresholds: MemoryBudgetThresholds::default(),
+                display: Some(Box::new(event_loop.owned_display_handle())),
             });
 
             info!("after wgpu instance initiation");
@@ -378,6 +384,7 @@ impl winit::application::ApplicationHandler for Runner {
                 loop_timer: LoopTimer::default(),
                 mouse_pos: PhysicalPosition::new(0.0, 0.0),
                 mouse_press: false,
+                instance: Box::new(instance),
             }
         }
     }
@@ -408,6 +415,7 @@ impl winit::application::ApplicationHandler for Runner {
             loop_timer,
             mouse_pos,
             mouse_press,
+            instance,
         } = self
         {
             let frame_time_start = Instant::recent();
@@ -581,7 +589,7 @@ impl winit::application::ApplicationHandler for Runner {
             }
 
             // update our renderer based on events here
-            if !systems.renderer.update(&event).unwrap() {
+            if !systems.renderer.update(instance, &event).unwrap() {
                 return;
             }
 
@@ -861,6 +869,7 @@ impl winit::application::ApplicationHandler for Runner {
             loop_timer: _,
             mouse_pos: _,
             mouse_press: _,
+            instance: _,
         } = self
         {
             input_handler.device_updates(&event);
@@ -888,6 +897,7 @@ impl winit::application::ApplicationHandler for Runner {
             loop_timer: _,
             mouse_pos: _,
             mouse_press: _,
+            instance: _,
         } = self
         {
             systems.renderer.window().request_redraw();

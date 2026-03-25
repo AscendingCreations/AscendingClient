@@ -1,7 +1,7 @@
-use camera::controls::FlatControls;
-use graphics::MapRenderer;
+use ascending_camera::controls::FlatControls;
+use ascending_graphics::MapRenderer;
+use ascending_time::Instant;
 use log::info;
-use time::Instant;
 
 use crate::{
     BufferTask, Entity, EntityKind, Position, Result, SystemHolder, World,

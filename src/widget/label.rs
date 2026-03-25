@@ -1,5 +1,5 @@
 use cosmic_text::{Attrs, Metrics};
-use graphics::{cosmic_text::Wrap, *};
+use ascending_graphics::{cosmic_text::Wrap, *};
 
 use crate::SystemHolder;
 

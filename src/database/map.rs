@@ -3,7 +3,7 @@ use crate::{
     BufferTask, BufferTaskEnum, MapAttributes, MapDirBlock, MapPosition,
     Result, SystemHolder, data_types::*, socket::*,
 };
-use graphics::*;
+use ascending_graphics::*;
 use log::{error, info};
 use serde::{Deserialize, Serialize};
 use snafu::Backtrace;

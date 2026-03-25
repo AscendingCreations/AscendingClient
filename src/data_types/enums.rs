@@ -1,5 +1,5 @@
 use crate::socket::*;
-use graphics::*;
+use ascending_graphics::*;
 use serde::{Deserialize, Serialize};
 use speedy::{Endianness, Readable, Writable};
 

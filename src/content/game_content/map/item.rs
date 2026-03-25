@@ -1,5 +1,5 @@
 use bytey::{ByteBufferRead, ByteBufferWrite};
-use graphics::*;
+use ascending_graphics::*;
 
 use serde::{Deserialize, Serialize};
 

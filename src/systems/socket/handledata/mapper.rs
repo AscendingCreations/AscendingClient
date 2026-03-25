@@ -1,7 +1,7 @@
 use crate::{BufferTask, data_types::*, fade::*, socket::*, systems::State};
 use ahash::AHashMap;
-use camera::controls::FlatControls;
-use graphics::MapRenderer;
+use ascending_camera::controls::FlatControls;
+use ascending_graphics::MapRenderer;
 use serde::{Deserialize, Serialize};
 
 use super::{

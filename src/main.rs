@@ -5,15 +5,16 @@
     unused_imports,
     clippy::too_many_arguments
 )]
-use backtrace::Backtrace;
-use camera::{
+use ascending_camera::{
     Projection,
     controls::{Controls, FlatControls, FlatSettings},
 };
+use ascending_graphics::*;
+use backtrace::Backtrace;
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
 
-use input::{Bindings, InputHandler, Key};
+use ascending_input::{Bindings, InputHandler, Key};
+use ascending_time::Updater;
 use log::{LevelFilter, Metadata, Record, error, info, warn};
 use lru::LruCache;
 use serde::{Deserialize, Serialize};
@@ -26,7 +27,6 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use time::Updater;
 use wgpu::{Backends, Dx12Compiler, InstanceDescriptor, InstanceFlags};
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize},

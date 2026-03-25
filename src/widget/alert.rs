@@ -11,8 +11,8 @@ use crate::{
     },
     widget::*,
 };
-use graphics::{cosmic_text::Attrs, *};
-use input::Key;
+use ascending_graphics::{cosmic_text::Attrs, *};
+use ascending_input::Key;
 use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 #[derive(PartialEq, Eq)]

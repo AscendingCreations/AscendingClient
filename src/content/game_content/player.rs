@@ -2,7 +2,7 @@ use crate::{
     EntityNameMap, HPBar, PlayerEntity, Result, SpriteIndex, create_label,
 };
 use bytey::{ByteBufferError, ByteBufferRead, ByteBufferWrite};
-use graphics::*;
+use ascending_graphics::*;
 
 pub const PLAYER_SPRITE_FRAME_X: f32 = 6.0;
 

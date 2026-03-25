@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::fs::{self, DirEntry, ReadDir};
 use std::path::Path;
 
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{ClientError, TILE_SIZE};
 

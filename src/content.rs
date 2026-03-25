@@ -6,12 +6,12 @@ pub mod menu_content;
 pub mod resource;
 
 pub use game_content::*;
-use graphics::MapRenderer;
+use ascending_graphics::MapRenderer;
 pub use inputs::*;
 use log::info;
 pub use menu_content::*;
 pub use resource::*;
-pub use time::Instant;
+pub use ascending_time::Instant;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ContentType {

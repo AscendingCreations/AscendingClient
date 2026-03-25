@@ -1,6 +1,6 @@
-use graphics::*;
+use ascending_graphics::*;
 use mmap_bytey::MByteBuffer;
-use time::Instant;
+use ascending_time::Instant;
 
 use crate::{
     Alert, GlobalKey, Result, World,

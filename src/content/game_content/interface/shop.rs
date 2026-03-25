@@ -1,4 +1,4 @@
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{SystemHolder, data_types::*, is_within_area, logic::*, widget::*};
 

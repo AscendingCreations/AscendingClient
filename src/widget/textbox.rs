@@ -1,13 +1,13 @@
 use arboard::Clipboard;
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
+use ascending_graphics::*;
 use log::warn;
 use std::cmp;
 
 const KEY_CTRL: usize = 0;
 const MAX_KEY: usize = 1;
 
-use input::Key;
+use ascending_input::Key;
 use winit::keyboard::NamedKey;
 
 use crate::{GfxType, SystemHolder, logic::*, widget::*};

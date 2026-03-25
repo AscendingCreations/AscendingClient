@@ -1,4 +1,4 @@
-use graphics::{cosmic_text::Attrs, *};
+use ascending_graphics::{cosmic_text::Attrs, *};
 
 pub mod content_input;
 pub mod login;

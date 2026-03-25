@@ -1,9 +1,9 @@
 use std::collections::VecDeque;
 
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
+use ascending_graphics::*;
 
-use input::Key;
+use ascending_input::Key;
 use winit::keyboard::NamedKey;
 
 use crate::{

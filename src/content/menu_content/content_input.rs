@@ -1,6 +1,6 @@
-use graphics::*;
+use ascending_graphics::*;
 
-use input::Key;
+use ascending_input::Key;
 use winit::{event_loop::ActiveEventLoop, keyboard::NamedKey};
 
 use crate::{

@@ -1,4 +1,4 @@
-use graphics::{cosmic_text::Attrs, *};
+use ascending_graphics::{cosmic_text::Attrs, *};
 
 use crate::{
     GfxType, ORDER_ITEM_DESC, ORDER_ITEM_DESC_TEXT, SystemHolder,

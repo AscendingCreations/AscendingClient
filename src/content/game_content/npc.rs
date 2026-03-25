@@ -1,4 +1,4 @@
-use graphics::*;
+use ascending_graphics::*;
 
 pub const NPC_SPRITE_FRAME_X: f32 = 6.0;
 

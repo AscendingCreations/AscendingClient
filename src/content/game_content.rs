@@ -1,7 +1,7 @@
 use std::{cell::RefCell, rc::Rc};
 
-use camera::controls::FlatControls;
-use graphics::*;
+use ascending_camera::controls::FlatControls;
+use ascending_graphics::*;
 
 use indexmap::IndexSet;
 

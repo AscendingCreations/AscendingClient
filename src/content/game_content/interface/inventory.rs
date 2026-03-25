@@ -1,4 +1,4 @@
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{
     Alert, AlertIndex, AlertType, Interface, Item, Result, SystemHolder,

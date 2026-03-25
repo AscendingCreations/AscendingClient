@@ -1,5 +1,5 @@
 use crate::{GfxType, SystemHolder, is_within_area, logic::*};
-use graphics::*;
+use ascending_graphics::*;
 
 pub struct ScrollbarBackground {
     pub color: Color,

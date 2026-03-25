@@ -5,8 +5,8 @@ use crate::{
 };
 pub use bytey::{ByteBuffer, ByteBufferError, ByteBufferRead, ByteBufferWrite};
 
-use camera::controls::FlatControls;
-use graphics::MapRenderer;
+use ascending_camera::controls::FlatControls;
+use ascending_graphics::MapRenderer;
 use log::{info, trace, warn};
 use mio::net::TcpStream;
 use mio::{Events, Interest, Poll, Token};

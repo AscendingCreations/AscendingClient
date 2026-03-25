@@ -1,5 +1,5 @@
 use crate::{SystemHolder, data_types::*, get_percent, widget::*};
-use graphics::*;
+use ascending_graphics::*;
 
 pub struct VitalBar {
     bg: GfxType,

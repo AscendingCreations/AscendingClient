@@ -1,5 +1,5 @@
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{
     Interface, MapPosition, Position, Result, SystemHolder, data_types::*,

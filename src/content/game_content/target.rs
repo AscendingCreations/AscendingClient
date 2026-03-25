@@ -2,7 +2,7 @@ use crate::{
     GlobalKey, HPBar, ORDER_TARGET, Result, SystemHolder, data_types::*,
     send_settarget, systems::Poller,
 };
-use graphics::*;
+use ascending_graphics::*;
 
 pub struct Target {
     pub entity: Option<GlobalKey>,

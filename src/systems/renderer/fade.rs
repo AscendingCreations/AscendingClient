@@ -1,5 +1,5 @@
-use camera::controls::FlatControls;
-use graphics::*;
+use ascending_camera::controls::FlatControls;
+use ascending_graphics::*;
 
 use winit::dpi::PhysicalSize;
 

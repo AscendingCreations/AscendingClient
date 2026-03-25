@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use educe::Educe;
-use graphics::*;
+use ascending_graphics::*;
 use mmap_bytey::{MByteBuffer, MByteBufferRead, MByteBufferWrite};
 use serde::{Deserialize, Serialize};
 

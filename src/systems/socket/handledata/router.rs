@@ -1,4 +1,4 @@
-use camera::controls::FlatControls;
+use ascending_camera::controls::FlatControls;
 use log::{error, trace};
 use snafu::Backtrace;
 

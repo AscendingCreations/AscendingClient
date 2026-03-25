@@ -1,5 +1,5 @@
 use bit_op::{BitOp, bit_u8::*};
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{
     Direction, MapAttribute, SystemHolder, content::game_content::player::*,

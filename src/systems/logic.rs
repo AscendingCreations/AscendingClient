@@ -1,4 +1,4 @@
-use graphics::*;
+use ascending_graphics::*;
 use winit::dpi::PhysicalSize;
 
 use crate::Direction;

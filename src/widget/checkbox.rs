@@ -1,7 +1,7 @@
 use std::default;
 
 use cosmic_text::{Attrs, Metrics};
-use graphics::*;
+use ascending_graphics::*;
 
 use crate::{GfxType, SystemHolder, logic::*, widget::*};
 
