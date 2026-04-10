@@ -13,9 +13,9 @@ version = "0.2.0"
 ahash = "0.8.12"
 arboard = "3.5.0"
 ascending_camera = "0.8.1"
-ascending_graphics = {version = "0.38.0", features = ["static_dx", "rayon"]}
+ascending_graphics = {version = "0.38.4", features = ["static_dx", "rayon"]}
 ascending_input = "0.6.1"
-ascending_time = {version = "0.2.2", features = ["enable_serde", "enable_mmap_bytey", "enable_bytey"]}
+ascending_time = {version = "0.2.3", features = ["enable_serde", "enable_mmap_bytey", "enable_bytey"]}
 backtrace = "0.3.75"
 bit_op = "0.1.1"
 bytey = "0.4.0"
