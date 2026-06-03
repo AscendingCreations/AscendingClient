@@ -1,5 +1,6 @@
 use ascending_graphics::wgpu::{Backend, Backends};
 use log::{LevelFilter, debug};
+use pki_types::pem::PemObject;
 use rustls::{
     ClientConfig, RootCertStore, ServerConfig,
     client::danger,
@@ -122,15 +123,6 @@ impl Default for Config {
     }
 }
 
-fn load_certs(filename: &str) -> Vec<CertificateDer<'static>> {
-    let certfile =
-        fs::File::open(filename).expect("cannot open certificate file");
-    let mut reader = BufReader::new(certfile);
-    rustls_pemfile::certs(&mut reader)
-        .map(|result| result.unwrap())
-        .collect()
-}
-
 fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
     let keyfile =
         fs::File::open(filename).expect("cannot open private key file");
@@ -153,7 +145,11 @@ fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
 
 pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {
     let mut root_store = RootCertStore::empty();
-    let ca_cert = load_certs("keys/ca-crt.pem");
+    let ca_cert: Vec<CertificateDer> =
+        CertificateDer::pem_file_iter("keys/ca-crt.pem")
+            .unwrap()
+            .map(|t| t.unwrap())
+            .collect();
     root_store.add_parsable_certificates(ca_cert);
 
     let config = ClientConfig::builder_with_provider(
