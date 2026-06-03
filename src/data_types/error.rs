@@ -57,7 +57,13 @@ pub enum ClientError {
     },
     #[snafu(transparent)]
     RodioStreamError {
-        source: rodio::StreamError,
+        source: rodio::DevicesError,
+        #[snafu(backtrace)]
+        backtrace: Backtrace,
+    },
+    #[snafu(transparent)]
+    RodioDeviceSink {
+        source: rodio::DeviceSinkError,
         #[snafu(backtrace)]
         backtrace: Backtrace,
     },

@@ -1,5 +1,5 @@
 use rodio::source::Source;
-use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink};
+use rodio::{Decoder, MixerDeviceSink, Player};
 use slab::Slab;
 use std::fs::File;
 use std::io::BufReader;
@@ -9,20 +9,18 @@ use std::time::{Duration, Instant};
 use crate::Result;
 
 pub struct Audio {
-    stream_handle: OutputStreamHandle,
-    _stream: OutputStream,
-    music: Sink,
-    effects: Slab<Sink>,
+    stream: MixerDeviceSink,
+    music: Player,
+    effects: Slab<Player>,
 }
 
 impl Audio {
     pub fn new(volume: f32) -> Result<Self> {
-        let (stream, stream_handle) = OutputStream::try_default()?;
-        let music = Sink::try_new(&stream_handle)?;
+        let stream_handle = rodio::DeviceSinkBuilder::open_default_sink()?;
+        let music = rodio::Player::connect_new(stream_handle.mixer());
         music.set_volume(volume);
         Ok(Self {
-            stream_handle,
-            _stream: stream,
+            stream: stream_handle,
             music,
             effects: Slab::new(),
         })
@@ -60,7 +58,7 @@ impl Audio {
         source: impl AsRef<Path>,
         volume: f32,
     ) -> Result<()> {
-        let sink = Sink::try_new(&self.stream_handle)?;
+        let sink = rodio::Player::connect_new(self.stream.mixer());
         let file = BufReader::new(File::open(source)?);
         let source = Decoder::new(file)?;
         sink.set_volume(volume);

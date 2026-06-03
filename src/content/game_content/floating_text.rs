@@ -6,7 +6,7 @@ use ascending_graphics::{
     cosmic_text::{Attrs, Metrics, Stretch, Style, Weight},
     *,
 };
-use rand::{Rng, rng};
+use rand::{Rng, RngExt, rng};
 
 struct FloatingTextData {
     text_bg: GfxType,
