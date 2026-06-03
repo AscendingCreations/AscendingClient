@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
-use cosmic_text::{Attrs, Metrics};
 use ascending_graphics::*;
+use cosmic_text::{Attrs, Metrics};
 
 use ascending_input::Key;
 use winit::keyboard::NamedKey;
@@ -104,9 +104,7 @@ impl Interface {
             CameraView::SubView1,
         );
 
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &ping_text, "Ping: 0");
+        systems.gfx.set_text(&ping_text, "Ping: 0");
 
         let pos = Vec3::new(
             statistic_pos.x,
@@ -128,11 +126,7 @@ impl Interface {
             CameraView::SubView1,
         );
 
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &average_ping,
-            "Av. Ping: 0",
-        );
+        systems.gfx.set_text(&average_ping, "Av. Ping: 0");
 
         let pos = Vec3::new(
             statistic_pos.x,
@@ -154,11 +148,7 @@ impl Interface {
             CameraView::SubView1,
         );
 
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &frame_loop,
-            "Frame Jitter: 0",
-        );
+        systems.gfx.set_text(&frame_loop, "Frame Jitter: 0");
 
         let mut interface = Interface {
             menu_button,
@@ -194,7 +184,7 @@ impl Interface {
         self.window_order.push((Window::Storage, 4));
         self.window_order.push((Window::Shop, 5));
         self.window_order.push((Window::Trade, 6));
-        self.window_order.sort_by(|a, b| a.1.cmp(&b.1));
+        self.window_order.sort_by_key(|a| a.1);
     }
 
     pub fn recreate(&mut self, systems: &mut SystemHolder) {
@@ -1587,7 +1577,7 @@ fn interface_set_to_first(
         interface.window_order[index].1 = 0;
     }
 
-    interface.window_order.sort_by(|a, b| a.1.cmp(&b.1));
+    interface.window_order.sort_by_key(|a| a.1);
     adjust_window_zorder(interface, systems);
 }
 
@@ -1614,7 +1604,7 @@ fn interface_set_to_last(
         interface.window_order[index].1 = last_index;
     }
 
-    interface.window_order.sort_by(|a, b| a.1.cmp(&b.1));
+    interface.window_order.sort_by_key(|a| a.1);
     adjust_window_zorder(interface, systems);
 }
 

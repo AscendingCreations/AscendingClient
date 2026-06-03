@@ -1,5 +1,5 @@
-use cosmic_text::{Attrs, Metrics};
 use ascending_graphics::*;
+use cosmic_text::{Attrs, Metrics};
 
 use crate::{
     Interface, MapPosition, Position, Result, SystemHolder, data_types::*,
@@ -79,8 +79,8 @@ impl ChatTab {
             true,
             CameraView::SubView1,
         );
-        systems.gfx.set_text(&mut systems.renderer, &text, &msg);
-        systems.gfx.center_text(&text);
+        systems.gfx.set_text(&text, &msg);
+        systems.gfx.center_text(&mut systems.renderer, &text);
 
         ChatTab {
             bg,
@@ -182,7 +182,7 @@ impl ChatTab {
                 set_pos.y + (20.0 * systems.scale as f32).floor(),
             )),
         );
-        systems.gfx.center_text(&self.text);
+        systems.gfx.center_text(&mut systems.renderer, &self.text);
     }
 }
 
@@ -945,11 +945,10 @@ impl Chatbox {
         );
         text_data
             .set_buffer_size(
-                &mut systems.renderer,
                 Some(self.chat_areasize.x),
                 Some(self.chat_areasize.y),
             )
-            .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
+            .set_wrap(cosmic_text::Wrap::Word);
 
         let text = systems.gfx.add_text(
             text_data,
@@ -963,7 +962,6 @@ impl Chatbox {
         let msg = if let Some(header) = header_msg {
             let header_color = Attrs::new().color(header.1);
             systems.gfx.set_rich_text(
-                &mut systems.renderer,
                 &text,
                 [
                     (header.0.as_str(), header_color),
@@ -972,14 +970,12 @@ impl Chatbox {
             );
             format!("{}{}", header.0, msg.0)
         } else {
-            systems.gfx.set_rich_text(
-                &mut systems.renderer,
-                &text,
-                [(msg.0.as_str(), msg_color)],
-            );
+            systems
+                .gfx
+                .set_rich_text(&text, [(msg.0.as_str(), msg_color)]);
             msg.0
         };
-        let size = systems.gfx.get_measure(&text);
+        let size = systems.gfx.get_measure(&mut systems.renderer, &text);
 
         let chat = Chat {
             text,

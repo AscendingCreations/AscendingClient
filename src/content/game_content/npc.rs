@@ -366,7 +366,9 @@ pub fn update_npc_position(
         Vec3::new(bar_pos.x, bar_pos.y, ORDER_HPBAR_BG),
     );
 
-    let textsize = systems.gfx.get_measure(&entitynamemap);
+    let textsize = systems
+        .gfx
+        .get_measure(&mut systems.renderer, &entitynamemap);
     let name_pos =
         texture_pos + Vec2::new((sprite_size.x - textsize.x) * 0.5, 40.0);
 

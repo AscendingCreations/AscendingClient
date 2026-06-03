@@ -132,14 +132,8 @@ pub fn add_float_text(
         start_pos + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32);
 
     let mut text = create_empty_label(systems);
-    text.set_text(
-        &mut systems.renderer,
-        &msg,
-        &Attrs::new(),
-        Shaping::Advanced,
-        None,
-    );
-    let size = Vec2::new(text.measure().x, 20.0);
+    text.set_text(&msg, &Attrs::new(), Shaping::Advanced, None);
+    let size = Vec2::new(text.measure(&mut systems.renderer.font_sys).x, 20.0);
     text.size = size;
 
     let mut rng = rng();
@@ -169,13 +163,7 @@ pub fn add_float_text(
         Color::rgba(10, 10, 10, 255),
     );
     let attrs = Attrs::new().weight(Weight::BOLD);
-    textbg.set_text(
-        &mut systems.renderer,
-        &msg,
-        &attrs,
-        Shaping::Advanced,
-        None,
-    );
+    textbg.set_text(&msg, &attrs, Shaping::Advanced, None);
     let text_bg = systems.gfx.add_text(
         textbg,
         2,

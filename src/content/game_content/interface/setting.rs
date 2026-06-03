@@ -108,10 +108,8 @@ impl Setting {
             false,
             CameraView::SubView1,
         );
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &header_text, "Setting");
-        systems.gfx.center_text(&header_text);
+        systems.gfx.set_text(&header_text, "Setting");
+        systems.gfx.center_text(&mut systems.renderer, &header_text);
 
         let mut sfx_scroll = Scrollbar::new(
             systems,
@@ -242,9 +240,7 @@ impl Setting {
                 false,
                 CameraView::SubView1,
             );
-            systems
-                .gfx
-                .set_text(&mut systems.renderer, &label_index, msg);
+            systems.gfx.set_text(&label_index, msg);
             label.push(label_index);
         }
 
@@ -273,11 +269,9 @@ impl Setting {
             false,
             CameraView::SubView1,
         );
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &bgm_label,
-            &format!("{}", systems.config.bgm_volume),
-        );
+        systems
+            .gfx
+            .set_text(&bgm_label, &format!("{}", systems.config.bgm_volume));
 
         let tpos = Vec3::new(
             w_pos.x + (50.0 * systems.scale as f32).floor(),
@@ -303,11 +297,9 @@ impl Setting {
             false,
             CameraView::SubView1,
         );
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &sfx_label,
-            &format!("{}", systems.config.sfx_volume),
-        );
+        systems
+            .gfx
+            .set_text(&sfx_label, &format!("{}", systems.config.sfx_volume));
 
         let mut checkbox = vec![
             Checkbox::new(
@@ -700,7 +692,9 @@ impl Setting {
                 self.pos.y + (262.0 * systems.scale as f32).floor(),
             )),
         );
-        systems.gfx.center_text(&self.header_text);
+        systems
+            .gfx
+            .center_text(&mut systems.renderer, &self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
@@ -985,11 +979,7 @@ impl Setting {
         systems: &mut SystemHolder,
         value: usize,
     ) {
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &self.bgm_label,
-            &format!("{value}"),
-        );
+        systems.gfx.set_text(&self.bgm_label, &format!("{value}"));
     }
 
     pub fn update_sfx_value(
@@ -997,10 +987,6 @@ impl Setting {
         systems: &mut SystemHolder,
         value: usize,
     ) {
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &self.sfx_label,
-            &format!("{value}"),
-        );
+        systems.gfx.set_text(&self.sfx_label, &format!("{value}"));
     }
 }

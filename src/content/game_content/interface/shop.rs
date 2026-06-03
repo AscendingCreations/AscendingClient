@@ -120,10 +120,8 @@ impl Shop {
             false,
             CameraView::SubView1,
         );
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &header_text, "Shop");
-        systems.gfx.center_text(&header_text);
+        systems.gfx.set_text(&header_text, "Shop");
+        systems.gfx.center_text(&mut systems.renderer, &header_text);
 
         let mut button = vec![
             Button::new(
@@ -269,7 +267,7 @@ impl Shop {
                 false,
                 CameraView::SubView1,
             );
-            systems.gfx.set_text(&mut systems.renderer, &name, "");
+            systems.gfx.set_text(&name, "");
 
             let pos = Vec2::new(
                 w_pos.x + (72.0 * systems.scale as f32).floor(),
@@ -296,7 +294,7 @@ impl Shop {
                 false,
                 CameraView::SubView1,
             );
-            systems.gfx.set_text(&mut systems.renderer, &price, "");
+            systems.gfx.set_text(&price, "");
 
             let p_icon = Image::new(
                 Some(systems.resource.shop_currency_icon.allocation),
@@ -702,7 +700,9 @@ impl Shop {
                 self.pos.y + (271.0 * systems.scale as f32).floor(),
             )),
         );
-        systems.gfx.center_text(&self.header_text);
+        systems
+            .gfx
+            .center_text(&mut systems.renderer, &self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
@@ -994,13 +994,10 @@ impl Shop {
                 .gfx
                 .set_visible(&self.item[index].price, self.visible);
 
+            systems
+                .gfx
+                .set_text(&self.item[index].name, &item_data.name);
             systems.gfx.set_text(
-                &mut systems.renderer,
-                &self.item[index].name,
-                &item_data.name,
-            );
-            systems.gfx.set_text(
-                &mut systems.renderer,
                 &self.item[index].price,
                 &format!("{}", shopdata.item[index].price),
             );
@@ -1009,7 +1006,6 @@ impl Shop {
                 self.item[index].got_count = true;
 
                 systems.gfx.set_text(
-                    &mut systems.renderer,
                     &self.item[index].amount,
                     &format!("{}", shopdata.item[index].amount),
                 );
@@ -1075,13 +1071,10 @@ impl Shop {
                 systems.gfx.remove_gfx(&mut systems.renderer, &sprite_icon);
             }
 
+            systems
+                .gfx
+                .set_text(&self.item[default_index].name, &item_data.name);
             systems.gfx.set_text(
-                &mut systems.renderer,
-                &self.item[default_index].name,
-                &item_data.name,
-            );
-            systems.gfx.set_text(
-                &mut systems.renderer,
                 &self.item[default_index].price,
                 &format!("{}", shopdata.item[index].price),
             );
@@ -1090,7 +1083,6 @@ impl Shop {
                 self.item[default_index].got_count = true;
 
                 systems.gfx.set_text(
-                    &mut systems.renderer,
                     &self.item[default_index].amount,
                     &format!("{}", shopdata.item[index].amount),
                 );

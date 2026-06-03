@@ -1,5 +1,5 @@
-use cosmic_text::{Attrs, Metrics};
 use ascending_graphics::*;
+use cosmic_text::{Attrs, Metrics};
 
 use crate::{GfxType, SystemHolder, logic::*, widget::*};
 
@@ -202,10 +202,8 @@ impl Button {
                     CameraView::SubView1,
                 );
 
-                systems
-                    .gfx
-                    .set_text(&mut systems.renderer, &index, &data.text);
-                systems.gfx.center_text(&index);
+                systems.gfx.set_text(&index, &data.text);
+                systems.gfx.center_text(&mut systems.renderer, &index);
 
                 Some(index)
             }
@@ -341,7 +339,9 @@ impl Button {
                                 + (self.size.y * systems.scale as f32).floor(),
                         )),
                     );
-                    systems.gfx.center_text(&content_index);
+                    systems
+                        .gfx
+                        .center_text(&mut systems.renderer, &content_index);
                 }
                 _ => {}
             };
@@ -380,11 +380,11 @@ impl Button {
         if let Some(content_data) = self.content
             && let ButtonContentType::Text(data) = &mut self.content_type
         {
+            systems.gfx.set_text(&content_data, &msg);
+            data.text = msg;
             systems
                 .gfx
-                .set_text(&mut systems.renderer, &content_data, &msg);
-            data.text = msg;
-            systems.gfx.center_text(&content_data);
+                .center_text(&mut systems.renderer, &content_data);
         }
     }
 
@@ -460,7 +460,9 @@ impl Button {
                                     .sub_f32(self.z_step.0, self.z_step.1),
                             ),
                         );
-                        systems.gfx.center_text(&content_data);
+                        systems
+                            .gfx
+                            .center_text(&mut systems.renderer, &content_data);
                     }
                     ButtonChangeType::ColorChange(color) => {
                         systems.gfx.set_color(&content_data, color);
@@ -574,7 +576,9 @@ impl Button {
                                     .sub_f32(self.z_step.0, self.z_step.1),
                             ),
                         );
-                        systems.gfx.center_text(&content_data);
+                        systems
+                            .gfx
+                            .center_text(&mut systems.renderer, &content_data);
                     }
                     ButtonChangeType::ColorChange(color) => {
                         systems.gfx.set_color(&content_data, color);
@@ -651,7 +655,9 @@ impl Button {
                         ),
                     );
                     systems.gfx.set_color(&content_data, data.color);
-                    systems.gfx.center_text(&content_data);
+                    systems
+                        .gfx
+                        .center_text(&mut systems.renderer, &content_data);
                 }
                 ButtonContentType::Image(data) => {
                     systems.gfx.set_pos(

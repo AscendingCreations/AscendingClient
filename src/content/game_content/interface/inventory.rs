@@ -122,10 +122,8 @@ impl Inventory {
             false,
             CameraView::SubView1,
         );
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &header_text, "Inventory");
-        systems.gfx.center_text(&header_text);
+        systems.gfx.set_text(&header_text, "Inventory");
+        systems.gfx.center_text(&mut systems.renderer, &header_text);
 
         let mut slot = [GfxType::default(); MAX_INV];
         for (i, slot) in slot.iter_mut().enumerate() {
@@ -468,11 +466,7 @@ impl Inventory {
                 self.visible,
                 CameraView::SubView1,
             );
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                &text_index,
-                &format!("{}", data.val),
-            );
+            systems.gfx.set_text(&text_index, &format!("{}", data.val));
 
             self.item_slot[slot].count = text_index;
             self.item_slot[slot].count_bg = text_bg_index;
@@ -670,7 +664,9 @@ impl Inventory {
                 self.pos.y + (262.0 * systems.scale as f32).floor(),
             )),
         );
-        systems.gfx.center_text(&self.header_text);
+        systems
+            .gfx
+            .center_text(&mut systems.renderer, &self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);

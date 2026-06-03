@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
-use cosmic_text::Attrs;
 use ascending_graphics::*;
+use cosmic_text::Attrs;
 use indexmap::IndexSet;
 use slotmap::SlotMap;
 
@@ -402,16 +402,11 @@ impl GfxCollection {
         }
     }
 
-    pub fn set_buffer_size(
-        &mut self,
-        renderer: &mut GpuRenderer,
-        index: &GfxType,
-        size: Vec2,
-    ) {
+    pub fn set_buffer_size(&mut self, index: &GfxType, size: Vec2) {
         if let Some(data) = self.storage.get_mut(index.0)
             && let GfxEnum::Text(gfx) = &mut data.gfx
         {
-            gfx.set_buffer_size(renderer, Some(size.x), Some(size.y));
+            gfx.set_buffer_size(Some(size.x), Some(size.y));
         }
     }
 
@@ -423,22 +418,17 @@ impl GfxCollection {
         }
     }
 
-    pub fn set_text(
-        &mut self,
-        renderer: &mut GpuRenderer,
-        index: &GfxType,
-        msg: &str,
-    ) {
+    pub fn set_text(&mut self, index: &GfxType, msg: &str) {
         if let Some(data) = self.storage.get_mut(index.0)
             && let GfxEnum::Text(gfx) = &mut data.gfx
         {
-            gfx.set_text(renderer, msg, &Attrs::new(), Shaping::Advanced, None);
+            gfx.set_text(msg, &Attrs::new(), Shaping::Advanced, None);
         }
     }
 
     pub fn set_custom_text(
         &mut self,
-        renderer: &mut GpuRenderer,
+
         index: &GfxType,
         msg: &str,
         attrs: Attrs,
@@ -446,57 +436,39 @@ impl GfxCollection {
         if let Some(data) = self.storage.get_mut(index.0)
             && let GfxEnum::Text(gfx) = &mut data.gfx
         {
-            gfx.set_text(renderer, msg, &attrs, Shaping::Advanced, None);
+            gfx.set_text(msg, &attrs, Shaping::Advanced, None);
         }
     }
 
-    pub fn set_rich_text<'s, 'r, I>(
-        &mut self,
-        renderer: &mut GpuRenderer,
-        index: &GfxType,
-        msg: I,
-    ) where
+    pub fn set_rich_text<'s, 'r, I>(&mut self, index: &GfxType, msg: I)
+    where
         I: IntoIterator<Item = (&'s str, Attrs<'r>)>,
     {
         if let Some(data) = self.storage.get_mut(index.0)
             && let GfxEnum::Text(gfx) = &mut data.gfx
         {
-            gfx.set_rich_text(
-                renderer,
-                msg,
-                &Attrs::new(),
-                Shaping::Advanced,
-                None,
-            );
+            gfx.set_rich_text(msg, &Attrs::new(), Shaping::Advanced, None);
         }
     }
 
-    pub fn set_text_wrap(
-        &mut self,
-        renderer: &mut GpuRenderer,
-        index: &GfxType,
-        can_wrap: bool,
-    ) {
+    pub fn set_text_wrap(&mut self, index: &GfxType, can_wrap: bool) {
         if let Some(data) = self.storage.get_mut(index.0)
             && let GfxEnum::Text(gfx) = &mut data.gfx
         {
-            gfx.set_wrap(
-                renderer,
-                if can_wrap {
-                    cosmic_text::Wrap::Word
-                } else {
-                    cosmic_text::Wrap::None
-                },
-            );
+            gfx.set_wrap(if can_wrap {
+                cosmic_text::Wrap::Word
+            } else {
+                cosmic_text::Wrap::None
+            });
         }
     }
 
-    pub fn center_text(&mut self, index: &GfxType) {
+    pub fn center_text(&mut self, renderer: &mut GpuRenderer, index: &GfxType) {
         if let Some(data) = self.storage.get_mut(index.0)
             && let GfxEnum::Text(gfx) = &mut data.gfx
             && let Some(bound) = gfx.bounds
         {
-            let size = gfx.measure();
+            let size = gfx.measure(&mut renderer.font_sys);
             let textbox_size = bound.right - bound.left;
             gfx.pos.x = bound.left + ((textbox_size * 0.5) - (size.x * 0.5));
             gfx.changed = true;
@@ -589,11 +561,15 @@ impl GfxCollection {
         Color::rgba(0, 0, 0, 0)
     }
 
-    pub fn get_measure(&self, index: &GfxType) -> Vec2 {
-        if let Some(data) = self.storage.get(index.0)
-            && let GfxEnum::Text(gfx) = &data.gfx
+    pub fn get_measure(
+        &mut self,
+        renderer: &mut GpuRenderer,
+        index: &GfxType,
+    ) -> Vec2 {
+        if let Some(data) = self.storage.get_mut(index.0)
+            && let GfxEnum::Text(gfx) = &mut data.gfx
         {
-            return gfx.measure();
+            return gfx.measure(&mut renderer.font_sys);
         }
 
         Vec2::new(0.0, 0.0)

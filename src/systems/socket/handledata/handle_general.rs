@@ -1,6 +1,6 @@
 use ascending_graphics::*;
-use mmap_bytey::MByteBuffer;
 use ascending_time::Instant;
+use mmap_bytey::MByteBuffer;
 
 use crate::{
     Alert, GlobalKey, Result, World,
@@ -40,7 +40,6 @@ pub fn handle_ping(
             if sum > 0 {
                 let average = sum / count as u64;
                 passer.systems.gfx.set_text(
-                    &mut passer.systems.renderer,
                     &passer.content.game_content.interface.average_ping,
                     &format!("Av. Ping: {average:?}"),
                 );
@@ -63,7 +62,6 @@ pub fn handle_ping(
     }
 
     passer.systems.gfx.set_text(
-        &mut passer.systems.renderer,
         &passer.content.game_content.interface.ping_text,
         &format!("Ping: {elapse_time:?}"),
     );

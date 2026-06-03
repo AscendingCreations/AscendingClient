@@ -81,11 +81,7 @@ pub fn handle_playerspawn(
             if let Some(Entity::Player(p_data)) =
                 passer.world.entities.get_mut(entity)
             {
-                passer.systems.gfx.set_text(
-                    &mut passer.systems.renderer,
-                    &p_data.name_map.0,
-                    &username,
-                );
+                passer.systems.gfx.set_text(&p_data.name_map.0, &username);
                 p_data.entity_name.0.clone_from(&username);
                 p_data.user_access = useraccess;
                 p_data.dir = dir;
@@ -182,11 +178,10 @@ pub fn handle_npcdata(
                 if let Some(npc_data) =
                     passer.systems.base.npc.get(num as usize)
                 {
-                    passer.systems.gfx.set_text(
-                        &mut passer.systems.renderer,
-                        &n_data.name_map.0,
-                        &npc_data.name,
-                    );
+                    passer
+                        .systems
+                        .gfx
+                        .set_text(&n_data.name_map.0, &npc_data.name);
                 }
 
                 n_data.dir = dir;

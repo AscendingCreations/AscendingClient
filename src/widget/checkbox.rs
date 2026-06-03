@@ -1,7 +1,7 @@
 use std::default;
 
-use cosmic_text::{Attrs, Metrics};
 use ascending_graphics::*;
+use cosmic_text::{Attrs, Metrics};
 
 use crate::{GfxType, SystemHolder, logic::*, widget::*};
 
@@ -241,9 +241,7 @@ impl Checkbox {
                 visible,
                 CameraView::SubView1,
             );
-            systems
-                .gfx
-                .set_text(&mut systems.renderer, &txt_index, &data.text);
+            systems.gfx.set_text(&txt_index, &data.text);
             adjust_x = data.offset_pos.x + data.label_size.x;
             Some(txt_index)
         } else {

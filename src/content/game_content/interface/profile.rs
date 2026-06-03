@@ -123,10 +123,8 @@ impl Profile {
             false,
             CameraView::SubView1,
         );
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &header_text, "Profile");
-        systems.gfx.center_text(&header_text);
+        systems.gfx.set_text(&header_text, "Profile");
+        systems.gfx.center_text(&mut systems.renderer, &header_text);
 
         let mut button = Vec::with_capacity(1);
         let close_button = Button::new(
@@ -253,7 +251,7 @@ impl Profile {
                 false,
                 CameraView::SubView1,
             );
-            systems.gfx.set_text(&mut systems.renderer, &label, msg);
+            systems.gfx.set_text(&label, msg);
             fixed_label.push(label);
         }
 
@@ -284,7 +282,7 @@ impl Profile {
                 false,
                 CameraView::SubView1,
             );
-            systems.gfx.set_text(&mut systems.renderer, &label, "0");
+            systems.gfx.set_text(&label, "0");
             value_label.push(label);
         }
 
@@ -511,7 +509,9 @@ impl Profile {
                 self.pos.y + (262.0 * systems.scale as f32).floor(),
             )),
         );
-        systems.gfx.center_text(&self.header_text);
+        systems
+            .gfx
+            .center_text(&mut systems.renderer, &self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
@@ -760,11 +760,9 @@ impl Profile {
             ProfileLabel::Damage => 2,
             ProfileLabel::Defense => 3,
         };
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &self.value_label[label_index],
-            &format!("{value}"),
-        );
+        systems
+            .gfx
+            .set_text(&self.value_label[label_index], &format!("{value}"));
     }
 
     pub fn update_equipment_slot(

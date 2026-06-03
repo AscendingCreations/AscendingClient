@@ -86,12 +86,8 @@ impl Register {
             CameraView::SubView1,
         );
 
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &text_index,
-            "Register Window",
-        );
-        systems.gfx.center_text(&text_index);
+        systems.gfx.set_text(&text_index, "Register Window");
+        systems.gfx.center_text(&mut systems.renderer, &text_index);
         label.push(text_index);
 
         for index in 0..5 {
@@ -171,7 +167,7 @@ impl Register {
                 _ => ("Email", false),
             };
 
-            systems.gfx.set_text(&mut systems.renderer, &textindex, msg);
+            systems.gfx.set_text(&textindex, msg);
             label.push(textindex);
 
             let tooltip = match index {
@@ -266,12 +262,10 @@ impl Register {
             CameraView::SubView1,
         );
 
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &sprite_index,
-            "Sprite Selection",
-        );
-        systems.gfx.center_text(&sprite_index);
+        systems.gfx.set_text(&sprite_index, "Sprite Selection");
+        systems
+            .gfx
+            .center_text(&mut systems.renderer, &sprite_index);
         label.push(sprite_index);
 
         button.push(Button::new(
@@ -420,10 +414,10 @@ impl Register {
             CameraView::SubView1,
         );
 
+        systems.gfx.set_text(&unique_label, "0");
         systems
             .gfx
-            .set_text(&mut systems.renderer, &unique_label, "0");
-        systems.gfx.center_text(&unique_label);
+            .center_text(&mut systems.renderer, &unique_label);
 
         Register {
             window,

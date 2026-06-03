@@ -67,11 +67,7 @@ pub fn handle_playerdata(
         if let Some(Entity::Player(p_data)) =
             passer.world.entities.get_mut(entity)
         {
-            passer.systems.gfx.set_text(
-                &mut passer.systems.renderer,
-                &p_data.name_map.0,
-                &username,
-            );
+            passer.systems.gfx.set_text(&p_data.name_map.0, &username);
             p_data.hp_bar.visible = vitals[0] != vitalmax[0];
             p_data.entity_name.0.clone_from(&username);
             p_data.user_access = useraccess;

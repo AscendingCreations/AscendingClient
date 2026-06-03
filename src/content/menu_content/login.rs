@@ -88,12 +88,8 @@ impl Login {
             CameraView::SubView1,
         );
 
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &text_index,
-            "Login Window",
-        );
-        systems.gfx.center_text(&text_index);
+        systems.gfx.set_text(&text_index, "Login Window");
+        systems.gfx.center_text(&mut systems.renderer, &text_index);
         label.push(text_index);
 
         for index in 0..2 {
@@ -173,7 +169,7 @@ impl Login {
                 _ => ("Email", vec![]),
             };
 
-            systems.gfx.set_text(&mut systems.renderer, &textindex, msg);
+            systems.gfx.set_text(&textindex, msg);
             label.push(textindex);
 
             let is_hidden = index == 1;

@@ -118,31 +118,19 @@ impl Alert {
         let mut text = create_empty_label(systems);
 
         text.set_buffer_size(
-            &mut systems.renderer,
             Some((max_text_width as f32 * systems.scale as f32).floor()),
             Some(128.0),
         )
-        .set_wrap(&mut systems.renderer, cosmic_text::Wrap::Word);
-        text.set_text(
-            &mut systems.renderer,
-            &msg,
-            &Attrs::new(),
-            Shaping::Advanced,
-            None,
-        );
+        .set_wrap(cosmic_text::Wrap::Word);
+        text.set_text(&msg, &Attrs::new(), Shaping::Advanced, None);
 
-        let text_size = text.measure().floor();
+        let text_size = text.measure(&mut systems.renderer.font_sys).floor();
         let mut header_text = create_empty_label(systems);
 
-        header_text.set_text(
-            &mut systems.renderer,
-            &header,
-            &Attrs::new(),
-            Shaping::Advanced,
-            None,
-        );
+        header_text.set_text(&header, &Attrs::new(), Shaping::Advanced, None);
 
-        let header_text_size = header_text.measure().floor();
+        let header_text_size =
+            header_text.measure(&mut systems.renderer.font_sys).floor();
         let text_width = header_text_size.x.max(text_size.x);
         let center = get_screen_center(&systems.size).floor();
         let orig_size = Vec2::new(
@@ -209,7 +197,9 @@ impl Alert {
         );
 
         if alert_type == AlertType::Input {
-            systems.gfx.center_text(&header_text_index);
+            systems
+                .gfx
+                .center_text(&mut systems.renderer, &header_text_index);
         }
 
         self.text.push(header_text_index);

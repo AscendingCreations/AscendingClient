@@ -128,10 +128,8 @@ impl Trade {
             false,
             CameraView::SubView1,
         );
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &header_text, "Trade");
-        systems.gfx.center_text(&header_text);
+        systems.gfx.set_text(&header_text, "Trade");
+        systems.gfx.center_text(&mut systems.renderer, &header_text);
 
         let mut button = Vec::with_capacity(3);
         let close_button = Button::new(
@@ -358,11 +356,9 @@ impl Trade {
             false,
             CameraView::SubView1,
         );
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &my_status_text,
-            "My Trade: Preparing...",
-        );
+        systems
+            .gfx
+            .set_text(&my_status_text, "My Trade: Preparing...");
         let theirstatus = create_label(
             systems,
             Vec3::new(
@@ -386,11 +382,9 @@ impl Trade {
             false,
             CameraView::SubView1,
         );
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &their_status_text,
-            "Their Trade: Preparing...",
-        );
+        systems
+            .gfx
+            .set_text(&their_status_text, "Their Trade: Preparing...");
 
         let my_money_icon = Image::new(
             Some(systems.resource.shop_currency_icon.allocation),
@@ -476,9 +470,7 @@ impl Trade {
             false,
             CameraView::SubView1,
         );
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &their_money, "0");
+        systems.gfx.set_text(&their_money, "0");
 
         let statustext = create_label(
             systems,
@@ -503,10 +495,8 @@ impl Trade {
             false,
             CameraView::SubView1,
         );
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &status_text, "");
-        systems.gfx.center_text(&status_text);
+        systems.gfx.set_text(&status_text, "");
+        systems.gfx.center_text(&mut systems.renderer, &status_text);
 
         Trade {
             visible: false,
@@ -609,24 +599,18 @@ impl Trade {
             self.button[1].change_text(systems, "Submit".into());
 
             self.money_input.set_text(systems, "0".into());
+            systems.gfx.set_text(&self.their_money, "0");
             systems
                 .gfx
-                .set_text(&mut systems.renderer, &self.their_money, "0");
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                &self.my_status_text,
-                "My Trade: Preparing...",
-            );
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                &self.their_status_text,
-                "Their Trade: Preparing...",
-            );
+                .set_text(&self.my_status_text, "My Trade: Preparing...");
+            systems
+                .gfx
+                .set_text(&self.their_status_text, "Their Trade: Preparing...");
 
+            systems.gfx.set_text(&self.status_text, "");
             systems
                 .gfx
-                .set_text(&mut systems.renderer, &self.status_text, "");
-            systems.gfx.center_text(&self.status_text);
+                .center_text(&mut systems.renderer, &self.status_text);
         }
         self.trade_status = TradeStatus::default();
     }
@@ -807,7 +791,9 @@ impl Trade {
                 self.pos.y + (381.0 * systems.scale as f32).floor(),
             )),
         );
-        systems.gfx.center_text(&self.header_text);
+        systems
+            .gfx
+            .center_text(&mut systems.renderer, &self.header_text);
 
         self.button.iter_mut().for_each(|button| {
             button.set_pos(systems, self.pos);
@@ -1014,7 +1000,9 @@ impl Trade {
                 self.pos.y + (30.0 * systems.scale as f32).floor(),
             )),
         );
-        systems.gfx.center_text(&self.status_text);
+        systems
+            .gfx
+            .center_text(&mut systems.renderer, &self.status_text);
     }
 
     pub fn hover_data(
@@ -1355,11 +1343,7 @@ impl Trade {
                 self.visible,
                 CameraView::SubView1,
             );
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                &text_index,
-                &format!("{}", data.val),
-            );
+            systems.gfx.set_text(&text_index, &format!("{}", data.val));
 
             item_slot[slot].count = text_index;
             item_slot[slot].count_bg = text_bg_index;
@@ -1378,11 +1362,9 @@ impl Trade {
             return;
         }
 
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &self.their_money,
-            &format!("{amount}"),
-        );
+        systems
+            .gfx
+            .set_text(&self.their_money, &format!("{amount}"));
     }
 
     pub fn update_my_status(
@@ -1394,11 +1376,7 @@ impl Trade {
             return;
         }
 
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &self.my_status_text,
-            &text,
-        );
+        systems.gfx.set_text(&self.my_status_text, &text);
     }
 
     pub fn update_their_status(
@@ -1410,11 +1388,7 @@ impl Trade {
             return;
         }
 
-        systems.gfx.set_text(
-            &mut systems.renderer,
-            &self.their_status_text,
-            &text,
-        );
+        systems.gfx.set_text(&self.their_status_text, &text);
     }
 
     pub fn update_status(&mut self, systems: &mut SystemHolder, text: String) {
@@ -1422,9 +1396,9 @@ impl Trade {
             return;
         }
 
+        systems.gfx.set_text(&self.status_text, &text);
         systems
             .gfx
-            .set_text(&mut systems.renderer, &self.status_text, &text);
-        systems.gfx.center_text(&self.status_text);
+            .center_text(&mut systems.renderer, &self.status_text);
     }
 }

@@ -1,5 +1,5 @@
-use cosmic_text::{Attrs, Metrics};
 use ascending_graphics::{cosmic_text::Wrap, *};
+use cosmic_text::{Attrs, Metrics};
 
 use crate::SystemHolder;
 
@@ -19,13 +19,9 @@ pub fn create_label(
         0,
     );
 
-    text.set_buffer_size(
-        &mut systems.renderer,
-        Some(systems.size.width),
-        Some(systems.size.height),
-    )
-    .set_bounds(bounds)
-    .set_default_color(color);
+    text.set_buffer_size(Some(systems.size.width), Some(systems.size.height))
+        .set_bounds(bounds)
+        .set_default_color(color);
     text.changed = true;
     text
 }
@@ -40,13 +36,9 @@ pub fn create_empty_label(systems: &mut SystemHolder) -> Text {
         0,
     );
 
-    text.set_buffer_size(
-        &mut systems.renderer,
-        Some(systems.size.width),
-        Some(systems.size.height),
-    )
-    .set_bounds(None)
-    .set_default_color(Color::rgba(255, 255, 255, 255));
+    text.set_buffer_size(Some(systems.size.width), Some(systems.size.height))
+        .set_bounds(None)
+        .set_default_color(Color::rgba(255, 255, 255, 255));
     text.changed = true;
     text
 }
@@ -70,6 +62,7 @@ pub fn measure_string(
             wrap: Wrap::None,
         },
         None,
+        TextShape::default(),
     )
 }
 

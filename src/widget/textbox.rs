@@ -1,6 +1,6 @@
 use arboard::Clipboard;
-use cosmic_text::{Attrs, Metrics};
 use ascending_graphics::*;
+use cosmic_text::{Attrs, Metrics};
 use log::warn;
 use std::cmp;
 
@@ -117,7 +117,7 @@ impl Textbox {
             )),
             text_color,
         );
-        text_data.set_wrap(&mut systems.renderer, cosmic_text::Wrap::None);
+        text_data.set_wrap(cosmic_text::Wrap::None);
         let text_index = systems.gfx.add_text(
             text_data,
             render_layer,
@@ -308,9 +308,7 @@ impl Textbox {
             + (self.adjust_pos * systems.scale as f32).floor();
 
         if text.is_empty() {
-            systems
-                .gfx
-                .set_text(&mut systems.renderer, &self.text_index, "");
+            systems.gfx.set_text(&self.text_index, "");
             let pos = systems.gfx.get_pos(&self.caret);
             systems
                 .gfx
@@ -331,9 +329,7 @@ impl Textbox {
             self.char_size.insert(self.caret_pos, size);
         }
 
-        systems
-            .gfx
-            .set_text(&mut systems.renderer, &self.text_index, &msg);
+        systems.gfx.set_text(&self.text_index, &msg);
 
         self.move_caret_pos(
             systems,
@@ -567,11 +563,7 @@ impl Textbox {
         }
 
         if did_edit {
-            systems.gfx.set_text(
-                &mut systems.renderer,
-                &self.text_index,
-                &self.data_text,
-            );
+            systems.gfx.set_text(&self.text_index, &self.data_text);
 
             self.hold_final_index = self.caret_pos;
             self.hold_initial_index = self.caret_pos;

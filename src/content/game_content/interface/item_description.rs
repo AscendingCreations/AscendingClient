@@ -121,14 +121,8 @@ impl ItemDescription {
         let mut name_text = create_empty_label(systems);
         let mut text_size = 0.0;
         for text in text_holder.iter() {
-            name_text.set_text(
-                &mut systems.renderer,
-                text,
-                &Attrs::new(),
-                Shaping::Advanced,
-                None,
-            );
-            let name_size = name_text.measure();
+            name_text.set_text(text, &Attrs::new(), Shaping::Advanced, None);
+            let name_size = name_text.measure(&mut systems.renderer.font_sys);
             if name_size.x > text_size {
                 text_size = name_size.x.floor();
             }
@@ -144,7 +138,6 @@ impl ItemDescription {
             size.y += (5.0 * systems.scale as f32).floor();
         }
         name_text.set_text(
-            &mut systems.renderer,
             &text_holder[0],
             &Attrs::new(),
             Shaping::Advanced,
@@ -210,9 +203,7 @@ impl ItemDescription {
                     self.visible,
                     CameraView::SubView1,
                 );
-                systems
-                    .gfx
-                    .set_text(&mut systems.renderer, &text_index, msg);
+                systems.gfx.set_text(&text_index, msg);
 
                 data.push(DescData {
                     index: text_index,

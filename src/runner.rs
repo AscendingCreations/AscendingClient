@@ -760,7 +760,6 @@ impl winit::application::ApplicationHandler for Runner {
 
             if *time < seconds {
                 systems.gfx.set_rich_text(
-                    &mut systems.renderer,
                     &systems.fps,
                     [
                         (
@@ -821,7 +820,6 @@ impl winit::application::ApplicationHandler for Runner {
                     if sum > 0 {
                         let average: u64 = sum / count as u64;
                         systems.gfx.set_text(
-                            &mut systems.renderer,
                             &content.game_content.interface.frame_loop,
                             &format!("Frame Jitter: {average:?}"),
                         );
