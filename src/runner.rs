@@ -262,7 +262,8 @@ impl winit::application::ApplicationHandler for Runner {
             );
 
             // We establish the different renderers here to load their data up to use them.
-            let text_renderer = TextRenderer::new(&systems.renderer).unwrap();
+            let text_renderer =
+                TextRenderer::new(&mut systems.renderer).unwrap();
             let image_renderer = ImageRenderer::new(&systems.renderer).unwrap();
             let mut map_renderer =
                 MapRenderer::new(&mut systems.renderer, 81).unwrap();

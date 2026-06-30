@@ -58,7 +58,7 @@ impl TextureAllocation {
             textures.push(TextureData {
                 name: name.to_string(),
                 allocation: Texture::from_file(path)?
-                    .upload(&mut atlases[0], renderer)
+                    .upload(name, &mut atlases[0], renderer)
                     .ok_or_else(|| OtherError::new("failed to upload image"))?,
             })
         }
@@ -71,39 +71,44 @@ impl TextureAllocation {
         );
 
         for path in get_dir_files("./images/tiles/") {
-            tilesheet.push(TilesheetData {
-                name: path.path().display().to_string(),
-                tile: Texture::from_file(path.path())?
-                    .new_tilesheet(&mut atlases[1], renderer, TILE_SIZE as u32)
-                    .ok_or_else(|| OtherError::new("failed to upload tiles"))?,
-            });
+            let name = path.path().display().to_string();
+            let tile = Texture::from_file(path.path())?
+                .new_tilesheet(
+                    &name,
+                    &mut atlases[1],
+                    renderer,
+                    TILE_SIZE as u32,
+                )
+                .ok_or_else(|| OtherError::new("failed to upload tiles"))?;
+
+            tilesheet.push(TilesheetData { name, tile });
         }
 
         for path in get_dir_files("./images/items/") {
-            items.push(TextureData {
-                name: path.path().display().to_string(),
-                allocation: Texture::from_file(path.path())?
-                    .upload(&mut atlases[0], renderer)
-                    .ok_or_else(|| OtherError::new("failed to upload image"))?,
-            });
+            let name = path.path().display().to_string();
+            let allocation = Texture::from_file(path.path())?
+                .upload(&name, &mut atlases[0], renderer)
+                .ok_or_else(|| OtherError::new("failed to upload image"))?;
+
+            items.push(TextureData { name, allocation });
         }
 
         for path in get_dir_files("./images/player/") {
-            players.push(TextureData {
-                name: path.path().display().to_string(),
-                allocation: Texture::from_file(path.path())?
-                    .upload(&mut atlases[0], renderer)
-                    .ok_or_else(|| OtherError::new("failed to upload image"))?,
-            });
+            let name = path.path().display().to_string();
+            let allocation = Texture::from_file(path.path())?
+                .upload(&name, &mut atlases[0], renderer)
+                .ok_or_else(|| OtherError::new("failed to upload image"))?;
+
+            players.push(TextureData { name, allocation });
         }
 
         for path in get_dir_files("./images/npc/") {
-            npcs.push(TextureData {
-                name: path.path().display().to_string(),
-                allocation: Texture::from_file(path.path())?
-                    .upload(&mut atlases[0], renderer)
-                    .ok_or_else(|| OtherError::new("failed to upload image"))?,
-            });
+            let name = path.path().display().to_string();
+            let allocation = Texture::from_file(path.path())?
+                .upload(&name, &mut atlases[0], renderer)
+                .ok_or_else(|| OtherError::new("failed to upload image"))?;
+
+            npcs.push(TextureData { name, allocation });
         }
 
         // Complete! We can now pass the result
