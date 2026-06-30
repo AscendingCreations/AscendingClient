@@ -331,7 +331,7 @@ impl Setting {
                 Vec2::new(24.0, 24.0),
                 0,
                 Some(CheckboxText {
-                    text: "Show FPS?".to_string(),
+                    text: "Show FPS?".into(),
                     offset_pos: Vec2::new(3.0, 2.0),
                     render_layer: 1,
                     label_size: Vec2::new(180.0, 20.0),
@@ -375,7 +375,7 @@ impl Setting {
                 Vec2::new(24.0, 24.0),
                 0,
                 Some(CheckboxText {
-                    text: "Show Ping?".to_string(),
+                    text: "Show Ping?".into(),
                     offset_pos: Vec2::new(3.0, 2.0),
                     render_layer: 1,
                     label_size: Vec2::new(180.0, 20.0),
@@ -419,7 +419,7 @@ impl Setting {
                 Vec2::new(24.0, 24.0),
                 0,
                 Some(CheckboxText {
-                    text: "Show Average Ping?".to_string(),
+                    text: "Show Average Ping?".into(),
                     offset_pos: Vec2::new(3.0, 2.0),
                     render_layer: 1,
                     label_size: Vec2::new(180.0, 20.0),
@@ -463,7 +463,7 @@ impl Setting {
                 Vec2::new(24.0, 24.0),
                 0,
                 Some(CheckboxText {
-                    text: "Show Frame Jitter?".to_string(),
+                    text: "Show Frame Jitter?".into(),
                     offset_pos: Vec2::new(3.0, 2.0),
                     render_layer: 1,
                     label_size: Vec2::new(180.0, 20.0),
@@ -881,7 +881,7 @@ impl Setting {
                 checkbox.set_hover(systems, true);
 
                 if let Some(msg) = &checkbox.tooltip {
-                    tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                    tooltip.init_tooltip(systems, screen_pos, msg.as_ref());
                 }
             } else {
                 checkbox.set_hover(systems, false);

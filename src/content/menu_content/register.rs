@@ -171,9 +171,9 @@ impl Register {
             label.push(textindex);
 
             let tooltip = match index {
-                0 | 1 => Some(
-                    "This email will be used for password reset".to_string(),
-                ),
+                0 | 1 => {
+                    Some("This email will be used for password reset".into())
+                }
                 _ => None,
             };
 
@@ -283,7 +283,7 @@ impl Register {
                 )),
             }),
             ButtonContentType::Text(ButtonContentText {
-                text: "Register".to_string(),
+                text: "Register".into(),
                 pos: Vec2::new(0.0, 7.0),
                 color: Color::rgba(230, 230, 230, 255),
                 render_layer: 1,
@@ -307,7 +307,7 @@ impl Register {
             systems,
             ButtonType::None,
             ButtonContentType::Text(ButtonContentText {
-                text: "Sign In".to_string(),
+                text: "Sign In".into(),
                 pos: Vec2::ZERO,
                 color: Color::rgba(80, 80, 80, 255),
                 render_layer: 1,
@@ -466,7 +466,7 @@ impl Register {
                 button.set_hover(systems, true);
 
                 if let Some(msg) = &button.tooltip {
-                    tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                    tooltip.init_tooltip(systems, screen_pos, msg.as_ref());
                 }
             } else {
                 button.set_hover(systems, false);
@@ -518,7 +518,7 @@ impl Register {
                     .floor(),
             ) && let Some(msg) = &textbox.tooltip
             {
-                tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                tooltip.init_tooltip(systems, screen_pos, msg.as_ref());
             }
         }
     }

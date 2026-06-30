@@ -3,7 +3,7 @@ use std::default;
 use ascending_graphics::*;
 use cosmic_text::{Attrs, Metrics};
 
-use crate::{GfxType, SystemHolder, logic::*, widget::*};
+use crate::{GfxType, SystemHolder, TString, logic::*, widget::*};
 
 #[derive(Clone)]
 pub enum CheckboxChangeType {
@@ -49,7 +49,7 @@ pub struct CheckboxImage {
 
 #[derive(Clone)]
 pub struct CheckboxText {
-    pub text: String,
+    pub text: TString,
     pub offset_pos: Vec2,
     pub render_layer: usize,
     pub label_size: Vec2,
@@ -93,7 +93,7 @@ pub struct Checkbox {
     pub box_size: Vec2,
     pub adjust_x: f32,
     z_step: (f32, i32),
-    pub tooltip: Option<String>,
+    pub tooltip: Option<TString>,
 }
 
 impl Checkbox {
@@ -110,7 +110,7 @@ impl Checkbox {
         render_layer: usize,
         text_data: Option<CheckboxText>,
         visible: bool,
-        tooltip: Option<String>,
+        tooltip: Option<TString>,
     ) -> Self {
         let pos = base_pos + (adjust_pos * systems.scale as f32);
         let image = match &box_type {
@@ -241,7 +241,7 @@ impl Checkbox {
                 visible,
                 CameraView::SubView1,
             );
-            systems.gfx.set_text(&txt_index, &data.text);
+            systems.gfx.set_text(&txt_index, data.text.as_ref());
             adjust_x = data.offset_pos.x + data.label_size.x;
             Some(txt_index)
         } else {

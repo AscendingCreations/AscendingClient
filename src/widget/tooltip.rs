@@ -68,7 +68,7 @@ impl Tooltip {
         &mut self,
         systems: &mut SystemHolder,
         screen_pos: Vec2,
-        msg: String,
+        msg: &str,
     ) {
         self.start_tmr = true;
         self.init_pos = screen_pos;
@@ -76,7 +76,7 @@ impl Tooltip {
         self.init = true;
         self.hide_tooltip(systems);
 
-        systems.gfx.set_text(&self.text, &msg);
+        systems.gfx.set_text(&self.text, msg);
         let text_size =
             systems.gfx.get_measure(&mut systems.renderer, &self.text)
                 + Vec2::new(0.0, 4.0);

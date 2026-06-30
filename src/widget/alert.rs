@@ -765,7 +765,7 @@ impl Alert {
             )
             && let Some(msg) = &textbox.textbox.tooltip
         {
-            tooltip.init_tooltip(systems, screen_pos, msg.clone());
+            tooltip.init_tooltip(systems, screen_pos, msg.as_ref());
         }
     }
 

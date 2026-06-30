@@ -1,7 +1,7 @@
 use ascending_graphics::*;
 use cosmic_text::{Attrs, Metrics};
 
-use crate::{GfxType, SystemHolder, logic::*, widget::*};
+use crate::{GfxType, SystemHolder, TString, logic::*, widget::*};
 
 #[derive(Clone)]
 pub enum ButtonChangeType {
@@ -40,7 +40,7 @@ pub struct ButtonContentImg {
 
 #[derive(Clone)]
 pub struct ButtonContentText {
-    pub text: String,
+    pub text: TString,
     pub pos: Vec2,
     pub color: Color,
     pub render_layer: usize,
@@ -77,7 +77,7 @@ pub struct Button {
     pub z_order: f32,
     pub size: Vec2,
     z_step: (f32, i32),
-    pub tooltip: Option<String>,
+    pub tooltip: Option<TString>,
 }
 
 impl Button {
@@ -93,7 +93,7 @@ impl Button {
         size: Vec2,
         render_layer: usize,
         visible: bool,
-        tooltip: Option<String>,
+        tooltip: Option<TString>,
     ) -> Self {
         let pos = base_pos + (adjust_pos * systems.scale as f32).floor();
 
@@ -202,7 +202,7 @@ impl Button {
                     CameraView::SubView1,
                 );
 
-                systems.gfx.set_text(&index, &data.text);
+                systems.gfx.set_text(&index, data.text.as_ref());
                 systems.gfx.center_text(&mut systems.renderer, &index);
 
                 Some(index)
@@ -376,11 +376,11 @@ impl Button {
         }
     }
 
-    pub fn change_text(&mut self, systems: &mut SystemHolder, msg: String) {
+    pub fn change_text(&mut self, systems: &mut SystemHolder, msg: TString) {
         if let Some(content_data) = self.content
             && let ButtonContentType::Text(data) = &mut self.content_type
         {
-            systems.gfx.set_text(&content_data, &msg);
+            systems.gfx.set_text(&content_data, msg.as_ref());
             data.text = msg;
             systems
                 .gfx

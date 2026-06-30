@@ -1,4 +1,4 @@
-use crate::{GfxType, SystemHolder, is_within_area, logic::*};
+use crate::{GfxType, SystemHolder, TString, is_within_area, logic::*};
 use ascending_graphics::*;
 
 pub struct ScrollbarBackground {
@@ -46,7 +46,7 @@ pub struct Scrollbar {
     in_hover: bool,
     pub in_hold: bool,
     z_step: (f32, i32),
-    pub tooltip: Option<String>,
+    pub tooltip: Option<TString>,
 }
 
 impl Scrollbar {
@@ -66,7 +66,7 @@ impl Scrollbar {
         min_bar_size: f32,
         reverse_value: bool,
         visible: bool,
-        tooltip: Option<String>,
+        tooltip: Option<TString>,
     ) -> Self {
         let bg = if let Some(data) = background {
             let pos = base_pos + (adjust_pos * systems.scale as f32).floor();

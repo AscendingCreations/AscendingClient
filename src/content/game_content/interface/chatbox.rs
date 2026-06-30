@@ -396,7 +396,7 @@ impl Chatbox {
                     )),
                 }),
                 ButtonContentType::Text(ButtonContentText {
-                    text: "Send".to_string(),
+                    text: "Send".into(),
                     pos: Vec2::new(0.0, 2.0),
                     color: Color::rgba(255, 255, 255, 255),
                     render_layer: 1,

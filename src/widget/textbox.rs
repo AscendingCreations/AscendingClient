@@ -10,7 +10,7 @@ const MAX_KEY: usize = 1;
 use ascending_input::Key;
 use winit::keyboard::NamedKey;
 
-use crate::{GfxType, SystemHolder, logic::*, widget::*};
+use crate::{GfxType, SystemHolder, TString, logic::*, widget::*};
 
 pub enum TextDisable {
     Selection,
@@ -40,7 +40,7 @@ pub struct Textbox {
     special_key_hold: [bool; MAX_KEY],
     hide_content: bool,
     z_step: (f32, i32),
-    pub tooltip: Option<String>,
+    pub tooltip: Option<TString>,
     in_hold: bool,
     hold_initial_index: usize,
     hold_final_index: usize,
@@ -66,7 +66,7 @@ impl Textbox {
         selection_bg_color: Color,
         hide_content: bool,
         visible: bool,
-        tooltip: Option<String>,
+        tooltip: Option<TString>,
         disable_option: Vec<TextDisable>,
     ) -> Self {
         let detail_1 = base_pos.z.sub_f32(z_step.0, z_step.1);

@@ -213,7 +213,7 @@ impl Login {
                 )),
             }),
             ButtonContentType::Text(ButtonContentText {
-                text: "Login".to_string(),
+                text: "Login".into(),
                 pos: Vec2::new(0.0, 7.0),
                 color: Color::rgba(230, 230, 230, 255),
                 render_layer: 1,
@@ -237,7 +237,7 @@ impl Login {
             systems,
             ButtonType::None,
             ButtonContentType::Text(ButtonContentText {
-                text: "Register".to_string(),
+                text: "Register".into(),
                 pos: Vec2::ZERO,
                 color: Color::rgba(80, 80, 80, 255),
                 render_layer: 1,
@@ -287,7 +287,7 @@ impl Login {
             Vec2::new(24.0, 24.0),
             0,
             Some(CheckboxText {
-                text: "Remember account?".to_string(),
+                text: "Remember account?".into(),
                 offset_pos: Vec2::new(3.0, 2.0),
                 render_layer: 1,
                 label_size: Vec2::new(180.0, 20.0),
@@ -350,7 +350,7 @@ impl Login {
                 button.set_hover(systems, true);
 
                 if let Some(msg) = &button.tooltip {
-                    tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                    tooltip.init_tooltip(systems, screen_pos, msg.as_ref());
                 }
             } else {
                 button.set_hover(systems, false);
@@ -407,7 +407,7 @@ impl Login {
             self.checkbox.set_hover(systems, true);
 
             if let Some(msg) = &self.checkbox.tooltip {
-                tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                tooltip.init_tooltip(systems, screen_pos, msg.as_ref());
             }
         } else {
             self.checkbox.set_hover(systems, false);
@@ -457,7 +457,7 @@ impl Login {
                     .floor(),
             ) && let Some(msg) = &textbox.tooltip
             {
-                tooltip.init_tooltip(systems, screen_pos, msg.clone());
+                tooltip.init_tooltip(systems, screen_pos, msg.as_ref());
             }
         }
     }
