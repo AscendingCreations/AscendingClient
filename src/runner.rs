@@ -430,8 +430,8 @@ impl winit::application::ApplicationHandler for Runner {
                             alert.show_alert(
                                 systems,
                                 AlertType::Confirm,
-                                "Do you want to return to title screen?".into(),
-                                "Exit Game".to_string(),
+                                "Do you want to return to title screen?",
+                                "Exit Game",
                                 250,
                                 AlertIndex::ExitGame,
                                 false,

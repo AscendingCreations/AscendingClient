@@ -185,8 +185,8 @@ pub fn handle_traderequest(
     passer.alert.show_alert(
         passer.systems,
         AlertType::Confirm,
-        "Would you like to accept this trade request?".into(),
-        format!("{name} would like to trade with you"),
+        "Would you like to accept this trade request?",
+        &format!("{name} would like to trade with you"),
         250,
         AlertIndex::TradeRequest,
         false,

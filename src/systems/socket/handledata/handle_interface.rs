@@ -20,8 +20,8 @@ pub fn handle_alertmsg(
     passer.alert.show_alert(
         passer.systems,
         AlertType::Inform,
-        message,
-        "Alert Message".into(),
+        &message,
+        "Alert Message",
         250,
         AlertIndex::None,
         false,

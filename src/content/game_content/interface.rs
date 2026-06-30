@@ -99,7 +99,7 @@ impl Interface {
         let ping_text = systems.gfx.add_text(
             ping,
             5,
-            "Ping".to_string(),
+            "Ping",
             systems.config.show_ping,
             CameraView::SubView1,
         );
@@ -121,7 +121,7 @@ impl Interface {
         let average_ping = systems.gfx.add_text(
             averageping,
             5,
-            "Av. Ping".to_string(),
+            "Av. Ping",
             systems.config.show_average_ping,
             CameraView::SubView1,
         );
@@ -143,7 +143,7 @@ impl Interface {
         let frame_loop = systems.gfx.add_text(
             framejitter,
             5,
-            "Av. Ping".to_string(),
+            "Av. Ping",
             systems.config.show_frame_loop,
             CameraView::SubView1,
         );
@@ -1023,8 +1023,8 @@ impl Interface {
                                     alert.show_alert(
                                         systems,
                                         AlertType::Input,
-                                        String::new(),
-                                        "Enter the amount to remove".into(),
+                                        "",
+                                        "Enter the amount to remove",
                                         250,
                                         AlertIndex::RemoveTradeItem(
                                             slot as u16,

@@ -860,8 +860,8 @@ pub fn release_storage_slot(
                 alert.show_alert(
                     systems,
                     AlertType::Input,
-                    String::new(),
-                    "Enter the amount to merge".into(),
+                    "",
+                    "Enter the amount to merge",
                     250,
                     AlertIndex::MergeStorage(slot as u16, new_slot as u16),
                     true,
@@ -910,8 +910,8 @@ pub fn release_storage_slot(
                 alert.show_alert(
                     systems,
                     AlertType::Input,
-                    String::new(),
-                    "Enter the amount to Withdraw".into(),
+                    "",
+                    "Enter the amount to Withdraw",
                     250,
                     AlertIndex::Withdraw(inv_slot as u16, slot as u16),
                     true,

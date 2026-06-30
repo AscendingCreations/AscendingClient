@@ -80,8 +80,8 @@ impl Alert {
         &mut self,
         systems: &mut SystemHolder,
         alert_type: AlertType,
-        msg: String,
-        header: String,
+        msg: &str,
+        header: &str,
         max_text_width: usize,
         custom_index: AlertIndex,
         numeric_only: bool,
@@ -122,12 +122,12 @@ impl Alert {
             Some(128.0),
         )
         .set_wrap(cosmic_text::Wrap::Word);
-        text.set_text(&msg, &Attrs::new(), Shaping::Advanced, None);
+        text.set_text(msg, &Attrs::new(), Shaping::Advanced, None);
 
         let text_size = text.measure(&mut systems.renderer.font_sys).floor();
         let mut header_text = create_empty_label(systems);
 
-        header_text.set_text(&header, &Attrs::new(), Shaping::Advanced, None);
+        header_text.set_text(header, &Attrs::new(), Shaping::Advanced, None);
 
         let header_text_size =
             header_text.measure(&mut systems.renderer.font_sys).floor();
