@@ -30,7 +30,7 @@ impl World {
         self.kinds
             .get(key)
             .copied()
-            .ok_or(ClientError::missing_kind())
+            .ok_or_else(ClientError::missing_kind)
     }
 
     /// Returns a Copied Kind or Default of None if doesnt exist.
