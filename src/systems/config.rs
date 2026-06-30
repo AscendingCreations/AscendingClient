@@ -123,26 +123,6 @@ impl Default for Config {
     }
 }
 
-fn load_private_key(filename: &str) -> PrivateKeyDer<'static> {
-    let keyfile =
-        fs::File::open(filename).expect("cannot open private key file");
-    let mut reader = BufReader::new(keyfile);
-
-    loop {
-        match rustls_pemfile::read_one(&mut reader)
-            .expect("cannot parse private key .pem file")
-        {
-            Some(rustls_pemfile::Item::Pkcs1Key(key)) => return key.into(),
-            Some(rustls_pemfile::Item::Pkcs8Key(key)) => return key.into(),
-            Some(rustls_pemfile::Item::Sec1Key(key)) => return key.into(),
-            None => break,
-            _ => {}
-        }
-    }
-
-    panic!("no keys found in {filename:?} (encrypted keys not supported)");
-}
-
 pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {
     let mut root_store = RootCertStore::empty();
     let ca_cert: Vec<CertificateDer> =
@@ -159,7 +139,7 @@ pub fn build_tls_config() -> Result<Arc<rustls::ClientConfig>> {
         }
         .into(),
     )
-    .with_protocol_versions(rustls::DEFAULT_VERSIONS)
+    .with_protocol_versions(rustls::ALL_VERSIONS)
     .expect("inconsistent cipher-suite/versions selected")
     .with_root_certificates(root_store)
     .with_no_client_auth();
