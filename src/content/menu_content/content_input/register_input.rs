@@ -143,8 +143,8 @@ fn trigger_button(
                 alert.show_alert(
                     systems,
                     AlertType::Inform,
-                    "Email did not match".into(),
-                    "Alert Message".into(),
+                    "Email did not match",
+                    "Alert Message",
                     250,
                     AlertIndex::None,
                     false,
