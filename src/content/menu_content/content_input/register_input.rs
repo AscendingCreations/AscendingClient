@@ -158,8 +158,8 @@ fn trigger_button(
                 alert.show_alert(
                     systems,
                     AlertType::Inform,
-                    "Password did not match".into(),
-                    "Alert Message".into(),
+                    "Password did not match",
+                    "Alert Message",
                     250,
                     AlertIndex::None,
                     false,
@@ -177,9 +177,8 @@ fn trigger_button(
                 alert.show_alert(
                     systems,
                     AlertType::Inform,
-                    "Username or Password contains unaccepted Characters"
-                        .into(),
-                    "Alert Message".into(),
+                    "Username or Password contains unaccepted Characters",
+                    "Alert Message",
                     250,
                     AlertIndex::None,
                     false,
@@ -191,9 +190,8 @@ fn trigger_button(
                 alert.show_alert(
                     systems,
                     AlertType::Inform,
-                    "Username has too many Characters, 64 Characters Max"
-                        .into(),
-                    "Alert Message".into(),
+                    "Username has too many Characters, 64 Characters Max",
+                    "Alert Message",
                     250,
                     AlertIndex::None,
                     false,
@@ -205,9 +203,8 @@ fn trigger_button(
                 alert.show_alert(
                     systems,
                     AlertType::Inform,
-                    "Password has too many Characters, 128 Characters Max"
-                        .into(),
-                    "Alert Message".into(),
+                    "Password has too many Characters, 128 Characters Max",
+                    "Alert Message",
                     250,
                     AlertIndex::None,
                     false,
@@ -219,8 +216,8 @@ fn trigger_button(
                 alert.show_alert(
                     systems,
                     AlertType::Inform,
-                    "Email must be an actual email.".into(),
-                    "Alert Message".into(),
+                    "Email must be an actual email.",
+                    "Alert Message",
                     250,
                     AlertIndex::None,
                     false,
@@ -242,8 +239,8 @@ fn trigger_button(
                     alert.show_alert(
                         systems,
                         AlertType::Inform,
-                        "Server is offline".into(),
-                        "Alert Message".into(),
+                        "Server is offline",
+                        "Alert Message",
                         250,
                         AlertIndex::None,
                         false,

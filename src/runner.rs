@@ -716,8 +716,8 @@ impl winit::application::ApplicationHandler for Runner {
                             alert.show_alert(
                                 systems,
                                 AlertType::Inform,
-                                "You have been disconnected".into(),
-                                "Alert Message".into(),
+                                "You have been disconnected",
+                                "Alert Message",
                                 250,
                                 AlertIndex::Disconnect,
                                 false,

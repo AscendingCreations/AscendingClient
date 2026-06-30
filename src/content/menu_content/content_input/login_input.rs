@@ -161,8 +161,8 @@ fn trigger_button(
                     alert.show_alert(
                         systems,
                         AlertType::Inform,
-                        "Server is offline".into(),
-                        "Alert Message".into(),
+                        "Server is offline",
+                        "Alert Message",
                         250,
                         AlertIndex::None,
                         false,
