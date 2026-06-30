@@ -131,7 +131,7 @@ impl winit::application::ApplicationHandler for Runner {
                 instance.create_surface(window.clone()).unwrap();
 
             info!("after compatible initiation");
-            print!("{:?}", &compatible_surface);
+            print!("{compatible_surface:?}");
             // This creates the Window Struct and Device struct that holds all the rendering information
             // we need to render to the screen. Window holds most of the window information including
             // the surface type. device includes the queue and GPU device for rendering.

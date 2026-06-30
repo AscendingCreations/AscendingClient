@@ -92,7 +92,7 @@ impl log::Log for MyLogger {
     fn log(&self, record: &Record) {
         if self.enabled(record.metadata()) {
             let msg = format!("{} - {}\n", record.level(), record.args());
-            println!("{}", &msg);
+            println!("{msg}");
 
             let mut file =
                 match File::options().append(true).create(true).open("log.txt")
