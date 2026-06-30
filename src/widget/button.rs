@@ -3,7 +3,7 @@ use cosmic_text::{Attrs, Metrics};
 
 use crate::{GfxType, SystemHolder, TString, logic::*, widget::*};
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub enum ButtonChangeType {
     None,
     ImageFrame(usize),
@@ -11,7 +11,7 @@ pub enum ButtonChangeType {
     AdjustY(usize),
 }
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct ButtonRect {
     pub rect_color: Color,
     pub got_border: bool,
@@ -21,14 +21,14 @@ pub struct ButtonRect {
     pub click_change: ButtonChangeType,
 }
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct ButtonImage {
     pub res: usize,
     pub hover_change: ButtonChangeType,
     pub click_change: ButtonChangeType,
 }
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct ButtonContentImg {
     pub res: usize,
     pub pos: Vec2,

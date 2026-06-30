@@ -167,9 +167,9 @@ fn trigger_button(
                 return;
             }
 
-            let email = menu_content.register.textbox[0].text.clone();
-            let password = menu_content.register.textbox[2].text.clone();
-            let username = menu_content.register.textbox[4].text.clone();
+            let email = &menu_content.register.textbox[0].text;
+            let password = &menu_content.register.textbox[2].text;
+            let username = &menu_content.register.textbox[4].text;
 
             if !username.chars().all(is_name_acceptable)
                 || !password.chars().all(is_password_acceptable)
@@ -212,7 +212,7 @@ fn trigger_button(
                 return;
             }
 
-            if !email_regex.is_match(&email) {
+            if !email_regex.is_match(email) {
                 alert.show_alert(
                     systems,
                     AlertType::Inform,

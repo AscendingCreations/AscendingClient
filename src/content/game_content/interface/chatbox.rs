@@ -14,7 +14,7 @@ const MAX_CHAT: usize = 100;
 #[derive(Debug, Clone)]
 pub struct Chat {
     text: GfxType,
-    msg: String,
+    msg: TString,
     size: Vec2,
     adjust_y: f32,
     channel: MessageChannel,
@@ -831,11 +831,11 @@ impl Chatbox {
         }
     }
 
-    pub fn get_selected_msg(&mut self) -> Option<String> {
+    pub fn get_selected_msg(&mut self) -> Option<&TString> {
         if let Some(index) = self.msg_select_index
             && let Some(chatdata) = self.chat.get(index)
         {
-            return Some(chatdata.msg.clone());
+            return Some(&chatdata.msg);
         }
         None
     }
@@ -932,8 +932,8 @@ impl Chatbox {
     pub fn add_chat(
         &mut self,
         systems: &mut SystemHolder,
-        msg: (String, Color),
-        header_msg: Option<(String, Color)>,
+        msg: (TString, Color),
+        header_msg: Option<(TString, Color)>,
         channel: MessageChannel,
     ) {
         let mut text_data = create_label(
@@ -964,15 +964,15 @@ impl Chatbox {
             systems.gfx.set_rich_text(
                 &text,
                 [
-                    (header.0.as_str(), header_color),
-                    (msg.0.as_str(), msg_color),
+                    (header.0.as_ref(), header_color),
+                    (msg.0.as_ref(), msg_color),
                 ],
             );
-            format!("{}{}", header.0, msg.0)
+            format!("{}{}", header.0, msg.0).into()
         } else {
             systems
                 .gfx
-                .set_rich_text(&text, [(msg.0.as_str(), msg_color)]);
+                .set_rich_text(&text, [(msg.0.as_ref(), msg_color)]);
             msg.0
         };
         let size = systems.gfx.get_measure(&mut systems.renderer, &text);
@@ -1107,22 +1107,21 @@ pub fn send_chat(
     systems: &mut SystemHolder,
     socket: &mut Poller,
 ) -> Result<()> {
-    let input_string = interface.chatbox.textbox.text.clone();
-    if input_string.is_empty() {
+    if interface.chatbox.textbox.text.is_empty() {
         return Ok(());
     }
 
-    if let Some(char) = input_string.chars().next() {
+    if let Some(char) = interface.chatbox.textbox.text.chars().next() {
         match char {
             '@' => {
-                let msg = &input_string[1..];
+                let msg = &interface.chatbox.textbox.text[1..];
                 if let Some(index) = msg.find(' ') {
                     let (name, message) = msg.split_at(index);
                     send_message(
                         socket,
                         crate::MessageChannel::Private,
-                        message.into(),
-                        name.into(),
+                        message,
+                        name,
                     )?;
                 } else {
                     interface.chatbox.add_chat(
@@ -1134,7 +1133,7 @@ pub fn send_chat(
                 }
             }
             '/' => {
-                let msg = &input_string[1..];
+                let msg = &interface.chatbox.textbox.text[1..];
                 match msg {
                     "trade" => {
                         send_command(socket, crate::Command::Trade)?;
@@ -1166,12 +1165,17 @@ pub fn send_chat(
                     2 => crate::MessageChannel::Global,
                     _ => crate::MessageChannel::Map,
                 };
-                send_message(socket, channel, input_string, String::new())?;
+                send_message(
+                    socket,
+                    channel,
+                    &interface.chatbox.textbox.text,
+                    "",
+                )?;
             }
         }
     }
 
-    interface.chatbox.textbox.set_text(systems, String::new());
+    interface.chatbox.textbox.set_text(systems, "");
 
     Ok(())
 }

@@ -78,7 +78,7 @@ pub fn handle_handshake(
     passer.systems.config.reconnect_code = code;
     passer.systems.config.save_config("settings.toml");
     passer.content.game_content.reconnect_count = 0;
-    send_handshake(passer.socket, handshake)
+    send_handshake(passer.socket, &handshake)
 }
 
 pub fn handle_loginok(

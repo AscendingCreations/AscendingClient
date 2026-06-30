@@ -30,13 +30,7 @@ impl GameContent {
     ) -> Result<()> {
         if alert.visible {
             return alert.alert_mouse_input(
-                systems,
-                socket,
-                content,
-                elwt,
-                input_type.clone(),
-                tooltip,
-                screen_pos,
+                systems, socket, content, elwt, input_type, tooltip, screen_pos,
             );
         }
 
@@ -46,7 +40,7 @@ impl GameContent {
             systems,
             socket,
             alert,
-            input_type.clone(),
+            input_type,
             tooltip,
             screen_pos,
         )? {

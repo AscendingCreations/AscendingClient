@@ -191,8 +191,8 @@ impl Login {
             );
 
             match index {
-                1 => txtbox.set_text(systems, systems.config.password.clone()),
-                _ => txtbox.set_text(systems, systems.config.username.clone()),
+                1 => txtbox.set_text(systems, &systems.config.password.clone()),
+                _ => txtbox.set_text(systems, &systems.config.username.clone()),
             }
 
             textbox.push(txtbox);

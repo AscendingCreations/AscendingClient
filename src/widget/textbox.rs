@@ -296,7 +296,7 @@ impl Textbox {
         );
     }
 
-    pub fn set_text(&mut self, systems: &mut SystemHolder, text: String) {
+    pub fn set_text(&mut self, systems: &mut SystemHolder, text: &str) {
         self.text.clear();
         self.data_text.clear();
         self.char_size.clear();
@@ -316,7 +316,7 @@ impl Textbox {
             return;
         }
 
-        self.text.push_str(&text);
+        self.text.push_str(text);
         let msg = if self.hide_content {
             self.text.chars().map(|_| '*').collect()
         } else {
@@ -380,7 +380,7 @@ impl Textbox {
                     );
                     let text = &self.text[first..second];
 
-                    set_clipboard_text(text.to_string());
+                    set_clipboard_text(text);
 
                     self.remove_selection(systems);
 
@@ -408,7 +408,7 @@ impl Textbox {
                     );
                     let text = &self.text[first..second];
 
-                    set_clipboard_text(text.to_string());
+                    set_clipboard_text(text);
 
                     special_key = true;
                 }
@@ -1038,7 +1038,7 @@ pub fn get_clipboard_text() -> String {
     }
 }
 
-pub fn set_clipboard_text(message: String) {
+pub fn set_clipboard_text(message: &str) {
     let mut clipboard = Clipboard::new().unwrap();
 
     if let Err(e) = clipboard.set_text(message) {

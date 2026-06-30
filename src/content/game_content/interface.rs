@@ -371,7 +371,7 @@ impl Interface {
                 if interface.chatbox.order_index == 0
                     && let Some(text) = interface.chatbox.get_selected_msg()
                 {
-                    set_clipboard_text(text);
+                    set_clipboard_text(text.as_ref());
                 }
             }
             MouseInputType::MouseLeftDown => {
@@ -1159,8 +1159,12 @@ impl Interface {
             SelectedTextbox::Trade => {
                 self.trade.money_input.set_select(systems, false);
                 if self.trade.trade_status == TradeStatus::None {
-                    let input_text = self.trade.money_input.text.clone();
-                    let amount = input_text.parse::<u64>().unwrap_or_default();
+                    let amount = self
+                        .trade
+                        .money_input
+                        .text
+                        .parse::<u64>()
+                        .unwrap_or_default();
                     send_updatetrademoney(socket, amount)?;
                 }
             }

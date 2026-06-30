@@ -11,7 +11,7 @@ use crate::{
     systems::State,
 };
 
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 #[allow(clippy::enum_variant_names)]
 pub enum MouseInputType {
     MouseLeftDown,

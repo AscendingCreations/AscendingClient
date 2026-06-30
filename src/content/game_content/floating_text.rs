@@ -120,7 +120,7 @@ pub fn add_float_text(
     systems: &mut SystemHolder,
     content: &mut GameContent,
     pos: Position,
-    msg: String,
+    msg: &str,
     color: Color,
 ) -> Result<()> {
     let start_pos = if let Some(start) = get_map_render_pos(systems, pos.map) {
@@ -132,7 +132,7 @@ pub fn add_float_text(
         start_pos + (Vec2::new(pos.x as f32, pos.y as f32) * TILE_SIZE as f32);
 
     let mut text = create_empty_label(systems);
-    text.set_text(&msg, &Attrs::new(), Shaping::Advanced, None);
+    text.set_text(msg, &Attrs::new(), Shaping::Advanced, None);
     let size = Vec2::new(text.measure(&mut systems.renderer.font_sys).x, 20.0);
     text.size = size;
 
@@ -163,7 +163,7 @@ pub fn add_float_text(
         Color::rgba(10, 10, 10, 255),
     );
     let attrs = Attrs::new().weight(Weight::BOLD);
-    textbg.set_text(&msg, &attrs, Shaping::Advanced, None);
+    textbg.set_text(msg, &attrs, Shaping::Advanced, None);
     let text_bg = systems.gfx.add_text(
         textbg,
         2,

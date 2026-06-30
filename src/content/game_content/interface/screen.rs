@@ -149,8 +149,8 @@ pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
 
     let character_button = Button::new(
         systems,
-        ButtonType::Rect(button_properties.clone()),
-        ButtonContentType::Image(image_properties.clone()),
+        ButtonType::Rect(button_properties),
+        ButtonContentType::Image(image_properties),
         Vec2::new(systems.size.width, 10.0),
         Vec2::new(-140.0, 0.0),
         ORDER_GUI_BUTTON,
@@ -163,8 +163,8 @@ pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
     image_properties.uv.x = 32.0;
     let inventory_button = Button::new(
         systems,
-        ButtonType::Rect(button_properties.clone()),
-        ButtonContentType::Image(image_properties.clone()),
+        ButtonType::Rect(button_properties),
+        ButtonContentType::Image(image_properties),
         Vec2::new(systems.size.width, 10.0),
         Vec2::new(-95.0, 0.0),
         ORDER_GUI_BUTTON,
@@ -177,8 +177,8 @@ pub fn create_menu_button(systems: &mut SystemHolder) -> [Button; 3] {
     image_properties.uv.x = 64.0;
     let setting_button = Button::new(
         systems,
-        ButtonType::Rect(button_properties.clone()),
-        ButtonContentType::Image(image_properties.clone()),
+        ButtonType::Rect(button_properties),
+        ButtonContentType::Image(image_properties),
         Vec2::new(systems.size.width, 10.0),
         Vec2::new(-50.0, 0.0),
         ORDER_GUI_BUTTON,

@@ -59,13 +59,13 @@ pub fn handle_chatmsg(
                 MessageChannel::Private => COLOR_RED,
                 _ => COLOR_WHITE,
             };
-            Some((head_string, color))
+            Some((head_string.into(), color))
         } else {
             None
         };
 
         passer.buffer.chatbuffer.add_task(ChatTask::new(
-            (msg_string, COLOR_WHITE),
+            (msg_string.into(), COLOR_WHITE),
             header,
             channel,
         ));
@@ -151,7 +151,7 @@ pub fn handle_damage(
             passer.systems,
             &mut passer.content.game_content,
             pos,
-            text,
+            &text,
             color,
         )?;
     }

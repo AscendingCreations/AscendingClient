@@ -951,9 +951,7 @@ impl Shop {
     }
 
     pub fn set_shop(&mut self, systems: &mut SystemHolder, shop_index: usize) {
-        let shopdata = systems.base.shop[shop_index].clone();
-
-        let shop_max_item = shopdata.max_item as usize;
+        let shop_max_item = systems.base.shop[shop_index].max_item as usize;
 
         self.shop_index = shop_index;
 
@@ -976,9 +974,6 @@ impl Shop {
 
         let max_item = shop_max_item.min(5);
         (0..max_item).for_each(|index| {
-            let item_data =
-                systems.base.item[shopdata.item[index].index as usize].clone();
-
             self.item[index].got_data = true;
             self.button[3 + index].set_visible(systems, self.visible);
             systems
@@ -994,20 +989,26 @@ impl Shop {
                 .gfx
                 .set_visible(&self.item[index].price, self.visible);
 
-            systems
-                .gfx
-                .set_text(&self.item[index].name, &item_data.name);
+            systems.gfx.set_text(
+                &self.item[index].name,
+                &systems.base.item
+                    [systems.base.shop[shop_index].item[index].index as usize]
+                    .name,
+            );
             systems.gfx.set_text(
                 &self.item[index].price,
-                &format!("{}", shopdata.item[index].price),
+                &format!("{}", systems.base.shop[shop_index].item[index].price),
             );
 
-            if shopdata.item[index].amount > 1 {
+            if systems.base.shop[shop_index].item[index].amount > 1 {
                 self.item[index].got_count = true;
 
                 systems.gfx.set_text(
                     &self.item[index].amount,
-                    &format!("{}", shopdata.item[index].amount),
+                    &format!(
+                        "{}",
+                        systems.base.shop[shop_index].item[index].amount
+                    ),
                 );
 
                 systems
@@ -1018,7 +1019,9 @@ impl Shop {
                     .set_visible(&self.item[index].amount_bg, self.visible);
             }
 
-            let item_pic = item_data.sprite;
+            let item_pic = systems.base.item
+                [systems.base.shop[shop_index].item[index].index as usize]
+                .sprite;
             let item_sprite = Image::new(
                 Some(systems.resource.items[item_pic as usize].allocation),
                 &mut systems.renderer,
@@ -1043,7 +1046,8 @@ impl Shop {
                 CameraView::SubView1,
             );
             self.item[index].icon = Some(item_index);
-            self.item[index].item_index = shopdata.item[index].index as usize;
+            self.item[index].item_index =
+                systems.base.shop[shop_index].item[index].index as usize;
         });
     }
 
@@ -1052,39 +1056,44 @@ impl Shop {
             return;
         }
 
-        let shopdata = systems.base.shop[self.shop_index].clone();
-
         let detail_origin = ORDER_GUI_WINDOW.sub_f32(self.z_order, 3);
         let item_zpos = detail_origin.sub_f32(0.002, 3);
 
         self.shop_start_pos = self.item_scroll.value;
         (self.shop_start_pos..self.shop_start_pos + 5).for_each(|index| {
-            let item_data =
-                systems.base.item[shopdata.item[index].index as usize].clone();
-
             let default_index = index - self.shop_start_pos;
 
             self.item[default_index].item_index =
-                shopdata.item[index].index as usize;
+                systems.base.shop[self.shop_index].item[index].index as usize;
 
             if let Some(sprite_icon) = self.item[default_index].icon {
                 systems.gfx.remove_gfx(&mut systems.renderer, &sprite_icon);
             }
 
-            systems
-                .gfx
-                .set_text(&self.item[default_index].name, &item_data.name);
+            systems.gfx.set_text(
+                &self.item[default_index].name,
+                &systems.base.item[systems.base.shop[self.shop_index].item
+                    [index]
+                    .index as usize]
+                    .name,
+            );
             systems.gfx.set_text(
                 &self.item[default_index].price,
-                &format!("{}", shopdata.item[index].price),
+                &format!(
+                    "{}",
+                    systems.base.shop[self.shop_index].item[index].price
+                ),
             );
 
-            if shopdata.item[index].amount > 1 {
+            if systems.base.shop[self.shop_index].item[index].amount > 1 {
                 self.item[default_index].got_count = true;
 
                 systems.gfx.set_text(
                     &self.item[default_index].amount,
-                    &format!("{}", shopdata.item[index].amount),
+                    &format!(
+                        "{}",
+                        systems.base.shop[self.shop_index].item[index].amount
+                    ),
                 );
 
                 systems.gfx.set_visible(
@@ -1105,7 +1114,9 @@ impl Shop {
                     .set_visible(&self.item[default_index].amount_bg, false);
             }
 
-            let item_pic = item_data.sprite;
+            let item_pic = systems.base.item
+                [systems.base.shop[self.shop_index].item[index].index as usize]
+                .sprite;
             let item_sprite = Image::new(
                 Some(systems.resource.items[item_pic as usize].allocation),
                 &mut systems.renderer,

@@ -71,15 +71,15 @@ impl BufferTask {
 }
 
 pub struct ChatTask {
-    msg: (String, Color),
-    header_msg: Option<(String, Color)>,
+    msg: (TString, Color),
+    header_msg: Option<(TString, Color)>,
     channel: MessageChannel,
 }
 
 impl ChatTask {
     pub fn new(
-        msg: (String, Color),
-        header_msg: Option<(String, Color)>,
+        msg: (TString, Color),
+        header_msg: Option<(TString, Color)>,
         channel: MessageChannel,
     ) -> Self {
         ChatTask {

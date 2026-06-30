@@ -141,11 +141,11 @@ fn trigger_button(
     match index {
         0 => {
             // Login
-            let username = menu_content.login.textbox[0].text.clone();
-            let password = menu_content.login.textbox[1].text.clone();
+            let username = &menu_content.login.textbox[0].text;
+            let password = &menu_content.login.textbox[1].text;
 
-            systems.config.username.clone_from(&username);
-            systems.config.password.clone_from(&password);
+            systems.config.username.clone_from(username);
+            systems.config.password.clone_from(password);
             systems.config.save_config("settings.toml");
 
             match send_login(

@@ -1,4 +1,4 @@
-use crate::{GlobalKey, Position, data_types::*, data_types::*, socket::*};
+use crate::{GlobalKey, Position, data_types::*, socket::*};
 
 use super::bufer_ext::MByteBufferExt;
 
@@ -56,9 +56,9 @@ enum ClientPacket {
 
 pub fn send_register(
     socket: &mut Poller,
-    username: String,
-    password: String,
-    email: String,
+    username: &str,
+    password: &str,
+    email: &str,
     sprite: u8,
     app_version: (u16, u16, u16),
 ) -> Result<()> {
@@ -79,8 +79,8 @@ pub fn send_register(
 
 pub fn send_login(
     socket: &mut Poller,
-    username: String,
-    password: String,
+    username: &str,
+    password: &str,
     app_version: (u16, u16, u16),
     reconnect_code: &str,
 ) -> Result<()> {
@@ -98,7 +98,7 @@ pub fn send_login(
     socket.send(buf, true)
 }
 
-pub fn send_handshake(socket: &mut Poller, handshake: String) -> Result<()> {
+pub fn send_handshake(socket: &mut Poller, handshake: &str) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 
     buf.write(ClientPacket::HandShake)?;
@@ -278,8 +278,8 @@ pub fn send_withdrawitem(
 pub fn send_message(
     socket: &mut Poller,
     channel: MessageChannel,
-    msg: String,
-    name: String,
+    msg: &str,
+    name: &str,
 ) -> Result<()> {
     let mut buf = MByteBuffer::new_packet()?;
 

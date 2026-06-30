@@ -445,7 +445,7 @@ impl Trade {
             None,
             vec![],
         );
-        money_input.set_text(systems, "0".into());
+        money_input.set_text(systems, "0");
 
         let their_money_text = create_label(
             systems,
@@ -598,7 +598,7 @@ impl Trade {
         if !visible {
             self.button[1].change_text(systems, "Submit".into());
 
-            self.money_input.set_text(systems, "0".into());
+            self.money_input.set_text(systems, "0");
             systems.gfx.set_text(&self.their_money, "0");
             systems
                 .gfx

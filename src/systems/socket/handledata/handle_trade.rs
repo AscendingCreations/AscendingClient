@@ -177,7 +177,7 @@ pub fn handle_traderequest(
     let name = if let Some(Entity::Player(p_data)) =
         passer.world.entities.get(entity)
     {
-        p_data.entity_name.0.clone()
+        &p_data.entity_name.0
     } else {
         return Ok(());
     };

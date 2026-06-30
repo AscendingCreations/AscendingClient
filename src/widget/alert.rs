@@ -303,7 +303,7 @@ impl Alert {
                 let pos = Vec2::new(((orig_size.x - 60.0) * 0.5).floor(), 10.0);
                 self.button.push(Button::new(
                     systems,
-                    ButtonType::Rect(button_detail.clone()),
+                    ButtonType::Rect(button_detail),
                     ButtonContentType::Text(ButtonContentText {
                         text: "Okay".into(),
                         pos: Vec2::new(0.0, 5.0),
@@ -327,7 +327,7 @@ impl Alert {
                     Vec2::new(((orig_size.x - 130.0) * 0.5).floor(), 10.0);
                 self.button.push(Button::new(
                     systems,
-                    ButtonType::Rect(button_detail.clone()),
+                    ButtonType::Rect(button_detail),
                     ButtonContentType::Text(ButtonContentText {
                         text: "Yes".into(),
                         pos: Vec2::new(0.0, 5.0),
@@ -347,7 +347,7 @@ impl Alert {
                 ));
                 self.button.push(Button::new(
                     systems,
-                    ButtonType::Rect(button_detail.clone()),
+                    ButtonType::Rect(button_detail),
                     ButtonContentType::Text(ButtonContentText {
                         text: "No".into(),
                         pos: Vec2::new(0.0, 5.0),
@@ -422,7 +422,7 @@ impl Alert {
 
                 self.button.push(Button::new(
                     systems,
-                    ButtonType::Rect(button_detail.clone()),
+                    ButtonType::Rect(button_detail),
                     ButtonContentType::Text(ButtonContentText {
                         text: "Confirm".into(),
                         pos: Vec2::new(0.0, 5.0),
@@ -442,7 +442,7 @@ impl Alert {
                 ));
                 self.button.push(Button::new(
                     systems,
-                    ButtonType::Rect(button_detail.clone()),
+                    ButtonType::Rect(button_detail),
                     ButtonContentType::Text(ButtonContentText {
                         text: "Cancel".into(),
                         pos: Vec2::new(0.0, 5.0),
