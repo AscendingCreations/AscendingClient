@@ -13,7 +13,7 @@ version = "0.2.0"
 ahash = "0.8.12"
 arboard = "3.5.0"
 ascending_camera = "0.9.0"
-ascending_graphics = {version = "0.43.0", features = ["static_dx", "rayon"]}
+ascending_graphics = {version = "0.44.0", features = ["static_dx", "rayon"]}
 ascending_input = "0.6.1"
 ascending_time = {version = "0.3.0", features = ["enable_serde", "enable_mmap_bytey", "enable_bytey"]}
 backtrace = "0.3.75"
@@ -36,10 +36,10 @@ log = {version = "0.4.31", default-features = false}
 lru = "0.18.0"
 mio = {version = "1.2.1", features = ["os-poll", "net"]}
 mmap_bytey = "0.2.0"
-pki-types = {package = "rustls-pki-types", version = "1.14.1", features = [
+pki-types = {package = "rustls-pki-types", version = "1.15.0", features = [
   "std",
 ]}
-rand = "0.10.1"
+rand = "0.10.2"
 rcgen = {version = "0.14.8", features = [
   "pem",
   "ring",
