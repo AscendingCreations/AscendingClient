@@ -7,7 +7,7 @@ authors = [
 edition = "2024"
 license = "MIT OR Apache-2.0"
 name = "client"
-version = "0.2.0"
+version = "0.3.0"
 
 [dependencies]
 ahash = "0.8.12"
